@@ -17,9 +17,8 @@ use Illuminate\Support\Str;
 class ArtikelResource extends Resource
 {
     protected static ?string $model = Artikel::class;
-    protected static ?string $navigationGroup = 'Content Management';
-    protected static ?int $navigationSort = 1;
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -116,6 +115,7 @@ class ArtikelResource extends Resource
         return [
             'index' => Pages\ListArtikels::route('/'),
             'create' => Pages\CreateArtikel::route('/create'),
+            'view' => Pages\ViewArtikel::route('/{record}'),
             'edit' => Pages\EditArtikel::route('/{record}/edit'),
         ];
     }
