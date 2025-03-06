@@ -10,22 +10,32 @@ class PendaftaranEvent extends Model
     use HasFactory;
 
     protected $table = 'pendaftaran_event';
-    
+
     protected $fillable = [
-        'event_id',
-        'nama',
-        'email',
-        'nomor_telepon',
-        'institusi',
-        'bukti_pembayaran',
-        'status',
+        'id_event',
+        'id_users',
+        'tanggal_registrasi',
+        'status_registrasi',
+    ];
+
+    protected $casts = [
+        'tanggal_registrasi' => 'datetime',
+        'status_registrasi' => 'boolean',
     ];
 
     /**
-     * Get the event that owns the registration.
+     * Get the event associated with the registration.
      */
     public function event()
     {
-        return $this->belongsTo(Event::class);
+        return $this->belongsTo(Event::class, 'id_event');
+    }
+
+    /**
+     * Get the user who registered for the event.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_users');
     }
 }

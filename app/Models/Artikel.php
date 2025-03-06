@@ -10,22 +10,20 @@ class Artikel extends Model
     use HasFactory;
 
     protected $table = 'artikel';
+    protected $primaryKey = 'id_artikel';
 
     protected $fillable = [
-        'user_id',
-        'kategori_id',
+        'id_users',
+        'id_kategori_artikel',
         'judul',
         'slug',
-        'isi',
-        'thumbnail',
-        'status',
-        'tanggal_publikasi',
-        'is_highlight',
+        'gambar_cover',
+        'konten',
+        'tanggal_upload',
     ];
 
     protected $casts = [
-        'tanggal_publikasi' => 'datetime',
-        'is_highlight' => 'boolean',
+        'tanggal_upload' => 'datetime',
     ];
 
     /**
@@ -33,7 +31,7 @@ class Artikel extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'id_users');
     }
 
     /**
@@ -41,6 +39,6 @@ class Artikel extends Model
      */
     public function kategori()
     {
-        return $this->belongsTo(KategoriArtikel::class, 'kategori_id');
+        return $this->belongsTo(KategoriArtikel::class, 'id_kategori_artikel', 'id_kategori_artikel');
     }
 }

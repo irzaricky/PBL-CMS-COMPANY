@@ -10,25 +10,23 @@ class Testimoni extends Model
     use HasFactory;
 
     protected $table = 'testimoni';
-    
-    protected $fillable = [
-        'judul',
-        'deskripsi',
-        'status',
-        'tanggal_mulai',
-        'tanggal_selesai',
-    ];
+    protected $primaryKey = 'id_testimoni';
 
-    protected $casts = [
-        'tanggal_mulai' => 'datetime',
-        'tanggal_selesai' => 'datetime',
+    protected $fillable = [
+        'id_kategori_testimoni',
+        'nama',
+        'email',
+        'foto_profil',
+        'status',
+        'rating',
+        'konten',
     ];
 
     /**
-     * Get the pengisian testimoni for the testimoni.
+     * Get the category that owns the testimonial.
      */
-    public function pengisian()
+    public function kategori()
     {
-        return $this->hasMany(PengisianTestimoni::class);
+        return $this->belongsTo(KategoriTestimoni::class, 'id_kategori_testimoni', 'id_kategori_testimoni');
     }
 }

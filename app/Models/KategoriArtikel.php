@@ -10,11 +10,11 @@ class KategoriArtikel extends Model
     use HasFactory;
 
     protected $table = 'kategori_artikel';
+    protected $primaryKey = 'id_kategori_artikel';
 
     protected $fillable = [
-        'nama_kategori',
+        'nama',
         'slug',
-        'deskripsi',
     ];
 
     /**
@@ -22,6 +22,6 @@ class KategoriArtikel extends Model
      */
     public function artikel()
     {
-        return $this->hasMany(Artikel::class, 'kategori_id');
+        return $this->hasMany(Artikel::class, 'id_kategori_artikel', 'id_kategori_artikel');
     }
 }

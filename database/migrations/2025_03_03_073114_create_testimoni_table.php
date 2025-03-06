@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('testimoni', function (Blueprint $table) {
             $table->id('id_testimoni');
-            $table->foreignId('id_kategori_testimoni')->constrained('kategori_testimoni')->onDelete('cascade');
+            $table->foreignId('id_kategori_testimoni')->constrained('kategori_testimoni', 'id_kategori_testimoni')->onDelete('cascade');
             $table->string('nama');
             $table->string('email');
             $table->string('foto_profil')->nullable();

@@ -10,23 +10,12 @@ class Mitra extends Model
     use HasFactory;
 
     protected $table = 'mitra';
-    
-    protected $fillable = [
-        'nama_mitra',
-        'logo',
-        'website',
-        'alamat',
-        'nomor_telepon',
-        'email',
-        'jenis_kerjasama',
-        'status',
-    ];
+    protected $primaryKey = 'id_mitra';
 
-    /**
-     * Get the details for the partner.
-     */
-    public function detail()
-    {
-        return $this->hasMany(DetailMitra::class);
-    }
+    protected $fillable = [
+        'nama',
+        'slug',
+        'logo',
+        'deskripsi',
+    ];
 }

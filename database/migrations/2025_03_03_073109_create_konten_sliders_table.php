@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->string('lokasi_file');
             $table->string('tipe_media');
             $table->string('link')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

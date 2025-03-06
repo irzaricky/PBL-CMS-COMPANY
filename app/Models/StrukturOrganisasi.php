@@ -10,12 +10,12 @@ class StrukturOrganisasi extends Model
     use HasFactory;
 
     protected $table = 'struktur_organisasi';
-    
+    protected $primaryKey = 'id_struktur_organisasi';
+
     protected $fillable = [
         'nama',
-        'jabatan',
-        'foto',
+        'role',
+        'foto_profil',
         'deskripsi',
-        'urutan',
     ];
 }

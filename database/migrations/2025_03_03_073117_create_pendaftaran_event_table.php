@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('pendaftaran_event', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_event')->constrained('event')->onDelete('cascade');
+            $table->foreignId('id_event')->constrained('event', 'id_event')->onDelete('cascade');
             $table->foreignId('id_users')->constrained('users')->onDelete('cascade');
             $table->dateTime('tanggal_registrasi');
             $table->boolean('status_registrasi')->default(false);

@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('galeri', function (Blueprint $table) {
             $table->id('id_galeri');
-            $table->foreignId('id_kategori_galeri')->constrained('kategori_galeri')->onDelete('cascade');
+            $table->foreignId('id_kategori_galeri')->constrained('kategori_galeri', 'id_kategori_galeri')->onDelete('cascade');
             $table->foreignId('id_users')->constrained('users')->onDelete('cascade');
             $table->string('judul');
             $table->text('deskripsi')->nullable();

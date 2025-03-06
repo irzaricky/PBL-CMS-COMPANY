@@ -10,16 +10,19 @@ class Unduhan extends Model
     use HasFactory;
 
     protected $table = 'unduhan';
-    
+    protected $primaryKey = 'id_unduhan';
+
     protected $fillable = [
-        'kategori_id',
-        'judul',
-        'deskripsi',
-        'file_path',
+        'id_kategori_unduhan',
+        'id_users',
+        'nama',
+        'slug',
+        'lokasi_file',
+        'jenis_file',
         'ukuran_file',
-        'format_file',
+        'deskripsi',
         'jumlah_unduhan',
-        'status',
+        'status_publikasi',
     ];
 
     /**
@@ -27,6 +30,14 @@ class Unduhan extends Model
      */
     public function kategori()
     {
-        return $this->belongsTo(KategoriUnduhan::class, 'kategori_id');
+        return $this->belongsTo(KategoriUnduhan::class, 'id_kategori_unduhan', 'id_kategori_unduhan');
+    }
+
+    /**
+     * Get the user that owns the download.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_users');
     }
 }

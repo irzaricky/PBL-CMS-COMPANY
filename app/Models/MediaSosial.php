@@ -10,11 +10,12 @@ class MediaSosial extends Model
     use HasFactory;
 
     protected $table = 'media_sosial';
-    
+    protected $primaryKey = 'id_media_sosial';
+
     protected $fillable = [
         'nama',
         'link',
-        'icon',
+        'ikon',
         'status',
     ];
 }

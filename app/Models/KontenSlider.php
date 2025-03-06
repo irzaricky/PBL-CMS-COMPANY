@@ -10,15 +10,14 @@ class KontenSlider extends Model
     use HasFactory;
 
     protected $table = 'konten_slider';
-    
+    protected $primaryKey = 'id_konten_slider';
+
     protected $fillable = [
-        'judul',
-        'sub_judul',
+        'nama',
         'deskripsi',
-        'gambar',
-        'tombol_teks',
-        'tombol_link',
-        'urutan',
-        'status',
+        'lokasi_file',
+        'tipe_media',
+        'link',
+        'status'
     ];
 }

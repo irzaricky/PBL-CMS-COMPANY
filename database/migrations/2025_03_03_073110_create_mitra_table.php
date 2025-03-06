@@ -9,7 +9,6 @@ return new class extends Migration {
     {
         Schema::create('mitra', function (Blueprint $table) {
             $table->id('id_mitra');
-            $table->foreignId('id_detail_mitra')->constrained('detail_mitra')->onDelete('cascade');
             $table->string('nama');
             $table->string('slug')->unique();
             $table->string('logo')->nullable();

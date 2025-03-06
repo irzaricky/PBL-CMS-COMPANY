@@ -10,10 +10,10 @@ class KategoriUnduhan extends Model
     use HasFactory;
 
     protected $table = 'kategori_unduhan';
-    
+    protected $primaryKey = 'id_kategori_unduhan';
+
     protected $fillable = [
-        'nama_kategori',
-        'slug',
+        'nama',
         'deskripsi',
     ];
 
@@ -22,6 +22,6 @@ class KategoriUnduhan extends Model
      */
     public function unduhan()
     {
-        return $this->hasMany(Unduhan::class, 'kategori_id');
+        return $this->hasMany(Unduhan::class, 'id_kategori_unduhan', 'id_kategori_unduhan');
     }
 }

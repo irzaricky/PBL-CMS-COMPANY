@@ -10,21 +10,32 @@ class PengisianTestimoni extends Model
     use HasFactory;
 
     protected $table = 'pengisian_testimoni';
-    
+
     protected $fillable = [
-        'testimoni_id',
-        'nama',
-        'email',
-        'isi_testimoni',
-        'rating',
+        'id_testimoni',
+        'id_users',
+        'tanggal_pengisian',
         'status',
     ];
 
+    protected $casts = [
+        'tanggal_pengisian' => 'datetime',
+        'status' => 'boolean',
+    ];
+
     /**
-     * Get the testimoni that owns the pengisian testimoni.
+     * Get the testimonial associated with the filling.
      */
     public function testimoni()
     {
-        return $this->belongsTo(Testimoni::class);
+        return $this->belongsTo(Testimoni::class, 'id_testimoni');
+    }
+
+    /**
+     * Get the user who filled the testimonial.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_users');
     }
 }

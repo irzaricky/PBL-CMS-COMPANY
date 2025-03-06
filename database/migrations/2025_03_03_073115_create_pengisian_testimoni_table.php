@@ -9,7 +9,7 @@ return new class extends Migration {
     {
         Schema::create('pengisian_testimoni', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_testimoni')->constrained('testimoni')->onDelete('cascade');
+            $table->foreignId('id_testimoni')->constrained('testimoni', 'id_testimoni')->onDelete('cascade');
             $table->foreignId('id_users')->constrained('users')->onDelete('cascade');
             $table->dateTime('tanggal_pengisian');
             $table->boolean('status')->default(false);

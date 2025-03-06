@@ -9,7 +9,9 @@ return new class extends Migration {
     {
         Schema::create('unduhan', function (Blueprint $table) {
             $table->id('id_unduhan');
-            $table->foreignId('id_kategori_unduhan')->constrained('kategori_unduhan')->onDelete('cascade');
+            $table->foreignId('id_kategori_unduhan')
+                ->constrained('kategori_unduhan', 'id_kategori_unduhan')
+                ->onDelete('cascade');
             $table->foreignId('id_users')->constrained('users')->onDelete('cascade');
             $table->string('nama');
             $table->string('slug')->unique();
@@ -17,6 +19,8 @@ return new class extends Migration {
             $table->string('jenis_file');
             $table->integer('ukuran_file');
             $table->text('deskripsi')->nullable();
+            $table->integer('jumlah_unduhan')->default(0);
+            $table->boolean('status_publikasi')->default(false);
             $table->timestamps();
         });
     }

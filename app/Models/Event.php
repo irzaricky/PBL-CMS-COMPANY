@@ -9,24 +9,23 @@ class Event extends Model
 {
     use HasFactory;
 
-    protected $table = 'events';
+    protected $table = 'event';
+    protected $primaryKey = 'id_event';
 
     protected $fillable = [
-        'nama_event',
+        'nama',
+        'slug',
         'deskripsi',
+        'gambar_cover',
+        'waktu_mulai',
+        'waktu_akhir',
         'lokasi',
-        'tanggal_mulai',
-        'tanggal_selesai',
-        'biaya',
-        'kapasitas',
-        'gambar',
-        'status',
+        'link_pendaftaran',
     ];
 
     protected $casts = [
-        'tanggal_mulai' => 'datetime',
-        'tanggal_selesai' => 'datetime',
-        'biaya' => 'decimal:2',
+        'waktu_mulai' => 'datetime',
+        'waktu_akhir' => 'datetime',
     ];
 
     /**
@@ -34,6 +33,6 @@ class Event extends Model
      */
     public function pendaftaran()
     {
-        return $this->hasMany(PendaftaranEvent::class);
+        return $this->hasMany(PendaftaranEvent::class, 'id_event', 'id_event');
     }
 }
