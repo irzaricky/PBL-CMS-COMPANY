@@ -12,12 +12,14 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class ArtikelResource extends Resource
 {
     protected static ?string $model = Artikel::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Content Management';
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     public static function form(Form $form): Form
     {
@@ -36,12 +38,17 @@ class ArtikelResource extends Resource
 
                 Forms\Components\TextInput::make('judul')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
+                        $set('slug', Str::slug($state));
+                    }),
 
                 Forms\Components\TextInput::make('slug')
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->maxLength(255),
+
 
                 Forms\Components\FileUpload::make('gambar_cover')
                     ->image()
@@ -61,18 +68,16 @@ class ArtikelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_users')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('id_kategori_artikel')
-                    ->numeric()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('judul')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('gambar_cover')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Author')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('kategori.nama')
+                    ->label('Category')
+                    ->sortable(),
+                Tables\Columns\ImageColumn::make('gambar_cover')
+                    ->label('Cover Image'),
                 Tables\Columns\TextColumn::make('tanggal_upload')
                     ->dateTime()
                     ->sortable(),
@@ -89,6 +94,7 @@ class ArtikelResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
