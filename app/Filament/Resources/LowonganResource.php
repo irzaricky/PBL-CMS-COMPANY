@@ -19,31 +19,91 @@ class LowonganResource extends Resource
     protected static ?string $navigationGroup = 'Content Management';
     protected static ?int $navigationSort = 4;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('judul')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('deskripsi')
-                    ->required()
+                Forms\Components\Tabs::make('Lowongan')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Informasi Dasar')
+                            ->schema([
+                                Forms\Components\Section::make('Detail Lowongan')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('judul')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->label('Judul Lowongan'),
+                                        Forms\Components\RichEditor::make('deskripsi')
+                                            ->required()
+                                            ->label('Deskripsi Lowongan')
+                                            ->toolbarButtons([
+                                                'blockquote',
+                                                'bold',
+                                                'bulletList',
+                                                'h2',
+                                                'h3',
+                                                'italic',
+                                                'link',
+                                                'orderedList',
+                                                'redo',
+                                                'strike',
+                                                'undo',
+                                            ])
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Detail Tambahan')
+                            ->schema([
+                                Forms\Components\Section::make('Manfaat & Persyaratan')
+                                    ->schema([
+                                        Forms\Components\RichEditor::make('manfaat')
+                                            ->required()
+                                            ->label('Manfaat')
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'bulletList',
+                                                'italic',
+                                                'orderedList',
+                                            ])
+                                            ->columnSpan(1),
+                                        Forms\Components\RichEditor::make('persyaratan')
+                                            ->required()
+                                            ->label('Persyaratan')
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'bulletList',
+                                                'italic',
+                                                'orderedList',
+                                            ])
+                                            ->columnSpan(1),
+                                    ])->columns(2),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Periode')
+                            ->schema([
+                                Forms\Components\Section::make('Informasi Waktu')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('durasi_lowongan')
+                                            ->required()
+                                            ->numeric()
+                                            ->label('Durasi (dalam hari)')
+                                            ->suffix('hari')
+                                            ->minValue(1)
+                                            ->helperText('Lama waktu magang/kerja dalam hari'),
+                                        Forms\Components\DateTimePicker::make('waktu_dibuka')
+                                            ->required()
+                                            ->label('Waktu Pendaftaran Dibuka'),
+                                        Forms\Components\DateTimePicker::make('waktu_ditutup')
+                                            ->required()
+                                            ->label('Waktu Pendaftaran Ditutup')
+                                            ->after('waktu_dibuka'),
+                                    ])->columns(3),
+                            ]),
+                    ])
                     ->columnSpanFull(),
-                Forms\Components\Textarea::make('manfaat')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('persyaratan')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('durasi_lowongan')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\DateTimePicker::make('waktu_dibuka')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('waktu_ditutup')
-                    ->required(),
             ]);
     }
 

@@ -1,3 +1,35 @@
+<script setup>
+import axios from "axios";
+import { Link } from "@inertiajs/vue3";
+import { ref, onMounted } from "vue";
+
+const articles = ref([]);
+const loading = ref(true);
+
+onMounted(() => {
+    fetchArticles();
+});
+
+async function fetchArticles() {
+    try {
+        const response = await axios.get("/api/articles");
+        articles.value = response.data.data.data;
+        loading.value = false;
+    } catch (error) {
+        console.error("Error fetching articles:", error);
+        loading.value = false;
+    }
+}
+
+function getImageUrl(image) {
+    return image ? `/storage/${image}` : "/placeholder.jpg";
+}
+
+function formatDate(date) {
+    return new Date(date).toLocaleDateString();
+}
+</script>
+
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 class="text-3xl font-bold text-gray-900 mb-8">Articles</h1>
@@ -106,6 +138,15 @@
                     </div>
                 </div>
             </div>
+
+            <div>
+                <Link
+                    href="/admin"
+                    class="block text-white-900 font-bold text-center whitespace-nowrap hover:underline"
+                >
+                    <h1>Hello world!</h1>
+                </Link>
+            </div>
         </div>
 
         <!-- No articles message -->
@@ -114,37 +155,3 @@
         </div>
     </div>
 </template>
-
-<script>
-import axios from "axios";
-
-export default {
-    data() {
-        return {
-            articles: [],
-            loading: true,
-        };
-    },
-    mounted() {
-        this.fetchArticles();
-    },
-    methods: {
-        async fetchArticles() {
-            try {
-                const response = await axios.get("/api/articles");
-                this.articles = response.data.data.data;
-                this.loading = false;
-            } catch (error) {
-                console.error("Error fetching articles:", error);
-                this.loading = false;
-            }
-        },
-        getImageUrl(image) {
-            return image ? `/storage/${image}` : "/placeholder.jpg";
-        },
-        formatDate(date) {
-            return new Date(date).toLocaleDateString();
-        },
-    },
-};
-</script>
