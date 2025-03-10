@@ -26,31 +26,79 @@ class EventResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
-                    ->required()
-                    ->maxLength(255)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
-                        $set('slug', Str::slug($state));
-                    }),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
-                Forms\Components\RichEditor::make('deskripsi')
+                Forms\Components\Tabs::make('Event')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Basic Information')
+                            ->schema([
+                                Forms\Components\Section::make('Event Details')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('nama')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->live(onBlur: true)
+                                            ->label('Event Name')
+                                            ->afterStateUpdated(function (string $state, Forms\Set $set) {
+                                                $set('slug', Str::slug($state));
+                                            }),
+                                        Forms\Components\TextInput::make('slug')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->unique(ignoreRecord: true),
+                                        Forms\Components\FileUpload::make('gambar_cover')
+                                            ->label('Cover Image')
+                                            ->image()
+                                            ->directory('event-covers')
+                                            ->maxSize(2048),
+                                    ])->columns(2),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Description')
+                            ->schema([
+                                Forms\Components\RichEditor::make('deskripsi')
+                                    ->label('Event Description')
+                                    ->toolbarButtons([
+                                        'blockquote',
+                                        'bold',
+                                        'bulletList',
+                                        'h2',
+                                        'h3',
+                                        'italic',
+                                        'link',
+                                        'orderedList',
+                                        'redo',
+                                        'strike',
+                                        'undo',
+                                    ])
+                                    ->required(),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Schedule & Location')
+                            ->schema([
+                                Forms\Components\Section::make('Event Schedule')
+                                    ->schema([
+                                        Forms\Components\DateTimePicker::make('waktu_mulai')
+                                            ->label('Start Time')
+                                            ->required(),
+                                        Forms\Components\DateTimePicker::make('waktu_akhir')
+                                            ->label('End Time')
+                                            ->required(),
+                                    ])->columns(2),
+
+                                Forms\Components\Section::make('Event Location')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('lokasi')
+                                            ->label('Location')
+                                            ->placeholder('Venue name, address, or online')
+                                            ->maxLength(255),
+                                        Forms\Components\TextInput::make('link_pendaftaran')
+                                            ->label('Registration Link')
+                                            ->url()
+                                            ->placeholder('https://example.com/register')
+                                            ->maxLength(255),
+                                    ])->columns(2),
+                            ]),
+                    ])
                     ->columnSpanFull(),
-                Forms\Components\FileUpload::make('gambar_cover')
-                    ->image()
-                    ->directory('event-covers')
-                    ->maxSize(2048),
-                Forms\Components\DateTimePicker::make('waktu_mulai')
-                    ->required(),
-                Forms\Components\DateTimePicker::make('waktu_akhir')
-                    ->required(),
-                Forms\Components\TextInput::make('lokasi')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('link_pendaftaran')
-                    ->maxLength(255),
             ]);
     }
 
