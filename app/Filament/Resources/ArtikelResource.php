@@ -26,42 +26,96 @@ class ArtikelResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('id_users')
-                    ->label('Author')
-                    ->relationship('user', 'name')
-                    ->default(auth()->id())
-                    ->required(),
+                Forms\Components\Tabs::make('Artikel')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Informasi Dasar')
+                            ->schema([
+                                Forms\Components\Section::make('Detail Artikel')
+                                    ->schema([
+                                        Forms\Components\Select::make('id_users')
+                                            ->label('Author')
+                                            ->relationship('user', 'name')
+                                            ->default(auth()->id())
+                                            ->required(),
 
-                Forms\Components\Select::make('id_kategori_artikel')
-                    ->label('Category')
-                    ->relationship('kategori', 'nama')
-                    ->required(),
+                                        Forms\Components\Select::make('id_kategori_artikel')
+                                            ->label('Category')
+                                            ->relationship('kategori', 'nama')
+                                            ->required(),
 
-                Forms\Components\TextInput::make('judul')
-                    ->required()
-                    ->maxLength(255)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
-                        $set('slug', Str::slug($state));
-                    }),
+                                        Forms\Components\TextInput::make('judul')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->live(onBlur: true)
+                                            ->label('Judul Artikel')
+                                            ->afterStateUpdated(function (string $state, Forms\Set $set) {
+                                                $set('slug', Str::slug($state));
+                                            }),
 
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
+                                        Forms\Components\TextInput::make('slug')
+                                            ->required()
+                                            ->unique(ignoreRecord: true)
+                                            ->maxLength(255)
+                                            ->helperText('URL-friendly version of the title'),
+                                    ])->columns(2),
 
+                                Forms\Components\Section::make('Visual')
+                                    ->schema([
+                                        Forms\Components\FileUpload::make('gambar_cover')
+                                            ->label('Cover Image')
+                                            ->image()
+                                            ->directory('artikel-covers')
+                                            ->maxSize(2048)
+                                            ->helperText('Recommended size: 1200 x 630 pixels'),
+                                    ]),
+                            ]),
 
-                Forms\Components\FileUpload::make('gambar_cover')
-                    ->image()
-                    ->directory('artikel-covers'),
+                        Forms\Components\Tabs\Tab::make('Konten')
+                            ->schema([
+                                Forms\Components\RichEditor::make('konten')
+                                    ->required()
+                                    ->toolbarButtons([
+                                        'blockquote',
+                                        'bold',
+                                        'bulletList',
+                                        'h2',
+                                        'h3',
+                                        'italic',
+                                        'link',
+                                        'orderedList',
+                                        'redo',
+                                        'strike',
+                                        'undo',
+                                    ])
+                                    ->label('Isi Artikel')
+                                    ->columnSpanFull(),
+                            ]),
 
-                Forms\Components\RichEditor::make('konten')
-                    ->required()
+                        Forms\Components\Tabs\Tab::make('Publikasi')
+                            ->schema([
+                                Forms\Components\Section::make('Pengaturan Publikasi')
+                                    ->schema([
+                                        Forms\Components\DateTimePicker::make('tanggal_upload')
+                                            ->label('Tanggal Publikasi')
+                                            ->default(now())
+                                            ->native(false)
+                                            ->seconds(false)
+                                            ->required(),
+
+                                        Forms\Components\Select::make('status')
+                                            ->label('Status Artikel')
+                                            ->options([
+                                                'dipublish' => 'Dipublish',
+                                                'dipending' => 'Dipending',
+                                                'draft' => 'Draft',
+                                            ])
+                                            ->default('dipending')
+                                            ->required()
+                                            ->helperText('Status publikasi artikel')
+                                    ])->columns(2),
+                            ]),
+                    ])
                     ->columnSpanFull(),
-
-                Forms\Components\DateTimePicker::make('tanggal_upload')
-                    ->default(now())
-                    ->required(),
             ]);
     }
 
@@ -79,6 +133,15 @@ class ArtikelResource extends Resource
                     ->sortable(),
                 Tables\Columns\ImageColumn::make('gambar_cover')
                     ->label('Cover Image'),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'dipublish' => 'success',
+                        'dipending' => 'warning',
+                        'draft' => 'gray',
+                    })
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('tanggal_upload')
                     ->dateTime()
                     ->sortable(),

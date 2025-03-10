@@ -95,9 +95,11 @@ class LowonganResource extends Resource
                                             ->helperText('Lama waktu magang/kerja dalam hari'),
                                         Forms\Components\DateTimePicker::make('waktu_dibuka')
                                             ->required()
+                                            ->native(false)
                                             ->label('Waktu Pendaftaran Dibuka'),
                                         Forms\Components\DateTimePicker::make('waktu_ditutup')
                                             ->required()
+                                            ->native(false)
                                             ->label('Waktu Pendaftaran Ditutup')
                                             ->after('waktu_dibuka'),
                                     ])->columns(3),
