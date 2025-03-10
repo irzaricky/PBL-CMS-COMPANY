@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class EventResource extends Resource
 {
@@ -19,7 +20,7 @@ class EventResource extends Resource
     protected static ?string $navigationGroup = 'Content Management';
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
     public static function form(Form $form): Form
     {
@@ -27,11 +28,16 @@ class EventResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nama')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
+                        $set('slug', Str::slug($state));
+                    }),
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('deskripsi')
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
+                Forms\Components\RichEditor::make('deskripsi')
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('gambar_cover')
                     ->image()
@@ -56,8 +62,8 @@ class EventResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('gambar_cover')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('gambar_cover')
+                    ->label('Cover Image'),
                 Tables\Columns\TextColumn::make('waktu_mulai')
                     ->dateTime()
                     ->sortable(),
