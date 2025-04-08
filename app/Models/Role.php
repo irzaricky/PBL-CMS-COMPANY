@@ -5,23 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class StrukturOrganisasi extends Model
+class Role extends Model
 {
     use HasFactory;
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'struktur_organisasi';
 
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_struktur_organisasi';
+    protected $primaryKey = 'id_role';
 
     /**
      * The attributes that are mass assignable.
@@ -29,15 +22,15 @@ class StrukturOrganisasi extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'id_user',
+        'nama_role',
         'deskripsi',
     ];
 
     /**
-     * Get the user associated with the struktur organisasi.
+     * Get the users associated with this role.
      */
-    public function user()
+    public function users()
     {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
+        return $this->hasMany(User::class, 'id_role', 'id_role');
     }
 }

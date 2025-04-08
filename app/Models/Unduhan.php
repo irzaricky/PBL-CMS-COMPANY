@@ -9,35 +9,49 @@ class Unduhan extends Model
 {
     use HasFactory;
 
-    protected $table = 'unduhan';
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
     protected $primaryKey = 'id_unduhan';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'id_kategori_unduhan',
-        'id_users',
-        'nama',
+        'id_user',
+        'nama_unduhan',
         'slug',
         'lokasi_file',
-        'jenis_file',
-        'ukuran_file',
         'deskripsi',
-        'jumlah_unduhan',
-        'status_publikasi',
+        'jumlah_unduhan'
     ];
 
     /**
-     * Get the category that owns the download.
+     * Get the user that owns this download.
      */
-    public function kategori()
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the category that this download belongs to.
+     */
+    public function kategoriUnduhan()
     {
         return $this->belongsTo(KategoriUnduhan::class, 'id_kategori_unduhan', 'id_kategori_unduhan');
     }
 
     /**
-     * Get the user that owns the download.
+     * Increment the download count.
      */
-    public function user()
+    public function incrementDownloadCount()
     {
-        return $this->belongsTo(User::class, 'id_users');
+        $this->increment('jumlah_unduhan');
     }
 }

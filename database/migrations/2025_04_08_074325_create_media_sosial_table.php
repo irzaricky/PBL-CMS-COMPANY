@@ -5,19 +5,24 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('media_sosial', function (Blueprint $table) {
             $table->id('id_media_sosial');
-            $table->string('nama');
-            $table->string('ikon');
-            $table->string('link');
-            $table->boolean('status')->default(true);
+            $table->string('nama_media_sosial', 50);
+            $table->string('icon', 200)->nullable();
+            $table->string('link', 100);
             $table->timestamps();
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('media_sosial');
     }

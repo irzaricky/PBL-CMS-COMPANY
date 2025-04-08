@@ -9,36 +9,48 @@ class Artikel extends Model
 {
     use HasFactory;
 
-    protected $table = 'artikel';
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
     protected $primaryKey = 'id_artikel';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
-        'id_users',
         'id_kategori_artikel',
-        'judul',
+        'id_user',
+        'thumbnail_artikel',
+        'judul_artikel',
+        'konten_artikel',
         'slug',
-        'gambar_cover',
-        'konten',
-        'tanggal_upload',
-    ];
-
-    protected $casts = [
-        'tanggal_upload' => 'datetime',
     ];
 
     /**
-     * Get the user that owns the article.
+     * Get the category that this article belongs to.
      */
-    public function user()
+    public function kategoriArtikel()
     {
-        return $this->belongsTo(User::class, 'id_users');
+        return $this->belongsTo(KategoriArtikel::class, 'id_kategori_artikel', 'id_kategori_artikel');
     }
 
     /**
-     * Get the category that owns the article.
+     * Get the user that authored this article.
      */
-    public function kategori()
+    public function user()
     {
-        return $this->belongsTo(KategoriArtikel::class, 'id_kategori_artikel', 'id_kategori_artikel');
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the sliders that feature this article.
+     */
+    public function kontenSliders()
+    {
+        return $this->hasMany(KontenSlider::class, 'id_artikel', 'id_artikel');
     }
 }

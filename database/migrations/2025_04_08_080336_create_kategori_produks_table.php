@@ -1,3 +1,4 @@
+table.php
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -10,8 +11,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('artikel', function (Blueprint $table) {
-            $table->enum('status', ['dipublish', 'dipending', 'draft'])->default('dipending');
+        Schema::create('kategori_produk', function (Blueprint $table) {
+            $table->id('id_kategori_produk');
+            $table->string('nama_kategori_produk', 50);
+            $table->timestamps();
         });
     }
 
@@ -20,8 +23,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('artikel', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('kategori_produk');
     }
 };

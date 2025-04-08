@@ -9,29 +9,40 @@ class Produk extends Model
 {
     use HasFactory;
 
-    protected $table = 'produk';
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id_produk';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
-        'kategori_id',
+        'id_kategori_produk',
         'nama_produk',
+        'gambar_produk',
+        'harga_produk',
         'slug',
-        'deskripsi_singkat',
-        'deskripsi_lengkap',
-        'spesifikasi',
-        'harga',
-        'gambar',
-        'status',
-    ];
-
-    protected $casts = [
-        'harga' => 'decimal:2',
+        'deskripsi_produk',
     ];
 
     /**
-     * Get the category that owns the product.
+     * Get the category that this product belongs to.
      */
-    public function kategori()
+    public function kategoriProduk()
     {
-        return $this->belongsTo(KategoriProduk::class, 'kategori_id');
+        return $this->belongsTo(KategoriProduk::class, 'id_kategori_produk', 'id_kategori_produk');
+    }
+
+    /**
+     * Get the sliders that feature this product.
+     */
+    public function kontenSliders()
+    {
+        return $this->hasMany(KontenSlider::class, 'id_produk', 'id_produk');
     }
 }

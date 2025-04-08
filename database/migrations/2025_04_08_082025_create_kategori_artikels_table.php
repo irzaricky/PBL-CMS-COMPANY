@@ -5,17 +5,22 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up()
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
     {
         Schema::create('kategori_artikel', function (Blueprint $table) {
             $table->id('id_kategori_artikel');
-            $table->string('nama');
-            $table->string('slug')->unique();
+            $table->string('nama_kategori_artikel', 50);
             $table->timestamps();
         });
     }
 
-    public function down()
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
     {
         Schema::dropIfExists('kategori_artikel');
     }
