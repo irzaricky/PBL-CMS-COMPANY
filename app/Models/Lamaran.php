@@ -10,6 +10,13 @@ class Lamaran extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'lamaran';
+    
+    /**
      * The primary key for the model.
      *
      * @var string

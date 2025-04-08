@@ -10,6 +10,12 @@ class MediaSosial extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'media_sosial';
+    /**
      * The primary key for the model.
      *
      * @var string

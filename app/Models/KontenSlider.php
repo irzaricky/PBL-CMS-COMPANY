@@ -10,6 +10,12 @@ class KontenSlider extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'konten_slider';
+    /**
      * The primary key for the model.
      *
      * @var string

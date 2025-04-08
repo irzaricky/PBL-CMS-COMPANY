@@ -10,6 +10,12 @@ class Mitra extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'mitra';
+    /**
      * The primary key for the model.
      *
      * @var string

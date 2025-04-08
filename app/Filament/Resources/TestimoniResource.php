@@ -16,36 +16,22 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class TestimoniResource extends Resource
 {
     protected static ?string $model = Testimoni::class;
-    protected static ?string $navigationGroup = 'Testimoni';
-    protected static ?int $navigationSort = 1;
-
+    protected static ?string $navigationGroup = 'Customer Service';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_kategori_testimoni')
+                Forms\Components\TextInput::make('id_user')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('nama')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('foto_profil')
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('status')
-                    ->required(),
-                Forms\Components\TextInput::make('rating')
-                    ->required()
-                    ->numeric()
-                    ->default(5),
-                Forms\Components\Textarea::make('konten')
+                Forms\Components\Textarea::make('isi_testimoni')
                     ->required()
                     ->columnSpanFull(),
+                Forms\Components\TextInput::make('rating')
+                    ->required()
+                    ->numeric(),
             ]);
     }
 
@@ -53,17 +39,9 @@ class TestimoniResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_kategori_testimoni')
+                Tables\Columns\TextColumn::make('id_user')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('nama')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('foto_profil')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('rating')
                     ->numeric()
                     ->sortable(),
@@ -80,7 +58,6 @@ class TestimoniResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -102,7 +79,6 @@ class TestimoniResource extends Resource
         return [
             'index' => Pages\ListTestimonis::route('/'),
             'create' => Pages\CreateTestimoni::route('/create'),
-            'view' => Pages\ViewTestimoni::route('/{record}'),
             'edit' => Pages\EditTestimoni::route('/{record}/edit'),
         ];
     }

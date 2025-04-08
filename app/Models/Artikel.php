@@ -10,6 +10,13 @@ class Artikel extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'artikel';
+
+    /**
      * The primary key for the model.
      *
      * @var string

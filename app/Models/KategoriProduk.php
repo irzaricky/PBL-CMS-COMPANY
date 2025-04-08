@@ -10,6 +10,12 @@ class KategoriProduk extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'kategori_produk';
+    /**
      * The primary key for the model.
      *
      * @var string

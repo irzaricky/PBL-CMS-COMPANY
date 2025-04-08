@@ -10,6 +10,12 @@ class KategoriGaleri extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'kategori_galeri';
+    /**
      * The primary key for the model.
      *
      * @var string

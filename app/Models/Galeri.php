@@ -10,6 +10,12 @@ class Galeri extends Model
     use HasFactory;
 
     /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'galeri';
+    /**
      * The primary key for the model.
      *
      * @var string
