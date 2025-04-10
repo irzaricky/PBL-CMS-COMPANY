@@ -16,25 +16,19 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class StrukturOrganisasiResource extends Resource
 {
     protected static ?string $model = StrukturOrganisasi::class;
-    protected static ?string $navigationGroup = 'Company Profile';
-    protected static ?int $navigationSort = 2;
-
+    protected static ?string $navigationGroup = 'Company Management';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
+                Forms\Components\TextInput::make('id_user')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\TextInput::make('deskripsi')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('role')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('foto_profil')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('deskripsi')
-                    ->columnSpanFull(),
             ]);
     }
 
@@ -42,11 +36,10 @@ class StrukturOrganisasiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('role')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('foto_profil')
+                Tables\Columns\TextColumn::make('id_user')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('deskripsi')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -61,7 +54,6 @@ class StrukturOrganisasiResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -83,7 +75,6 @@ class StrukturOrganisasiResource extends Resource
         return [
             'index' => Pages\ListStrukturOrganisasis::route('/'),
             'create' => Pages\CreateStrukturOrganisasi::route('/create'),
-            'view' => Pages\ViewStrukturOrganisasi::route('/{record}'),
             'edit' => Pages\EditStrukturOrganisasi::route('/{record}/edit'),
         ];
     }

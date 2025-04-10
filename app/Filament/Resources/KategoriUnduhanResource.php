@@ -16,20 +16,16 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class KategoriUnduhanResource extends Resource
 {
     protected static ?string $model = KategoriUnduhan::class;
-    protected static ?string $navigationGroup = 'Downloads';
-    protected static ?int $navigationSort = 2;
-
+    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
+                Forms\Components\TextInput::make('nama_kategori_unduhan')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('deskripsi')
-                    ->columnSpanFull(),
+                    ->maxLength(50),
             ]);
     }
 
@@ -37,7 +33,7 @@ class KategoriUnduhanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama')
+                Tables\Columns\TextColumn::make('nama_kategori_unduhan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -52,7 +48,6 @@ class KategoriUnduhanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -74,7 +69,6 @@ class KategoriUnduhanResource extends Resource
         return [
             'index' => Pages\ListKategoriUnduhans::route('/'),
             'create' => Pages\CreateKategoriUnduhan::route('/create'),
-            'view' => Pages\ViewKategoriUnduhan::route('/{record}'),
             'edit' => Pages\EditKategoriUnduhan::route('/{record}/edit'),
         ];
     }

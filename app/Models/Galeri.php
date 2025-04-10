@@ -9,22 +9,61 @@ class Galeri extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'galeri';
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id_galeri';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
-        'kategori_id',
-        'judul',
-        'deskripsi',
-        'file_path',
-        'jenis_media',
-        'status',
+        'id_user',
+        'id_kategori_galeri',
+        'judul_galeri',
+        'visualisasi_galeri',
+        'deskripsi_galeri',
     ];
 
     /**
-     * Get the category that owns the gallery item.
+     * Get the user that owns this gallery item.
      */
-    public function kategori()
+    public function user()
     {
-        return $this->belongsTo(KategoriGaleri::class, 'kategori_id');
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the category that this gallery item belongs to.
+     */
+    public function kategoriGaleri()
+    {
+        return $this->belongsTo(KategoriGaleri::class, 'id_kategori_galeri', 'id_kategori_galeri');
+    }
+
+    /**
+     * Get the sliders that feature this gallery item.
+     */
+    public function kontenSliders()
+    {
+        return $this->hasMany(KontenSlider::class, 'id_galeri', 'id_galeri');
+    }
+
+    /**
+     * Get the company profiles that use this gallery.
+     */
+    public function profilPerusahaan()
+    {
+        return $this->hasMany(ProfilPerusahaan::class, 'id_galeri', 'id_galeri');
     }
 }

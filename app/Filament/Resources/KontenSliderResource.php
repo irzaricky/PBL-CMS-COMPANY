@@ -16,30 +16,28 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class KontenSliderResource extends Resource
 {
     protected static ?string $model = KontenSlider::class;
-    protected static ?string $navigationGroup = 'Website Settings';
-    protected static ?int $navigationSort = 1;
-
+    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
+                Forms\Components\TextInput::make('id_user')
+                    ->numeric(),
+                Forms\Components\TextInput::make('id_galeri')
+                    ->numeric(),
+                Forms\Components\TextInput::make('id_produk')
+                    ->numeric(),
+                Forms\Components\TextInput::make('id_lowongan')
+                    ->numeric(),
+                Forms\Components\TextInput::make('id_event')
+                    ->numeric(),
+                Forms\Components\TextInput::make('id_artikel')
+                    ->numeric(),
+                Forms\Components\TextInput::make('judul_header')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('deskripsi')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('lokasi_file')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('tipe_media')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('link')
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('status')
-                    ->required(),
+                    ->maxLength(100),
             ]);
     }
 
@@ -47,16 +45,26 @@ class KontenSliderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama')
+                Tables\Columns\TextColumn::make('id_user')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('id_galeri')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('id_produk')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('id_lowongan')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('id_event')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('id_artikel')
+                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('judul_header')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('lokasi_file')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tipe_media')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('link')
-                    ->searchable(),
-                Tables\Columns\IconColumn::make('status')
-                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -70,7 +78,6 @@ class KontenSliderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -92,7 +99,6 @@ class KontenSliderResource extends Resource
         return [
             'index' => Pages\ListKontenSliders::route('/'),
             'create' => Pages\CreateKontenSlider::route('/create'),
-            'view' => Pages\ViewKontenSlider::route('/{record}'),
             'edit' => Pages\EditKontenSlider::route('/{record}/edit'),
         ];
     }
