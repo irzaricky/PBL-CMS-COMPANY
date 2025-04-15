@@ -16,7 +16,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class UnduhanResource extends Resource
 {
     protected static ?string $model = Unduhan::class;
-    protected static ?string $navigationGroup = 'Content Management';
+    protected static ?string $navigationGroup = 'Downloads';
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -26,24 +28,32 @@ class UnduhanResource extends Resource
                 Forms\Components\TextInput::make('id_kategori_unduhan')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('id_user')
+                Forms\Components\TextInput::make('id_users')
                     ->required()
                     ->numeric(),
-                Forms\Components\TextInput::make('nama_unduhan')
+                Forms\Components\TextInput::make('nama')
                     ->required()
-                    ->maxLength(100),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('slug')
                     ->required()
-                    ->maxLength(100),
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('lokasi_file')
                     ->required()
-                    ->maxLength(200),
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('jenis_file')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('ukuran_file')
+                    ->required()
+                    ->numeric(),
                 Forms\Components\Textarea::make('deskripsi')
                     ->columnSpanFull(),
                 Forms\Components\TextInput::make('jumlah_unduhan')
                     ->required()
                     ->numeric()
                     ->default(0),
+                Forms\Components\Toggle::make('status_publikasi')
+                    ->required(),
             ]);
     }
 
@@ -54,18 +64,25 @@ class UnduhanResource extends Resource
                 Tables\Columns\TextColumn::make('id_kategori_unduhan')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('id_user')
+                Tables\Columns\TextColumn::make('id_users')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('nama_unduhan')
+                Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('lokasi_file')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('jenis_file')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('ukuran_file')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\IconColumn::make('status_publikasi')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -79,6 +96,7 @@ class UnduhanResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -100,6 +118,7 @@ class UnduhanResource extends Resource
         return [
             'index' => Pages\ListUnduhans::route('/'),
             'create' => Pages\CreateUnduhan::route('/create'),
+            'view' => Pages\ViewUnduhan::route('/{record}'),
             'edit' => Pages\EditUnduhan::route('/{record}/edit'),
         ];
     }

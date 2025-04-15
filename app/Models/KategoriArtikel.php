@@ -9,32 +9,18 @@ class KategoriArtikel extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'kategori_artikel';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
     protected $primaryKey = 'id_kategori_artikel';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'nama_kategori_artikel',
+        'nama',
+        'slug',
     ];
 
     /**
-     * Get the articles for this category.
+     * Get the articles for the category.
      */
-    public function artikels()
+    public function artikel()
     {
         return $this->hasMany(Artikel::class, 'id_kategori_artikel', 'id_kategori_artikel');
     }

@@ -9,60 +9,21 @@ class Lowongan extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'lowongan';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
     protected $primaryKey = 'id_lowongan';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'id_user',
-        'judul_lowongan',
-        'deskripsi_pekerjaan',
-        'jenis_lowongan',
-        'gaji',
-        'tanggal_dibuka',
-        'tanggal_ditutup',
-        'status_lowongan',
-        'tenaga_dibutuhkan',
+        'judul',
+        'deskripsi',
+        'manfaat',
+        'persyaratan',
+        'durasi_lowongan',
+        'waktu_dibuka',
+        'waktu_ditutup',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
-        'tanggal_dibuka' => 'date',
-        'tanggal_ditutup' => 'date',
-        'gaji' => 'decimal:2',
+        'waktu_dibuka' => 'datetime',
+        'waktu_ditutup' => 'datetime',
     ];
-
-    /**
-     * Get the user that created this job vacancy.
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
-    }
-
-    /**
-     * Get the sliders that feature this job vacancy.
-     */
-    public function kontenSliders()
-    {
-        return $this->hasMany(KontenSlider::class, 'id_lowongan', 'id_lowongan');
-    }
 }

@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Str;
 
 class FilamentUserSeeder extends Seeder
@@ -16,40 +15,31 @@ class FilamentUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create roles
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        $editorRole = Role::firstOrCreate(['name' => 'editor']);
-
-        // Optional: Create permissions
-        $manageUsers = Permission::firstOrCreate(['name' => 'manage users']);
-        $manageContent = Permission::firstOrCreate(['name' => 'manage content']);
-
-        // Assign permissions to roles
-        $adminRole->givePermissionTo([$manageUsers, $manageContent]);
-        $editorRole->givePermissionTo([$manageContent]);
-
-        // Create admin user
-        $adminUser = User::create([
+        // Create a super admin user
+        $user = User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password123'),
-            'tanggal_registrasi' => now(),
             'remember_token' => Str::random(10),
         ]);
 
-        // Create editor user
-        $editorUser = User::create([
+        // Check if using spatie/laravel-permission
+        if (class_exists(Role::class)) {
+            // Create roles if they don't exist
+            $adminRole = Role::firstOrCreate(['name' => 'super_admin']);
+
+            // Assign role to user
+            $user->assignRole($adminRole);
+        }
+
+        // Create additional users if needed
+        User::create([
             'name' => 'Editor',
             'email' => 'editor@example.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password123'),
-            'tanggal_registrasi' => now(),
             'remember_token' => Str::random(10),
         ]);
-
-        // Assign roles to users
-        $adminUser->assignRole($adminRole);
-        $editorUser->assignRole($editorRole);
     }
 }

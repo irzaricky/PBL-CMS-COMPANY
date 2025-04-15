@@ -16,21 +16,26 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MediaSosialResource extends Resource
 {
     protected static ?string $model = MediaSosial::class;
-    protected static ?string $navigationGroup = 'Customer Service';
+    protected static ?string $navigationGroup = 'Website Settings';
+    protected static ?int $navigationSort = 2;
+
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama_media_sosial')
+                Forms\Components\TextInput::make('nama')
                     ->required()
-                    ->maxLength(50),
-                Forms\Components\TextInput::make('icon')
-                    ->maxLength(200),
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('ikon')
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('link')
                     ->required()
-                    ->maxLength(100),
+                    ->maxLength(255),
+                Forms\Components\Toggle::make('status')
+                    ->required(),
             ]);
     }
 
@@ -38,12 +43,14 @@ class MediaSosialResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama_media_sosial')
+                Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('icon')
+                Tables\Columns\TextColumn::make('ikon')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('link')
                     ->searchable(),
+                Tables\Columns\IconColumn::make('status')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -57,6 +64,7 @@ class MediaSosialResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -78,6 +86,7 @@ class MediaSosialResource extends Resource
         return [
             'index' => Pages\ListMediaSosials::route('/'),
             'create' => Pages\CreateMediaSosial::route('/create'),
+            'view' => Pages\ViewMediaSosial::route('/{record}'),
             'edit' => Pages\EditMediaSosial::route('/{record}/edit'),
         ];
     }

@@ -16,35 +16,96 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class LowonganResource extends Resource
 {
     protected static ?string $model = Lowongan::class;
-    protected static ?string $navigationGroup = 'Customer Service';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'Content Management';
+    protected static ?int $navigationSort = 4;
+
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_user')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('judul_lowongan')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\Textarea::make('deskripsi_pekerjaan')
-                    ->required()
+                Forms\Components\Tabs::make('Lowongan')
+                    ->tabs([
+                        Forms\Components\Tabs\Tab::make('Informasi Dasar')
+                            ->schema([
+                                Forms\Components\Section::make('Detail Lowongan')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('judul')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->label('Judul Lowongan'),
+                                        Forms\Components\RichEditor::make('deskripsi')
+                                            ->required()
+                                            ->label('Deskripsi Lowongan')
+                                            ->toolbarButtons([
+                                                'blockquote',
+                                                'bold',
+                                                'bulletList',
+                                                'h2',
+                                                'h3',
+                                                'italic',
+                                                'link',
+                                                'orderedList',
+                                                'redo',
+                                                'strike',
+                                                'undo',
+                                            ])
+                                            ->columnSpanFull(),
+                                    ]),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Detail Tambahan')
+                            ->schema([
+                                Forms\Components\Section::make('Manfaat & Persyaratan')
+                                    ->schema([
+                                        Forms\Components\RichEditor::make('manfaat')
+                                            ->required()
+                                            ->label('Manfaat')
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'bulletList',
+                                                'italic',
+                                                'orderedList',
+                                            ])
+                                            ->columnSpan(1),
+                                        Forms\Components\RichEditor::make('persyaratan')
+                                            ->required()
+                                            ->label('Persyaratan')
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'bulletList',
+                                                'italic',
+                                                'orderedList',
+                                            ])
+                                            ->columnSpan(1),
+                                    ])->columns(2),
+                            ]),
+
+                        Forms\Components\Tabs\Tab::make('Periode')
+                            ->schema([
+                                Forms\Components\Section::make('Informasi Waktu')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('durasi_lowongan')
+                                            ->required()
+                                            ->numeric()
+                                            ->label('Durasi (dalam hari)')
+                                            ->suffix('hari')
+                                            ->minValue(1)
+                                            ->helperText('Lama waktu magang/kerja dalam hari'),
+                                        Forms\Components\DateTimePicker::make('waktu_dibuka')
+                                            ->required()
+                                            ->native(false)
+                                            ->label('Waktu Pendaftaran Dibuka'),
+                                        Forms\Components\DateTimePicker::make('waktu_ditutup')
+                                            ->required()
+                                            ->native(false)
+                                            ->label('Waktu Pendaftaran Ditutup')
+                                            ->after('waktu_dibuka'),
+                                    ])->columns(3),
+                            ]),
+                    ])
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('jenis_lowongan')
-                    ->required(),
-                Forms\Components\TextInput::make('gaji')
-                    ->numeric(),
-                Forms\Components\DatePicker::make('tanggal_dibuka')
-                    ->required(),
-                Forms\Components\DatePicker::make('tanggal_ditutup')
-                    ->required(),
-                Forms\Components\TextInput::make('status_lowongan')
-                    ->required(),
-                Forms\Components\TextInput::make('tenaga_dibutuhkan')
-                    ->required()
-                    ->numeric(),
             ]);
     }
 
@@ -52,24 +113,16 @@ class LowonganResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_user')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('judul_lowongan')
+                Tables\Columns\TextColumn::make('judul')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('jenis_lowongan'),
-                Tables\Columns\TextColumn::make('gaji')
+                Tables\Columns\TextColumn::make('durasi_lowongan')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tanggal_dibuka')
-                    ->date()
+                Tables\Columns\TextColumn::make('waktu_dibuka')
+                    ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tanggal_ditutup')
-                    ->date()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('status_lowongan'),
-                Tables\Columns\TextColumn::make('tenaga_dibutuhkan')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('waktu_ditutup')
+                    ->dateTime()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -84,6 +137,7 @@ class LowonganResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -105,6 +159,7 @@ class LowonganResource extends Resource
         return [
             'index' => Pages\ListLowongans::route('/'),
             'create' => Pages\CreateLowongan::route('/create'),
+            'view' => Pages\ViewLowongan::route('/{record}'),
             'edit' => Pages\EditLowongan::route('/{record}/edit'),
         ];
     }

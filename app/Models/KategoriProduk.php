@@ -9,33 +9,19 @@ class KategoriProduk extends Model
 {
     use HasFactory;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = 'kategori_produk';
-    /**
-     * The primary key for the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = 'id_kategori_produk';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
+    
     protected $fillable = [
-        'nama_kategori_produk',
+        'nama_kategori',
+        'slug',
+        'deskripsi',
     ];
 
     /**
-     * Get the products for this category.
+     * Get the products for the category.
      */
-    public function produks()
+    public function produk()
     {
-        return $this->hasMany(Produk::class, 'id_kategori_produk', 'id_kategori_produk');
+        return $this->hasMany(Produk::class, 'kategori_id');
     }
 }
