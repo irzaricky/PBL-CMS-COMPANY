@@ -14,16 +14,28 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasRoles;
 
     /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id_user';
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
      */
     protected $fillable = [
-        'name',
+        'nama_lengkap',
         'email',
         'password',
         'foto_profil',
-        'role',
+        'alamat',
+        'no_hp',
+        'nik',
+        'tanggal_lahir',
+        'tanggal_registrasi',
+        'status_kepegawaian',
     ];
 
     /**
@@ -46,6 +58,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'tanggal_lahir' => 'date',
+            'tanggal_registrasi' => 'date',
         ];
     }
 }

@@ -9,24 +9,35 @@ class Testimoni extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'testimoni';
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
     protected $primaryKey = 'id_testimoni';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
-        'id_kategori_testimoni',
-        'nama',
-        'email',
-        'foto_profil',
-        'status',
+        'id_user',
+        'isi_testimoni',
         'rating',
-        'konten',
     ];
 
     /**
-     * Get the category that owns the testimonial.
+     * Get the user that created this testimonial.
      */
-    public function kategori()
+    public function user()
     {
-        return $this->belongsTo(KategoriTestimoni::class, 'id_kategori_testimoni', 'id_kategori_testimoni');
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
     }
 }

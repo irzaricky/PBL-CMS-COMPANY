@@ -12,31 +12,20 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Str;
 
 class KategoriArtikelResource extends Resource
 {
     protected static ?string $model = KategoriArtikel::class;
     protected static ?string $navigationGroup = 'Content Management';
-    protected static ?int $navigationSort = 2;
-
     protected static ?string $navigationIcon = 'heroicon-o-tag';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nama')
+                Forms\Components\TextInput::make('nama_kategori_artikel')
                     ->required()
-                    ->maxLength(255)
-                    ->live(onBlur: true)
-                    ->afterStateUpdated(function (string $state, Forms\Set $set) {
-                        $set('slug', Str::slug($state));
-                    }),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
+                    ->maxLength(50),
             ]);
     }
 
@@ -44,13 +33,8 @@ class KategoriArtikelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('nama')
+                Tables\Columns\TextColumn::make('nama_kategori_artikel')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('artikel_count')
-                    ->counts('artikel')
-                    ->label('Articles'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -64,7 +48,6 @@ class KategoriArtikelResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -74,12 +57,18 @@ class KategoriArtikelResource extends Resource
             ]);
     }
 
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListKategoriArtikels::route('/'),
             'create' => Pages\CreateKategoriArtikel::route('/create'),
-            'view' => Pages\ViewKategoriArtikel::route('/{record}'),
             'edit' => Pages\EditKategoriArtikel::route('/{record}/edit'),
         ];
     }

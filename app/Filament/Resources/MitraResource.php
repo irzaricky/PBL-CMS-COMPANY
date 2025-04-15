@@ -16,9 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MitraResource extends Resource
 {
     protected static ?string $model = Mitra::class;
-    protected static ?string $navigationGroup = 'Company Profile';
-    protected static ?int $navigationSort = 3;
-
+    protected static ?string $navigationGroup = 'Company Management';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
@@ -27,14 +25,16 @@ class MitraResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('nama')
                     ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(100),
                 Forms\Components\TextInput::make('logo')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('deskripsi')
-                    ->columnSpanFull(),
+                    ->maxLength(200),
+                Forms\Components\TextInput::make('alamat_mitra')
+                    ->maxLength(200),
+                Forms\Components\TextInput::make('dok_siup')
+                    ->maxLength(200),
+                Forms\Components\TextInput::make('dok_npwp')
+                    ->maxLength(200),
+                Forms\Components\DatePicker::make('tanggal_kemitraan'),
             ]);
     }
 
@@ -44,10 +44,17 @@ class MitraResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('nama')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('logo')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('alamat_mitra')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('dok_siup')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('dok_npwp')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tanggal_kemitraan')
+                    ->date()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -61,7 +68,6 @@ class MitraResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -83,7 +89,6 @@ class MitraResource extends Resource
         return [
             'index' => Pages\ListMitras::route('/'),
             'create' => Pages\CreateMitra::route('/create'),
-            'view' => Pages\ViewMitra::route('/{record}'),
             'edit' => Pages\EditMitra::route('/{record}/edit'),
         ];
     }

@@ -9,18 +9,39 @@ class ProfilPerusahaan extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'profil_perusahaan';
+
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
     protected $primaryKey = 'id_profil_perusahaan';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
     protected $fillable = [
+        'id_galeri',
         'nama_perusahaan',
+        'logo_perusahaan',
         'deskripsi_perusahaan',
-        'visi',
-        'misi',
-        'sejarah',
-        'pencapaian_perusahaan',
         'alamat_perusahaan',
         'email_perusahaan',
-        'nomor_telepon_perusahaan',
     ];
+
+    /**
+     * Get the gallery associated with the company profile.
+     */
+    public function galeri()
+    {
+        return $this->belongsTo(Galeri::class, 'id_galeri', 'id_galeri');
+    }
 }

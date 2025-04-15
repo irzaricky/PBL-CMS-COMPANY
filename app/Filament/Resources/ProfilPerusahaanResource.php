@@ -16,36 +16,29 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
-    protected static ?string $navigationGroup = 'Company Profile';
-    protected static ?int $navigationSort = 1;
-
+    protected static ?string $navigationGroup = 'Company Management';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\TextInput::make('id_galeri')
+                    ->numeric(),
                 Forms\Components\TextInput::make('nama_perusahaan')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(100),
+                Forms\Components\TextInput::make('logo_perusahaan')
+                    ->maxLength(200),
                 Forms\Components\Textarea::make('deskripsi_perusahaan')
                     ->columnSpanFull(),
-                Forms\Components\Textarea::make('visi')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('misi')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('sejarah')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('pencapaian_perusahaan')
-                    ->columnSpanFull(),
                 Forms\Components\TextInput::make('alamat_perusahaan')
-                    ->maxLength(255),
+                    ->required()
+                    ->maxLength(200),
                 Forms\Components\TextInput::make('email_perusahaan')
                     ->email()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('nomor_telepon_perusahaan')
-                    ->tel()
-                    ->maxLength(255),
+                    ->required()
+                    ->maxLength(50),
             ]);
     }
 
@@ -53,13 +46,16 @@ class ProfilPerusahaanResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id_galeri')
+                    ->numeric()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('nama_perusahaan')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('logo_perusahaan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('alamat_perusahaan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email_perusahaan')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('nomor_telepon_perusahaan')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -74,7 +70,6 @@ class ProfilPerusahaanResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -96,7 +91,6 @@ class ProfilPerusahaanResource extends Resource
         return [
             'index' => Pages\ListProfilPerusahaans::route('/'),
             'create' => Pages\CreateProfilPerusahaan::route('/create'),
-            'view' => Pages\ViewProfilPerusahaan::route('/{record}'),
             'edit' => Pages\EditProfilPerusahaan::route('/{record}/edit'),
         ];
     }
