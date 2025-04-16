@@ -12,18 +12,12 @@ return new class extends Migration {
     {
         Schema::create('feedback', function (Blueprint $table) {
             $table->id('id_feedback');
-            $table->unsignedBigInteger('id_user');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('subjek_feedback', 200);
             $table->text('isi_feedback');
             $table->date('tanggal_feedback');
             $table->text('tanggapan_feedback')->nullable();
             $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('id_user')
-                ->references('id_user')
-                ->on('users')
-                ->onDelete('cascade');
         });
     }
 

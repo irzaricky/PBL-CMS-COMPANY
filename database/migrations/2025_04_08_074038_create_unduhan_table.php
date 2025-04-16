@@ -12,17 +12,14 @@ return new class extends Migration {
     {
         Schema::create('unduhan', function (Blueprint $table) {
             $table->id('id_unduhan');
-            $table->unsignedBigInteger('id_kategori_unduhan');
-            $table->unsignedBigInteger('id_user');
+            $table->foreignId('id_kategori_unduhan')->constrained('kategori_unduhan', 'id_kategori_unduhan')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama_unduhan', 100);
             $table->string('slug', 100)->unique();
             $table->string('lokasi_file', 200);
             $table->text('deskripsi')->nullable();
             $table->bigInteger('jumlah_unduhan')->default(0);
             $table->timestamps();
-
-            $table->foreign('id_user')->references('id_user')->on('users')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('id_kategori_unduhan')->references('id_kategori_unduhan')->on('kategori_unduhan')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 

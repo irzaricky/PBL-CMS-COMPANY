@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('lowongan', function (Blueprint $table) {
             $table->id('id_lowongan');
-            $table->unsignedBigInteger('id_user');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('judul_lowongan', 200);
             $table->text('deskripsi_pekerjaan');
             $table->enum('jenis_lowongan', ['Full-time', 'Part-time', 'Freelance', 'Internship']);
@@ -22,12 +22,6 @@ return new class extends Migration {
             $table->enum('status_lowongan', ['dibuka', 'ditutup']);
             $table->tinyInteger('tenaga_dibutuhkan')->unsigned();
             $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('id_user')
-                ->references('id_user')
-                ->on('users')
-                ->onDelete('cascade');
         });
     }
 

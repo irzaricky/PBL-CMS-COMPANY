@@ -12,23 +12,12 @@ return new class extends Migration {
     {
         Schema::create('lamaran', function (Blueprint $table) {
             $table->id('id_lamaran');
-            $table->unsignedBigInteger('id_user');
-            $table->unsignedBigInteger('id_lowongan');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+            $table->foreignId('id_lowongan')->constrained('lowongan', 'id_lowongan')->onDelete('cascade');
             $table->string('cv', 200)->nullable();
             $table->string('portfolio', 200)->nullable();
             $table->enum('status_lamaran', ['Diterima', 'Diproses', 'Ditolak'])->default('Diproses');
             $table->timestamps();
-
-            // Foreign key constraints
-            $table->foreign('id_user')
-                ->references('id_user')
-                ->on('users')
-                ->onDelete('cascade');
-
-            $table->foreign('id_lowongan')
-                ->references('id_lowongan')
-                ->on('lowongan')
-                ->onDelete('cascade');
         });
     }
 

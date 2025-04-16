@@ -12,24 +12,13 @@ return new class extends Migration {
     {
         Schema::create('artikel', function (Blueprint $table) {
             $table->id('id_artikel');
-            $table->unsignedBigInteger('id_kategori_artikel');
-            $table->unsignedBigInteger('id_user');
+            $table->foreignId('id_kategori_artikel')->constrained('kategori_artikel', 'id_kategori_artikel')->onDelete('cascade');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('thumbnail_artikel', 200)->nullable();
             $table->string('judul_artikel', 100);
             $table->text('konten_artikel');
             $table->string('slug', 100)->unique();
             $table->timestamps();
-
-            // Foreign key constraints
-            $table->foreign('id_kategori_artikel')
-                ->references('id_kategori_artikel')
-                ->on('kategori_artikel')
-                ->onDelete('cascade');
-
-            $table->foreign('id_user')
-                ->references('id_user')
-                ->on('users')
-                ->onDelete('cascade');
         });
     }
 
