@@ -36,19 +36,4 @@ class Produk extends Model
         'deskripsi_produk',
     ];
 
-    /**
-     * Get the category that this product belongs to.
-     */
-    public function kategoriProduk()
-    {
-        return $this->belongsTo(KategoriProduk::class, 'id_kategori_produk', 'id_kategori_produk');
-    }
-
-    /**
-     * Get the sliders that feature this product.
-     */
-    public function kontenSliders()
-    {
-        return $this->hasMany(KontenSlider::class, 'id_produk', 'id_produk');
-    }
 }

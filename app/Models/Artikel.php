@@ -36,28 +36,4 @@ class Artikel extends Model
         'konten_artikel',
         'slug',
     ];
-
-    /**
-     * Get the category that this article belongs to.
-     */
-    public function kategoriArtikel()
-    {
-        return $this->belongsTo(KategoriArtikel::class, 'id_kategori_artikel', 'id_kategori_artikel');
-    }
-
-    /**
-     * Get the user that authored this article.
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
-    }
-
-    /**
-     * Get the sliders that feature this article.
-     */
-    public function kontenSliders()
-    {
-        return $this->hasMany(KontenSlider::class, 'id_artikel', 'id_artikel');
-    }
 }

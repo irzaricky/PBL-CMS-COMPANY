@@ -30,12 +30,4 @@ class KategoriArtikel extends Model
     protected $fillable = [
         'nama_kategori_artikel',
     ];
-
-    /**
-     * Get the articles for this category.
-     */
-    public function artikels()
-    {
-        return $this->hasMany(Artikel::class, 'id_kategori_artikel', 'id_kategori_artikel');
-    }
 }

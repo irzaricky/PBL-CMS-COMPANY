@@ -30,12 +30,4 @@ class KategoriUnduhan extends Model
     protected $fillable = [
         'nama_kategori_unduhan',
     ];
-
-    /**
-     * Get the downloads for this category.
-     */
-    public function unduhans()
-    {
-        return $this->hasMany(Unduhan::class, 'id_kategori_unduhan', 'id_kategori_unduhan');
-    }
 }

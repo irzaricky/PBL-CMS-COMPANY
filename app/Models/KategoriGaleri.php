@@ -30,12 +30,4 @@ class KategoriGaleri extends Model
     protected $fillable = [
         'nama_kategori_galeri',
     ];
-
-    /**
-     * Get the gallery items for this category.
-     */
-    public function galeris()
-    {
-        return $this->hasMany(Galeri::class, 'id_kategori_galeri', 'id_kategori_galeri');
-    }
 }

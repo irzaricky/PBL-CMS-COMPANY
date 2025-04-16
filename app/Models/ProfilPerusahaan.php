@@ -37,11 +37,4 @@ class ProfilPerusahaan extends Model
         'email_perusahaan',
     ];
 
-    /**
-     * Get the gallery associated with the company profile.
-     */
-    public function galeri()
-    {
-        return $this->belongsTo(Galeri::class, 'id_galeri', 'id_galeri');
-    }
 }
