@@ -12,16 +12,12 @@ return new class extends Migration {
     {
         Schema::create('galeri', function (Blueprint $table) {
             $table->id('id_galeri');
-            $table->unsignedBigInteger('id_user');
-            $table->unsignedBigInteger('id_kategori_galeri');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+            $table->foreignId('id_kategori_galeri')->constrained('kategori_galeri', 'id_kategori_galeri')->onDelete('cascade');
             $table->string('judul_galeri', 200);
-            $table->string('visualisasi_galeri', 200);
+            $table->string('visualisasi_galeri', 200)->nullable();
             $table->text('deskripsi_galeri')->nullable();
             $table->timestamps();
-
-            // Foreign key constraints
-            $table->foreign('id_user')->references('id_user')->on('users')->onDelete('cascade');
-            $table->foreign('id_kategori_galeri')->references('id_kategori_galeri')->on('kategori_galeri')->onDelete('cascade');
         });
     }
 

@@ -12,16 +12,10 @@ return new class extends Migration {
     {
         Schema::create('testimoni', function (Blueprint $table) {
             $table->id('id_testimoni');
-            $table->unsignedBigInteger('id_user');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->text('isi_testimoni');
             $table->tinyInteger('rating')->unsigned()->comment('Rating dari 1-5');
             $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('id_user')
-                ->references('id_user')
-                ->on('users')
-                ->onDelete('cascade');
         });
     }
 

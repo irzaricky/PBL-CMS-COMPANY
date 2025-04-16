@@ -12,22 +12,14 @@ return new class extends Migration {
     {
         Schema::create('konten_slider', function (Blueprint $table) {
             $table->id('id_konten_slider');
-            $table->unsignedBigInteger('id_user')->nullable();
-            $table->unsignedBigInteger('id_galeri')->nullable();
-            $table->unsignedBigInteger('id_produk')->nullable();
-            $table->unsignedBigInteger('id_lowongan')->nullable();
-            $table->unsignedBigInteger('id_event')->nullable();
-            $table->unsignedBigInteger('id_artikel')->nullable();
+            $table->foreignId('id_user')->nullable()->constrained('users', 'id_user')->onDelete('set null');
+            $table->foreignId('id_galeri')->nullable()->constrained('galeri', 'id_galeri')->onDelete('set null');
+            $table->foreignId('id_produk')->nullable()->constrained('produk', 'id_produk')->onDelete('set null');
+            $table->foreignId('id_lowongan')->nullable()->constrained('lowongan', 'id_lowongan')->onDelete('set null');
+            $table->foreignId('id_event')->nullable()->constrained('event', 'id_event')->onDelete('set null');
+            $table->foreignId('id_artikel')->nullable()->constrained('artikel', 'id_artikel')->onDelete('set null');
             $table->string('judul_header', 100);
             $table->timestamps();
-
-            // Foreign key constraints
-            $table->foreign('id_user')->references('id_user')->on('users')->onDelete('set null');
-            $table->foreign('id_galeri')->references('id_galeri')->on('galeri')->onDelete('set null');
-            $table->foreign('id_produk')->references('id_produk')->on('produk')->onDelete('set null');
-            $table->foreign('id_lowongan')->references('id_lowongan')->on('lowongan')->onDelete('set null');
-            $table->foreign('id_event')->references('id_event')->on('event')->onDelete('set null');
-            $table->foreign('id_artikel')->references('id_artikel')->on('artikel')->onDelete('set null');
         });
     }
 

@@ -12,19 +12,13 @@ return new class extends Migration {
     {
         Schema::create('produk', function (Blueprint $table) {
             $table->id('id_produk');
-            $table->unsignedBigInteger('id_kategori_produk');
+            $table->foreignId('id_kategori_produk')->constrained('kategori_produk', 'id_kategori_produk')->onDelete('cascade');
             $table->string('nama_produk', 100);
             $table->string('gambar_produk', 200)->nullable();
             $table->string('harga_produk', 50);
             $table->string('slug', 100)->unique();
             $table->text('deskripsi_produk')->nullable();
             $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('id_kategori_produk')
-                ->references('id_kategori_produk')
-                ->on('kategori_produk')
-                ->onDelete('cascade');
         });
     }
 

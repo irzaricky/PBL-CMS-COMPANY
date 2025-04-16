@@ -20,14 +20,6 @@ class FilamentUserSeeder extends Seeder
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $editorRole = Role::firstOrCreate(['name' => 'editor']);
 
-        // Optional: Create permissions
-        $manageUsers = Permission::firstOrCreate(['name' => 'manage users']);
-        $manageContent = Permission::firstOrCreate(['name' => 'manage content']);
-
-        // Assign permissions to roles
-        $adminRole->givePermissionTo([$manageUsers, $manageContent]);
-        $editorRole->givePermissionTo([$manageContent]);
-
         // Create admin user
         $adminUser = User::create([
             'name' => 'Admin',
