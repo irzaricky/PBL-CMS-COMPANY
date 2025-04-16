@@ -44,4 +44,12 @@ class Feedback extends Model
     protected $casts = [
         'tanggal_feedback' => 'date',
     ];
+
+    /**
+     * Get the user that created this feedback.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
 }

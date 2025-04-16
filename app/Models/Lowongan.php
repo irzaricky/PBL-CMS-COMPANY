@@ -49,4 +49,20 @@ class Lowongan extends Model
         'tanggal_ditutup' => 'date',
         'gaji' => 'decimal:2',
     ];
+
+    /**
+     * Get the user that created this job vacancy.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the sliders that feature this job vacancy.
+     */
+    public function kontenSliders()
+    {
+        return $this->hasMany(KontenSlider::class, 'id_lowongan', 'id_lowongan');
+    }
 }

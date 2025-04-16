@@ -33,4 +33,11 @@ class Testimoni extends Model
         'rating',
     ];
 
+    /**
+     * Get the user that created this testimonial.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
 }

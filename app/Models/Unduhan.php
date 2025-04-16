@@ -37,4 +37,27 @@ class Unduhan extends Model
         'jumlah_unduhan'
     ];
 
+    /**
+     * Get the user that owns this download.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get the category that this download belongs to.
+     */
+    public function kategoriUnduhan()
+    {
+        return $this->belongsTo(KategoriUnduhan::class, 'id_kategori_unduhan', 'id_kategori_unduhan');
+    }
+
+    /**
+     * Increment the download count.
+     */
+    public function incrementDownloadCount()
+    {
+        $this->increment('jumlah_unduhan');
+    }
 }

@@ -29,7 +29,6 @@ class Event extends Model
      */
     protected $fillable = [
         'nama_event',
-        'thumbnail_event',
         'deskripsi_event',
         'lokasi_event',
         'waktu_start_event',
@@ -46,4 +45,12 @@ class Event extends Model
         'waktu_start_event' => 'datetime',
         'waktu_end_event' => 'datetime',
     ];
+
+    /**
+     * Get the sliders that feature this event.
+     */
+    public function kontenSliders()
+    {
+        return $this->hasMany(KontenSlider::class, 'id_event', 'id_event');
+    }
 }

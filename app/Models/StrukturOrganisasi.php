@@ -33,4 +33,11 @@ class StrukturOrganisasi extends Model
         'deskripsi',
     ];
 
+    /**
+     * Get the user associated with the struktur organisasi.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
 }
