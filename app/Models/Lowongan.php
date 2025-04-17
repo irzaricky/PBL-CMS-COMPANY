@@ -30,6 +30,7 @@ class Lowongan extends Model
     protected $fillable = [
         'id_user',
         'judul_lowongan',
+        'thumbnail_lowongan',
         'deskripsi_pekerjaan',
         'jenis_lowongan',
         'gaji',
