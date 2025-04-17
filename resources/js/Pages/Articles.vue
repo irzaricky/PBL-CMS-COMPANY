@@ -13,7 +13,7 @@ onMounted(() => {
 async function fetchArticles() {
     try {
         const response = await axios.get("/api/articles");
-        articles.value = response.data.data.data;
+        articles.value = response.data;
         loading.value = false;
     } catch (error) {
         console.error("Error fetching articles:", error);
@@ -22,7 +22,7 @@ async function fetchArticles() {
 }
 
 function getImageUrl(image) {
-    return image ? `/storage/${image}` : "/placeholder.jpg";
+    return image ? `/storage/${image}` : "/placeholder.jpeg";
 }
 
 function formatDate(date) {
@@ -48,14 +48,14 @@ function formatDate(date) {
         >
             <div
                 v-for="article in articles"
-                :key="article.id"
+                :key="article.id_artikel"
                 class="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300"
             >
                 <!-- Article image -->
                 <div class="h-48 overflow-hidden">
                     <img
-                        :src="getImageUrl(article.gambar_cover)"
-                        :alt="article.judul"
+                        :src="getImageUrl(article.thumbnail_artikel)"
+                        :alt="article.judul_artikel"
                         class="w-full h-full object-cover"
                     />
                 </div>
@@ -65,7 +65,7 @@ function formatDate(date) {
                     <h2
                         class="text-xl font-semibold text-gray-800 mb-2 line-clamp-2"
                     >
-                        {{ article.judul }}
+                        {{ article.judul_artikel }}
                     </h2>
 
                     <div class="flex items-center mb-3 text-sm text-gray-600">
@@ -106,7 +106,7 @@ function formatDate(date) {
                                     d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
                                 />
                             </svg>
-                            {{ article.kategori.nama }}
+                            {{ article.kategoriArtikel.nama_kategori_artikel }}
                         </span>
 
                         <span class="flex items-center">
@@ -124,28 +124,19 @@ function formatDate(date) {
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                                 />
                             </svg>
-                            {{ formatDate(article.tanggal_upload) }}
+                            {{ formatDate(article.created_at) }}
                         </span>
                     </div>
 
                     <div class="mt-4">
                         <a
-                            href="#"
+                            :href="`/articles/${article.slug}`"
                             class="inline-block px-4 py-2 bg-blue-500 text-white font-medium text-sm rounded hover:bg-blue-600 transition-colors duration-300"
                         >
                             Read More
                         </a>
                     </div>
                 </div>
-            </div>
-
-            <div>
-                <a
-                    href="/admin"
-                    class="block text-white-900 font-bold text-center whitespace-nowrap hover:underline"
-                >
-                    <h1>Hello world!</h1>
-                </a>
             </div>
         </div>
 

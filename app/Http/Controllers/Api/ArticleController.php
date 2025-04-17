@@ -4,52 +4,52 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artikel;
+use App\Models\KategoriArtikel;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Http\Resources\ArticleResource;
 
 class ArticleController extends Controller
 {
     /**
      * Get all articles
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        $articles = Artikel::with(['kategori', 'user:id,name'])
-            ->orderBy('tanggal_upload', 'desc')
-            ->paginate(10);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $articles
-        ]);
+        try {
+            $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
+            return ArticleResource::collection($articles);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Artikel',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
-     * Get a specific article
+     * Get a single article by ID
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
+    public function view($id)
     {
-        $article = Artikel::with(['kategori', 'user:id,name'])
-            ->findOrFail($id);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $article
-        ]);
-    }
-
-    /**
-     * Get articles by category
-     */
-    public function getByCategory($categoryId)
-    {
-        $articles = Artikel::with(['kategori', 'user:id,name'])
-            ->where('id_kategori_artikel', $categoryId)
-            ->orderBy('tanggal_upload', 'desc')
-            ->paginate(10);
-
-        return response()->json([
-            'status' => 'success',
-            'data' => $articles
-        ]);
+        try {
+            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])->findOrFail($id);
+            return new ArticleResource($article);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Artikel Tidak Ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 }
