@@ -25,7 +25,6 @@ class EventResource extends JsonResource
             'link_daftar_event' => $this->link_daftar_event,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-            'status' => $this->getEventStatus(),
         ];
     }
 }

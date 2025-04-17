@@ -30,6 +30,7 @@ class Testimoni extends Model
     protected $fillable = [
         'id_user',
         'isi_testimoni',
+        'thumbnail_testimoni',
         'rating',
     ];
 
