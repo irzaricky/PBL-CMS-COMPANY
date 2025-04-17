@@ -40,6 +40,16 @@ class EventSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'id_event' => 4,
+                'nama_event' => 'Tech Meetup 2025',
+                'deskripsi_event' => 'Pertemuan tahunan untuk membahas tren teknologi terbaru dan networking',
+                'lokasi_event' => 'Hotel Grand Indonesia, Jakarta',
+                'waktu_start_event' => now()->subDays(30)->setTime(13, 0),
+                'waktu_end_event' => now()->subDays(30)->setTime(17, 0),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }

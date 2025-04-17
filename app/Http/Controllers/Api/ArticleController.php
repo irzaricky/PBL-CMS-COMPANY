@@ -15,7 +15,7 @@ class ArticleController extends Controller
     /**
      * Get all articles
      * 
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
     {
@@ -37,7 +37,7 @@ class ArticleController extends Controller
      * Get a single article by ID
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\ArticleResource|\Illuminate\Http\JsonResponse
      */
     public function view($id)
     {
