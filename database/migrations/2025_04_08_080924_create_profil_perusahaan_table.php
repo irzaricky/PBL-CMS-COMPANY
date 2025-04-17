@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id('id_profil_perusahaan');
             $table->foreignId('id_galeri')->nullable()->constrained('galeri', 'id_galeri')->onDelete('set null');
             $table->string('nama_perusahaan', 100);
-            $table->json('thumbnail_perusahaan', 300)->nullable();
+            $table->json('thumbnail_perusahaan')->nullable();
             $table->string('logo_perusahaan', 200)->nullable();
             $table->text('deskripsi_perusahaan')->nullable();
             $table->string('alamat_perusahaan', 200);

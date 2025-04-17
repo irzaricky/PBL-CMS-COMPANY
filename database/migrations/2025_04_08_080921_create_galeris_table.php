@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->foreignId('id_kategori_galeri')->constrained('kategori_galeri', 'id_kategori_galeri')->onDelete('cascade');
             $table->string('judul_galeri', 200);
-            $table->json('thumbnail_galeri', 400)->nullable();
+            $table->json('thumbnail_galeri')->nullable();
             $table->text('deskripsi_galeri')->nullable();
             $table->timestamps();
         });

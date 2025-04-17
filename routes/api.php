@@ -4,7 +4,8 @@ use App\Http\Controllers\Api\ArticleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Article routes
-Route::get('/articles', [ArticleController::class, 'index']);
-Route::get('/articles/category/{categoryId}', [ArticleController::class, 'getByCategory']);
-Route::get('/articles/{id}', [ArticleController::class, 'show']);
+// Articles
+Route::prefix('articles')->group(function () {
+    Route::get('/', [ArticleController::class, 'index']);
+    Route::get('/{id}', [ArticleController::class, 'view']);
+});
