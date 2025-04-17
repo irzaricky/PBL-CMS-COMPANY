@@ -26,10 +26,12 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->brandName('BIISCORP')
             ->login()
+            ->font('Plus jakarta Sans')
             ->registration()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#6E7EA1',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

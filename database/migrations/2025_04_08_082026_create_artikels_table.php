@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id('id_artikel');
             $table->foreignId('id_kategori_artikel')->constrained('kategori_artikel', 'id_kategori_artikel')->onDelete('cascade');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
-            $table->string('thumbnail_artikel', 200)->nullable();
+            $table->json('thumbnail_artikel', 400)->nullable();
             $table->string('judul_artikel', 100);
             $table->text('konten_artikel');
             $table->string('slug', 100)->unique();

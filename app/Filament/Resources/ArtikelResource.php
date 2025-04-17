@@ -18,29 +18,58 @@ class ArtikelResource extends Resource
     protected static ?string $model = Artikel::class;
     protected static ?string $navigationGroup = 'Content Management';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static ?string $navigationIcon = 'heroicon-s-document-text';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_kategori_artikel')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('id_user')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('thumbnail_artikel')
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('judul_artikel')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\Textarea::make('konten_artikel')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(100),
+                Forms\Components\Section::make('Informasi Artikel')
+                    ->schema([
+                        Forms\Components\TextInput::make('judul_artikel')
+                            ->label('Judul Artikel')
+                            ->required()
+                            ->maxLength(100)
+                            ->live(onBlur: true)
+                            ->reactive(),
+
+                        Forms\Components\Select::make('id_kategori_artikel')
+                            ->label('Kategori Artikel')
+                            ->relationship('kategoriArtikel', 'nama_kategori_artikel')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                            
+                        Forms\Components\Select::make('id_user')
+                            ->label('Penulis')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                            
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(100)
+                            ->unique(ignoreRecord: true),
+                    ]),
+                    
+                Forms\Components\Section::make('Media & Konten')
+                    ->schema([
+                        Forms\Components\FileUpload::make('thumbnail_artikel')
+                            ->label('Thumbnail Artikel')
+                            ->image()
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('16:9')
+                            ->directory('artikel-thumbnails')
+                            ->disk('public'),
+                            
+                        Forms\Components\RichEditor::make('konten_artikel')
+                            ->label('Konten Artikel')
+                            ->required()
+                            ->fileAttachmentsDisk('public')
+                            ->fileAttachmentsDirectory('artikel-attachments')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -48,31 +77,48 @@ class ArtikelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_kategori_artikel')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('id_user')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('thumbnail_artikel')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('thumbnail_artikel')
+                    ->label('Thumbnail')
+                    ->circular(),
+                    
                 Tables\Columns\TextColumn::make('judul_artikel')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Judul')
+                    ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->limit(50),
+                    
+                Tables\Columns\TextColumn::make('kategoriArtikel.nama_kategori_artikel')
+                    ->label('Kategori')
+                    ->sortable()
+                    ->searchable(),
+                    
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Penulis')
+                    ->sortable()
+                    ->searchable(),
+                    
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Dibuat Pada')
+                    ->dateTime('d M Y H:i')
+                    ->sortable(),
+                    
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('id_kategori_artikel')
+                    ->label('Kategori')
+                    ->relationship('kategoriArtikel', 'nama_kategori_artikel'),
+                    
+                Tables\Filters\SelectFilter::make('id_user')
+                    ->label('Penulis')
+                    ->relationship('user', 'name'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

@@ -32,7 +32,7 @@ function formatDate(date) {
 
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">Articles</h1>
+        <h1 class="text-3xl font-bold text-red-900 mb-8">Articles</h1>
 
         <!-- Loading state -->
         <div v-if="loading" class="flex justify-center items-center py-12">
@@ -140,12 +140,12 @@ function formatDate(date) {
             </div>
 
             <div>
-                <Link
+                <a
                     href="/admin"
                     class="block text-white-900 font-bold text-center whitespace-nowrap hover:underline"
                 >
                     <h1>Hello world!</h1>
-                </Link>
+                </a>
             </div>
         </div>
 

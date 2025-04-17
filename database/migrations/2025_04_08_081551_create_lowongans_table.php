@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id('id_lowongan');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('judul_lowongan', 200);
+            $table->json("thumbnail_lowongan", 400)->nullable();
             $table->text('deskripsi_pekerjaan');
             $table->enum('jenis_lowongan', ['Full-time', 'Part-time', 'Freelance', 'Internship']);
             $table->decimal('gaji', 10, 2)->nullable();

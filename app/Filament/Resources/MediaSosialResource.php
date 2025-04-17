@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class MediaSosialResource extends Resource
 {
     protected static ?string $model = MediaSosial::class;
-    protected static ?string $navigationGroup = 'Customer Service';
+    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
