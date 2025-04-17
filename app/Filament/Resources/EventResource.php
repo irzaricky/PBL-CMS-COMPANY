@@ -45,16 +45,15 @@ class EventResource extends Resource
                         Forms\Components\FileUpload::make('thumbnail_event')
                             ->label('Thumbnail Event')
                             ->image()
+                            ->multiple() // Enable multiple uploads
+                            ->reorderable() // Allow reordering of images
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9')
                             ->directory('event-thumbnails')
-                            ->disk('public'),
-                            
-                        Forms\Components\TextInput::make('lokasi_event')
-                            ->label('Lokasi Event')
-                            ->required()
-                            ->maxLength(200)
-                            ->placeholder('Masukkan lokasi event'),
+                            ->maxFiles(5) // Optional: limit number of files
+                            ->helperText('Deskripsikan eventmu, maksimal 5 gambar(format: jpg, png, webp)')
+                            ->disk('public')
+                            ->columnSpanFull(),
 
                         Forms\Components\TextInput::make('lokasi_event')
                             ->label('Lokasi Event (Google Maps)')
@@ -71,15 +70,6 @@ class EventResource extends Resource
                                     ->url(fn ($get) => $get('lokasi_event'), true)
                                     ->visible(fn ($get) => filled($get('lokasi_event')))
                             ),
-                            // ->rules([
-                            //     function() {
-                            //         return function (string $attribute, $value, \Closure $fail) {
-                            //             if (!preg_match('/maps\.google\.com|google\.com\/maps/i', $value)) {
-                            //                 $fail("The {$attribute} must be a valid Google Maps URL.");
-                            //             }
-                            //         };
-                            //     },
-                            // ]),
                             
                         Forms\Components\Grid::make()
                             ->schema([
@@ -88,7 +78,6 @@ class EventResource extends Resource
                                     ->required()
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
-                                    ->default(now()->startOfHour())
                                     ->native(false)
                                     ->minDate(now()),
                                     
@@ -97,8 +86,6 @@ class EventResource extends Resource
                                     ->required()
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
-                                    ->default(now()->startOfHour()->addHours(2))
-                                    ->minDate(now())
                                     ->native(false)
                                     ->after('waktu_start_event'),
                             ]),
@@ -121,8 +108,11 @@ class EventResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('thumbnail_event')
                     ->label('Thumbnail')
-                    ->defaultImageUrl(url('/images/default-event.jpg'))
-                    ->square(),
+                    ->circular()
+                    ->stacked() // Display multiple images in a stack
+                    ->limit(3) // Show only first 3 images
+                    ->limitedRemainingText() // Shows "+X more" for remaining images
+                    ->extraImgAttributes(['class' => 'object-cover']),
                     
                 Tables\Columns\TextColumn::make('nama_event')
                     ->label('Nama Event')
@@ -154,19 +144,19 @@ class EventResource extends Resource
                         $now = now();
                         
                         if ($now->lt($record->waktu_start_event)) {
-                            return 'upcoming';
+                            return 'Akan datang';
                         }
                         
                         if ($now->gt($record->waktu_end_event)) {
-                            return 'completed';
+                            return 'Selesai';
                         }
                         
-                        return 'ongoing';
+                        return 'Sedang berlangsung';
                     })
                     ->colors([
-                        'warning' => 'upcoming',
-                        'success' => 'ongoing',
-                        'danger' => 'completed',
+                        'warning' => 'Akan datang',
+                        'success' => 'Sedang berlangsung',
+                        'danger' => 'Selesai',
                     ]),
                     
                 Tables\Columns\TextColumn::make('link_daftar_event')

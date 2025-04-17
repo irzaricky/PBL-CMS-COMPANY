@@ -45,6 +45,7 @@ class Event extends Model
     protected $casts = [
         'waktu_start_event' => 'datetime',
         'waktu_end_event' => 'datetime',
+        'thumbnail_event' => 'array',
     ];
 
     /**

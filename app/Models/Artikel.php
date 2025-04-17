@@ -37,6 +37,10 @@ class Artikel extends Model
         'slug',
     ];
 
+    protected $casts = [
+        'thumbnail_artikel' => 'array',
+    ];
+
     /**
      * Get the category that this article belongs to.
      */

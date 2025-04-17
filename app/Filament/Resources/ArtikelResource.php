@@ -53,15 +53,20 @@ class ArtikelResource extends Resource
                             ->unique(ignoreRecord: true),
                     ]),
                     
-                Forms\Components\Section::make('Media & Konten')
+                    Forms\Components\Section::make('Media & Konten')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_artikel')
-                            ->label('Thumbnail Artikel')
+                            ->label('Galeri Gambar Artikel')
                             ->image()
+                            ->multiple() // Enable multiple uploads
+                            ->reorderable() // Allow reordering of images
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9')
                             ->directory('artikel-thumbnails')
-                            ->disk('public'),
+                            ->maxFiles(5) // Optional: limit number of files
+                            ->helperText('Upload hingga 5 gambar untuk artikel (format: jpg, png, webp)')
+                            ->disk('public')
+                            ->columnSpanFull(),
                             
                         Forms\Components\RichEditor::make('konten_artikel')
                             ->label('Konten Artikel')
@@ -79,7 +84,11 @@ class ArtikelResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('thumbnail_artikel')
                     ->label('Thumbnail')
-                    ->circular(),
+                    ->circular()
+                    ->stacked() // Display multiple images in a stack
+                    ->limit(3) // Show only first 3 images
+                    ->limitedRemainingText() // Shows "+X more" for remaining images
+                    ->extraImgAttributes(['class' => 'object-cover']),
                     
                 Tables\Columns\TextColumn::make('judul_artikel')
                     ->label('Judul')
