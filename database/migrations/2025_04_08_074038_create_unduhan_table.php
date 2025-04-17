@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->foreignId('id_kategori_unduhan')->constrained('kategori_unduhan', 'id_kategori_unduhan')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade')->onUpdate('cascade');
             $table->string('nama_unduhan', 100);
-            $table->json('thumbnail_unduhan', 200)->nullable();
+            $table->json('thumbnail_unduhan')->nullable();
             $table->string('slug', 100)->unique();
             $table->string('lokasi_file', 200);
             $table->text('deskripsi')->nullable();
