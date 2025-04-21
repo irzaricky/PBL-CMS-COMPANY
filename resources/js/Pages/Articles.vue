@@ -13,7 +13,7 @@ onMounted(() => {
 async function fetchArticles() {
     try {
         const response = await axios.get("/api/articles");
-        articles.value = response.data;
+        articles.value = response.data.data;
         loading.value = false;
     } catch (error) {
         console.error("Error fetching articles:", error);
@@ -130,7 +130,7 @@ function formatDate(date) {
 
                     <div class="mt-4">
                         <a
-                            :href="`/articles/${article.slug}`"
+                            :href="`/artikel/${article.slug}`"
                             class="inline-block px-4 py-2 bg-blue-500 text-white font-medium text-sm rounded hover:bg-blue-600 transition-colors duration-300"
                         >
                             Read More

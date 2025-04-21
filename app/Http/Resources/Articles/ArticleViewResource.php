@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
-
+namespace App\Http\Resources\Articles;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ArticleResource extends JsonResource
+class ArticleViewResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -12,7 +12,7 @@ class ArticleResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray(Request $request): array
     {
         return [
             'id_artikel' => $this->id_artikel,
@@ -28,7 +28,7 @@ class ArticleResource extends JsonResource
                 'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
             ],
-            'slu    g' => $this->slug,
+            'slug' => $this->slug,
         ];
     }
 }

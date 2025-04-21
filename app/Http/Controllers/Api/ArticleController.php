@@ -4,11 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Artikel;
-use App\Models\KategoriArtikel;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
-use App\Http\Resources\ArticleResource;
+use App\Http\Resources\Articles\ArticleListResource;
+use App\Http\Resources\Articles\ArticleViewResource;
 
 class ArticleController extends Controller
 {
@@ -23,7 +20,7 @@ class ArticleController extends Controller
             $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
-            return ArticleResource::collection($articles);
+            return ArticleListResource::collection($articles);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -37,13 +34,13 @@ class ArticleController extends Controller
      * Get a single article by ID
      * 
      * @param int $id
-     * @return \App\Http\Resources\ArticleResource|\Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\Articles\ArticleViewResource|\Illuminate\Http\JsonResponse
      */
     public function view($id)
     {
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])->findOrFail($id);
-            return new ArticleResource($article);
+            return new ArticleViewResource($article);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
