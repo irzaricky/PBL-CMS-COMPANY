@@ -31,15 +31,41 @@ class ArticleController extends Controller
     }
 
     /**
-     * Get a single article by ID
+     * Get a single article by slug
+     * 
+     * @param string $slug
+     * @return \App\Http\Resources\Articles\ArticleViewResource|\Illuminate\Http\JsonResponse
+     */
+    public function getArticleBySlug($slug)
+    {
+        try {
+            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->where('slug', $slug)
+                ->firstOrFail();
+
+            return new ArticleViewResource($article);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Artikel Tidak Ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    /**
+     * Get the article by id
      * 
      * @param int $id
      * @return \App\Http\Resources\Articles\ArticleViewResource|\Illuminate\Http\JsonResponse
      */
-    public function view($id)
+    public function getArticleById($id)
     {
         try {
-            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])->findOrFail($id);
+            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->where('id_artikel', $id)
+                ->firstOrFail();
+
             return new ArticleViewResource($article);
         } catch (\Exception $e) {
             return response()->json([

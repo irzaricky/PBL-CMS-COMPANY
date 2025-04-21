@@ -18,9 +18,16 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/artikel', action: function () {
-    return Inertia::render('Articles');
+Route::prefix('artikel')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Artikel/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Artikel/Show', ['slug' => $slug]);
+    });
 });
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

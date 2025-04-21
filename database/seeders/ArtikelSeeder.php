@@ -15,69 +15,23 @@ class ArtikelSeeder extends Seeder
                 'id_kategori_artikel' => 1,
                 'id_user' => 1,
                 'judul_artikel' => 'Penerapan AI dalam Bisnis Modern',
-                'konten_artikel' => '<h2>Transformasi Digital dengan Kecerdasan Buatan</h2>
-                <p>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Nullam auctor, nisl nec ultricies lacinia, nisl nisl aliquet nisl, eget aliquet nisl nisl eget nisl. Perkembangan teknologi AI telah membawa perubahan signifikan dalam dunia bisnis.</p>
-                
-                <p>Beberapa manfaat AI dalam bisnis:</p>
-                <ul>
-                    <li>Otomatisasi proses repetitif</li>
-                    <li>Analisis data yang lebih cepat dan akurat</li>
-                    <li>Personalisasi pengalaman pelanggan</li>
-                </ul>
-                
-                <h3>Implementasi AI di Berbagai Sektor</h3>
-                <p>Menurut riset terbaru, <em>implementasi AI dapat meningkatkan produktivitas hingga 40%</em> di berbagai sektor industri. Nullam auctor, nisl nec ultricies lacinia, nisl nisl aliquet nisl, eget aliquet nisl nisl eget nisl.</p>
-                
-                <blockquote>
-                    <p>"AI bukan hanya tentang teknologi, tapi tentang bagaimana kita menggunakannya untuk menyelesaikan masalah nyata dalam bisnis." - John Doe, AI Specialist</p>
-                </blockquote>',
+                'konten_artikel' => '<h2>Transformasi Digital dengan Kecerdasan Buatan</h2><p>&nbsp;Di era digital saat ini, kecerdasan buatan (AI) menjadi motor utama dalam mendorong perubahan di berbagai sektor industri. Lebih dari sekadar teknologi mutakhir, AI kini hadir sebagai solusi nyata dalam menghadapi tantangan bisnis modern.&nbsp;</p><h3>AI: Mengubah Cara Bisnis Beroperasi</h3><p>Penerapan AI telah membuka jalan bagi transformasi operasional yang lebih efisien dan cerdas. Beberapa manfaat utama yang dirasakan pelaku bisnis antara lain:</p><ul><li><strong>Otomatisasi Tugas Repetitif</strong><br> AI memungkinkan perusahaan mengotomatiskan pekerjaan berulang, sehingga tim dapat fokus pada tugas-tugas strategis yang lebih bernilai.</li><li><strong>Analisis Data Cepat dan Akurat</strong><br> Dengan kemampuan memproses data dalam jumlah besar secara real-time, AI membantu pengambilan keputusan menjadi lebih cepat dan berbasis fakta.</li><li><strong>Personalisasi Pengalaman Pelanggan</strong><br> Dari rekomendasi produk hingga layanan pelanggan berbasis chatbot, AI memungkinkan pengalaman yang lebih relevan dan personal bagi konsumen.</li></ul><h3><h3>Dampak di Berbagai Sektor</h3></h3><p>Menurut riset terbaru, penerapan AI dapat meningkatkan produktivitas hingga 40% di sektor-sektor seperti manufaktur, layanan keuangan, kesehatan, hingga logistik. Hal ini menunjukkan bahwa AI bukan hanya relevan di dunia teknologi, tetapi juga menjadi kekuatan transformatif di bidang-bidang yang sebelumnya tidak terlalu terdigitalisasi.</p><blockquote>"AI bukan hanya tentang teknologi, tapi tentang bagaimana kita menggunakannya untuk menyelesaikan masalah nyata dalam bisnis."<br>&nbsp;— <em>John Doe, AI Specialist</em></blockquote><h3>Penutup</h3><p>Transformasi digital dengan kecerdasan buatan bukan lagi sebuah pilihan, melainkan keharusan bagi bisnis yang ingin tetap relevan dan kompetitif. Ke depan, kemampuan untuk beradaptasi dan memanfaatkan AI secara strategis akan menjadi salah satu kunci utama kesuksesan.</p>',
                 'slug' => 'penerapan-ai-dalam-bisnis-modern',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+
             [
                 'id_artikel' => 2,
                 'id_kategori_artikel' => 2,
                 'id_user' => 2,
                 'judul_artikel' => 'Strategi Marketing Digital 2025',
-                'konten_artikel' => '<h2>Evolusi Marketing di Era Digital</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. <mark>Perubahan perilaku konsumen</mark> menjadi tantangan sekaligus peluang bagi marketer di tahun 2025.</p>
-                
-                <h3>Tren Marketing Digital 2025</h3>
-                <ol>
-                    <li><strong>Video Pendek</strong> - Platform seperti TikTok dan Instagram Reels mendominasi perhatian audiens</li>
-                    <li><strong>AI-Driven Marketing</strong> - Personalisasi konten berdasarkan analisis perilaku</li>
-                    <li><strong>Voice Search Optimization</strong> - Optimasi untuk pencarian suara</li>
-                </ol>
-                
-                <p>Menurut survei terbaru:</p>
-                <table border="1">
-                    <thead>
-                        <tr>
-                            <th>Platform</th>
-                            <th>Persentase Pengguna</th>
-                            <th>ROI</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Video Marketing</td>
-                            <td>78%</td>
-                            <td>Tinggi</td>
-                        </tr>
-                        <tr>
-                            <td>Email Marketing</td>
-                            <td>65%</td>
-                            <td>Sedang</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <p><em>Strategi yang tepat akan menentukan keberhasilan kampanye marketing Anda</em> di tengah persaingan yang semakin ketat.</p>',
+                'konten_artikel' => '<h2>Evolusi Marketing di Era Digital</h2><p>&nbsp;Perkembangan teknologi dan perubahan perilaku konsumen terus membentuk lanskap marketing digital. Di tahun 2025, para pemasar menghadapi tantangan baru sekaligus peluang besar untuk menjangkau audiens dengan cara yang lebih relevan dan efektif.&nbsp;</p><h3>Tren Marketing Digital 2025</h3><p>Berikut beberapa tren utama yang diprediksi akan mendominasi strategi pemasaran digital tahun ini:</p><ul><li><strong>Video Pendek</strong><br> Platform seperti TikTok dan Instagram Reels semakin mendominasi atensi audiens. Konten singkat, kreatif, dan to the point menjadi senjata utama dalam membangun engagement.</li><li><strong>AI-Driven Marketing</strong><br> Personalisasi konten berbasis kecerdasan buatan memungkinkan brand menyampaikan pesan yang lebih tepat sasaran dengan menganalisis perilaku pengguna secara real-time.</li><li><strong>Voice Search Optimization</strong><br> Semakin populernya asisten virtual seperti Google Assistant dan Alexa membuat optimasi untuk pencarian suara menjadi langkah penting dalam strategi SEO modern.</li></ul><h3>&nbsp;Data: Platform &amp; ROI&nbsp;</h3><p>Survei terbaru menunjukkan efektivitas berbagai platform marketing berdasarkan jumlah pengguna dan return on investment (ROI):</p><p>many data hehe</p><p>Data ini menegaskan pentingnya memilih platform yang sesuai dengan karakteristik target audiens dan tujuan kampanye.&nbsp;</p><h3>Penutup: Strategi Adalah Kunci</h3><p>Di tengah persaingan digital yang semakin ketat, keberhasilan kampanye tidak hanya ditentukan oleh tren, tapi juga oleh strategi yang tepat. Memahami audiens, memanfaatkan teknologi, dan konsisten dalam membangun brand menjadi faktor penentu dalam memenangkan hati konsumen di era digital.</p>',
                 'slug' => 'strategi-marketing-digital-2025',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+
             [
                 'id_artikel' => 3,
                 'id_kategori_artikel' => 3,

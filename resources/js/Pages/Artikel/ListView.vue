@@ -1,6 +1,5 @@
 <script setup>
 import axios from "axios";
-import { Link } from "@inertiajs/vue3";
 import { ref, onMounted } from "vue";
 
 const articles = ref([]);
@@ -12,7 +11,7 @@ onMounted(() => {
 
 async function fetchArticles() {
     try {
-        const response = await axios.get("/api/articles");
+        const response = await axios.get("/api/artikel");
         articles.value = response.data.data;
         loading.value = false;
     } catch (error) {
@@ -22,7 +21,13 @@ async function fetchArticles() {
 }
 
 function getImageUrl(image) {
-    return image ? `/storage/${image}` : "/placeholder.jpeg";
+    if (!image) return "/image/placeholder.jpeg";
+
+    if (typeof image === "object" && image !== null) {
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.jpeg";
+    }
+
+    return `/storage/${image}`;
 }
 
 function formatDate(date) {
@@ -32,7 +37,7 @@ function formatDate(date) {
 
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 class="text-3xl font-bold text-red-900 mb-8">Articles</h1>
+        <h1 class="text-3xl font-bold text-red-900 mb-8">Artikel</h1>
 
         <!-- Loading state -->
         <div v-if="loading" class="flex justify-center items-center py-12">
