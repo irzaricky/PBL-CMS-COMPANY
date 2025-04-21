@@ -18,6 +18,7 @@ Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+
 Route::prefix('artikel')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Artikel/ListView');
@@ -28,6 +29,17 @@ Route::prefix('artikel')->group(function () {
     });
 });
 
+
+// Event
+Route::prefix('events')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Event/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

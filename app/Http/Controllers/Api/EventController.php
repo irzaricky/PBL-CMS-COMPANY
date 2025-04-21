@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
-use App\Http\Resources\EventResource;
+use App\Http\Resources\Events\EventListResource;
+use App\Http\Resources\Events\EventViewResource;
 
 class EventController extends Controller
 {
@@ -17,9 +18,9 @@ class EventController extends Controller
     public function index()
     {
         try {
-            $events = Event::orderBy('waktu_start_event', 'desc')
+            $event = Event::orderBy('created_at', 'desc')
                 ->paginate(10);
-            return EventResource::collection($events);
+            return EventListResource::collection($event);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -29,18 +30,39 @@ class EventController extends Controller
         }
     }
 
-
     /**
-     * Get a single event by ID
+     * Get a single article by slug
      * 
-     * @param int $id
-     * @return \App\Http\Resources\EventResource|\Illuminate\Http\JsonResponse
+     * @param string $slug
+     * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
      */
-    public function view($id)
+    public function getEventBySlug($slug)
     {
         try {
-            $event = Event::findOrFail($id);
-            return new EventResource($event);
+            $event = Event::where('slug', $slug)
+                ->firstOrFail();
+            return new EventViewResource($event);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Event Tidak Ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    /**
+     * Get the article by id
+     * 
+     * @param int $id
+     * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
+     */
+    public function getEventById($id)
+    {
+        try {
+            $event = Event::where('id_event', $id)
+                ->firstOrFail();
+            return new EventViewResource($event);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

@@ -32,9 +32,11 @@ class Event extends Model
         'deskripsi_event',
         'thumbnail_event',
         'lokasi_event',
+        'link_lokasi_event',
         'waktu_start_event',
         'waktu_end_event',
         'link_daftar_event',
+        'slug',
     ];
 
     /**

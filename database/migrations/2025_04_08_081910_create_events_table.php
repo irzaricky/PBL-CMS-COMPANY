@@ -16,9 +16,11 @@ return new class extends Migration {
             $table->text('deskripsi_event');
             $table->json('thumbnail_event')->nullable();
             $table->string('lokasi_event', 200);
+            $table->string('link_lokasi_event', 200);
             $table->dateTime('waktu_start_event');
             $table->dateTime('waktu_end_event');
             $table->string('link_daftar_event', 100)->nullable();
+            $table->string('slug', 100)->unique();
             $table->timestamps();
         });
     }

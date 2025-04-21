@@ -30,7 +30,7 @@ class EventResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->placeholder('Masukkan nama event'),
-                            
+
                         Forms\Components\RichEditor::make('deskripsi_event')
                             ->label('Deskripsi Event')
                             ->required()
@@ -39,7 +39,7 @@ class EventResource extends Resource
                             ->placeholder('Deskripsikan detail acara')
                             ->columnSpanFull(),
                     ]),
-                    
+
                 Forms\Components\Section::make('Detail Event')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_event')
@@ -55,8 +55,17 @@ class EventResource extends Resource
                             ->disk('public')
                             ->columnSpanFull(),
 
+
                         Forms\Components\TextInput::make('lokasi_event')
-                            ->label('Lokasi Event (Google Maps)')
+                            ->label('Nama Lokasi Event')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Masukkan nama atau alamat lokasi event')
+                            ->helperText('Contoh: Gedung Serbaguna UGM, Yogyakarta')
+                            ->columnSpan(2),
+
+                        Forms\Components\TextInput::make('link_lokasi_event')
+                            ->label('Link Lokasi Event (Google Maps)')
                             ->required()
                             ->maxLength(200)
                             ->url()
@@ -67,10 +76,11 @@ class EventResource extends Resource
                                 Forms\Components\Actions\Action::make('open')
                                     ->icon('heroicon-o-arrow-top-right-on-square')
                                     ->tooltip('Open map in new tab')
-                                    ->url(fn ($get) => $get('lokasi_event'), true)
-                                    ->visible(fn ($get) => filled($get('lokasi_event')))
+                                    ->url(fn($get) => $get('link_lokasi_event'), true)
+                                    ->visible(fn($get) => filled($get('link_lokasi_event')))
                             ),
-                            
+
+
                         Forms\Components\Grid::make()
                             ->schema([
                                 Forms\Components\DateTimePicker::make('waktu_start_event')
@@ -80,7 +90,7 @@ class EventResource extends Resource
                                     ->displayFormat('d F Y - H:i')
                                     ->native(false)
                                     ->minDate(now()),
-                                    
+
                                 Forms\Components\DateTimePicker::make('waktu_end_event')
                                     ->label('Waktu Selesai')
                                     ->required()
@@ -90,14 +100,15 @@ class EventResource extends Resource
                                     ->after('waktu_start_event'),
                             ]),
                     ]),
-                    
+
                 Forms\Components\Section::make('Informasi Pendaftaran')
                     ->schema([
                         Forms\Components\TextInput::make('link_daftar_event')
                             ->label('Link Pendaftaran')
-                            ->prefix('https://')
-                            ->placeholder('www.example.com/register')
-                            ->maxLength(100),
+                            ->placeholder('https://www.example.com/register')
+                            ->url() // Add URL validation
+                            ->helperText('Masukkan URL lengkap termasuk https://')
+                            ->maxLength(200),
                     ]),
             ]);
     }
@@ -113,44 +124,55 @@ class EventResource extends Resource
                     ->limit(3) // Show only first 3 images
                     ->limitedRemainingText() // Shows "+X more" for remaining images
                     ->extraImgAttributes(['class' => 'object-cover']),
-                    
+
                 Tables\Columns\TextColumn::make('nama_event')
                     ->label('Nama Event')
                     ->searchable()
                     ->sortable()
                     ->limit(30),
-                    
+
                 Tables\Columns\TextColumn::make('lokasi_event')
                     ->label('Lokasi')
                     ->searchable()
                     ->limit(30)
-                    ->url(fn ($record) => $record->lokasi_event)
+                    ->tooltip(fn($record) => $record->lokasi_event)
+                    ->icon('heroicon-o-building-office'),
+
+                Tables\Columns\TextColumn::make('link_lokasi_event')
+                    ->label('Link Lokasi')
+                    ->searchable()
+                    ->limit(30)
+                    ->url(fn($record) => $record->link_lokasi_event)
                     ->openUrlInNewTab()
-                    ->icon('heroicon-o-map-pin'),
-                    
+                    ->icon('heroicon-o-map-pin')
+                    ->tooltip('Klik untuk melihat di Google Maps')
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 Tables\Columns\TextColumn::make('waktu_start_event')
                     ->label('Mulai')
                     ->dateTime('d M Y - H:i')
-                    ->sortable(),
-                    
+                    ->sortable()
+                    ->icon('heroicon-o-calendar'),
+
                 Tables\Columns\TextColumn::make('waktu_end_event')
                     ->label('Selesai')
                     ->dateTime('d M Y - H:i')
-                    ->sortable(),
-                    
+                    ->sortable()
+                    ->icon('heroicon-o-clock'),
+
                 Tables\Columns\BadgeColumn::make('status')
                     ->label('Status')
                     ->getStateUsing(function (Event $record): string {
                         $now = now();
-                        
+
                         if ($now->lt($record->waktu_start_event)) {
                             return 'Akan datang';
                         }
-                        
+
                         if ($now->gt($record->waktu_end_event)) {
                             return 'Selesai';
                         }
-                        
+
                         return 'Sedang berlangsung';
                     })
                     ->colors([
@@ -158,11 +180,12 @@ class EventResource extends Resource
                         'success' => 'Sedang berlangsung',
                         'danger' => 'Selesai',
                     ]),
-                    
+
                 Tables\Columns\TextColumn::make('link_daftar_event')
                     ->label('Link Pendaftaran')
-                    ->url(fn ($record) => $record->link_daftar_event ? 'https://' . $record->link_daftar_event : null)
+                    ->url(fn($record) => $record->link_daftar_event)
                     ->openUrlInNewTab()
+                    ->icon('heroicon-o-link')
                     ->toggleable(),
             ])
             ->filters([
@@ -176,7 +199,7 @@ class EventResource extends Resource
                         return match ($data['value']) {
                             'upcoming' => $query->where('waktu_start_event', '>', now()),
                             'ongoing' => $query->where('waktu_start_event', '<=', now())
-                                             ->where('waktu_end_event', '>=', now()),
+                                ->where('waktu_end_event', '>=', now()),
                             'completed' => $query->where('waktu_end_event', '<', now()),
                             default => $query,
                         };
