@@ -3,23 +3,101 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 
 const articles = ref([]);
+const categories = ref([]);
+const selectedCategory = ref(null);
 const loading = ref(true);
+const searchQuery = ref("");
+const searching = ref(false);
+let debounceTimer = null;
 
+// fungsi yang dijalankan saat view di muat
 onMounted(() => {
+    fetchCategories();
     fetchArticles();
 });
 
-async function fetchArticles() {
+// Fungsi untuk mengambil kategori
+async function fetchCategories() {
     try {
-        const response = await axios.get("/api/artikel");
-        articles.value = response.data.data;
-        loading.value = false;
+        const response = await axios.get("/api/artikel/categories");
+        categories.value = response.data.data;
     } catch (error) {
-        console.error("Error fetching articles:", error);
-        loading.value = false;
+        console.error("Error fetching categories:", error);
     }
 }
 
+// Fungsi filter artikel berdasarkan kategori
+function filterByCategory(categoryId) {
+    selectedCategory.value = categoryId;
+    if (searchQuery.value.length > 0) {
+        searchArticles(searchQuery.value);
+    } else {
+        fetchArticles();
+    }
+}
+
+// Fungsi untuk menangani input pencarian dengan debounce
+function handleSearch() {
+    // Bersihkan timer sebelumnya jika ada
+    if (debounceTimer) {
+        clearTimeout(debounceTimer);
+    }
+
+    searching.value = true;
+
+    // Buat timer baru
+    debounceTimer = setTimeout(() => {
+        if (searchQuery.value.length === 0) {
+            fetchArticles();
+        } else {
+            searchArticles(searchQuery.value);
+        }
+    }, 500); // Tunggu 500ms setelah user berhenti mengetik
+}
+
+// Fungsi untuk mengambil artikel melalui api
+async function fetchArticles() {
+    try {
+        loading.value = true;
+        const params = {};
+        if (selectedCategory.value) {
+            params.category_id = selectedCategory.value;
+        }
+
+        const response = await axios.get("/api/artikel", { params });
+        articles.value = response.data.data;
+    } catch (error) {
+        console.error("Error fetching articles:", error);
+    } finally {
+        loading.value = false;
+        searching.value = false;
+    }
+}
+
+// Fungsi untuk mencari artikel berdasarkan query melalui api
+async function searchArticles(query) {
+    try {
+        loading.value = true;
+        const params = {
+            query: query,
+        };
+
+        if (selectedCategory.value) {
+            params.category_id = selectedCategory.value;
+        }
+
+        const response = await axios.get("/api/artikel/search", { params });
+        articles.value = response.data.data || []; //jika tidak ada data, set ke array kosong
+    } catch (error) {
+        console.error("Error searching articles:", error);
+        articles.value = []; // Reset artikel jika error
+    } finally {
+        loading.value = false;
+        searching.value = false;
+    }
+}
+
+// Fungsi untuk mendapatkan URL gambar
 function getImageUrl(image) {
     if (!image) return "/image/placeholder.jpeg";
 
@@ -30,6 +108,7 @@ function getImageUrl(image) {
     return `/storage/${image}`;
 }
 
+// Fungsi untuk memformat tanggal
 function formatDate(date) {
     return new Date(date).toLocaleDateString();
 }
@@ -37,10 +116,60 @@ function formatDate(date) {
 
 <template>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 class="text-3xl font-bold text-red-900 mb-8">Artikel</h1>
+        <div
+            class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
+        >
+            <h1 class="text-3xl font-bold text-red-900 mb-4 md:mb-0">
+                Artikel
+            </h1>
+
+            <!-- Search box -->
+            <div class="w-full md:w-1/3 relative">
+                <input
+                    v-model="searchQuery"
+                    type="text"
+                    placeholder="Search articles..."
+                    @input="handleSearch"
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                />
+            </div>
+        </div>
+
+        <!-- Category filter -->
+        <div class="mb-6">
+            <div class="flex flex-wrap gap-2">
+                <button
+                    @click="filterByCategory(null)"
+                    class="px-3 py-1 rounded-full text-sm font-medium"
+                    :class="
+                        selectedCategory === null
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                    "
+                >
+                    Semua
+                </button>
+                <button
+                    v-for="category in categories"
+                    :key="category.id_kategori_artikel"
+                    @click="filterByCategory(category.id_kategori_artikel)"
+                    class="px-3 py-1 rounded-full text-sm font-medium"
+                    :class="
+                        selectedCategory === category.id_kategori_artikel
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                    "
+                >
+                    {{ category.nama_kategori_artikel }}
+                </button>
+            </div>
+        </div>
 
         <!-- Loading state -->
-        <div v-if="loading" class="flex justify-center items-center py-12">
+        <div
+            v-if="loading || searching"
+            class="flex justify-center items-center py-12"
+        >
             <div
                 class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
             ></div>
@@ -48,7 +177,7 @@ function formatDate(date) {
 
         <!-- Articles grid -->
         <div
-            v-else
+            v-else-if="articles.length > 0"
             class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
             <div
@@ -145,9 +274,16 @@ function formatDate(date) {
             </div>
         </div>
 
-        <!-- No articles message -->
-        <div v-if="!loading && articles.length === 0" class="text-center py-12">
-            <p class="text-gray-500 text-lg">No articles found</p>
+        <!-- No articles found -->
+        <div v-else class="text-center py-12">
+            <p class="text-gray-500 text-lg">
+                {{
+                    searchQuery
+                        ? `No articles found matching "${searchQuery}"`
+                        : "No articles found"
+                }}
+                {{ selectedCategory !== null ? " in this category." : "" }}
+            </p>
         </div>
     </div>
 </template>

@@ -11,6 +11,12 @@ Route::prefix('artikel')->group(function () {
     // Untuk mengambil semua artikel
     Route::get('/', [ArticleController::class, 'index']);
 
+    // Untuk mengambil semua kategori artikel
+    Route::get('/categories', [ArticleController::class, 'getCategories']);
+
+    // untuk search artikel berdasarkan judul atau isi artikel
+    Route::get('/search', [ArticleController::class, 'search']);
+
     // untuk mengambil artikel berdasarkan id
     Route::get('/id/{id}', [ArticleController::class, 'getArticleById']);
 
@@ -36,3 +42,4 @@ Route::prefix('events')->group(function () {
 
 
 });
+

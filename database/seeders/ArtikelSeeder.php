@@ -54,8 +54,12 @@ class ArtikelSeeder extends Seeder
                 
                 <p>Setelah instalasi selesai, masuk ke direktori project:</p>
                 
-                <pre><code>cd example-app
-php artisan serve</code></pre>
+                <pre>
+                <code>
+                cd example-app
+                php artisan serve
+                </code>
+                </pre>
                 
                 <div class="note">
                     <p><strong>Catatan:</strong> <em>Pastikan Anda memiliki PHP dan Composer terinstal di sistem Anda sebelum memulai.</em></p>
