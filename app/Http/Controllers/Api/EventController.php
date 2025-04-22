@@ -7,6 +7,7 @@ use App\Models\Event;
 use Illuminate\Http\Request;
 use App\Http\Resources\Events\EventListResource;
 use App\Http\Resources\Events\EventViewResource;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -18,9 +19,11 @@ class EventController extends Controller
     public function index()
     {
         try {
-            $event = Event::orderBy('created_at', 'desc')
+            $events = Event::where('waktu_start_event', '>', Carbon::now())
+                ->orderBy('waktu_start_event', 'asc')
                 ->paginate(10);
-            return EventListResource::collection($event);
+
+            return EventListResource::collection($events);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

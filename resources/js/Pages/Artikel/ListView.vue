@@ -16,7 +16,7 @@ onMounted(() => {
     fetchArticles();
 });
 
-// Fungsi untuk mengambil kategori
+// Fungsi untuk mengambil kategori artikel melalui api
 async function fetchCategories() {
     try {
         const response = await axios.get("/api/artikel/categories");
