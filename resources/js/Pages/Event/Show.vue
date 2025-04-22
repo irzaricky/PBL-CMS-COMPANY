@@ -59,39 +59,8 @@ function formatTime(date) {
     });
 }
 
-// Calculate if event is upcoming, ongoing, or past
-const eventStatus = computed(() => {
-    if (!event.value) return null;
-
-    const now = new Date();
-    const startTime = new Date(event.value.waktu_start_event);
-    const endTime = new Date(event.value.waktu_end_event);
-
-    if (now < startTime) {
-        return {
-            status: "upcoming",
-            label: "Upcoming Event",
-            color: "bg-blue-500",
-        };
-    } else if (now >= startTime && now <= endTime) {
-        return {
-            status: "ongoing",
-            label: "Ongoing Event",
-            color: "bg-green-500",
-        };
-    } else {
-        return {
-            status: "past",
-            label: "Past Event",
-            color: "bg-gray-500",
-        };
-    }
-});
-
 // Calculate days remaining until event
 const daysRemaining = computed(() => {
-    if (!event.value || eventStatus.value?.status !== "upcoming") return null;
-
     const now = new Date();
     const startTime = new Date(event.value.waktu_start_event);
     const diffTime = startTime - now;
@@ -253,19 +222,15 @@ const daysRemaining = computed(() => {
                         :src="getImageUrl(event.thumbnail_event)"
                         :alt="event.nama_event"
                         class="w-full h-[400px] object-cover object-center"
-                        :class="{
-                            'filter grayscale': eventStatus.status === 'past',
-                        }"
                     />
                     <div
                         class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"
                     ></div>
                     <div class="absolute bottom-0 left-0 p-6 text-white">
                         <span
-                            class="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3"
-                            :class="eventStatus.color"
+                            class="inline-block px-3 py-1 text-xs font-semibold rounded-full mb-3 bg-blue-500"
                         >
-                            {{ eventStatus.label }}
+                            Upcoming Event
                         </span>
                         <h1
                             class="text-3xl sm:text-4xl font-bold text-white mb-2"
@@ -279,7 +244,6 @@ const daysRemaining = computed(() => {
                 <div class="p-6 sm:p-8">
                     <!-- Countdown for upcoming events -->
                     <div
-                        v-if="eventStatus.status === 'upcoming'"
                         class="mb-8 bg-blue-50 p-4 rounded-lg border border-blue-100 text-center"
                     >
                         <h3 class="text-lg font-semibold text-blue-800 mb-2">
@@ -354,10 +318,7 @@ const daysRemaining = computed(() => {
                         </div>
 
                         <div
-                            v-if="
-                                event.link_daftar_event &&
-                                eventStatus.status !== 'past'
-                            "
+                            v-if="event.link_daftar_event"
                             class="flex flex-col items-center text-center"
                         >
                             <span class="text-sm text-gray-500"
