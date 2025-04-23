@@ -31,29 +31,61 @@ class ArtikelResource extends Resource
                             ->required()
                             ->maxLength(100)
                             ->live(onBlur: true)
-                            ->reactive(),
+                            ->reactive()
+                            ->afterStateUpdated(function (string $state, callable $set) {
+                                $set('slug', str($state)->slug());
+                            }),
 
                         Forms\Components\Select::make('id_kategori_artikel')
                             ->label('Kategori Artikel')
                             ->relationship('kategoriArtikel', 'nama_kategori_artikel')
                             ->searchable()
                             ->preload()
-                            ->required(),
-                            
+                            ->required()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('nama_kategori_artikel')
+                                    ->label('Nama Kategori')
+                                    ->required()
+                                    ->maxLength(50),
+                                Forms\Components\Textarea::make('deskripsi')
+                                    ->label('Deskripsi')
+                                    ->maxLength(200),
+                            ])
+                            ->editOptionForm([
+                                Forms\Components\TextInput::make('nama_kategori_artikel')
+                                    ->label('Nama Kategori')
+                                    ->required()
+                                    ->maxLength(50),
+                                Forms\Components\Textarea::make('deskripsi')
+                                    ->label('Deskripsi')
+                                    ->maxLength(200),
+                            ])
+                            ->manageOptionForm([
+                                Forms\Components\TextInput::make('nama_kategori_artikel')
+                                    ->label('Nama Kategori')
+                                    ->required()
+                                    ->maxLength(50),
+                                Forms\Components\Textarea::make('deskripsi')
+                                    ->label('Deskripsi')
+                                    ->maxLength(200),
+                            ]),
+
                         Forms\Components\Select::make('id_user')
                             ->label('Penulis')
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),
-                            
+
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true),
+                            ->unique(ignoreRecord: true)
+                            ->dehydrated()
+                            ->helperText('Akan terisi otomatis berdasarkan judul'),
                     ]),
-                    
-                    Forms\Components\Section::make('Media & Konten')
+
+                Forms\Components\Section::make('Media & Konten')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_artikel')
                             ->label('Galeri Gambar Artikel')
@@ -67,7 +99,7 @@ class ArtikelResource extends Resource
                             ->helperText('Upload hingga 5 gambar untuk artikel (format: jpg, png, webp)')
                             ->disk('public')
                             ->columnSpanFull(),
-                            
+
                         Forms\Components\RichEditor::make('konten_artikel')
                             ->label('Konten Artikel')
                             ->required()
@@ -89,28 +121,28 @@ class ArtikelResource extends Resource
                     ->limit(3) // Show only first 3 images
                     ->limitedRemainingText() // Shows "+X more" for remaining images
                     ->extraImgAttributes(['class' => 'object-cover']),
-                    
+
                 Tables\Columns\TextColumn::make('judul_artikel')
                     ->label('Judul')
                     ->searchable()
                     ->sortable()
                     ->limit(50),
-                    
+
                 Tables\Columns\TextColumn::make('kategoriArtikel.nama_kategori_artikel')
                     ->label('Kategori')
                     ->sortable()
                     ->searchable(),
-                    
+
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Penulis')
                     ->sortable()
                     ->searchable(),
-                    
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
@@ -121,7 +153,7 @@ class ArtikelResource extends Resource
                 Tables\Filters\SelectFilter::make('id_kategori_artikel')
                     ->label('Kategori')
                     ->relationship('kategoriArtikel', 'nama_kategori_artikel'),
-                    
+
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Penulis')
                     ->relationship('user', 'name'),

@@ -36,6 +36,10 @@ class Produk extends Model
         'deskripsi_produk',
     ];
 
+    protected $casts = [
+        'thumbnail_produk' => 'array',
+    ];
+
     /**
      * Get the category that this product belongs to.
      */

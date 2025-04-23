@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('judul_galeri', 200);
             $table->json('thumbnail_galeri')->nullable();
             $table->text('deskripsi_galeri')->nullable();
+            $table->string('slug', 100)->unique();
             $table->timestamps();
         });
     }

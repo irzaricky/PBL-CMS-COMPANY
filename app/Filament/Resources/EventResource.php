@@ -28,8 +28,18 @@ class EventResource extends Resource
                         Forms\Components\TextInput::make('nama_event')
                             ->label('Nama Event')
                             ->required()
-                            ->maxLength(255)
-                            ->placeholder('Masukkan nama event'),
+                            ->maxLength(100)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (string $state, callable $set) {
+                                $set('slug', str($state)->slug());
+                            }),
+
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(100)
+                            ->unique(ignoreRecord: true)
+                            ->dehydrated()
+                            ->helperText('Akan terisi otomatis berdasarkan nama event'),
 
                         Forms\Components\RichEditor::make('deskripsi_event')
                             ->label('Deskripsi Event')

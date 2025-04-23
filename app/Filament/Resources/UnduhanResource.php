@@ -17,33 +17,101 @@ class UnduhanResource extends Resource
 {
     protected static ?string $model = Unduhan::class;
     protected static ?string $navigationGroup = 'Content Management';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-arrow-down';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_kategori_unduhan')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('id_user')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('nama_unduhan')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('slug')
-                    ->required()
-                    ->maxLength(100),
-                Forms\Components\TextInput::make('lokasi_file')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\Textarea::make('deskripsi')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('jumlah_unduhan')
-                    ->required()
-                    ->numeric()
-                    ->default(0),
+                Forms\Components\Section::make('Informasi Unduhan')
+                    ->schema([
+                        Forms\Components\TextInput::make('nama_unduhan')
+                            ->label('Nama Unduhan')
+                            ->required()
+                            ->maxLength(100)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (string $state, callable $set) {
+                                $set('slug', str($state)->slug());
+                            }),
+
+                        Forms\Components\Select::make('id_kategori_unduhan')
+                            ->label('Kategori Unduhan')
+                            ->relationship('kategoriUnduhan', 'nama_kategori_unduhan')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->createOptionForm([
+                                Forms\Components\TextInput::make('nama_kategori_unduhan')
+                                    ->label('Nama Kategori')
+                                    ->required()
+                                    ->maxLength(50),
+                            ])
+                            ->editOptionForm([
+                                Forms\Components\TextInput::make('nama_kategori_unduhan')
+                                    ->label('Nama Kategori')
+                                    ->required()
+                                    ->maxLength(50),
+                            ])
+                            ->manageOptionForm([
+                                Forms\Components\TextInput::make('nama_kategori_unduhan')
+                                    ->label('Nama Kategori')
+                                    ->required()
+                                    ->maxLength(50),
+                            ]),
+
+                        Forms\Components\Select::make('id_user')
+                            ->label('Pengunggah')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(100)
+                            ->unique(ignoreRecord: true)
+                            ->dehydrated()
+                            ->helperText('Akan terisi otomatis berdasarkan nama unduhan'),
+                    ]),
+
+                Forms\Components\Section::make('File & Konten')
+                    ->schema([
+                        Forms\Components\FileUpload::make('thumbnail_unduhan')
+                            ->label('Gambar Thumbnail')
+                            ->image()
+                            ->multiple()
+                            ->reorderable()
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('16:9')
+                            ->directory('unduhan-thumbnails')
+                            ->helperText('Upload gambar thumbnail (opsional)')
+                            ->disk('public')
+                            ->columnSpanFull(),
+
+                        Forms\Components\FileUpload::make('lokasi_file')
+                            ->label('File Unduhan')
+                            ->directory('unduhan-files')
+                            ->acceptedFileTypes(['application/pdf', 'application/zip', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'])
+                            ->maxSize(10240) // 10MB
+                            ->required()
+                            ->disk('public')
+                            ->downloadable()
+                            ->helperText('Upload file untuk diunduh (format: pdf, doc, docx, xls, xlsx, ppt, pptx, zip)'),
+
+                        Forms\Components\RichEditor::make('deskripsi')
+                            ->label('Deskripsi Unduhan')
+                            ->fileAttachmentsDisk('public')
+                            ->fileAttachmentsDirectory('unduhan-attachments')
+                            ->columnSpanFull(),
+
+                        Forms\Components\TextInput::make('jumlah_unduhan')
+                            ->label('Jumlah Unduhan')
+                            ->numeric()
+                            ->default(0)
+                            ->disabled()
+                            ->dehydrated()
+                            ->helperText('Jumlah ini akan bertambah otomatis ketika file diunduh'),
+                    ]),
             ]);
     }
 
@@ -51,35 +119,69 @@ class UnduhanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_kategori_unduhan')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('id_user')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\ImageColumn::make('thumbnail_unduhan')
+                    ->label('Thumbnail')
+                    ->circular()
+                    ->stacked()
+                    ->limit(1)
+                    ->disk('public'),
+
                 Tables\Columns\TextColumn::make('nama_unduhan')
+                    ->label('Nama Unduhan')
+                    ->searchable()
+                    ->sortable()
+                    ->limit(30),
+
+                Tables\Columns\TextColumn::make('kategoriUnduhan.nama_kategori_unduhan')
+                    ->label('Kategori')
+                    ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
+
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Pengunggah')
+                    ->sortable()
                     ->searchable(),
+
                 Tables\Columns\TextColumn::make('lokasi_file')
-                    ->searchable(),
+                    ->label('File')
+                    ->searchable()
+                    ->toggleable(),
+
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
+                    ->label('Jumlah Unduhan')
                     ->numeric()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Dibuat Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('id_kategori_unduhan')
+                    ->label('Kategori')
+                    ->relationship('kategoriUnduhan', 'nama_kategori_unduhan'),
+
+                Tables\Filters\SelectFilter::make('id_user')
+                    ->label('Pengunggah')
+                    ->relationship('user', 'name'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('download')
+                    ->label('Unduh')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn(Unduhan $record) => url('storage/' . $record->lokasi_file))
+                    ->openUrlInNewTab()
+                    ->action(fn(Unduhan $record) => $record->incrementDownloadCount()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -33,6 +33,7 @@ class Galeri extends Model
         'judul_galeri',
         'visualisasi_galeri',
         'deskripsi_galeri',
+        'slug',
     ];
 
     /**
