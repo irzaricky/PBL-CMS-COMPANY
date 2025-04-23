@@ -76,18 +76,6 @@ class UnduhanResource extends Resource
 
                 Forms\Components\Section::make('File & Konten')
                     ->schema([
-                        Forms\Components\FileUpload::make('thumbnail_unduhan')
-                            ->label('Gambar Thumbnail')
-                            ->image()
-                            ->multiple()
-                            ->reorderable()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
-                            ->directory('unduhan-thumbnails')
-                            ->helperText('Upload gambar thumbnail (opsional)')
-                            ->disk('public')
-                            ->columnSpanFull(),
-
                         Forms\Components\FileUpload::make('lokasi_file')
                             ->label('File Unduhan')
                             ->directory('unduhan-files')
@@ -119,13 +107,6 @@ class UnduhanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_unduhan')
-                    ->label('Thumbnail')
-                    ->circular()
-                    ->stacked()
-                    ->limit(1)
-                    ->disk('public'),
-
                 Tables\Columns\TextColumn::make('nama_unduhan')
                     ->label('Nama Unduhan')
                     ->searchable()

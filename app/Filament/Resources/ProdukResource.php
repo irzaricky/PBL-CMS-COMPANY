@@ -48,7 +48,7 @@ class ProdukResource extends Resource
                                     ->maxLength(50),
                                 Forms\Components\Textarea::make('deskripsi')
                                     ->label('Deskripsi')
-                                    ->maxLength(200),   
+                                    ->maxLength(200),
                             ])
                             ->editOptionForm([
                                 Forms\Components\TextInput::make('nama_kategori_produk')
