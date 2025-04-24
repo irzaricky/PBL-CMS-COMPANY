@@ -99,7 +99,12 @@ class EventResource extends Resource
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
                                     ->native(false)
-                                    ->minDate(now()),
+                                    ->minDate(now())
+                                    ->helperText('Waktu mulai harus diisi terlebih dahulu')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, callable $set) {
+                                        $set('waktu_end_event', null);
+                                    }),
 
                                 Forms\Components\DateTimePicker::make('waktu_end_event')
                                     ->label('Waktu Selesai')
@@ -107,7 +112,9 @@ class EventResource extends Resource
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
                                     ->native(false)
-                                    ->after('waktu_start_event'),
+                                    ->minDate(fn(callable $get) => $get('waktu_start_event') ?: now())
+                                    ->helperText('Waktu selesai harus setelah waktu mulai')
+                                    ->disabled(fn(callable $get) => !$get('waktu_start_event')),
                             ]),
                     ]),
 
