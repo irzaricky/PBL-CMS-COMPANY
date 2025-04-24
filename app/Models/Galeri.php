@@ -31,9 +31,13 @@ class Galeri extends Model
         'id_user',
         'id_kategori_galeri',
         'judul_galeri',
-        'visualisasi_galeri',
+        'thumbnail_galeri',
         'deskripsi_galeri',
         'slug',
+    ];
+
+    protected $casts = [
+        'thumbnail_galeri' => 'array',
     ];
 
     /**

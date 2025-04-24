@@ -73,7 +73,6 @@ class ProdukResource extends Resource
                             ->label('Harga Produk')
                             ->required()
                             ->maxLength(50)
-                            ->prefix('Rp')
                             ->placeholder('0'),
 
                         Forms\Components\TextInput::make('slug')

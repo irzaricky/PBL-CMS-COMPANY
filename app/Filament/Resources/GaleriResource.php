@@ -86,7 +86,7 @@ class GaleriResource extends Resource
 
                 Forms\Components\Section::make('Media & Konten')
                     ->schema([
-                        Forms\Components\FileUpload::make('visualisasi_galeri')
+                        Forms\Components\FileUpload::make('thumbnail_galeri')
                             ->label('Gambar Galeri')
                             ->image()
                             ->multiple()
@@ -113,7 +113,7 @@ class GaleriResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('visualisasi_galeri')
+                Tables\Columns\ImageColumn::make('thumbnail_galeri')
                     ->label('Gambar')
                     ->circular()
                     ->stacked()
