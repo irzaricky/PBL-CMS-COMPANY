@@ -31,9 +31,12 @@ class ArtikelResource extends Resource
                             ->required()
                             ->maxLength(100)
                             ->live(onBlur: true)
-                            ->reactive()
-                            ->afterStateUpdated(function (string $state, callable $set) {
-                                $set('slug', str($state)->slug());
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if (!empty($state)) {
+                                    $set('slug', str($state)->slug());
+                                } else {
+                                    $set('slug', null);
+                                }
                             }),
 
                         Forms\Components\Select::make('id_kategori_artikel')
@@ -73,6 +76,7 @@ class ArtikelResource extends Resource
                         Forms\Components\Select::make('id_user')
                             ->label('Penulis')
                             ->relationship('user', 'name')
+                            ->default(fn() => auth()->id())
                             ->searchable()
                             ->preload()
                             ->required(),

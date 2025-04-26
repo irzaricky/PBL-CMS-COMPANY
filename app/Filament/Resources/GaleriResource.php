@@ -30,8 +30,12 @@ class GaleriResource extends Resource
                             ->required()
                             ->maxLength(200)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function (string $state, callable $set) {
-                                $set('slug', str($state)->slug());
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if (!empty($state)) {
+                                    $set('slug', str($state)->slug());
+                                } else {
+                                    $set('slug', null);
+                                }
                             }),
 
                         Forms\Components\Select::make('id_kategori_galeri')
@@ -72,6 +76,7 @@ class GaleriResource extends Resource
                         Forms\Components\Select::make('id_user')
                             ->label('Pengunggah')
                             ->relationship('user', 'name')
+                            ->default(fn() => auth()->id())
                             ->searchable()
                             ->preload()
                             ->required(),

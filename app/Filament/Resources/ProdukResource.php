@@ -31,8 +31,12 @@ class ProdukResource extends Resource
                             ->required()
                             ->maxLength(100)
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function (string $state, callable $set) {
-                                $set('slug', str($state)->slug());
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if (!empty($state)) {
+                                    $set('slug', str($state)->slug());
+                                } else {
+                                    $set('slug', null);
+                                }
                             }),
 
                         Forms\Components\Select::make('id_kategori_produk')
