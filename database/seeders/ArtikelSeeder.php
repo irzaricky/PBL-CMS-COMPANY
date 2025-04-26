@@ -17,7 +17,7 @@ class ArtikelSeeder extends Seeder
         // generate 20 artikel menggunakan faker
         for ($i = 1; $i <= 20; $i++) {
             // Judul artikel
-            $judul = $faker->sentence(rand(4, 8));
+            $judul = Faker::create('en_US')->bs();
 
             // Generate konten HTML
             $konten = $this->generateArtikelContent($faker);

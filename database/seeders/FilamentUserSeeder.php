@@ -4,11 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Str;
-use Faker\Factory as Faker;
 
 class FilamentUserSeeder extends Seeder
 {
@@ -17,89 +13,84 @@ class FilamentUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create admin user
+        // Admin user
         $adminUser = User::create([
             'name' => 'John Admin',
-            'status_kepegawaian' => 'Tetap',
             'email' => 'admin@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
             'email_verified_at' => now(),
-            'password' => Hash::make('password123'),
-            'remember_token' => Str::random(10),
         ]);
+        $adminUser->assignRole('super_admin');
 
-        // Create Director user
+
+        // Director user
         $directorUser = User::create([
             'name' => 'John Director',
-            'status_kepegawaian' => 'Tetap',
             'email' => 'director@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
             'email_verified_at' => now(),
-            'password' => Hash::make('password123'),
-            'remember_token' => Str::random(10),
+        ]);
+        $directorUser->assignRole('Director');
+
+
+        // Content Management users
+        $editor1 = User::create([
+            'name' => 'John Editor',
+            'email' => 'editor1@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
+            'email_verified_at' => now(),
         ]);
 
-        // Create Content Manager users with unique emails
-        $contentManagers = [
-            [
-                'name' => 'John Editor',
-                'email' => 'editor1@example.com',
-            ],
-            [
-                'name' => 'Johny Editor',
-                'email' => 'editor2@example.com',
-            ],
-            [
-                'name' => 'Johnes Editor',
-                'email' => 'editor3@example.com',
-            ],
-        ];
+        $editor2 = User::create([
+            'name' => 'Johny Editor',
+            'email' => 'editor2@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
+            'email_verified_at' => now(),
+        ]);
 
-        $contentManagerUsers = [];
-        foreach ($contentManagers as $manager) {
-            $user = User::create([
-                'name' => $manager['name'],
-                'status_kepegawaian' => 'Tetap',
-                'email' => $manager['email'],
-                'email_verified_at' => now(),
-                'password' => Hash::make('password123'),
-                'remember_token' => Str::random(10),
-            ]);
-            $user->assignRole('Content Management');
-            $contentManagerUsers[] = $user;
-        }
+        $editor3 = User::create([
+            'name' => 'Johnes Editor',
+            'email' => 'editor3@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
+            'email_verified_at' => now(),
+        ]);
+
+        $editor1->assignRole('Content Management');
+        $editor2->assignRole('Content Management');
+        $editor3->assignRole('Content Management');
 
 
-        // Create Customer Service users with unique emails
-        $customerServices = [
-            [
-                'name' => 'John Customer Service',
-                'email' => 'cs1@example.com',
-            ],
-            [
-                'name' => 'Johny Customer Service',
-                'email' => 'cs2@example.com',
-            ],
-            [
-                'name' => 'Johnes Customer Service',
-                'email' => 'cs3@example.com',
-            ],
-        ];
+        // Customer Service users
+        $cs1 = User::create([
+            'name' => 'John Customer Service',
+            'email' => 'cs1@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
+            'email_verified_at' => now(),
+        ]);
 
-        $customerServiceUsers = [];
-        foreach ($customerServices as $cs) {
-            $user = User::create([
-                'name' => $cs['name'],
-                'status_kepegawaian' => 'Tetap',
-                'email' => $cs['email'],
-                'email_verified_at' => now(),
-                'password' => Hash::make('password123'),
-                'remember_token' => Str::random(10),
-            ]);
-            $user->assignRole('Customer Service');
-            $customerServiceUsers[] = $user;
-        }
+        $cs2 = User::create([
+            'name' => 'Johny Customer Service',
+            'email' => 'cs2@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
+            'email_verified_at' => now(),
+        ]);
 
-        // Assign roles to admin and director
-        $adminUser->assignRole('super_admin');
-        $directorUser->assignRole('Director');
+        $cs3 = User::create([
+            'name' => 'Johnes Customer Service',
+            'email' => 'cs3@example.com',
+            'password' => bcrypt('password123'),
+            'status_kepegawaian' => 'Tetap',
+            'email_verified_at' => now(),
+        ]);
+        $cs1->assignRole('Customer Service');
+        $cs2->assignRole('Customer Service');
+        $cs3->assignRole('Customer Service');
     }
 }

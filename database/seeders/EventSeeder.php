@@ -11,7 +11,7 @@ class EventSeeder extends Seeder
 {
     public function run(): void
     {
-        // Gunakan faker default (en_US) untuk bs
+        // Gunakan faker default (en_US) untuk bs atau catchprase
         $fakerEN = Faker::create('en_US');
         // Gunakan faker Indonesia untuk data lainnya
         $faker = Faker::create('id_ID');
@@ -20,7 +20,6 @@ class EventSeeder extends Seeder
 
         // Generate 20 event dengan Faker
         for ($i = 1; $i <= 20; $i++) {
-            // Gunakan bs atau words untuk nama event
             $namaEvent = $fakerEN->bs();
             $startDate = $faker->dateTimeBetween('-2 months', '+6 months');
             $endDate = clone $startDate;
@@ -36,7 +35,6 @@ class EventSeeder extends Seeder
                 $lokasi = $faker->company() . ', ' . $faker->city();
             }
 
-            // Generate deskripsi sebagai teks biasa
             $deskripsi = $this->generateEventDescription($faker, $fakerEN);
 
             $events[] = [
@@ -54,7 +52,6 @@ class EventSeeder extends Seeder
             ];
         }
 
-        // Masukkan semua data ke database
         DB::table('event')->insert($events);
     }
 

@@ -18,7 +18,7 @@ class KontenSliderSeeder extends Seeder
                 'id_lowongan' => null,
                 'id_event' => 1,
                 'id_artikel' => 1,
-                'judul_header' => 'Slider 1',
+                'judul_header' => 'Slider Utama',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

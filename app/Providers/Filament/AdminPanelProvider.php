@@ -31,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Plus jakarta Sans')
             ->registration()
             ->colors([
-                'primary' => '#6E7EA1',
+                'primary' => '#3b82f6',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

@@ -21,8 +21,6 @@ class LowonganSeeder extends Seeder
                 'tanggal_ditutup' => now()->addDays(30),
                 'status_lowongan' => 'dibuka',
                 'tenaga_dibutuhkan' => 2,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'id_lowongan' => 2,
@@ -35,8 +33,6 @@ class LowonganSeeder extends Seeder
                 'tanggal_ditutup' => now()->addDays(14),
                 'status_lowongan' => 'dibuka',
                 'tenaga_dibutuhkan' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
             [
                 'id_lowongan' => 3,
@@ -49,8 +45,6 @@ class LowonganSeeder extends Seeder
                 'tanggal_ditutup' => now()->addDays(7),
                 'status_lowongan' => 'dibuka',
                 'tenaga_dibutuhkan' => 3,
-                'created_at' => now(),
-                'updated_at' => now(),
             ],
         ]);
     }
