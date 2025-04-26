@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id('id_testimoni');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->text('isi_testimoni');
-            $table->string('thumbnail_testimoni', 100);
+            $table->json('thumbnail_testimoni')->nullable();
             $table->tinyInteger('rating')->unsigned()->comment('Rating dari 1-5');
             $table->timestamps();
         });

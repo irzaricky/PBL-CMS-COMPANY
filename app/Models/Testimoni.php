@@ -34,6 +34,10 @@ class Testimoni extends Model
         'rating',
     ];
 
+    protected $casts = [
+        'thumbnail_testimoni' => 'array',
+    ];
+
     /**
      * Get the user that created this testimonial.
      */
