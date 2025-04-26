@@ -100,15 +100,14 @@ class EventResource extends Resource
                                 Forms\Components\DateTimePicker::make('waktu_start_event')
                                     ->label('Waktu Mulai')
                                     ->required()
+                                    ->default(now())
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
                                     ->native(false)
-                                    ->minDate(now())
-                                    ->helperText('Waktu mulai harus diisi terlebih dahulu')
-                                    ->live()
-                                    ->afterStateUpdated(function ($state, callable $set) {
-                                        $set('waktu_end_event', null);
-                                    }),
+                                    ->minDate(fn($record) => $record ? null : now())
+                                    ->validationMessages([
+                                        'after_or_equal' => 'waktu mulai event harus sebelum waktu selesai event.',
+                                    ]),
 
                                 Forms\Components\DateTimePicker::make('waktu_end_event')
                                     ->label('Waktu Selesai')
@@ -116,9 +115,10 @@ class EventResource extends Resource
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
                                     ->native(false)
-                                    ->minDate(fn(callable $get) => $get('waktu_start_event') ?: now())
-                                    ->helperText('Waktu selesai harus setelah waktu mulai')
-                                    ->disabled(fn(callable $get) => !$get('waktu_start_event')),
+                                    ->afterOrEqual('waktu_start_event')
+                                    ->validationMessages([
+                                        'after_or_equal' => 'waktu selesai event tidak boleh sebelum tanggal mulai event.',
+                                    ]),
                             ]),
                     ]),
 

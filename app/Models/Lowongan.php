@@ -49,6 +49,7 @@ class Lowongan extends Model
         'tanggal_dibuka' => 'date',
         'tanggal_ditutup' => 'date',
         'gaji' => 'decimal:2',
+        'thumbnail_lowongan' => 'array',
     ];
 
     /**

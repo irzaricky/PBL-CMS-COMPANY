@@ -12,29 +12,71 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Collection;
 
 class LamaranResource extends Resource
 {
     protected static ?string $model = Lamaran::class;
     protected static ?string $navigationGroup = 'Customer Service';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+    protected static ?string $recordTitleAttribute = 'id_lamaran';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_user')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('id_lowongan')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('cv')
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('portfolio')
-                    ->maxLength(200),
-                Forms\Components\TextInput::make('status_lamaran')
-                    ->required(),
+                Forms\Components\Section::make('Informasi Pelamar')
+                    ->schema([
+                        Forms\Components\Select::make('id_user')
+                            ->label('Pelamar')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->disabled(),
+
+
+                        Forms\Components\Select::make('id_lowongan')
+                            ->label('Lowongan')
+                            ->relationship('lowongan', 'judul_lowongan')
+                            ->searchable()
+                            ->preload()
+                            ->disabled(),
+                    ]),
+
+                Forms\Components\Section::make('Dokumen Pelamar')
+                    ->schema([
+                        Forms\Components\FileUpload::make('cv')
+                            ->label('Curriculum Vitae (CV)')
+                            ->directory('lamaran-cv')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->maxSize(5120)
+                            ->disk('public')
+                            ->downloadable()
+                            ->disabled(),
+
+
+                        Forms\Components\FileUpload::make('portfolio')
+                            ->label('Portfolio')
+                            ->directory('lamaran-portfolio')
+                            ->acceptedFileTypes(['application/pdf'])
+                            ->maxSize(10240)
+                            ->disk('public')
+                            ->downloadable()
+                            ->disabled(),
+                    ]),
+
+                Forms\Components\Section::make('Status Lamaran')
+                    ->schema([
+                        Forms\Components\Select::make('status_lamaran')
+                            ->label('Status')
+                            ->options([
+                                'Diproses' => 'Diproses',
+                                'Diterima' => 'Diterima',
+                                'Ditolak' => 'Ditolak',
+                            ])
+                            ->default('Diproses')
+                            ->required(),
+                    ]),
             ]);
     }
 
@@ -42,35 +84,94 @@ class LamaranResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_user')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Pelamar')
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('id_lowongan')
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('cv')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('portfolio')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('status_lamaran'),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+
+                Tables\Columns\TextColumn::make('lowongan.judul_lowongan')
+                    ->label('Lowongan')
+                    ->searchable()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->limit(50),
+
+                Tables\Columns\IconColumn::make('cv')
+                    ->label('CV')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-document')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->state(fn(Lamaran $record): bool => !empty($record->cv)),
+
+                Tables\Columns\IconColumn::make('portfolio')
+                    ->label('Portfolio')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-document')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->state(fn(Lamaran $record): bool => !empty($record->portfolio)),
+
+                Tables\Columns\BadgeColumn::make('status_lamaran')
+                    ->label('Status')
+                    ->colors([
+                        'primary' => 'Diproses',
+                        'success' => 'Diterima',
+                        'danger' => 'Ditolak',
+                    ]),
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Lamaran')
+                    ->dateTime('d M Y H:i')
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status_lamaran')
+                    ->label('Status')
+                    ->options([
+                        'Diproses' => 'Diproses',
+                        'Diterima' => 'Diterima',
+                        'Ditolak' => 'Ditolak',
+                    ]),
+
+                Tables\Filters\SelectFilter::make('id_lowongan')
+                    ->label('Lowongan')
+                    ->relationship('lowongan', 'judul_lowongan'),
+
+                Tables\Filters\SelectFilter::make('id_user')
+                    ->label('Pelamar')
+                    ->relationship('user', 'name'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\BulkAction::make('updateStatus')
+                        ->label('Update Status')
+                        ->icon('heroicon-o-check-circle')
+                        ->form([
+                            Forms\Components\Select::make('status_lamaran')
+                                ->label('Status Baru')
+                                ->options([
+                                    'Diproses' => 'Diproses',
+                                    'Diterima' => 'Diterima',
+                                    'Ditolak' => 'Ditolak',
+                                ])
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'status_lamaran' => $data['status_lamaran'],
+                                ]);
+                            }
+                        }),
                 ]),
             ]);
     }

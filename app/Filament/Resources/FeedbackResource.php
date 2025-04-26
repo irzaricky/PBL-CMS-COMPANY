@@ -17,25 +17,48 @@ class FeedbackResource extends Resource
 {
     protected static ?string $model = Feedback::class;
     protected static ?string $navigationGroup = 'Customer Service';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_user')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('subjek_feedback')
-                    ->required()
-                    ->maxLength(200),
-                Forms\Components\Textarea::make('isi_feedback')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\DatePicker::make('tanggal_feedback')
-                    ->required(),
-                Forms\Components\Textarea::make('tanggapan_feedback')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Informasi Feedback')
+                    ->schema([
+                        Forms\Components\Select::make('id_user')
+                            ->label('Pengguna')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->disabled(),
+
+                        Forms\Components\TextInput::make('subjek_feedback')
+                            ->label('Subjek')
+                            ->required()
+                            ->maxLength(200)
+                            ->disabled(),
+
+                        Forms\Components\DatePicker::make('tanggal_feedback')
+                            ->label('Tanggal Feedback')
+                            ->required()
+                            ->default(now())
+                            ->displayFormat('d F Y')
+                            ->disabled(),
+
+                        Forms\Components\RichEditor::make('isi_feedback')
+                            ->label('Isi Feedback')
+                            ->required()
+                            ->columnSpanFull()
+                            ->disabled(),
+                    ]),
+
+                Forms\Components\Section::make('Tanggapan Admin')
+                    ->schema([
+                        Forms\Components\RichEditor::make('tanggapan_feedback')
+                            ->label('Tanggapan')
+                            ->placeholder('Masukkan tanggapan untuk feedback ini')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -43,27 +66,61 @@ class FeedbackResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_user')
-                    ->numeric()
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Pengguna')
+                    ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('subjek_feedback')
-                    ->searchable(),
+                    ->label('Subjek')
+                    ->searchable()
+                    ->limit(50),
+
                 Tables\Columns\TextColumn::make('tanggal_feedback')
-                    ->date()
+                    ->label('Tanggal')
+                    ->date('d F Y')
                     ->sortable(),
+
+                Tables\Columns\IconColumn::make('tanggapan_feedback')
+                    ->label('Ditanggapi')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->state(fn(Feedback $record): bool => !empty($record->tanggapan_feedback)),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Dibuat Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('status_tanggapan')
+                    ->label('Status Tanggapan')
+                    ->options([
+                        'responded' => 'Sudah Ditanggapi',
+                        'pending' => 'Belum Ditanggapi',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return match ($data['value']) {
+                            'responded' => $query->whereNotNull('tanggapan_feedback'),
+                            'pending' => $query->whereNull('tanggapan_feedback'),
+                            default => $query,
+                        };
+                    }),
+
+                Tables\Filters\SelectFilter::make('id_user')
+                    ->label('Pengguna')
+                    ->relationship('user', 'name'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
