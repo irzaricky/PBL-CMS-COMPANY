@@ -31,10 +31,20 @@ class ProfilPerusahaan extends Model
     protected $fillable = [
         'id_galeri',
         'nama_perusahaan',
+        'thumbnail_perusahaan',
         'logo_perusahaan',
         'deskripsi_perusahaan',
         'alamat_perusahaan',
         'email_perusahaan',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'thumbnail_perusahaan' => 'array',
     ];
 
     /**
