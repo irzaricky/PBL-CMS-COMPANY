@@ -34,6 +34,7 @@ class Artikel extends Model
         'thumbnail_artikel',
         'judul_artikel',
         'konten_artikel',
+        'jumlah_view',
         'slug',
     ];
 
@@ -63,5 +64,10 @@ class Artikel extends Model
     public function kontenSliders()
     {
         return $this->hasMany(KontenSlider::class, 'id_artikel', 'id_artikel');
+    }
+
+    public function UpdateViewCount()
+    {
+        $this->increment('jumlah_view');
     }
 }

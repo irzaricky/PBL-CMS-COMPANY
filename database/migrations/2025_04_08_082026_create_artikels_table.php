@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->json('thumbnail_artikel')->nullable();
             $table->string('judul_artikel', 100);
             $table->text('konten_artikel');
+            $table->integer('jumlah_view')->default(0);
             $table->string('slug', 100)->unique();
             $table->timestamps();
         });

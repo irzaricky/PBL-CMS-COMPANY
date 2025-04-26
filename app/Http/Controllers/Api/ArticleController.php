@@ -24,7 +24,7 @@ class ArticleController extends Controller
                 ->orderBy('created_at', 'desc');
 
             // Filter berdasarkan kategori jika ada parameter category_id
-            if ($request->has('category_id') && !empty($request->category_id)) {
+            if ($request->has('category_id')) {
                 $query->where('id_kategori_artikel', $request->category_id);
             }
 
@@ -53,6 +53,7 @@ class ArticleController extends Controller
                 ->where('slug', $slug)
                 ->firstOrFail();
 
+            $article->UpdateViewCount();
             return new ArticleViewResource($article);
         } catch (\Exception $e) {
             return response()->json([
