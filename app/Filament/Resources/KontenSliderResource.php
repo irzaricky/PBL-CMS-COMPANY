@@ -86,7 +86,7 @@ class KontenSliderResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('judul_header')
-                    ->label('Judul')
+                    ->label('Judul Header')
                     ->searchable()
                     ->sortable()
                     ->limit(30),
@@ -95,47 +95,6 @@ class KontenSliderResource extends Resource
                     ->label('Pembuat')
                     ->searchable()
                     ->sortable(),
-
-                Tables\Columns\TextColumn::make('kontenType')
-                    ->label('Tipe Konten')
-                    ->getStateUsing(function (KontenSlider $record): string {
-                        if ($record->id_artikel)
-                            return 'Artikel';
-                        if ($record->id_galeri)
-                            return 'Galeri';
-                        if ($record->id_event)
-                            return 'Event';
-                        if ($record->id_produk)
-                            return 'Produk';
-                        if ($record->id_lowongan)
-                            return 'Lowongan';
-                        return 'Tidak ada';
-                    }),
-
-                Tables\Columns\TextColumn::make('kontenJudul')
-                    ->label('Judul Konten')
-                    ->getStateUsing(function (KontenSlider $record): ?string {
-                        if ($record->artikel)
-                            return $record->artikel->judul_artikel;
-                        if ($record->galeri)
-                            return $record->galeri->judul_galeri;
-                        if ($record->event)
-                            return $record->event->nama_event;
-                        if ($record->produk)
-                            return $record->produk->nama_produk;
-                        if ($record->lowongan)
-                            return $record->lowongan->judul_lowongan;
-                        return null;
-                    })
-                    ->searchable(query: function (Builder $query, string $search): Builder {
-                        return $query->where(function (Builder $query) use ($search) {
-                            $query->whereHas('artikel', fn($q) => $q->where('judul_artikel', 'like', "%{$search}%"))
-                                ->orWhereHas('galeri', fn($q) => $q->where('judul_galeri', 'like', "%{$search}%"))
-                                ->orWhereHas('event', fn($q) => $q->where('nama_event', 'like', "%{$search}%"))
-                                ->orWhereHas('produk', fn($q) => $q->where('nama_produk', 'like', "%{$search}%"))
-                                ->orWhereHas('lowongan', fn($q) => $q->where('judul_lowongan', 'like', "%{$search}%"));
-                        });
-                    }),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -195,7 +154,7 @@ class KontenSliderResource extends Resource
     {
         return [
             'index' => Pages\ListKontenSliders::route('/'),
-            'create' => Pages\CreateKontenSlider::route('/create'),
+            // 'create' => Pages\CreateKontenSlider::route('/create'),
             'edit' => Pages\EditKontenSlider::route('/{record}/edit'),
         ];
     }

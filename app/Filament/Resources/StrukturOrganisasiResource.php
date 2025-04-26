@@ -17,18 +17,42 @@ class StrukturOrganisasiResource extends Resource
 {
     protected static ?string $model = StrukturOrganisasi::class;
     protected static ?string $navigationGroup = 'Company Management';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-users';
+    protected static ?string $recordTitleAttribute = 'deskripsi';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id_user')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('deskripsi')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make('Informasi Posisi')
+                    ->schema([
+                        Forms\Components\Select::make('id_user')
+                            ->label('Pengguna')
+                            ->relationship('user', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->helperText('Pilih pengguna yang menempati posisi ini'),
+
+                        Forms\Components\TextInput::make('deskripsi')
+                            ->label('Posisi/Jabatan')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Contoh: Direktur Utama, Manager, dsb'),
+                    ]),
+
+                Forms\Components\Section::make('Media')
+                    ->schema([
+                        Forms\Components\FileUpload::make('thumbnail_struktur_organisasi')
+                            ->label('Foto Profil')
+                            ->image()
+                            ->multiple(false)
+                            ->imageResizeMode('cover')
+                            ->imageCropAspectRatio('1:1')
+                            ->directory('struktur-organisasi-images')
+                            ->disk('public')
+                            ->helperText('Unggah foto profil posisi ini (format: jpg, png)'),
+                    ]),
             ]);
     }
 
@@ -36,24 +60,39 @@ class StrukturOrganisasiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id_user')
-                    ->numeric()
+                Tables\Columns\ImageColumn::make('thumbnail_struktur_organisasi')
+                    ->label('Foto')
+                    ->circular()
+                    ->disk('public'),
+
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Nama')
+                    ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('deskripsi')
-                    ->searchable(),
+                    ->label('Posisi/Jabatan')
+                    ->searchable()
+                    ->sortable(),
+
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Dibuat Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui Pada')
+                    ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('deskripsi', 'asc')
             ->filters([
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
