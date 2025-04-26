@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ShieldSeeder::class,
             FilamentUserSeeder::class,
+            DummyUser::class,
             KategoriUnduhanSeeder::class,
             KategoriProdukSeeder::class,
             KategoriGaleriSeeder::class,
@@ -38,8 +39,6 @@ class DatabaseSeeder extends Seeder
             KontenSliderSeeder::class,
             MitraSeeder::class,
             StrukturOrganisasiSeeder::class,
-
-
         ]);
     }
 }

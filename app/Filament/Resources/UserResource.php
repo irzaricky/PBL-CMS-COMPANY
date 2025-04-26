@@ -38,8 +38,8 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('password')
                             ->label('Password')
                             ->password()
-                            ->required(fn (string $operation): bool => $operation === 'create')
-                            ->dehydrated(fn ($state) => filled($state))
+                            ->required(fn(string $operation): bool => $operation === 'create')
+                            ->dehydrated(fn($state) => filled($state))
                             ->maxLength(72)
                             ->disabled(),
                         Forms\Components\Select::make('roles')
@@ -48,7 +48,7 @@ class UserResource extends Resource
                             ->preload()
                             ->searchable(),
                     ]),
-                
+
                 Forms\Components\Section::make('Data Pribadi')
                     ->schema([
                         Forms\Components\FileUpload::make('foto_profil')
@@ -77,10 +77,10 @@ class UserResource extends Resource
                             ->native(false)
                             ->maxDate(now()),
                     ]),
-                    
+
                 Forms\Components\Section::make('Informasi Kepegawaian')
                     ->schema([
-                        Forms\Components\DatePicker::make('tanggal_registrasi')
+                        Forms\Components\DatePicker::make('created_at')
                             ->label('Tanggal Registrasi')
                             ->required()
                             ->displayFormat('d F Y')
@@ -118,7 +118,7 @@ class UserResource extends Resource
                     ->label('Tanggal Lahir')
                     ->date('d F Y')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tanggal_registrasi')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date('d F Y')
                     ->sortable(),
@@ -131,9 +131,10 @@ class UserResource extends Resource
                         'danger' => 'Percobaan',
                     ]),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Tanggal Registrasi')
+                    ->date()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
                     ->sortable()

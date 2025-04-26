@@ -21,8 +21,7 @@ return new class extends Migration {
             $table->string('no_hp', 15)->nullable();
             $table->string('nik', 16)->nullable();
             $table->date('tanggal_lahir')->nullable();
-            $table->date('tanggal_registrasi')->nullable();
-            $table->enum('status_kepegawaian', ['Tetap', 'Kontrak', 'Magang', 'Percobaan'])->nullable();
+            $table->enum('status_kepegawaian', ['Tetap', 'Kontrak', 'Magang'])->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();

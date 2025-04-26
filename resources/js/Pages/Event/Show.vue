@@ -340,7 +340,7 @@ const daysRemaining = computed(() => {
                             Event Details
                         </h2>
                         <div class="prose prose-lg max-w-none">
-                            <p class="whitespace-pre-line">
+                            <p class="whitespace-pre-line text-justify">
                                 {{ event.deskripsi_event }}
                             </p>
                         </div>

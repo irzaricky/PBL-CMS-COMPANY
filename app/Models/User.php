@@ -37,7 +37,6 @@ class User extends Authenticatable
         'no_hp',
         'nik',
         'tanggal_lahir',
-        'tanggal_registrasi',
         'status_kepegawaian',
     ];
 
@@ -62,7 +61,6 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'tanggal_lahir' => 'date',
-            'tanggal_registrasi' => 'date',
         ];
     }
 }

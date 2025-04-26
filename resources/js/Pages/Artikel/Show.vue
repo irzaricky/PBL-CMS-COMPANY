@@ -294,7 +294,9 @@ function formatDate(date) {
                     </div>
 
                     <!-- Article content using @tailwindcss/typography -->
-                    <div class="prose prose-lg prose-blue mx-auto max-w-none">
+                    <div
+                        class="prose prose-lg prose-blue mx-auto max-w-none text-justify"
+                    >
                         <div v-html="article.konten_artikel"></div>
                     </div>
                 </div>
