@@ -12,7 +12,9 @@ const showingNavigationDropdown = ref(false);
 
     <!-- Main Content (dynamic content) -->
     <main>
-      <slot></slot>
+      <slot>
+        
+      </slot>
     </main>
 
     <!-- Footer -->

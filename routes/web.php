@@ -33,8 +33,12 @@ Route::get('/', function () {
     return Inertia::render('Home');
 });
 
+Route::get('/example', function () {
+    return Inertia::render('Example');
+});
+
 // Event
-Route::prefix('events')->group(function () {
+Route::prefix('event')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Event/ListView');
     });
