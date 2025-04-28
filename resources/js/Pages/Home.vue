@@ -30,6 +30,17 @@
                         Explore Articles
                     </a>
                 </div>
+
+                <div class="bg-blue-500 text-white p-6 rounded-lg shadow-lg">
+                    <h3 class="text-2xl font-semibold mb-4">Akses dasbor admin</h3>
+                    <p>Kelola konten di sini!</p>
+                    <a
+                        href="/admin"
+                        class="mt-4 inline-block px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                        Menuju admin
+                    </a>
+                </div>
             </div>
         </div>
     </AppLayout>

@@ -38,7 +38,7 @@
                         @click="toggleMegaMenu"
                     >
                         <a
-                            href="/"
+                            href="#"
                             class="relative font-bold text-black after:block after:content-[''] after:absolute after:h-[2px] after:bg-indigo-900 after:w-0 after:left-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300"
                         >
                             Lainnya
@@ -63,16 +63,20 @@
 
             <!-- Right side (Buttons) -->
             <div class="hidden md:flex gap-4 font-medium">
-                <button
-                    class="px-5 py-2 text-black bg-black/10 rounded-full hover:bg-black/20 transition"
-                >
-                    Lihat lebih banyak
-                </button>
-                <button
-                    class="px-5 py-2 text-white bg-indigo-900 rounded-full hover:bg-indigo-800 transition"
-                >
-                    Login
-                </button>
+                <a href="/" class="no-underline">
+                    <button
+                        class="px-5 py-2 text-black bg-black/10 rounded-full hover:bg-black/20 transition"
+                    >
+                        Lihat lebih banyak
+                    </button>
+                </a>
+                <a href="/register" class="no-underline">
+                    <button
+                        class="px-5 py-2 text-white bg-indigo-900 rounded-full hover:bg-indigo-800 transition"
+                    >
+                        Login
+                    </button>
+                </a>
             </div>
 
             <!-- Mobile Menu Button -->
