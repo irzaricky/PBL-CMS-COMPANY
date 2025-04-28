@@ -13,24 +13,36 @@
 
                 <!-- Desktop Links -->
                 <div
-                    class="hidden justify-between md:flex gap-8 items-center font-semibold text-black"
+                    class="hidden justify-between md:flex gap-8 items-center font-bold text-black"
                 >
-                    <a href="/" class="hover:text-indigo-900 transition"
-                        >Home</a
+                    <a
+                        href="/"
+                        class="relative font-bold text-black after:block after:content-[''] after:absolute after:h-[2px] after:bg-indigo-900 after:w-0 after:left-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300"
                     >
-                    <a href="/artikel" class="hover:text-indigo-900 transition"
-                        >Artikel</a
+                        Home
+                    </a>
+                    <a
+                        href="/artikel"
+                        class="relative font-bold text-black after:block after:content-[''] after:absolute after:h-[2px] after:bg-indigo-900 after:w-0 after:left-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300"
                     >
-                    <a href="/event" class="hover:text-indigo-900 transition"
-                        >Event</a
+                        Artikel
+                    </a>
+                    <a
+                        href="/event"
+                        class="relative font-bold text-black after:block after:content-[''] after:absolute after:h-[2px] after:bg-indigo-900 after:w-0 after:left-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300"
                     >
+                        Event
+                    </a>
                     <div
                         class="flex items-center gap-1 cursor-pointer"
                         @click="toggleMegaMenu"
                     >
-                        <a href="#" class="hover:text-indigo-900 transition"
-                            >Lainnya</a
+                        <a
+                            href="/"
+                            class="relative font-bold text-black after:block after:content-[''] after:absolute after:h-[2px] after:bg-indigo-900 after:w-0 after:left-0 after:bottom-0 hover:after:w-full after:transition-all after:duration-300"
                         >
+                            Lainnya
+                        </a>
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             class="h-4 w-4"
@@ -54,12 +66,12 @@
                 <button
                     class="px-5 py-2 text-black bg-black/10 rounded-full hover:bg-black/20 transition"
                 >
-                    Join
+                    Lihat lebih banyak
                 </button>
                 <button
                     class="px-5 py-2 text-white bg-indigo-900 rounded-full hover:bg-indigo-800 transition"
                 >
-                    View
+                    Login
                 </button>
             </div>
 
@@ -90,19 +102,19 @@
             class="flex flex-col gap-6 px-6 py-4 bg-[#F2F2F2] md:hidden"
         >
             <a
-                href="#"
-                class="font-bold text-black hover:text-indigo-900 transition"
-                >Home Page</a
+                href="/"
+                class="font-bold text-black hover:text-indigo-900 transition link-anim"
+                >Home</a
             >
             <a
-                href="#"
+                href="/artikel"
                 class="font-bold text-black hover:text-indigo-900 transition"
-                >About Us</a
+                >Artikel</a
             >
             <a
-                href="#"
+                href="/event"
                 class="font-bold text-black hover:text-indigo-900 transition"
-                >Our Services</a
+                >Event</a
             >
             <div
                 @click="toggleMegaMenu"
@@ -111,7 +123,7 @@
                 <a
                     href="#"
                     class="font-bold text-black hover:text-indigo-900 transition"
-                    >More Links</a
+                    >Lainnya</a
                 >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -144,7 +156,13 @@
         </div>
 
         <!-- Mega Menu -->
-        <MegaMenu v-if="showMegaMenu" />
+        <Transition
+            name="fade-slide"
+            enter-active-class="transition duration-300"
+            leave-active-class="transition duration-300"
+        >
+            <MegaMenu v-if="showMegaMenu" />
+        </Transition>
     </nav>
 </template>
 
@@ -170,3 +188,22 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+.fade-slide-enter-from {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+.fade-slide-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+}
+.fade-slide-leave-from {
+    opacity: 1;
+    transform: translateY(0);
+}
+.fade-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+</style>
