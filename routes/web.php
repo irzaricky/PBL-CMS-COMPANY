@@ -29,6 +29,9 @@ Route::prefix('artikel')->group(function () {
     });
 });
 
+Route::get('/', function () {
+    return Inertia::render('Home');
+});
 
 // Event
 Route::prefix('events')->group(function () {

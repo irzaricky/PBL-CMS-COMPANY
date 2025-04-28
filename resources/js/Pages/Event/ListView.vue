@@ -1,6 +1,7 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted, computed } from "vue";
+import Navbar from '@/Components/Navbar.vue';
 
 const events = ref([]);
 const loading = ref(true);
@@ -61,6 +62,7 @@ const upcomingEvents = computed(() => {
 </script>
 
 <template>
+    <Navbar />
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 class="text-3xl font-bold text-blue-900 mb-8">Events</h1>
 
