@@ -63,7 +63,7 @@
 
             <!-- Right side (Buttons) -->
             <div class="hidden md:flex gap-4 font-medium">
-                <a href="/" class="no-underline">
+                <a href="/example" class="no-underline">
                     <button
                         class="px-5 py-2 text-black bg-black/10 rounded-full hover:bg-black/20 transition"
                     >

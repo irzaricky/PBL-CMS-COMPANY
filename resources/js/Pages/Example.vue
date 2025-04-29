@@ -174,13 +174,14 @@ AOS.init();
                 </div>
             </div>
         </section>
+
         <section class="grid grid-cols-1 md:grid-cols-3 gap-6 p-10 bg-gray-100">
-            <!-- Card -->
+            <!-- Card 1 -->
             <div
                 class="relative group overflow-hidden rounded-lg shadow-lg bg-white"
             >
                 <img
-                    src="/image/placeholder.jpeg"
+                    src="/image/placeholder.webp"
                     alt="Gambar"
                     class="w-full h-60 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -189,10 +190,9 @@ AOS.init();
                 <div
                     class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-6"
                 >
-                    <!-- Icon -->
-                    <div class="text-white text-3xl mb-4">📚</div>
+                    <!-- Lucide Icon -->
+                    <Book class="text-white w-8 h-8 mb-4" />
 
-                    <!-- Text -->
                     <h3 class="text-white text-xl font-bold">Judul Card</h3>
                     <p class="text-white text-sm mt-1">
                         Deskripsi singkat tentang card ini.
@@ -200,12 +200,12 @@ AOS.init();
                 </div>
             </div>
 
-            <!-- Copy paste Card lagi -->
+            <!-- Card 2 -->
             <div
                 class="relative group overflow-hidden rounded-lg shadow-lg bg-white"
             >
                 <img
-                    src="https://via.placeholder.com/400x300"
+                    src="/image/placeholder.webp"
                     alt="Gambar"
                     class="w-full h-60 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -213,7 +213,7 @@ AOS.init();
                 <div
                     class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-6"
                 >
-                    <div class="text-white text-3xl mb-4">🎯</div>
+                    <Target class="text-white w-8 h-8 mb-4" />
                     <h3 class="text-white text-xl font-bold">Judul Card 2</h3>
                     <p class="text-white text-sm mt-1">
                         Deskripsi untuk card kedua.
@@ -221,11 +221,12 @@ AOS.init();
                 </div>
             </div>
 
+            <!-- Card 3 -->
             <div
                 class="relative group overflow-hidden rounded-lg shadow-lg bg-white"
             >
                 <img
-                    src="https://via.placeholder.com/400x300"
+                    src="/image/placeholder.webp"
                     alt="Gambar"
                     class="w-full h-60 object-cover group-hover:scale-110 transition-transform duration-500"
                 />
@@ -233,7 +234,7 @@ AOS.init();
                 <div
                     class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-6"
                 >
-                    <div class="text-white text-3xl mb-4">🚀</div>
+                    <Rocket class="text-white w-8 h-8 mb-4" />
                     <h3 class="text-white text-xl font-bold">Judul Card 3</h3>
                     <p class="text-white text-sm mt-1">
                         Deskripsi untuk card ketiga.
@@ -241,5 +242,6 @@ AOS.init();
                 </div>
             </div>
         </section>
+
     </div>
 </template>

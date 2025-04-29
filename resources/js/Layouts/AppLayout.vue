@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import Navbar from '@/Components/Navbar.vue';
+import Hero from '@/Components/Hero.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -9,6 +10,7 @@ const showingNavigationDropdown = ref(false);
   <div>
     <!-- Navbar -->
     <Navbar />
+    <Hero />
 
     <!-- Main Content (dynamic content) -->
     <main>

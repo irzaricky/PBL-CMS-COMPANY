@@ -208,7 +208,7 @@
             <article class="py-2 mt-4 w-full">
                 <img
                     src="\image\placeholder.webp"
-                    class="object-contain w-40 max-w-full aspect-[1.52]"
+                    class="object-contain w-40 max-w-full aspect-[1.52] rounded-lg"
                     alt="Blog image"
                 />
                 <div class="mt-4 w-full">
@@ -222,7 +222,7 @@
                     </div>
                     <a
                         href="/artikel"
-                        class="mt-2 text-sm underline underline decoration-auto decoration-solid underline-offset-auto"
+                        class="mt-2 text-sm underline decoration-auto decoration-solid underline-offset-auto"
                         >Baca selanjutnya</a
                     >
                 </div>
