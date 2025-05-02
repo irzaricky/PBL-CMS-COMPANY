@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use App\Services\FileHandlers\SingleFileHandler;
 
 class MediaSosialResource extends Resource
 {
@@ -95,7 +98,10 @@ class MediaSosialResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records) {
+                            SingleFileHandler::deleteBulkFiles($records, 'icon');
+                        }),
                 ]),
             ]);
     }
@@ -112,6 +118,7 @@ class MediaSosialResource extends Resource
         return [
             'index' => Pages\ListMediaSosials::route('/'),
             'create' => Pages\CreateMediaSosial::route('/create'),
+            // ada tambahan validasi pada edit event
             'edit' => Pages\EditMediaSosial::route('/{record}/edit'),
         ];
     }

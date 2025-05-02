@@ -34,25 +34,17 @@ class StrukturOrganisasiResource extends Resource
                             ->required()
                             ->helperText('Pilih pengguna yang menempati posisi ini'),
 
-                        Forms\Components\TextInput::make('deskripsi')
+                        Forms\Components\TextInput::make('jabatan')
                             ->label('Posisi/Jabatan')
                             ->required()
                             ->maxLength(255)
                             ->placeholder('Contoh: Direktur Utama, Manager, dsb'),
-                    ]),
 
-                Forms\Components\Section::make('Media')
-                    ->schema([
-                        Forms\Components\FileUpload::make('thumbnail_struktur_organisasi')
-                            ->label('Foto Profil')
-                            ->image()
-                            ->multiple(false)
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('1:1')
-                            ->directory('struktur-organisasi-images')
-                            ->disk('public')
-                            ->helperText('Unggah foto profil posisi ini (format: jpg, png)')
-                            ->optimize('webp'),
+                        Forms\Components\TextInput::make('deskripsi')
+                            ->label('Deskripsi Posisi/Jabatan')
+                            ->required()
+                            ->maxLength(255)
+                            ->placeholder('Contoh: Bertanggung jawab atas pengelolaan perusahaan, dsb'),
                     ]),
             ]);
     }
@@ -61,18 +53,18 @@ class StrukturOrganisasiResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_struktur_organisasi')
-                    ->label('Foto')
-                    ->circular()
-                    ->disk('public'),
-
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama')
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('deskripsi')
+                Tables\Columns\TextColumn::make('jabatan')
                     ->label('Posisi/Jabatan')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('deskripsi')
+                    ->label('Deskripsi Posisi/Jabatan')
                     ->searchable()
                     ->sortable(),
 

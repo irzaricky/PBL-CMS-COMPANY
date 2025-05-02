@@ -31,7 +31,7 @@ class StrukturOrganisasi extends Model
     protected $fillable = [
         'id_user',
         'deskripsi',
-        'thumbnail_struktur_organisasi',
+        'jabatan',
     ];
 
     /**

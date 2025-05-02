@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Collection;
+use App\Services\FileHandlers\MultipleFileHandler;
 
 class LowonganResource extends Resource
 {
@@ -225,25 +226,9 @@ class LowonganResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('updateStatus')
-                        ->label('Update Status')
-                        ->icon('heroicon-o-check-circle')
-                        ->form([
-                            Forms\Components\Select::make('status_lowongan')
-                                ->label('Status Baru')
-                                ->options([
-                                    'dibuka' => 'Dibuka',
-                                    'ditutup' => 'Ditutup',
-                                ])
-                                ->required(),
-                        ])
-                        ->action(function (Collection $records, array $data): void {
-                            foreach ($records as $record) {
-                                $record->update([
-                                    'status_lowongan' => $data['status_lowongan'],
-                                ]);
-                            }
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_lowongan');
                         }),
                 ]),
             ]);

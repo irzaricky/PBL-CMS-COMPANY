@@ -12,6 +12,10 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use App\Services\FileHandlers\MultipleFileHandler;
+
 
 class EventResource extends Resource
 {
@@ -60,11 +64,11 @@ class EventResource extends Resource
                             ->label('Thumbnail Event')
                             ->image()
                             ->multiple()
-                            ->reorderable() 
+                            ->reorderable()
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9')
                             ->directory('event-thumbnails')
-                            ->maxFiles(5) 
+                            ->maxFiles(5)
                             ->helperText('Deskripsikan eventmu, maksimal 5 gambar(format: jpg, png, webp)')
                             ->disk('public')
                             ->columnSpanFull()
@@ -142,9 +146,9 @@ class EventResource extends Resource
                 Tables\Columns\ImageColumn::make('thumbnail_event')
                     ->label('Thumbnail')
                     ->circular()
-                    ->stacked() // Display multiple images in a stack
-                    ->limit(3) // Show only first 3 images
-                    ->limitedRemainingText() // Shows "+X more" for remaining images
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText()
                     ->extraImgAttributes(['class' => 'object-cover']),
 
                 Tables\Columns\TextColumn::make('nama_event')
@@ -233,7 +237,10 @@ class EventResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_event');
+                        }),
                 ]),
             ]);
     }
@@ -250,6 +257,7 @@ class EventResource extends Resource
         return [
             'index' => Pages\ListEvents::route('/'),
             'create' => Pages\CreateEvent::route('/create'),
+            // ada tambahan validasi pada edit event
             'edit' => Pages\EditEvent::route('/{record}/edit'),
         ];
     }

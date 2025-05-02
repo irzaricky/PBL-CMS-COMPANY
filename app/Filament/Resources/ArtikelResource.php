@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Collection;
+use App\Services\FileHandlers\MultipleFileHandler;
 
 class ArtikelResource extends Resource
 {
@@ -171,7 +172,10 @@ class ArtikelResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');
+                        }),
                 ]),
             ]);
     }
@@ -188,6 +192,7 @@ class ArtikelResource extends Resource
         return [
             'index' => Pages\ListArtikels::route('/'),
             'create' => Pages\CreateArtikel::route('/create'),
+            // ada tambahan validasi pada edit artikel
             'edit' => Pages\EditArtikel::route('/{record}/edit'),
         ];
     }

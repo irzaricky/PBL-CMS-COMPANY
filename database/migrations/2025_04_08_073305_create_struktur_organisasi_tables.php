@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('struktur_organisasi', function (Blueprint $table) {
             $table->id('id_struktur_organisasi');
             $table->foreignId('id_user')->constrained('users', 'id_user');
-            $table->json('thumbnail_struktur_organisasi')->nullable();
+            $table->string('jabatan')->nullable();
             $table->string('deskripsi');
             $table->timestamps();
         });

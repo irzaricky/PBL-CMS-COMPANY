@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use App\Services\FileHandlers\MultipleFileHandler;
 
 class GaleriResource extends Resource
 {
@@ -169,7 +172,10 @@ class GaleriResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_galeri');
+                        }),
                 ]),
             ]);
     }
@@ -186,6 +192,7 @@ class GaleriResource extends Resource
         return [
             'index' => Pages\ListGaleris::route('/'),
             'create' => Pages\CreateGaleri::route('/create'),
+            // ada tambahan validasi pada edit event
             'edit' => Pages\EditGaleri::route('/{record}/edit'),
         ];
     }

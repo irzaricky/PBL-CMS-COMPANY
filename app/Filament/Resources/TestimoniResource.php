@@ -12,6 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
+use App\Services\FileHandlers\MultipleFileHandler;
 
 class TestimoniResource extends Resource
 {
@@ -40,10 +43,14 @@ class TestimoniResource extends Resource
                         Forms\Components\FileUpload::make('thumbnail_testimoni')
                             ->label('Foto Testimoni')
                             ->image()
+                            ->multiple()
+                            ->reorderable()
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('1:1')
                             ->directory('testimoni-images')
+                            ->maxFiles(5)
                             ->disk('public')
+                            ->columnSpanFull()
                             ->optimize('webp')
                             ->required(),
 
@@ -115,11 +122,30 @@ class TestimoniResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                // Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function ($record) {
+                        // Delete all files related to the testimoni being deleted
+                        $files = $record->thumbnail_testimoni;
+
+                        if (!empty($files)) {
+                            $files = is_array($files) ? $files : json_decode($files, true);
+
+                            foreach ($files as $file) {
+                                if (Storage::disk('public')->exists($file)) {
+                                    Storage::disk('public')->delete($file);
+                                }
+                            }
+                        }
+                    }),
             ])
+
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_testimoni');
+                        }),
                 ]),
             ]);
     }
@@ -136,7 +162,7 @@ class TestimoniResource extends Resource
         return [
             'index' => Pages\ListTestimonis::route('/'),
             'create' => Pages\CreateTestimoni::route('/create'),
-            // 'edit' => Pages\EditTestimoni::route('/{record}/edit'),
+            'edit' => Pages\EditTestimoni::route('/{record}/edit'),
         ];
     }
 }
