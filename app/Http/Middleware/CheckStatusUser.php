@@ -18,26 +18,23 @@ class CheckStatusUser
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) {
-            return $next($request);
-        }
-
         $user = Auth::user();
 
-        // Hanya cek status user (aktif/nonaktif)
+        // Cek status user (aktif/nonaktif)
         if ($user->status === 'nonaktif') {
             Auth::logout();
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('login');
+            return redirect()->route('filament.admin.auth.login')
+                ->with('error', 'Akun Anda sudah tidak aktif. Silakan hubungi administrator.');
         }
 
-        // Cek status_kepegawaian (khusus untuk admin)
-        if (is_null($user->status_kepegawaian)) {
-            return redirect('/admin/dashboard');
-        } else {
-            return redirect('/dashboard');
+        if (empty($user->status_kepegawaian) && $request->routeIs('filament.*')) {
+            return redirect('/dashboard')->with('message', 'Anda tidak memiliki akses ke panel admin.');
         }
+
+        // Lanjutkan dengan request
+        return $next($request);
     }
 }
