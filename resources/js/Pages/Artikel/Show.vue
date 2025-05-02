@@ -40,10 +40,10 @@ async function fetchArticle() {
 
 // fungsi untuk mendapatkan URL gambar
 function getImageUrl(image) {
-    if (!image) return "/image/placeholder.jpeg";
+    if (!image) return "/image/placeholder.webp";
 
     if (typeof image === "object" && image !== null) {
-        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.jpeg";
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
     }
 
     return `/storage/${image}`;

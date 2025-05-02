@@ -87,7 +87,8 @@ class LowonganResource extends Resource
                             ->maxFiles(5)
                             ->helperText('Upload hingga 5 gambar untuk artikel (format: jpg, png, webp)')
                             ->disk('public')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->optimize('webp'),
                     ]),
 
                 Forms\Components\Section::make('Periode Lowongan')

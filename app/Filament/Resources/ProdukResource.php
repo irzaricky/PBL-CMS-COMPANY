@@ -99,7 +99,8 @@ class ProdukResource extends Resource
                             ->directory('produk-images')
                             ->helperText('Upload gambar produk (format: jpg, png, webp)')
                             ->disk('public')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->optimize('webp'),
 
                         Forms\Components\RichEditor::make('deskripsi_produk')
                             ->label('Deskripsi Produk')

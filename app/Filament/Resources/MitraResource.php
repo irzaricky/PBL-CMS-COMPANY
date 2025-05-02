@@ -39,7 +39,8 @@ class MitraResource extends Resource
                             ->imageCropAspectRatio('1:1')
                             ->directory('mitra-logos')
                             ->disk('public')
-                            ->helperText('Upload logo perusahaan (format: jpg, png, svg)'),
+                            ->helperText('Upload logo perusahaan (format: jpg, png, svg)')
+                            ->optimize('webp'),
 
                         Forms\Components\Textarea::make('alamat_mitra')
                             ->label('Alamat Mitra')

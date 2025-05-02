@@ -59,15 +59,16 @@ class EventResource extends Resource
                         Forms\Components\FileUpload::make('thumbnail_event')
                             ->label('Thumbnail Event')
                             ->image()
-                            ->multiple() // Enable multiple uploads
-                            ->reorderable() // Allow reordering of images
+                            ->multiple()
+                            ->reorderable() 
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9')
                             ->directory('event-thumbnails')
-                            ->maxFiles(5) // Optional: limit number of files
+                            ->maxFiles(5) 
                             ->helperText('Deskripsikan eventmu, maksimal 5 gambar(format: jpg, png, webp)')
                             ->disk('public')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->optimize('webp'),
 
 
                         Forms\Components\TextInput::make('lokasi_event')

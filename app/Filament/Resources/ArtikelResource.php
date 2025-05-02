@@ -12,6 +12,8 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Collection;
 
 class ArtikelResource extends Resource
 {
@@ -94,15 +96,16 @@ class ArtikelResource extends Resource
                         Forms\Components\FileUpload::make('thumbnail_artikel')
                             ->label('Galeri Gambar Artikel')
                             ->image()
-                            ->multiple() // Enable multiple uploads
-                            ->reorderable() // Allow reordering of images
+                            ->multiple()
+                            ->reorderable()
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('16:9')
                             ->directory('artikel-thumbnails')
-                            ->maxFiles(5) // Optional: limit number of files
+                            ->maxFiles(5)
                             ->helperText('Upload hingga 5 gambar untuk artikel (format: jpg, png, webp)')
                             ->disk('public')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->optimize('webp'),
 
                         Forms\Components\RichEditor::make('konten_artikel')
                             ->label('Konten Artikel')
@@ -121,9 +124,9 @@ class ArtikelResource extends Resource
                 Tables\Columns\ImageColumn::make('thumbnail_artikel')
                     ->label('Thumbnail')
                     ->circular()
-                    ->stacked() // Display multiple images in a stack
-                    ->limit(3) // Show only first 3 images
-                    ->limitedRemainingText() // Shows "+X more" for remaining images
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText()
                     ->extraImgAttributes(['class' => 'object-cover']),
 
                 Tables\Columns\TextColumn::make('judul_artikel')

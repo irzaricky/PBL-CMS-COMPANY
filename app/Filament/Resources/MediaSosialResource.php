@@ -39,7 +39,8 @@ class MediaSosialResource extends Resource
                             ->required()
                             ->imageResizeTargetWidth('64')
                             ->imageResizeTargetHeight('64')
-                            ->helperText('Upload icon media sosial (format: png, jpg, svg). Disarankan ukuran 64x64px.'),
+                            ->helperText('Upload icon media sosial (format: png, jpg, svg). Disarankan ukuran 64x64px.')
+                            ->optimize('webp'),
 
                         Forms\Components\TextInput::make('link')
                             ->label('Link')

@@ -102,7 +102,8 @@ class GaleriResource extends Resource
                             ->maxFiles(10)
                             ->helperText('Upload hingga 10 gambar (format: jpg, png, webp)')
                             ->disk('public')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->optimize('webp'),
 
                         Forms\Components\RichEditor::make('deskripsi_galeri')
                             ->label('Deskripsi Galeri')

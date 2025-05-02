@@ -51,7 +51,8 @@ class StrukturOrganisasiResource extends Resource
                             ->imageCropAspectRatio('1:1')
                             ->directory('struktur-organisasi-images')
                             ->disk('public')
-                            ->helperText('Unggah foto profil posisi ini (format: jpg, png)'),
+                            ->helperText('Unggah foto profil posisi ini (format: jpg, png)')
+                            ->optimize('webp'),
                     ]),
             ]);
     }

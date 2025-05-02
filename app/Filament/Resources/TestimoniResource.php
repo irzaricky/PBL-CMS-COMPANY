@@ -44,6 +44,7 @@ class TestimoniResource extends Resource
                             ->imageCropAspectRatio('1:1')
                             ->directory('testimoni-images')
                             ->disk('public')
+                            ->optimize('webp')
                             ->required(),
 
                         Forms\Components\Select::make('rating')

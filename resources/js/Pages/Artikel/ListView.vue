@@ -1,7 +1,7 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted } from "vue";
-import Navbar from '@/Components/Navbar.vue';
+import Navbar from "@/Components/Navbar.vue";
 
 const articles = ref([]);
 const categories = ref([]);
@@ -100,10 +100,10 @@ async function searchArticles(query) {
 
 // Fungsi untuk mendapatkan URL gambar
 function getImageUrl(image) {
-    if (!image) return "/image/placeholder.jpeg";
+    if (!image) return "/image/placeholder.webp";
 
     if (typeof image === "object" && image !== null) {
-        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.jpeg";
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
     }
 
     return `/storage/${image}`;
@@ -121,7 +121,7 @@ function formatDate(date) {
         <div
             class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8"
         >
-            <h1 class="text-3xl font-bold text-red-900 mb-4 md:mb-0">
+            <h1 class="text-3xl font-bold text-blue-900 mb-8 md:mb-0">
                 Artikel
             </h1>
 

@@ -39,7 +39,8 @@ class ProfilPerusahaanResource extends Resource
                             ->imageCropAspectRatio('1:1')
                             ->directory('perusahaan-logo')
                             ->disk('public')
-                            ->helperText('Unggah logo perusahaan (format: jpg, png, svg)'),
+                            ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
+                            ->optimize('webp'),
 
                         Forms\Components\FileUpload::make('thumbnail_perusahaan')
                             ->label('Gambar Perusahaan')
@@ -50,7 +51,8 @@ class ProfilPerusahaanResource extends Resource
                             ->imageCropAspectRatio('16:9')
                             ->directory('perusahaan-images')
                             ->disk('public')
-                            ->helperText('Unggah gambar untuk profil perusahaan (format: jpg, png)'),
+                            ->helperText('Unggah gambar untuk profil perusahaan (format: jpg, png)')
+                            ->optimize('webp'),
 
                         Forms\Components\Select::make('id_galeri')
                             ->label('Galeri Terkait')

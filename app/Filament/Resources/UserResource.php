@@ -57,7 +57,8 @@ class UserResource extends Resource
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('1:1')
                             ->directory('profile-photos')
-                            ->disk('public'),
+                            ->disk('public')
+                            ->optimize('webp'),
                         Forms\Components\Textarea::make('alamat')
                             ->label('Alamat')
                             ->rows(3)
