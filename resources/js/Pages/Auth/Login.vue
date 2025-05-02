@@ -1,11 +1,11 @@
 <script setup>
-import Checkbox from '@/Deprecated Components/Checkbox.vue';
-import GuestLayout from '@/Deprecated Layouts/GuestLayout.vue';
-import InputError from '@/Deprecated Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Deprecated Components/PrimaryButton.vue';
-import TextInput from '@/Deprecated Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+import Checkbox from "@/Deprecated Components/Checkbox.vue";
+import GuestLayout from "@/Deprecated Layouts/GuestLayout.vue";
+import InputError from "@/Deprecated Components/InputError.vue";
+import InputLabel from "@/Deprecated Components/InputLabel.vue";
+import PrimaryButton from "@/Deprecated Components/PrimaryButton.vue";
+import TextInput from "@/Deprecated Components/TextInput.vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 
 defineProps({
     canResetPassword: {
@@ -17,14 +17,14 @@ defineProps({
 });
 
 const form = useForm({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => form.reset('password'),
+    form.post(route("login"), {
+        onFinish: () => form.reset("password"),
     });
 };
 </script>
@@ -72,9 +72,7 @@ const submit = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
+                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
                 </label>
             </div>
 

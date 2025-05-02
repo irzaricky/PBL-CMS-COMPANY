@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Collection;
 
 class UserResource extends Resource
 {
@@ -96,6 +97,15 @@ class UserResource extends Resource
                                 'Percobaan' => 'Masa Percobaan',
                             ])
                             ->nullable(),
+
+                        Forms\Components\Select::make('status')
+                            ->label('Status Akun')
+                            ->options([
+                                'aktif' => 'Aktif',
+                                'nonaktif' => 'Nonaktif',
+                            ])
+                            ->default('aktif')
+                            ->required(),
                     ]),
             ]);
     }
@@ -104,33 +114,46 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('foto_profil')
+                    ->label('Foto')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\ImageColumn::make('foto_profil')
-                    ->label('Foto')
-                    ->circular(),
                 Tables\Columns\TextColumn::make('no_hp')
                     ->label('Nomor HP')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('tanggal_lahir')
                     ->label('Tanggal Lahir')
                     ->date('d F Y')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date('d F Y')
                     ->sortable(),
                 Tables\Columns\BadgeColumn::make('status_kepegawaian')
-                    ->label('Status')
+                    ->label('Status Kepegawaian')
+                    ->badge()
+                    ->alignment('center')
                     ->colors([
                         'primary' => 'Tetap',
                         'success' => 'Kontrak',
                         'warning' => 'Magang',
                         'danger' => 'Percobaan',
                     ]),
+
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status Akun')
+                    ->badge()
+                    ->alignment('center')
+                    ->color(fn(string $state): string => match ($state) {
+                        'aktif' => 'success',
+                        'nonaktif' => 'danger',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date()
@@ -154,9 +177,46 @@ class UserResource extends Resource
                         'Percobaan' => 'Masa Percobaan',
                     ])
                     ->label('Status Kepegawaian'),
+                Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'aktif' => 'Aktif',
+                        'nonaktif' => 'Nonaktif',
+                    ]),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('toggleStatus')
+                    ->label(fn(User $record) => $record->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan')
+                    ->icon(fn(User $record) => $record->status === 'aktif' ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
+                    ->color(fn(User $record) => $record->status === 'aktif' ? 'danger' : 'success')
+                    ->requiresConfirmation()
+                    ->action(function (User $record) {
+                        $record->status = $record->status === 'aktif' ? 'nonaktif' : 'aktif';
+                        $record->save();
+                    }),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('toggleStatusBulk')
+                        ->label('Aktifkan/Nonaktifkan')
+                        ->action(function (Collection $records, array $data) {
+                            foreach ($records as $record) {
+                                $record->status = $data['status'];
+                                $record->save();
+                            }
+                        })
+                        ->form([
+                            Forms\Components\Select::make('status')
+                                ->label('Status')
+                                ->options([
+                                    'aktif' => 'Aktif',
+                                    'nonaktif' => 'Nonaktif',
+                                ])
+                                ->required(),
+                        ]),
+                ]),
             ]);
     }
 

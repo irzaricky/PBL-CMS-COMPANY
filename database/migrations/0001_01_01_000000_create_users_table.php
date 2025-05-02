@@ -22,9 +22,11 @@ return new class extends Migration {
             $table->string('nik', 16)->nullable();
             $table->date('tanggal_lahir')->nullable();
             $table->enum('status_kepegawaian', ['Tetap', 'Kontrak', 'Magang'])->nullable();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
