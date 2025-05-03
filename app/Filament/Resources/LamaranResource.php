@@ -109,8 +109,9 @@ class LamaranResource extends Resource
                     ->falseIcon('heroicon-o-x-circle')
                     ->state(fn(Lamaran $record): bool => !empty($record->portfolio)),
 
-                Tables\Columns\BadgeColumn::make('status_lamaran')
+                Tables\Columns\TextColumn::make('status_lamaran')
                     ->label('Status')
+                    ->badge()
                     ->colors([
                         'primary' => 'Diproses',
                         'success' => 'Diterima',
@@ -142,7 +143,6 @@ class LamaranResource extends Resource
                     ->relationship('lowongan', 'judul_lowongan'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

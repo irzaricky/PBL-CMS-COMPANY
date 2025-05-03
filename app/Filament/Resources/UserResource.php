@@ -135,7 +135,7 @@ class UserResource extends Resource
                     ->label('Tanggal Registrasi')
                     ->date('d F Y')
                     ->sortable(),
-                Tables\Columns\BadgeColumn::make('status_kepegawaian')
+                Tables\Columns\TextColumn::make('status_kepegawaian')
                     ->label('Status Kepegawaian')
                     ->badge()
                     ->alignment('center')

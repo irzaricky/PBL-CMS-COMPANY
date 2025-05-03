@@ -52,6 +52,15 @@ class MediaSosialResource extends Resource
                             ->maxLength(200)
                             ->placeholder('https://www.example.com/username')
                             ->helperText('Masukkan URL lengkap termasuk https://'),
+
+                        Forms\Components\Select::make('status')
+                            ->label('Status')
+                            ->options([
+                                'aktif' => 'Aktif',
+                                'nonaktif' => 'Nonaktif',
+                            ])
+                            ->default('aktif')
+                            ->required(),
                     ]),
             ]);
     }
@@ -77,6 +86,14 @@ class MediaSosialResource extends Resource
                     ->limit(30)
                     ->tooltip(fn(MediaSosial $record): string => $record->link),
 
+                Tables\Columns\TextColumn::make('status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'aktif' => 'success',
+                        'nonaktif' => 'danger',
+                    }),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
@@ -90,14 +107,58 @@ class MediaSosialResource extends Resource
                     ->toggleable(),
             ])
             ->filters([
-                // No filters needed
+                Tables\Filters\SelectFilter::make('status')
+                    ->options([
+                        'aktif' => 'Aktif',
+                        'nonaktif' => 'Nonaktif',
+                    ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('toggleStatus')
+                    ->label(
+                        fn(MediaSosial $record): string =>
+                        $record->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'
+                    )
+                    ->icon(
+                        fn(MediaSosial $record): string =>
+                        $record->status === 'aktif' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle'
+                    )
+                    ->color(
+                        fn(MediaSosial $record): string =>
+                        $record->status === 'aktif' ? 'danger' : 'success'
+                    )
+                    ->requiresConfirmation()
+                    ->action(function (MediaSosial $record): void {
+                        $record->status = $record->status === 'aktif' ? 'nonaktif' : 'aktif';
+                        $record->save();
+                    }),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function (MediaSosial $record) {
+                        SingleFileHandler::deleteFile($record, 'icon');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('updateStatus')
+                        ->label('Update Status')
+                        ->icon('heroicon-o-check-circle')
+                        ->action(function (Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'status' => $data['status'],
+                                ]);
+                            }
+                        })
+                        ->form([
+                            Forms\Components\Select::make('status')
+                                ->label('Status')
+                                ->options([
+                                    'aktif' => 'Aktif',
+                                    'nonaktif' => 'Nonaktif',
+                                ])
+                                ->required(),
+                        ]),
                     Tables\Actions\DeleteBulkAction::make()
                         ->before(function (Collection $records) {
                             SingleFileHandler::deleteBulkFiles($records, 'icon');

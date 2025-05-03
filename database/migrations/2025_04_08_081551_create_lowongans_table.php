@@ -22,6 +22,7 @@ return new class extends Migration {
             $table->date('tanggal_ditutup');
             $table->enum('status_lowongan', ['dibuka', 'ditutup']);
             $table->tinyInteger('tenaga_dibutuhkan')->unsigned();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

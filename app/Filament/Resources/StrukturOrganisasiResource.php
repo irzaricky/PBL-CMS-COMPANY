@@ -88,8 +88,9 @@ class StrukturOrganisasiResource extends Resource
                     ->tooltip(fn(StrukturOrganisasi $record): string => $record->deskripsi)
                     ->sortable(),
 
-                Tables\Columns\BadgeColumn::make('user.status')
+                Tables\Columns\TextColumn::make('user.status')
                     ->label('Status')
+                    ->badge()
                     ->colors([
                         'success' => 'aktif',
                         'danger' => 'nonaktif',

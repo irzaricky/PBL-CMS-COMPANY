@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->string('nama_media_sosial', 50);
             $table->string('icon', 200)->nullable();
             $table->string('link', 100);
+            $table->enum('status', ['aktif', 'nonaktif'])->default('nonaktif');
             $table->timestamps();
         });
     }

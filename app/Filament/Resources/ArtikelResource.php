@@ -2,19 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ArtikelResource\Pages;
-use App\Filament\Resources\ArtikelResource\RelationManagers;
-use App\Models\Artikel;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Artikel;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use App\Filament\Resources\ArtikelResource\Pages;
 use App\Services\FileHandlers\MultipleFileHandler;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ArtikelResource\RelationManagers;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
 
 class ArtikelResource extends Resource
 {
@@ -22,6 +26,14 @@ class ArtikelResource extends Resource
     protected static ?string $navigationGroup = 'Content Management';
 
     protected static ?string $navigationIcon = 'heroicon-s-document-text';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -79,7 +91,7 @@ class ArtikelResource extends Resource
                         Forms\Components\Select::make('id_user')
                             ->label('Penulis')
                             ->relationship('user', 'name')
-                            ->default(fn() => auth()->id())
+                            ->default(fn() => Auth::id())
                             ->searchable()
                             ->preload()
                             ->required(),
@@ -156,6 +168,12 @@ class ArtikelResource extends Resource
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('id_kategori_artikel')
@@ -165,14 +183,32 @@ class ArtikelResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Penulis')
                     ->relationship('user', 'name'),
+
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->successNotificationTitle('Artikel berhasil diarsipkan'),
+                Tables\Actions\RestoreAction::make()
+                    ->successNotificationTitle('Artikel berhasil dipulihkan'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->successNotificationTitle('Artikel berhasil dihapus permanen')
+                    ->before(function ($record) {
+                        MultipleFileHandler::deleteFiles($record, 'thumbnail_artikel');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->successNotificationTitle('Artikel berhasil diarsipkan')
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');
+                        }),
+                    RestoreBulkAction::make()
+                        ->successNotificationTitle('Artikel berhasil dipulihkan'),
+                    ForceDeleteBulkAction::make()
+                        ->successNotificationTitle('Artikel berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');
                         }),

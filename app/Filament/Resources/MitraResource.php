@@ -109,8 +109,9 @@ class MitraResource extends Resource
                     ->tooltip(fn(Mitra $record): string => $record->alamat_mitra ?? '')
                     ->searchable(),
 
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
                     ->label('Status')
+                    ->badge()
                     ->colors([
                         'success' => 'aktif',
                         'danger' => 'nonaktif',

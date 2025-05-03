@@ -31,5 +31,6 @@ class MediaSosial extends Model
         'nama_media_sosial',
         'icon',
         'link',
+        'status'
     ];
 }

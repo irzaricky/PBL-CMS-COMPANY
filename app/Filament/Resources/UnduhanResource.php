@@ -2,16 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UnduhanResource\Pages;
-use App\Filament\Resources\UnduhanResource\RelationManagers;
-use App\Models\Unduhan;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Unduhan;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TrashedFilter;
+use Illuminate\Database\Eloquent\Collection;
+use Filament\Tables\Actions\RestoreBulkAction;
+use App\Services\FileHandlers\SingleFileHandler;
+use App\Filament\Resources\UnduhanResource\Pages;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\UnduhanResource\RelationManagers;
 
 class UnduhanResource extends Resource
 {
@@ -108,6 +114,14 @@ class UnduhanResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -149,6 +163,12 @@ class UnduhanResource extends Resource
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('id_kategori_unduhan')
@@ -158,20 +178,44 @@ class UnduhanResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Pengunggah')
                     ->relationship('user', 'name'),
+
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->successNotificationTitle('Unduhan berhasil diarsipkan'),
+                Tables\Actions\RestoreAction::make()
+                    ->successNotificationTitle('Unduhan berhasil dipulihkan'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->successNotificationTitle('Unduhan berhasil dihapus permanen')
+                    ->before(function ($record) {
+                        SingleFileHandler::deleteFile($record, 'lokasi_file');
+                    }),
                 Tables\Actions\Action::make('download')
                     ->label('Unduh')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->url(fn(Unduhan $record) => url('storage/' . $record->lokasi_file))
-                    ->openUrlInNewTab()
-                    ->action(fn(Unduhan $record) => $record->incrementDownloadCount()),
+                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->successNotificationTitle('Unduhan berhasil diarsipkan')
+                        ->before(function (Collection $records) {
+                            foreach ($records as $record) {
+                                SingleFileHandler::deleteFile($record, 'lokasi_file');
+                            }
+                        }),
+                    RestoreBulkAction::make()
+                        ->successNotificationTitle('Unduhan berhasil dipulihkan'),
+                    ForceDeleteBulkAction::make()
+                        ->successNotificationTitle('Unduhan berhasil dihapus permanen')
+                        ->before(function (Collection $records) {
+                            foreach ($records as $record) {
+                                SingleFileHandler::deleteFile($record, 'lokasi_file');
+                            }
+                        }),
                 ]),
             ]);
     }

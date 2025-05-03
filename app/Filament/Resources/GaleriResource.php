@@ -2,19 +2,23 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\GaleriResource\Pages;
-use App\Filament\Resources\GaleriResource\RelationManagers;
-use App\Models\Galeri;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Galeri;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use App\Filament\Resources\GaleriResource\Pages;
 use App\Services\FileHandlers\MultipleFileHandler;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
+use App\Filament\Resources\GaleriResource\RelationManagers;
 
 class GaleriResource extends Resource
 {
@@ -79,7 +83,7 @@ class GaleriResource extends Resource
                         Forms\Components\Select::make('id_user')
                             ->label('Pengunggah')
                             ->relationship('user', 'name')
-                            ->default(fn() => auth()->id())
+                            ->default(fn() => Auth::id())
                             ->searchable()
                             ->preload()
                             ->required(),
@@ -115,6 +119,14 @@ class GaleriResource extends Resource
                             ->fileAttachmentsDirectory('galeri-attachments')
                             ->columnSpanFull(),
                     ]),
+            ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
             ]);
     }
 
@@ -156,6 +168,12 @@ class GaleriResource extends Resource
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('id_kategori_galeri')
@@ -165,14 +183,32 @@ class GaleriResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Pengunggah')
                     ->relationship('user', 'name'),
+
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->successNotificationTitle('Galeri berhasil diarsipkan'),
+                Tables\Actions\RestoreAction::make()
+                    ->successNotificationTitle('Galeri berhasil dipulihkan'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->successNotificationTitle('Galeri berhasil dihapus permanen')
+                    ->before(function ($record) {
+                        MultipleFileHandler::deleteFiles($record, 'thumbnail_galeri');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->successNotificationTitle('Galeri berhasil diarsipkan')
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_galeri');
+                        }),
+                    RestoreBulkAction::make()
+                        ->successNotificationTitle('Galeri berhasil dipulihkan'),
+                    ForceDeleteBulkAction::make()
+                        ->successNotificationTitle('Galeri berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_galeri');
                         }),

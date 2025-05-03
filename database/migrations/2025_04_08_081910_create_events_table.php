@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->dateTime('waktu_end_event');
             $table->string('link_daftar_event', 100)->nullable();
             $table->string('slug', 100)->unique();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

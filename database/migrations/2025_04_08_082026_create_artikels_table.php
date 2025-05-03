@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->integer('jumlah_view')->default(0);
             $table->string('slug', 100)->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

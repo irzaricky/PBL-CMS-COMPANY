@@ -15,7 +15,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\FileHandlers\MultipleFileHandler;
-
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
 
 class EventResource extends Resource
 {
@@ -169,7 +171,7 @@ class EventResource extends Resource
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-map-pin')
                     ->tooltip('Klik untuk melihat di Google Maps')
-                    ->toggleable(isToggledHiddenByDefault: false),
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('waktu_start_event')
                     ->label('Mulai')
@@ -183,8 +185,10 @@ class EventResource extends Resource
                     ->sortable()
                     ->icon('heroicon-o-clock'),
 
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
                     ->label('Status')
+                    ->badge()
+                    ->alignCenter()
                     ->getStateUsing(function (Event $record): string {
                         $now = now();
 
@@ -209,7 +213,14 @@ class EventResource extends Resource
                     ->url(fn($record) => $record->link_daftar_event)
                     ->openUrlInNewTab()
                     ->icon('heroicon-o-link')
-                    ->toggleable(),
+                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -227,18 +238,44 @@ class EventResource extends Resource
                             default => $query,
                         };
                     }),
+
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->successNotificationTitle('Event berhasil diarsipkan'),
+                Tables\Actions\RestoreAction::make()
+                    ->successNotificationTitle('Event berhasil dipulihkan'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->successNotificationTitle('Event berhasil dihapus permanen')
+                    ->before(function ($record) {
+                        MultipleFileHandler::deleteFiles($record, 'thumbnail_event');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->successNotificationTitle('Event berhasil diarsipkan')
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_event');
+                        }),
+                    RestoreBulkAction::make()
+                        ->successNotificationTitle('Event berhasil dipulihkan'),
+                    ForceDeleteBulkAction::make()
+                        ->successNotificationTitle('Event berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_event');
                         }),
                 ]),
+            ]);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
             ]);
     }
 

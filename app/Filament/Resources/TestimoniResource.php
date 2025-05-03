@@ -108,8 +108,9 @@ class TestimoniResource extends Resource
                     ->formatStateUsing(fn(int $state): string => str_repeat('⭐', $state))
                     ->sortable(),
 
-                Tables\Columns\BadgeColumn::make('status')
+                Tables\Columns\TextColumn::make('status')
                     ->label('Status')
+                    ->badge()
                     ->colors([
                         'success' => 'Ditampilkan',
                         'danger' => 'Tidak Ditampilkan',
@@ -145,7 +146,6 @@ class TestimoniResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('toggleStatus')
                     ->label(
@@ -167,10 +167,10 @@ class TestimoniResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_testimoni');
-                        }),
+                    // Tables\Actions\DeleteBulkAction::make()
+                    //     ->before(function (Collection $records) {
+                    //         MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_testimoni');
+                    //     }),
                     Tables\Actions\BulkAction::make('updateStatus')
                         ->label('Update Status')
                         ->icon('heroicon-o-eye')

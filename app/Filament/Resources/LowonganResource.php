@@ -2,18 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\LowonganResource\Pages;
-use App\Filament\Resources\LowonganResource\RelationManagers;
-use App\Models\Lowongan;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Lowongan;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Collection;
+use App\Filament\Resources\LowonganResource\Pages;
 use App\Services\FileHandlers\MultipleFileHandler;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\LowonganResource\RelationManagers;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
 
 class LowonganResource extends Resource
 {
@@ -39,7 +43,7 @@ class LowonganResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
-                            ->default(fn() => auth()->id())
+                            ->default(fn() => Auth::id())
                             ->required(),
 
                         Forms\Components\Select::make('jenis_lowongan')
@@ -130,6 +134,14 @@ class LowonganResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+
     public static function table(Table $table): Table
     {
         return $table
@@ -148,8 +160,9 @@ class LowonganResource extends Resource
                     ->sortable()
                     ->limit(50),
 
-                Tables\Columns\BadgeColumn::make('jenis_lowongan')
+                Tables\Columns\TextColumn::make('jenis_lowongan')
                     ->label('Jenis Pekerjaan')
+                    ->badge()
                     ->colors([
                         'primary' => 'Full-time',
                         'secondary' => 'Part-time',
@@ -172,8 +185,9 @@ class LowonganResource extends Resource
                     ->date('d M Y')
                     ->sortable(),
 
-                Tables\Columns\BadgeColumn::make('status_lowongan')
+                Tables\Columns\TextColumn::make('status_lowongan')
                     ->label('Status')
+                    ->badge()
                     ->colors([
                         'success' => 'dibuka',
                         'danger' => 'ditutup',
@@ -182,7 +196,8 @@ class LowonganResource extends Resource
                 Tables\Columns\TextColumn::make('tenaga_dibutuhkan')
                     ->label('Posisi terbuka')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pembuat')
@@ -192,6 +207,12 @@ class LowonganResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
+                    ->dateTime('d M Y H:i')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -219,18 +240,35 @@ class LowonganResource extends Resource
                         ->where('tanggal_dibuka', '<=', now())
                         ->where('tanggal_ditutup', '>=', now())
                         ->where('status_lowongan', 'dibuka')),
+
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->before(function (Lowongan $record) {
+                    ->successNotificationTitle('Lowongan berhasil diarsipkan')
+                    ->before(function ($record) {
+                        MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');
+                    }),
+                Tables\Actions\RestoreAction::make()
+                    ->successNotificationTitle('Lowongan berhasil dipulihkan'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->successNotificationTitle('Lowongan berhasil dihapus permanen')
+                    ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');
                     }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->successNotificationTitle('Lowongan berhasil diarsipkan')
+                        ->before(function (Collection $records) {
+                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_lowongan');
+                        }),
+                    RestoreBulkAction::make()
+                        ->successNotificationTitle('Lowongan berhasil dipulihkan'),
+                    ForceDeleteBulkAction::make()
+                        ->successNotificationTitle('Lowongan berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_lowongan');
                         }),
