@@ -33,12 +33,14 @@ class TestimoniResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
-                            ->required(),
+                            ->required()
+                            ->disabled(),
 
                         Forms\Components\RichEditor::make('isi_testimoni')
                             ->label('Isi Testimoni')
                             ->required()
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->disabled(),
 
                         Forms\Components\FileUpload::make('thumbnail_testimoni')
                             ->label('Foto Testimoni')
@@ -52,7 +54,8 @@ class TestimoniResource extends Resource
                             ->disk('public')
                             ->columnSpanFull()
                             ->optimize('webp')
-                            ->required(),
+                            ->required()
+                            ->disabled(),
 
                         Forms\Components\Select::make('rating')
                             ->label('Rating')
@@ -64,7 +67,18 @@ class TestimoniResource extends Resource
                                 5 => '⭐⭐⭐⭐⭐ (5) Sangat Baik',
                             ])
                             ->required()
-                            ->default(5),
+                            ->default(5)
+                            ->disabled(),
+
+                        Forms\Components\Select::make('status')
+                            ->label('Status Tampilan')
+                            ->options([
+                                'Ditampilkan' => 'Ditampilkan',
+                                'Tidak Ditampilkan' => 'Tidak Ditampilkan',
+                            ])
+                            ->default('Tidak Ditampilkan')
+                            ->required()
+                            ->helperText('Pilih untuk menampilkan atau menyembunyikan testimoni ini di website'),
                     ]),
             ]);
     }
@@ -94,6 +108,13 @@ class TestimoniResource extends Resource
                     ->formatStateUsing(fn(int $state): string => str_repeat('⭐', $state))
                     ->sortable(),
 
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status')
+                    ->colors([
+                        'success' => 'Ditampilkan',
+                        'danger' => 'Tidak Ditampilkan',
+                    ]),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
@@ -116,35 +137,58 @@ class TestimoniResource extends Resource
                         5 => '⭐⭐⭐⭐⭐ (5) Sangat Baik',
                     ]),
 
-                Tables\Filters\SelectFilter::make('id_user')
-                    ->label('Pengguna')
-                    ->relationship('user', 'name'),
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status Tampilan')
+                    ->options([
+                        'Ditampilkan' => 'Ditampilkan',
+                        'Tidak Ditampilkan' => 'Tidak Ditampilkan',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->before(function ($record) {
-                        // Delete all files related to the testimoni being deleted
-                        $files = $record->thumbnail_testimoni;
-
-                        if (!empty($files)) {
-                            $files = is_array($files) ? $files : json_decode($files, true);
-
-                            foreach ($files as $file) {
-                                if (Storage::disk('public')->exists($file)) {
-                                    Storage::disk('public')->delete($file);
-                                }
-                            }
-                        }
+                Tables\Actions\Action::make('toggleStatus')
+                    ->label(
+                        fn(Testimoni $record): string =>
+                        $record->status === 'Ditampilkan' ? 'Sembunyikan' : 'Tampilkan'
+                    )
+                    ->icon(
+                        fn(Testimoni $record): string =>
+                        $record->status === 'Ditampilkan' ? 'heroicon-o-eye-slash' : 'heroicon-o-eye'
+                    )
+                    ->color(
+                        fn(Testimoni $record): string =>
+                        $record->status === 'Ditampilkan' ? 'danger' : 'success'
+                    )
+                    ->action(function (Testimoni $record): void {
+                        $record->status = $record->status === 'Ditampilkan' ? 'Tidak Ditampilkan' : 'Ditampilkan';
+                        $record->save();
                     }),
             ])
-
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_testimoni');
+                        }),
+                    Tables\Actions\BulkAction::make('updateStatus')
+                        ->label('Update Status')
+                        ->icon('heroicon-o-eye')
+                        ->form([
+                            Forms\Components\Select::make('status')
+                                ->label('Status')
+                                ->options([
+                                    'Ditampilkan' => 'Ditampilkan',
+                                    'Tidak Ditampilkan' => 'Tidak Ditampilkan',
+                                ])
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'status' => $data['status'],
+                                ]);
+                            }
                         }),
                 ]),
             ]);

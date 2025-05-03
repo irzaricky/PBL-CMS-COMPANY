@@ -21,6 +21,8 @@ class EditMitra extends EditRecord
             Actions\DeleteAction::make()
                 ->before(function ($record) {
                     SingleFileHandler::deleteFile($record, 'logo');
+                    SingleFileHandler::deleteFile($record, 'dok_siup');
+                    SingleFileHandler::deleteFile($record, 'dok_npwp');
                 }),
         ];
     }
@@ -32,6 +34,8 @@ class EditMitra extends EditRecord
     public function beforeSave(): void
     {
         SingleFileHandler::handleRemovedFile($this->record, $this->data, 'logo');
+        SingleFileHandler::handleRemovedFile($this->record, $this->data, 'dok_siup');
+        SingleFileHandler::handleRemovedFile($this->record, $this->data, 'dok_npwp');
     }
 
     /**
@@ -39,7 +43,10 @@ class EditMitra extends EditRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        return SingleFileHandler::formatFileData($data, 'logo');
+        $data = SingleFileHandler::formatFileData($data, 'logo');
+        $data = SingleFileHandler::formatFileData($data, 'dok_siup');
+        $data = SingleFileHandler::formatFileData($data, 'dok_npwp');
+        return $data;
     }
 
     /**

@@ -58,6 +58,7 @@ class FilamentUserSeeder extends Seeder
             'password' => bcrypt('password123'),
             'status_kepegawaian' => 'Tetap',
             'email_verified_at' => now(),
+            'status' => 'nonaktif',
         ]);
 
         $editor1->assignRole('Content Management');
@@ -80,6 +81,7 @@ class FilamentUserSeeder extends Seeder
             'password' => bcrypt('password123'),
             'status_kepegawaian' => 'Tetap',
             'email_verified_at' => now(),
+            'status' => 'nonaktif',
         ]);
 
         $cs3 = User::create([

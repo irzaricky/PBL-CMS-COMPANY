@@ -140,10 +140,6 @@ class LamaranResource extends Resource
                 Tables\Filters\SelectFilter::make('id_lowongan')
                     ->label('Lowongan')
                     ->relationship('lowongan', 'judul_lowongan'),
-
-                Tables\Filters\SelectFilter::make('id_user')
-                    ->label('Pelamar')
-                    ->relationship('user', 'name'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -151,7 +147,6 @@ class LamaranResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('updateStatus')
                         ->label('Update Status')
                         ->icon('heroicon-o-check-circle')

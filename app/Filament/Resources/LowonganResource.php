@@ -223,6 +223,10 @@ class LowonganResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->before(function (Lowongan $record) {
+                        MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

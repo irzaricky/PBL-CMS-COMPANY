@@ -18,7 +18,7 @@ class StrukturOrganisasiResource extends Resource
     protected static ?string $model = StrukturOrganisasi::class;
     protected static ?string $navigationGroup = 'Company Management';
     protected static ?string $navigationIcon = 'heroicon-o-users';
-    protected static ?string $recordTitleAttribute = 'deskripsi';
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function form(Form $form): Form
     {
@@ -32,7 +32,7 @@ class StrukturOrganisasiResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->helperText('Pilih pengguna yang menempati posisi ini'),
+                            ->helperText('Pilih pengguna yang menempati posisi ini. Status posisi akan mengikuti status pengguna'),
 
                         Forms\Components\TextInput::make('jabatan')
                             ->label('Posisi/Jabatan')
@@ -45,6 +45,24 @@ class StrukturOrganisasiResource extends Resource
                             ->required()
                             ->maxLength(255)
                             ->placeholder('Contoh: Bertanggung jawab atas pengelolaan perusahaan, dsb'),
+
+                        Forms\Components\DatePicker::make('tanggal_mulai')
+                            ->label('Tanggal Mulai Jabatan')
+                            ->default(now())
+                            ->seconds(false)
+                            ->displayFormat('d F Y')
+                            ->native(false)
+                            ->required(),
+
+                        Forms\Components\DatePicker::make('tanggal_selesai')
+                            ->label('Tanggal Selesai Jabatan')
+                            ->displayFormat('d F Y')
+                            ->native(false)
+                            ->afterOrEqual('tanggal_mulai')
+                            ->helperText('Kosongkan jika masih aktif')
+                            ->validationMessages([
+                                'after_or_equal' => 'Tanggal selesai jabatan harus setelah tanggal mulai jabatan',
+                            ]),
                     ]),
             ]);
     }
@@ -66,7 +84,27 @@ class StrukturOrganisasiResource extends Resource
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi Posisi/Jabatan')
                     ->searchable()
+                    ->limit(50)
+                    ->tooltip(fn(StrukturOrganisasi $record): string => $record->deskripsi)
                     ->sortable(),
+
+                Tables\Columns\BadgeColumn::make('user.status')
+                    ->label('Status')
+                    ->colors([
+                        'success' => 'aktif',
+                        'danger' => 'nonaktif',
+                    ]),
+
+                Tables\Columns\TextColumn::make('tanggal_mulai')
+                    ->label('Tanggal Mulai')
+                    ->date('d M Y')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('tanggal_selesai')
+                    ->label('Tanggal Selesai')
+                    ->date('d M Y')
+                    ->sortable()
+                    ->placeholder('-'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -80,18 +118,48 @@ class StrukturOrganisasiResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->defaultSort('deskripsi', 'asc')
+            ->defaultSort('tanggal_mulai', 'desc')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('user.status')
+                    ->label('Status')
+                    ->options([
+                        'aktif' => 'Aktif',
+                        'nonaktif' => 'Nonaktif',
+                    ]),
+
+                Tables\Filters\Filter::make('tanggal_mulai')
+                    ->form([
+                        Forms\Components\DatePicker::make('from_date')
+                            ->label('Dari Tanggal'),
+                        Forms\Components\DatePicker::make('to_date')
+                            ->label('Sampai Tanggal'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['from_date'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_mulai', '>=', $date),
+                            )
+                            ->when(
+                                $data['to_date'],
+                                fn(Builder $query, $date): Builder => $query->whereDate('tanggal_mulai', '<=', $date),
+                            );
+                    }),
+
+                Tables\Filters\Filter::make('active_positions')
+                    ->label('Posisi Aktif')
+                    ->query(fn(Builder $query): Builder => $query
+                        ->whereHas('user', function (Builder $query) {
+                            $query->where('status', 'aktif');
+                        })
+                        ->where(function (Builder $query) {
+                            $query->whereNull('tanggal_selesai')
+                                ->orWhere('tanggal_selesai', '>=', now());
+                        })),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
             ]);
     }
 

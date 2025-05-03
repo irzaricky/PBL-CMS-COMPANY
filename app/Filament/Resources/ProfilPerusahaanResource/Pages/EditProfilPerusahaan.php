@@ -43,7 +43,8 @@ class EditProfilPerusahaan extends EditRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data = SingleFileHandler::formatFileData($data, 'logo_perusahaan');
-        return MultipleFileHandler::formatFileData($data, 'thumbnail_perusahaan');
+        $data = MultipleFileHandler::formatFileData($data, 'thumbnail_perusahaan');
+        return $data;
     }
 
     /**

@@ -15,6 +15,8 @@ return new class extends Migration {
             $table->foreignId('id_user')->constrained('users', 'id_user');
             $table->string('jabatan')->nullable();
             $table->string('deskripsi');
+            $table->timestamp('tanggal_mulai')->nullable();
+            $table->timestamp('tanggal_selesai')->nullable();
             $table->timestamps();
         });
     }

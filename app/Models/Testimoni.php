@@ -32,6 +32,7 @@ class Testimoni extends Model
         'isi_testimoni',
         'thumbnail_testimoni',
         'rating',
+        'status',
     ];
 
     protected $casts = [

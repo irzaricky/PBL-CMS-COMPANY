@@ -34,6 +34,7 @@ class Mitra extends Model
         'dok_siup',
         'dok_npwp',
         'tanggal_kemitraan',
+        'status',
     ];
 
     /**

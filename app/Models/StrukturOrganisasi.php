@@ -32,6 +32,18 @@ class StrukturOrganisasi extends Model
         'id_user',
         'deskripsi',
         'jabatan',
+        'tanggal_mulai',
+        'tanggal_selesai',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'tanggal_mulai' => 'datetime',
+        'tanggal_selesai' => 'datetime',
     ];
 
     /**

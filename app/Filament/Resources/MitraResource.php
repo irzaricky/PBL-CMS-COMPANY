@@ -57,6 +57,15 @@ class MitraResource extends Resource
                             ->displayFormat('d F Y')
                             ->default(now())
                             ->native(false),
+
+                        Forms\Components\Select::make('status')
+                            ->label('Status Kemitraan')
+                            ->options([
+                                'aktif' => 'Aktif',
+                                'nonaktif' => 'Nonaktif',
+                            ])
+                            ->default('aktif')
+                            ->required(),
                     ]),
 
                 Forms\Components\Section::make('Dokumen Legal')
@@ -64,7 +73,7 @@ class MitraResource extends Resource
                         Forms\Components\FileUpload::make('dok_siup')
                             ->label('Dokumen SIUP')
                             ->directory('mitra-dokumen/siup')
-                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->acceptedFileTypes(['application/pdf'])
                             ->maxSize(5120) // 5MB
                             ->disk('public')
                             ->downloadable(),
@@ -72,7 +81,7 @@ class MitraResource extends Resource
                         Forms\Components\FileUpload::make('dok_npwp')
                             ->label('Dokumen NPWP')
                             ->directory('mitra-dokumen/npwp')
-                            ->acceptedFileTypes(['application/pdf', 'image/jpeg', 'image/png'])
+                            ->acceptedFileTypes(['application/pdf'])
                             ->maxSize(5120) // 5MB
                             ->disk('public')
                             ->downloadable(),
@@ -99,6 +108,13 @@ class MitraResource extends Resource
                     ->limit(30)
                     ->tooltip(fn(Mitra $record): string => $record->alamat_mitra ?? '')
                     ->searchable(),
+
+                Tables\Columns\BadgeColumn::make('status')
+                    ->label('Status')
+                    ->colors([
+                        'success' => 'aktif',
+                        'danger' => 'nonaktif',
+                    ]),
 
                 Tables\Columns\IconColumn::make('dok_siup')
                     ->label('SIUP')
@@ -132,6 +148,13 @@ class MitraResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'aktif' => 'Aktif',
+                        'nonaktif' => 'Nonaktif',
+                    ]),
+
                 Tables\Filters\Filter::make('has_documents')
                     ->label('Dengan Dokumen Lengkap')
                     ->query(fn(Builder $query): Builder => $query->whereNotNull('dok_siup')->whereNotNull('dok_npwp')),
@@ -143,12 +166,44 @@ class MitraResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('toggleStatus')
+                    ->label(
+                        fn(Mitra $record): string =>
+                        $record->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'
+                    )
+                    ->icon(
+                        fn(Mitra $record): string =>
+                        $record->status === 'aktif' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle'
+                    )
+                    ->color(
+                        fn(Mitra $record): string =>
+                        $record->status === 'aktif' ? 'danger' : 'success'
+                    )
+                    ->action(function (Mitra $record): void {
+                        $record->status = $record->status === 'aktif' ? 'nonaktif' : 'aktif';
+                        $record->save();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->before(function (Collection $records) {
-                            SingleFileHandler::deleteBulkFiles($records, 'logo');
+                    Tables\Actions\BulkAction::make('updateStatus')
+                        ->label('Update Status')
+                        ->icon('heroicon-o-check-circle')
+                        ->form([
+                            Forms\Components\Select::make('status')
+                                ->label('Status')
+                                ->options([
+                                    'aktif' => 'Aktif',
+                                    'nonaktif' => 'Nonaktif',
+                                ])
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            foreach ($records as $record) {
+                                $record->update([
+                                    'status' => $data['status'],
+                                ]);
+                            }
                         }),
                 ]),
             ]);

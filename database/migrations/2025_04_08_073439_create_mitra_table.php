@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('dok_siup', 200)->nullable();
             $table->string('dok_npwp', 200)->nullable();
             $table->date('tanggal_kemitraan')->nullable();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->timestamps();
         });
     }

@@ -109,10 +109,7 @@ class EventResource extends Resource
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
                                     ->native(false)
-                                    ->minDate(fn($record) => $record ? null : now())
-                                    ->validationMessages([
-                                        'after_or_equal' => 'waktu mulai event harus sebelum waktu selesai event.',
-                                    ]),
+                                    ->minDate(fn($record) => $record ? null : now()),
 
                                 Forms\Components\DateTimePicker::make('waktu_end_event')
                                     ->label('Waktu Selesai')
