@@ -19,7 +19,6 @@ class LowonganSeeder extends Seeder
                 'gaji' => 12000000,
                 'tanggal_dibuka' => now(),
                 'tanggal_ditutup' => now()->addDays(30),
-                'status_lowongan' => 'dibuka',
                 'tenaga_dibutuhkan' => 2,
             ],
             [
@@ -31,7 +30,6 @@ class LowonganSeeder extends Seeder
                 'gaji' => 10000000,
                 'tanggal_dibuka' => now(),
                 'tanggal_ditutup' => now()->addDays(14),
-                'status_lowongan' => 'dibuka',
                 'tenaga_dibutuhkan' => 1,
             ],
             [
@@ -43,7 +41,6 @@ class LowonganSeeder extends Seeder
                 'gaji' => 2500000,
                 'tanggal_dibuka' => now(),
                 'tanggal_ditutup' => now()->addDays(7),
-                'status_lowongan' => 'dibuka',
                 'tenaga_dibutuhkan' => 3,
             ],
         ]);

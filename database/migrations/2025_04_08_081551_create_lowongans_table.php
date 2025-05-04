@@ -20,7 +20,6 @@ return new class extends Migration {
             $table->decimal('gaji', 10, 2)->nullable();
             $table->date('tanggal_dibuka');
             $table->date('tanggal_ditutup');
-            $table->enum('status_lowongan', ['dibuka', 'ditutup']);
             $table->tinyInteger('tenaga_dibutuhkan')->unsigned();
             $table->softDeletes();
             $table->timestamps();

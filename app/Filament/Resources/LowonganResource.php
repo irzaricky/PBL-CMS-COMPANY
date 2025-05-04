@@ -120,15 +120,6 @@ class LowonganResource extends Resource
                                     ->validationMessages([
                                         'after_or_equal' => 'Tanggal ditutup tidak boleh sebelum tanggal dibuka.',
                                     ]),
-
-                                Forms\Components\Select::make('status_lowongan')
-                                    ->label('Status Lowongan')
-                                    ->options([
-                                        'dibuka' => 'Dibuka',
-                                        'ditutup' => 'Ditutup',
-                                    ])
-                                    ->default('dibuka')
-                                    ->required(),
                             ]),
                     ]),
             ]);
@@ -185,13 +176,29 @@ class LowonganResource extends Resource
                     ->date('d M Y')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('status_lowongan')
+                Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->colors([
-                        'success' => 'dibuka',
-                        'danger' => 'ditutup',
-                    ]),
+                    ->color(fn(string $state): string => match ($state) {
+                        'Aktif' => 'success',
+                        'Ditutup' => 'danger',
+                        default => 'secondary',
+                    })
+                    ->getStateUsing(function ($record): string {
+                        $now = now();
+
+                        if ($now->between($record->tanggal_dibuka, $record->tanggal_ditutup)) {
+                            return 'Aktif';
+                        }
+
+                        if ($now->isAfter($record->tanggal_ditutup)) {
+                            return 'Ditutup';
+                        }
+
+                        return 'Belum Dibuka';
+                    })
+                    ->sortable()
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('tenaga_dibutuhkan')
                     ->label('Posisi terbuka')
@@ -227,21 +234,11 @@ class LowonganResource extends Resource
                         'Internship' => 'Internship',
                     ]),
 
-                Tables\Filters\SelectFilter::make('status_lowongan')
-                    ->label('Status')
-                    ->options([
-                        'dibuka' => 'Dibuka',
-                        'ditutup' => 'Ditutup',
-                    ]),
-
                 Tables\Filters\Filter::make('active')
                     ->label('Aktif')
                     ->query(fn(Builder $query): Builder => $query
                         ->where('tanggal_dibuka', '<=', now())
-                        ->where('tanggal_ditutup', '>=', now())
-                        ->where('status_lowongan', 'dibuka')),
-
-                TrashedFilter::make(),
+                        ->where('tanggal_ditutup', '>=', now())),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

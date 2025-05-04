@@ -168,8 +168,6 @@ class ProdukResource extends Resource
                 Tables\Filters\SelectFilter::make('id_kategori_produk')
                     ->label('Kategori')
                     ->relationship('kategoriProduk', 'nama_kategori_produk'),
-
-                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

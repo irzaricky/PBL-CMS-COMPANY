@@ -238,8 +238,6 @@ class EventResource extends Resource
                             default => $query,
                         };
                     }),
-
-                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

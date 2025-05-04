@@ -163,6 +163,11 @@ class ArtikelResource extends Resource
                     ->dateTime('d M Y H:i')
                     ->sortable(),
 
+                Tables\Columns\TextColumn::make('jumlah_view')
+                    ->label('Jumlah View')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: false),
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
@@ -183,8 +188,6 @@ class ArtikelResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Penulis')
                     ->relationship('user', 'name'),
-
-                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

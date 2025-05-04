@@ -177,7 +177,6 @@ class UserResource extends Resource
                         'Percobaan' => 'Masa Percobaan',
                     ])
                     ->label('Status Kepegawaian'),
-                Tables\Filters\TrashedFilter::make(),
                 Tables\Filters\SelectFilter::make('status')
                     ->options([
                         'aktif' => 'Aktif',

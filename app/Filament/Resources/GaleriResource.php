@@ -183,8 +183,6 @@ class GaleriResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Pengunggah')
                     ->relationship('user', 'name'),
-
-                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
