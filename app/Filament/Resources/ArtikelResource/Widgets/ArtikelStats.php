@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources\ArtikelResource\Widgets;
 
-use App\Filament\Resources\ArtikelResource\Pages\ListArtikels;
 use App\Models\Artikel;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
 use Flowframe\Trend\Trend;
+use Illuminate\Support\Number;
 use Flowframe\Trend\TrendValue;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use App\Filament\Resources\ArtikelResource\Pages\ListArtikels;
 
 class ArtikelStats extends BaseWidget
 {
@@ -41,7 +42,7 @@ class ArtikelStats extends BaseWidget
                         ->toArray()
                 )
                 ->color('primary'),
-            Stat::make('Total View', number_format($this->getPageTableQuery()->sum('jumlah_view'), 0, ',', '.'))
+            Stat::make('Total View', Number::format($this->getPageTableQuery()->sum('jumlah_view')))
                 ->description('Total view semua artikel')
                 ->color('success'),
             Stat::make('Rata-rata View', number_format($this->getPageTableQuery()->avg('jumlah_view'), 0))
