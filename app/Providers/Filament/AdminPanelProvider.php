@@ -12,6 +12,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Resources\UserResource;
+use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
@@ -85,8 +86,8 @@ class AdminPanelProvider extends PanelProvider
             // });
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()
-                    ->icon('heroicon-o-home')
-                    ->label('Home')
+                    ->icon('heroicon-s-power')
+                    ->label('Keluar dari halaman admin')
                     ->url('/'), // Mengarah ke halaman utama
             ]);;
     }

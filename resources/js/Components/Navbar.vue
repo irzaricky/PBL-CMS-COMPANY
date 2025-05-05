@@ -2,7 +2,13 @@
     <div class="container mx-auto bg-white p-6 font-custom">
 
         <div class="flex justify-between items-center mb-6">
-            <img src="image/UKMI hitam.png" alt="Logo UKMI" class="h-16" />
+            <!-- Kiri: Logo + Tulisan UKMI -->
+            <div class="flex items-center space-x-2">
+                <img src="image/UKMI hitam.png" alt="Logo UKMI" class="h-16" />
+                <span class="text-2xl font-bold text-black px-4">Biiscorp</span>
+            </div>
+
+            <!-- Kanan: Ikon -->
             <AlignJustify class="text-black w-10 h-10" />
         </div>
 
@@ -29,7 +35,7 @@
                 <ChevronDown class="absolute right-0 top-1/2 transform -translate-y-1/2 text-black" />
             </div>
 
-            
+
             <Transition name="fade-slide" enter-active-class="transition duration-300"
                 leave-active-class="transition duration-300">
                 <MegaMenu v-if="showMegaMenu" />
