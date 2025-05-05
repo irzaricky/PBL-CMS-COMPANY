@@ -13,11 +13,12 @@ class ArtikelSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
         $artikels = [];
+        $usedSlugs = [];
 
-        // generate 20 artikel menggunakan faker
-        for ($i = 1; $i <= 20; $i++) {
+
+        for ($i = 1; $i <= 100; $i++) {
             // Judul artikel
-            $judul = Faker::create('en_US')->bs();
+            $judul = Faker::create('en_US')->unique()->bs();
 
             // Generate konten HTML
             $konten = $this->generateArtikelContent($faker);
@@ -36,7 +37,9 @@ class ArtikelSeeder extends Seeder
         }
 
         // Masukkan semua data ke database
-        DB::table('artikel')->insert($artikels);
+        foreach (array_chunk($artikels, 100) as $chunk) {
+            DB::table('artikel')->insert($chunk);
+        }
     }
 
     /**

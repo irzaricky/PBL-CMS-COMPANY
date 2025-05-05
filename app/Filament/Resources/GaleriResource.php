@@ -19,6 +19,7 @@ use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Filters\TrashedFilter;
 use App\Filament\Resources\GaleriResource\RelationManagers;
+use App\Filament\Resources\GaleriResource\Widgets\GaleriStats;
 
 class GaleriResource extends Resource
 {
@@ -103,8 +104,8 @@ class GaleriResource extends Resource
                             ->image()
                             ->multiple()
                             ->reorderable()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
+                            // ->imageResizeMode('cover')
+                            // ->imageCropAspectRatio('16:9')
                             ->directory('galeri-images')
                             ->maxFiles(10)
                             ->helperText('Upload hingga 10 gambar (format: jpg, png, webp)')
@@ -157,6 +158,13 @@ class GaleriResource extends Resource
                     ->label('Pengunggah')
                     ->sortable()
                     ->searchable(),
+
+                Tables\Columns\TextColumn::make('jumlah_unduhan')
+                    ->label('Jumlah Unduhan')
+                    ->sortable()
+                    ->numeric()
+                    ->alignCenter()
+                    ->badge(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -218,6 +226,13 @@ class GaleriResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            GaleriStats::class,
         ];
     }
 

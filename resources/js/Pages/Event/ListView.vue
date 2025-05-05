@@ -224,8 +224,7 @@ const upcomingEvents = computed(() => {
                                     View Details
                                 </a>
                                 <a
-                                    v-if="event.link_daftar_event"
-                                    :href="event.link_daftar_event"
+                                    href="#"
                                     target="_blank"
                                     class="inline-block px-4 py-2 bg-green-500 text-white font-medium text-sm rounded hover:bg-green-600 transition-colors duration-300"
                                 >

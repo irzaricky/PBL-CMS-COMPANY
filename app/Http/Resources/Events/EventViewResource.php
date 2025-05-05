@@ -24,7 +24,6 @@ class EventViewResource extends JsonResource
             'link_lokasi_event' => $this->link_lokasi_event,
             'waktu_start_event' => $this->waktu_start_event,
             'waktu_end_event' => $this->waktu_end_event,
-            'link_daftar_event' => $this->link_daftar_event,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'slug' => $this->slug,

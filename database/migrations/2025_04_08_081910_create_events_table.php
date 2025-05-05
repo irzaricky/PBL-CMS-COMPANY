@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('link_lokasi_event', 200);
             $table->dateTime('waktu_start_event');
             $table->dateTime('waktu_end_event');
-            $table->string('link_daftar_event', 100)->nullable();
+            $table->integer('jumlah_pendaftar')->default(0);
             $table->string('slug', 100)->unique();
             $table->softDeletes();
             $table->timestamps();

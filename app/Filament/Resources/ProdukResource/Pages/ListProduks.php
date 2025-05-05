@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\ProdukResource\Pages;
 
-use App\Filament\Resources\ProdukResource;
+use App\Filament\Resources\ProdukResource\Widgets\ProdukStats;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\ProdukResource;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListProduks extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = ProdukResource::class;
 
     protected function getHeaderActions(): array
@@ -18,6 +21,12 @@ class ListProduks extends ListRecords
         ];
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            ProdukStats::class,
+        ];
+    }
     public function getTabs(): array
     {
         return [

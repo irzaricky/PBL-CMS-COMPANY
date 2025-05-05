@@ -317,15 +317,12 @@ const daysRemaining = computed(() => {
                             </div>
                         </div>
 
-                        <div
-                            v-if="event.link_daftar_event"
-                            class="flex flex-col items-center text-center"
-                        >
+                        <div class="flex flex-col items-center text-center">
                             <span class="text-sm text-gray-500"
                                 >Registration</span
                             >
                             <a
-                                :href="event.link_daftar_event"
+                                href="#"
                                 target="_blank"
                                 class="mt-2 inline-flex items-center px-4 py-2 bg-green-600 text-black rounded-lg hover:bg-green-700 transition-colors"
                             >

@@ -19,6 +19,7 @@ use App\Services\FileHandlers\MultipleFileHandler;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\EventResource\RelationManagers;
+use App\Filament\Resources\EventResource\Widgets\EventStats;
 
 class EventResource extends Resource
 {
@@ -126,16 +127,6 @@ class EventResource extends Resource
                                     ]),
                             ]),
                     ]),
-
-                Forms\Components\Section::make('Informasi Pendaftaran')
-                    ->schema([
-                        Forms\Components\TextInput::make('link_daftar_event')
-                            ->label('Link Pendaftaran')
-                            ->placeholder('https://www.example.com/register')
-                            ->url() // Add URL validation
-                            ->helperText('Masukkan URL lengkap termasuk https://')
-                            ->maxLength(200),
-                    ]),
             ]);
     }
 
@@ -186,6 +177,13 @@ class EventResource extends Resource
                     ->sortable()
                     ->icon('heroicon-o-clock'),
 
+                Tables\Columns\TextColumn::make('jumlah_pendaftar')
+                    ->label('Jumlah Pendaftar')
+                    ->sortable()
+                    ->alignCenter()
+                    ->icon('heroicon-o-user-group')
+                    ->color('primary'),
+
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
                     ->badge()
@@ -209,13 +207,6 @@ class EventResource extends Resource
                         'danger' => 'Selesai',
                     ]),
 
-                Tables\Columns\TextColumn::make('link_daftar_event')
-                    ->label('Link Pendaftaran')
-                    ->url(fn($record) => $record->link_daftar_event)
-                    ->openUrlInNewTab()
-                    ->icon('heroicon-o-link')
-                    ->toggleable()
-                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
@@ -282,6 +273,13 @@ class EventResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            EventStats::class,
         ];
     }
 

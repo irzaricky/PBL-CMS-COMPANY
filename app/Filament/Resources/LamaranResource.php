@@ -19,7 +19,7 @@ class LamaranResource extends Resource
 {
     protected static ?string $model = Lamaran::class;
     protected static ?string $navigationGroup = 'Customer Service';
-    protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+    protected static ?string $navigationIcon = 'heroicon-s-briefcase';
     protected static ?string $recordTitleAttribute = 'id_lamaran';
 
     public static function form(Form $form): Form
@@ -46,6 +46,9 @@ class LamaranResource extends Resource
 
                 Forms\Components\Section::make('Dokumen Pelamar')
                     ->schema([
+                        Forms\Components\TextInput::make('nama_asli')
+                            ->label('Nama Asli')
+                            ->disabled(),
                         Forms\Components\FileUpload::make('cv')
                             ->label('Curriculum Vitae (CV)')
                             ->directory('lamaran-cv')

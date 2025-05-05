@@ -14,6 +14,7 @@ return new class extends Migration {
             $table->id('id_lamaran');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->foreignId('id_lowongan')->constrained('lowongan', 'id_lowongan')->onDelete('cascade');
+            $table->string('nama_asli', 100);
             $table->string('cv', 200)->nullable();
             $table->string('portfolio', 200)->nullable();
             $table->enum('status_lamaran', ['Diterima', 'Diproses', 'Ditolak'])->default('Diproses');

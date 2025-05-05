@@ -2,19 +2,29 @@
 
 namespace App\Filament\Resources\GaleriResource\Pages;
 
-use App\Filament\Resources\GaleriResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\GaleriResource;
+use App\Filament\Resources\GaleriResource\Widgets\GaleriStats;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListGaleris extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = GaleriResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            GaleriStats::class,
         ];
     }
 

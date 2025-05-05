@@ -45,7 +45,7 @@ class EventSeeder extends Seeder
                 'link_lokasi_event' => 'https://maps.app.goo.gl/TkgARfqzGjPkxFRcA',
                 'waktu_start_event' => $startDate,
                 'waktu_end_event' => $endDate,
-                'link_daftar_event' => 'https://google.com/',
+                'jumlah_pendaftar' => rand(0, 200),
                 'slug' => Str::slug($namaEvent),
                 'created_at' => now(),
                 'updated_at' => now(),
