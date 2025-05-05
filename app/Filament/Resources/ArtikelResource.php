@@ -11,14 +11,15 @@ use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
+use Filament\Tables\Actions\RestoreBulkAction;
 use App\Filament\Resources\ArtikelResource\Pages;
 use App\Services\FileHandlers\MultipleFileHandler;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ArtikelResource\RelationManagers;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Filters\TrashedFilter;
+use App\Filament\Resources\ArtikelResource\Widgets\ArtikelStats;
 
 class ArtikelResource extends Resource
 {
@@ -223,6 +224,13 @@ class ArtikelResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            ArtikelStats::class,
         ];
     }
 
