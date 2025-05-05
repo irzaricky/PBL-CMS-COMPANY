@@ -29,7 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName(ProfilPerusahaan::first()->nama_perusahaan)
+            ->brandName(ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
             ->login()
             ->font('Plus jakarta Sans')
             ->registration()
