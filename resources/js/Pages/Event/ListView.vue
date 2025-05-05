@@ -1,7 +1,7 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted, computed } from "vue";
-import Navbar from '@/Components/Navbar.vue';
+import Navbar from "@/Components/Navbar.vue";
 
 const events = ref([]);
 const loading = ref(true);
@@ -218,7 +218,7 @@ const upcomingEvents = computed(() => {
 
                             <div class="flex justify-between">
                                 <a
-                                    :href="`/events/${event.slug}`"
+                                    :href="`/event/${event.slug}`"
                                     class="inline-block px-4 py-2 bg-blue-500 text-white font-medium text-sm rounded hover:bg-blue-600 transition-colors duration-300"
                                 >
                                     View Details
