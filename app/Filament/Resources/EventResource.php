@@ -300,4 +300,12 @@ class EventResource extends Resource
 
         return (string) $modelClass::where('waktu_start_event', '>=', now())->count();
     }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        /** @var class-string<Model> $modelClass */
+        $modelClass = static::$model;
+
+        return (string) 'event yang akan datang';
+    }
 }

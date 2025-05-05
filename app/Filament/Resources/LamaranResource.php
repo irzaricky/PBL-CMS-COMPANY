@@ -198,4 +198,12 @@ class LamaranResource extends Resource
 
         return (string) $modelClass::where('status_lamaran', 'Diproses')->count();
     }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        /** @var class-string<Model> $modelClass */
+        $modelClass = static::$model;
+
+        return (string) 'Sedang Diproses';
+    }
 }
