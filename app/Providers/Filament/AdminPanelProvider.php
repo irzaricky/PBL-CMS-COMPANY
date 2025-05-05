@@ -27,6 +27,7 @@ class AdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
+            ->spa()
             ->id('admin')
             ->path('admin')
             ->brandName(ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')

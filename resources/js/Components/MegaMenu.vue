@@ -1,242 +1,92 @@
 <template>
-    <div
-        class="flex overflow-hidden flex-wrap self-center w-full text-black max-md:max-w-full"
-    >
-        <div
-            class="flex flex-wrap flex-1 shrink gap-8 items-start self-start py-8 pr-8 pl-16 basis-8 min-w-60 max-md:px-5 max-md:max-w-full"
-        >
-            <div class="flex-1 shrink basis-0 min-w-60">
-                <h3 class="text-sm font-semibold">Navigasi Utama</h3>
-                <ul class="mt-4 w-full">
-                    <li
-                        class="flex gap-3 items-start pt-2 pb-7 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start pt-2 pb-7 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start py-2 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start py-2 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="flex-1 shrink basis-0 min-w-60">
-                <h3 class="text-sm font-semibold">Lainnya di CMS ini</h3>
-                <ul class="mt-4 w-full">
-                    <li
-                        class="flex gap-3 items-start py-2 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start pt-2 pb-7 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start py-2 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start pt-2 pb-7 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
-            <div class="flex-1 shrink basis-0 min-w-60">
-                <h3 class="text-sm font-semibold">Blog Teratas</h3>
-                <ul class="mt-4 w-full">
-                    <li
-                        class="flex gap-3 items-start pt-2 pb-7 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start py-2 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start pt-2 pb-7 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                    <li
-                        class="flex gap-3 items-start pt-2 pb-7 mt-4 w-72 max-w-full min-h-[82px]"
-                    >
-                        <img
-                            src="image/Cube.svg"
-                            class="object-contain shrink-0 w-6 aspect-square"
-                            alt="Icon"
-                        />
-                        <div class="flex-1 shrink basis-0 min-w-60">
-                            <h4 class="text-base font-semibold">Lorem Ipsum</h4>
-                            <p class="text-sm">
-                                Dolor sit amet, consectetur adipiscing elit.
-                            </p>
-                        </div>
-                    </li>
-                </ul>
+    <div name="mega-menu">
+        <div class="mt-6">
+            <span class="font-bold text-sm">Informasi</span>
+            <div class="space-y-4 p-4 text-xl font-semibold">
+                <a href="/artikel"
+                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <FileText class="w-5 h-5" />
+                    <div>Artikel</div>
+                </a>
+
+                <a href="/galeri"
+                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <Image class="w-5 h-5" />
+                    <div>Galeri</div>
+                </a>
+
+                <a href="/unduhan"
+                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <Download class="w-5 h-5" />
+                    <div>Unduhan</div>
+                </a>
             </div>
         </div>
+
+        <div class="mt-6">
+            <span class="font-bold text-sm">Kegiatan</span>
+            <div class="space-y-4 p-4 text-xl font-semibold">
+                <a href="/event" class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <Calendar class="w-5 h-5" />
+                    <div>Event</div>
+                </a>
+
+                <a href="/lowongan"
+                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <BriefcaseBusiness class="w-5 h-5" />
+                    <div>Lowongan</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <span class="font-bold text-sm">Tentang kami</span>
+            <div class="space-y-4 p-4 text-xl font-semibold">
+                <a href="/profil"
+                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <Building2 class="w-5 h-5" />
+                    <div>Profil Perusahaan</div>
+                </a>
+
+                <a href="/visi-misi"
+                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <Binoculars class="w-5 h-5" />
+                    <div>Visi Misi Perusahaan</div>
+                </a>
+
+                <a href="/struktur"
+                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300">
+                    <Users class="w-5 h-5" />
+                    <div>Struktur Organisasi</div>
+                </a>
+            </div>
+        </div>
+
         <div
-            class="flex flex-col py-8 pr-24 pl-8 bg-white min-w-60 w-[416px] max-md:px-5"
-        >
-            <h3 class="text-sm font-semibold">Dari artikel kami</h3>
-            <article class="py-2 mt-4 w-full">
-                <img
-                    src="\image\placeholder.webp"
-                    class="object-contain w-40 max-w-full aspect-[1.52] rounded-lg"
-                    alt="Blog image"
-                />
-                <div class="mt-4 w-full">
-                    <div class="w-full">
-                        <h4 class="text-base font-semibold">
-                            Insightful Article
-                        </h4>
-                        <p class="mt-1 text-sm">
-                            Lorem ipsum dolor sit amet.
-                        </p>
+            className=" p-6 flex-col justify-start items-start gap-4 bg-gray-100 mt-6 rounded-xl shadow-xl shadow-radius-2xl">
+            <div className=" justify-start text-sm font-semibold leading-tight">
+                Artikel terbaik kami</div>
+            <div className=" py-2 flex flex-col justify-start items-start gap-4">
+                <img className="w-full h-48 rounded-2xl" src="https://placehold.co/287x188" />
+                <div className="w-full flex flex-col justify-start items-start gap-2">
+                    <div className=" flex flex-col justify-start items-start gap-1">
+                        <div className=" justify-start text-base font-semibold leading-normal">
+                            Artikel bagus</div>
+                        <div className=" justify-start text-sm font-normal leading-tight">
+                            Pelajari lebih lanjut tentang artikel ini.</div>
                     </div>
-                    <a
-                        href="/artikel"
-                        class="mt-2 text-sm underline decoration-auto decoration-solid underline-offset-auto"
-                        >Baca selanjutnya</a
-                    >
+                    <div className="justify-start text-sm font-normal underline leading-tight">
+                        Read more</div>
                 </div>
-            </article>
-            <button
-                class="flex gap-2 justify-center items-center self-start py-1 mt-4 text-base font-medium text-black whitespace-nowrap rounded-[100px]"
-            >
-                <span class="self-stretch my-auto">Tombol</span>
-                <img
-                    src="image/arrow-right.svg"
-                    class="object-contain w-4 h-4"
-                    alt="Arrow right"
-                />
-            </button>
+            </div>
+            <div data-alternate="False" data-icon-position="Trailing" data-small="False" data-style="Link"
+                className="py-1 rounded-[100px] inline-flex justify-center items-center gap-2">
+                <div className="justify-start text-base font-medium leading-normal">
+                    Join</div>
+                <div className="w-6 h-6 relative overflow-hidden">
+                    <div className="w-2 h-3 left-[8.29px] top-[5.54px] absolute bg-Color-Scheme-2-Text" />
+                </div>
+            </div>
         </div>
     </div>
 </template>

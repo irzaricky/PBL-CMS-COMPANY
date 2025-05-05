@@ -7,21 +7,13 @@ const showingNavigationDropdown = ref(false);
 </script>
 
 <template>
-  <div>
-    <!-- Navbar -->
-    <Navbar />
-    <Hero />
+    <div>
+        <Navbar />
 
-    <!-- Main Content (dynamic content) -->
-    <main>
-      <slot>
-        
-      </slot>
-    </main>
+        <main>
+            <slot>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white text-center py-4">
-      <p>&copy; 2025 My Awesome App. All Rights Reserved.</p>
-    </footer>
-  </div>
+            </slot>
+        </main>
+    </div>
 </template>

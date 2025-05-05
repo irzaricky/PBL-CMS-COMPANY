@@ -1,6 +1,7 @@
 <script setup>
 import AOS, { init } from "aos";
 import "aos/dist/aos.css";
+import { School } from "lucide-vue-next";
 
 AOS.init();
 </script>
@@ -191,7 +192,7 @@ AOS.init();
                     class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition duration-500 flex flex-col justify-end p-6"
                 >
                     <!-- Lucide Icon -->
-                    <Book class="text-white w-8 h-8 mb-4" />
+                    <School class="text-white w-8 h-8 mb-4" />
 
                     <h3 class="text-white text-xl font-bold">Judul Card</h3>
                     <p class="text-white text-sm mt-1">
