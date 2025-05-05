@@ -148,4 +148,12 @@ class FeedbackResource extends Resource
 
         return (string) $modelClass::whereNull('tanggapan_feedback')->count();
     }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        /** @var class-string<Model> $modelClass */
+        $modelClass = static::$model;
+
+        return (string) 'Belum Ditanggapi';
+    }
 }
