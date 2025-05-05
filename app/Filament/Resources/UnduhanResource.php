@@ -23,7 +23,7 @@ class UnduhanResource extends Resource
 {
     protected static ?string $model = Unduhan::class;
     protected static ?string $navigationGroup = 'Content Management';
-    protected static ?string $navigationIcon = 'heroicon-o-document-arrow-down';
+    protected static ?string $navigationIcon = 'heroicon-s-document-arrow-down';
 
     public static function form(Form $form): Form
     {

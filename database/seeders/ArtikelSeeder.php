@@ -18,17 +18,7 @@ class ArtikelSeeder extends Seeder
 
         for ($i = 1; $i <= 100; $i++) {
             // Judul artikel
-            $judul = Faker::create('en_US')->bs();
-
-            // Pastikan slug unik
-            $slug = Str::slug($judul);
-            $originalSlug = $slug;
-            $counter = 1;
-            while (in_array($slug, $usedSlugs)) {
-                $slug = $originalSlug . '-' . $counter;
-                $counter++;
-            }
-            $usedSlugs[] = $slug;
+            $judul = Faker::create('en_US')->unique()->bs();
 
             // Generate konten HTML
             $konten = $this->generateArtikelContent($faker);

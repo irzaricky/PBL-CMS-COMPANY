@@ -35,6 +35,7 @@ class Galeri extends Model
         'thumbnail_galeri',
         'deskripsi_galeri',
         'slug',
+        'jumlah_unduhan',
     ];
 
     protected $casts = [

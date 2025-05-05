@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->json('thumbnail_galeri')->nullable();
             $table->text('deskripsi_galeri')->nullable();
             $table->string('slug', 100)->unique();
+            $table->bigInteger('jumlah_unduhan')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });
