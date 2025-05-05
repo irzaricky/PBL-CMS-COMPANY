@@ -15,8 +15,8 @@ class ArtikelSeeder extends Seeder
         $artikels = [];
         $usedSlugs = [];
 
-        // generate 20 artikel menggunakan faker
-        for ($i = 1; $i <= 500; $i++) {
+
+        for ($i = 1; $i <= 100; $i++) {
             // Judul artikel
             $judul = Faker::create('en_US')->bs();
 

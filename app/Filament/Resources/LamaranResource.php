@@ -46,6 +46,9 @@ class LamaranResource extends Resource
 
                 Forms\Components\Section::make('Dokumen Pelamar')
                     ->schema([
+                        Forms\Components\TextInput::make('nama_asli')
+                            ->label('Nama Asli')
+                            ->disabled(),
                         Forms\Components\FileUpload::make('cv')
                             ->label('Curriculum Vitae (CV)')
                             ->directory('lamaran-cv')

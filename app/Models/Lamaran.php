@@ -15,7 +15,7 @@ class Lamaran extends Model
      * @var string
      */
     protected $table = 'lamaran';
-    
+
     /**
      * The primary key for the model.
      *
@@ -31,6 +31,7 @@ class Lamaran extends Model
     protected $fillable = [
         'id_user',
         'id_lowongan',
+        'nama_asli',
         'cv',
         'portfolio',
         'status_lamaran',
