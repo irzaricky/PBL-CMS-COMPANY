@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Navbar from '@/Components/Navbar.vue';
 import Hero from '@/Components/Hero.vue';
+import Benefit from '@/Components/Benefit.vue';
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -10,7 +11,7 @@ const showingNavigationDropdown = ref(false);
     <div>
         <Navbar />
         <Hero />
-
+        <Benefit /> 
         <main>
             <slot>
 

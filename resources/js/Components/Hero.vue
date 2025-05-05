@@ -11,8 +11,8 @@
             <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 sm:mb-6">Judul Utama</h1>
             <p class="text-lg sm:text-xl mb-6 sm:mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel quidem eum possimus? Totam quia soluta incidunt</p>
             <div class="flex sm:flex-row gap-6 sm:gap-8">
-                <button class="bg-white text-black px-6 py-3 rounded-lg text-lg sm:text-xl">Register</button>
-                <button class="bg-transparent border border-white px-6 py-3 rounded-lg text-lg sm:text-xl">Login</button>
+                <button class="bg-white text-black px-6 py-3 rounded-lg text-lg sm:text-xl"> <a href="/admin">Admin</a></button>
+                <button class="bg-transparent border border-white px-6 py-3 rounded-lg text-lg sm:text-xl"><a href="/admin">Admin</a></button>
             </div>
         </div>
     </div>

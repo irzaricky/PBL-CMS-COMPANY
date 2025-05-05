@@ -62,7 +62,7 @@ function formatDate(date) {
 </script>
 
 <template>
-    <div class="bg-gray-50 min-h-screen py-10">
+    <div class="bg-gray-50 min-h-screen py-10 font-custom">
         <!-- Breadcrumb navigation -->
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
             <nav class="flex" aria-label="Breadcrumb">
