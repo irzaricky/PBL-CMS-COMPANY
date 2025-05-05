@@ -1,96 +1,58 @@
 <template>
-    <section class="relative bg-white overflow-hidden py-20 px-6 md:px-16">
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-black/5 z-0"></div>
+    <div class="relative h-[600px] w-full overflow-hidden font-custom">
+        <div v-for="(image, index) in images" :key="index"
+            class="absolute inset-0 bg-center bg-cover transition-opacity duration-[2000ms]"
+            :style="{ backgroundImage: `url(${image})` }" :class="[
+                index === currentImage ? 'opacity-100 z-0 animate-zoomPan' : 'opacity-0 z-0'
+            ]"></div>
 
-        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between max-w-7xl mx-auto gap-12">
-            <!-- Kiri -->
-            <div class="flex-1 text-center md:text-left z-10">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-black mb-4">
-                    Selamat Datang di UKMI!
-                </h1>
-                <p class="text-lg text-gray-700 mb-6 max-w-md">
-                    Wadah kegiatan kerohanian Islam yang seru, hangat, dan bermanfaat!
-                </p>
-                <div class="flex justify-center md:justify-start gap-4">
-                    <button class="bg-indigo-900 text-white px-6 py-3 rounded-full hover:bg-indigo-800 transition">
-                        Mulai Sekarang
-                    </button>
-                    <button class="bg-black/10 text-black px-6 py-3 rounded-full hover:bg-black/20 transition">
-                        Pelajari Lebih Lanjut
-                    </button>
-                </div>
+        <div
+            class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-white text-center px-4 z-10">
+            <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 sm:mb-6">Judul Utama</h1>
+            <p class="text-lg sm:text-xl mb-6 sm:mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel quidem eum possimus? Totam quia soluta incidunt</p>
+            <div class="flex sm:flex-row gap-6 sm:gap-8">
+                <button class="bg-white text-black px-6 py-3 rounded-lg text-lg sm:text-xl">Register</button>
+                <button class="bg-transparent border border-white px-6 py-3 rounded-lg text-lg sm:text-xl">Login</button>
             </div>
-
-           <!-- Kanan: Foto vertical loop -->
-<div class="w-full md:w-auto max-w-md h-[300px] md:h-[400px] overflow-hidden relative z-10">
-  <div class="flex gap-4 w-fit">
-    <!-- Kolom kiri -->
-    <div class="flex flex-col gap-4 animate-scroll-up">
-      <template v-for="i in 2" :key="'col1-' + i">
-        <img
-          src="/image/placeholder.webp"
-          class="w-32 h-40 md:w-40 md:h-52 object-cover rounded-xl shadow"
-        />
-        <img
-          src="/image/placeholder.webp"
-          class="w-32 h-40 md:w-40 md:h-52 object-cover rounded-xl shadow"
-        />
-        <img
-          src="/image/placeholder.webp"
-          class="w-32 h-40 md:w-40 md:h-52 object-cover rounded-xl shadow"
-        />
-      </template>
-    </div>
-    <!-- Kolom kanan -->
-    <div class="flex flex-col gap-4 animate-scroll-down">
-      <template v-for="i in 2" :key="'col2-' + i">
-        <img
-          src="/image/placeholder.webp"
-          class="w-32 h-40 md:w-40 md:h-52 object-cover rounded-xl shadow"
-        />
-        <img
-          src="/image/placeholder.webp"
-          class="w-32 h-40 md:w-40 md:h-52 object-cover rounded-xl shadow"
-        />
-        <img
-          src="/image/placeholder.webp"
-          class="w-32 h-40 md:w-40 md:h-52 object-cover rounded-xl shadow"
-        />
-      </template>
-    </div>
-  </div>
-</div>
         </div>
-    </section>
+    </div>
 </template>
 
-<style>
-@keyframes scrollUp {
+<script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
+const images = [
+    'https://placehold.co/600x400?text=Gambar+1',
+    'https://placehold.co/600x400?text=Gambar+2',
+    'https://placehold.co/600x400?text=Gambar+3'
+]
+
+const currentImage = ref(0)
+let intervalId
+
+onMounted(() => {
+    intervalId = setInterval(() => {
+        currentImage.value = (currentImage.value + 1) % images.length
+    }, 6000)
+})
+
+onBeforeUnmount(() => {
+    clearInterval(intervalId)
+})
+</script>
+
+<style scoped>
+@keyframes zoomPan {
     0% {
-        transform: translateY(0%);
+        transform: scale(1) translate(0, 0);
     }
 
     100% {
-        transform: translateY(-50%);
+        transform: scale(1.25) translate(5%, 5%);
     }
 }
 
-@keyframes scrollDown {
-    0% {
-        transform: translateY(-50%);
-    }
-
-    100% {
-        transform: translateY(0%);
-    }
-}
-
-.animate-scroll-up {
-    animation: scrollUp 20s linear infinite;
-}
-
-.animate-scroll-down {
-    animation: scrollDown 20s linear infinite;
+.animate-zoomPan {
+    animation: zoomPan 40s ease-in-out forwards;
 }
 </style>

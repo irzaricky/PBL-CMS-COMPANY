@@ -9,6 +9,7 @@ const showingNavigationDropdown = ref(false);
 <template>
     <div>
         <Navbar />
+        <Hero />
 
         <main>
             <slot>
