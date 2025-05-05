@@ -15,8 +15,7 @@ class ArtikelStats extends BaseWidget
 {
     use InteractsWithPageTable;
 
-    // Set polling interval to 5 seconds
-    protected static ?string $pollingInterval = null;
+    protected static ?string $pollingInterval = '2s';
 
     protected function getTablePage(): string
     {

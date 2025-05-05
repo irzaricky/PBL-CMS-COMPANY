@@ -36,7 +36,7 @@ class Event extends Model
         'link_lokasi_event',
         'waktu_start_event',
         'waktu_end_event',
-        'link_daftar_event',
+        'jumlah_pendaftar',
         'slug',
     ];
 
