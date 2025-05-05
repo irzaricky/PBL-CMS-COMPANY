@@ -2,17 +2,18 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\LamaranResource\Pages;
-use App\Filament\Resources\LamaranResource\RelationManagers;
-use App\Models\Lamaran;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use App\Models\Lamaran;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Database\Eloquent\Collection;
+use App\Filament\Resources\LamaranResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\LamaranResource\RelationManagers;
 
 class LamaranResource extends Resource
 {
@@ -185,5 +186,13 @@ class LamaranResource extends Resource
             'create' => Pages\CreateLamaran::route('/create'),
             'edit' => Pages\EditLamaran::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        /** @var class-string<Model> $modelClass */
+        $modelClass = static::$model;
+
+        return (string) $modelClass::where('status_lamaran', 'Diproses')->count();
     }
 }

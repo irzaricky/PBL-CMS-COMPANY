@@ -11,52 +11,23 @@ class LamaranSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create('id_ID');
-
         $statusOptions = ['Diproses', 'Diterima', 'Ditolak'];
+        $lamaran = [];
 
-        $lamaran = [
-            [
-                'id_lamaran' => 1,
-                'id_user' => 9,
-                'id_lowongan' => 1,
-                'status_lamaran' => $faker->randomElement($statusOptions),
-                'created_at' => $faker->dateTimeBetween('-3 months', '-2 months'),
-                'updated_at' => $faker->dateTimeBetween('-2 months', '-1 month'),
-            ],
-            [
-                'id_lamaran' => 2,
-                'id_user' => 10,
-                'id_lowongan' => 2,
-                'status_lamaran' => $faker->randomElement($statusOptions),
-                'created_at' => $faker->dateTimeBetween('-3 months', '-2 months'),
-                'updated_at' => $faker->dateTimeBetween('-2 months', '-1 month'),
-            ],
-            [
-                'id_lamaran' => 3,
-                'id_user' => 11,
-                'id_lowongan' => 3,
-                'status_lamaran' => $faker->randomElement($statusOptions),
-                'created_at' => $faker->dateTimeBetween('-3 months', '-2 months'),
-                'updated_at' => $faker->dateTimeBetween('-2 months', '-1 month'),
-            ],
+        // Generate 30 applications
+        for ($i = 1; $i <= 30; $i++) {
+            $createdAt = $faker->dateTimeBetween('-3 months', '-1 month');
+            $updatedAt = $faker->dateTimeBetween($createdAt, 'now');
 
-            [
-                'id_lamaran' => 4,
-                'id_user' => 12,
-                'id_lowongan' => 1,
+            $lamaran[] = [
+                'id_lamaran' => $i,
+                'id_user' => $faker->numberBetween(9, 13),
+                'id_lowongan' => $faker->numberBetween(1, 3),
                 'status_lamaran' => $faker->randomElement($statusOptions),
-                'created_at' => $faker->dateTimeBetween('-3 months', '-2 months'),
-                'updated_at' => $faker->dateTimeBetween('-2 months', '-1 month'),
-            ],
-            [
-                'id_lamaran' => 5,
-                'id_user' => 13,
-                'id_lowongan' => 2,
-                'status_lamaran' => $faker->randomElement($statusOptions),
-                'created_at' => $faker->dateTimeBetween('-2 months', '-1 month'),
-                'updated_at' => $faker->dateTimeBetween('-1 month', 'now'),
-            ],
-        ];
+                'created_at' => $createdAt,
+                'updated_at' => $updatedAt,
+            ];
+        }
 
         DB::table('lamaran')->insert($lamaran);
     }
