@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { megaMenuCache } from "./MegaMenuStore";
 
 const articles = ref([]);
 
@@ -10,8 +11,18 @@ onMounted(() => {
 
 async function fetchArticles() {
     try {
+        // Check if we have valid cached data
+        if (megaMenuCache.isValid("articles")) {
+            articles.value = megaMenuCache.articles;
+            return;
+        }
+
+        // Otherwise fetch from API
         const response = await axios.get("/api/artikel/most-viewed");
         articles.value = response.data.data;
+
+        // Cache the response
+        megaMenuCache.setCache("articles", response.data.data);
     } catch (error) {
         console.error("Error fetching articles:", error);
     }

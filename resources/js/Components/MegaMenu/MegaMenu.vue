@@ -5,13 +5,7 @@ import MiniArtikel from "./MiniArtikel.vue";
 import MiniEvent from "./MiniEvent.vue";
 import MiniLowongan from "./MiniLowongan.vue";
 
-function getImageUrl(image) {
-    if (!image) return "/image/placeholder.webp";
-    if (typeof image === "object" && image !== null) {
-        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
-    }
-    return `/storage/${image}`;
-}
+
 
 defineOptions({ name: "MegaMenu" });
 

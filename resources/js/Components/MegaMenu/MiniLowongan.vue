@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { megaMenuCache } from "./MegaMenuStore";
 
 const lowongans = ref([]);
 
@@ -10,8 +11,17 @@ onMounted(() => {
 
 async function fetchLowongan() {
     try {
+        // Check if we have valid cached data
+        if (megaMenuCache.isValid("lowongans")) {
+            lowongans.value = megaMenuCache.lowongans;
+            return;
+        }
+
         const response = await axios.get("/api/lowongan/newest");
         lowongans.value = response.data.data;
+
+        // Cache the response
+        megaMenuCache.setCache("lowongans", response.data.data);
     } catch (error) {
         console.error("Error fetching lowongan:", error);
     }
