@@ -18,6 +18,9 @@ Route::prefix('artikel')->group(function () {
     // untuk search artikel berdasarkan judul atau isi artikel
     Route::get('/search', [ArtikelController::class, 'search']);
 
+    // untuk mengambil artikel dengan view terbanyak
+    Route::get('/most-viewed', [ArtikelController::class, 'getArticleByMostView']);
+
     // untuk mengambil artikel berdasarkan id
     Route::get('/id/{id}', [ArtikelController::class, 'getArticleById']);
 

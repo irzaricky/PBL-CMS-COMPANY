@@ -160,4 +160,27 @@ class ArtikelController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get the most viewed articles
+     * 
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function getArticleByMostView()
+    {
+        try {
+            $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->orderBy('jumlah_view', 'desc')
+                ->take(1)
+                ->get();
+
+            return ArticleListResource::collection($articles);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Artikel',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
