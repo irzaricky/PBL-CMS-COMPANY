@@ -167,6 +167,7 @@ class ArtikelResource extends Resource
                 Tables\Columns\TextColumn::make('jumlah_view')
                     ->label('Jumlah View')
                     ->sortable()
+                    ->alignCenter()
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 Tables\Columns\TextColumn::make('updated_at')

@@ -9,7 +9,7 @@ use App\Http\Resources\Articles\ArticleListResource;
 use App\Http\Resources\Articles\ArticleViewResource;
 use Illuminate\Http\Request;
 
-class ArticleController extends Controller
+class ArtikelController extends Controller
 {
     /**
      * Get all articles
