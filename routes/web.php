@@ -15,13 +15,13 @@ Route::get('/dashboard', function () {
 
 
 Route::prefix('artikel')->group(function () {
-    Route::get('/', action: function () {
+    Route::get('/', function () {
         return Inertia::render('Artikel/ListView');
-    });
+    })->name('artikel.list');
 
-    Route::get('/{slug}', action: function ($slug) {
+    Route::get('/{slug}', function ($slug) {
         return Inertia::render('Artikel/Show', ['slug' => $slug]);
-    });
+    })->name('artikel.show');
 });
 
 Route::get('/', function () {
@@ -34,13 +34,13 @@ Route::get('/example', function () {
 
 // Event
 Route::prefix('event')->group(function () {
-    Route::get('/', action: function () {
+    Route::get('/', function () {
         return Inertia::render('Event/ListView');
-    });
+    })->name('event.list');
 
-    Route::get('/{slug}', action: function ($slug) {
+    Route::get('/{slug}', function ($slug) {
         return Inertia::render('Event/Show', ['slug' => $slug]);
-    });
+    })->name('event.show');
 });
 
 Route::middleware('auth')->group(function () {
