@@ -23,7 +23,7 @@ Route::prefix('artikel')->group(function () {
 
 Route::get('/', function () {
     return Inertia::render('Home');
-});
+})->name('home');
 
 Route::get('/example', function () {
     return Inertia::render('Example');

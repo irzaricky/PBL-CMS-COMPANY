@@ -43,6 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
             ->login()
             ->unsavedChangesAlerts()
+            ->globalSearch(false)
             ->font('Plus jakarta Sans')
             ->registration()
             ->colors([
