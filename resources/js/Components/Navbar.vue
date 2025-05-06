@@ -3,7 +3,6 @@ import { AlignJustify, ChevronDown } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import Home from "@/Pages/Home.vue";
 
 // Define props
 const props = defineProps({
@@ -84,12 +83,12 @@ function getImageUrl(image) {
 </style>
 
 <template>
-    <div class="container mx-auto bg-white p-6 font-custom">
-        <div class="flex justify-between items-center mb-6">
-            <!-- Kiri: Logo + Tulisan UKMI -->
+    <nav class="w-full bg-white shadow-sm fixed top-0 left-0 z-50">
+        <div class="container mx-auto flex items-center justify-between py-4">
+            <!-- Logo -->
             <div class="flex items-center space-x-2">
                 <div
-                    class="h-16 w-16 flex items-center justify-center overflow-hidden"
+                    class="h-12 w-12 flex items-center justify-center overflow-hidden"
                 >
                     <img
                         :src="getImageUrl(profil_perusahaan?.logo_perusahaan)"
@@ -97,60 +96,66 @@ function getImageUrl(image) {
                         class="h-full w-full object-contain"
                     />
                 </div>
-
-                <a href="/" class="text-2xl font-bold text-black px-4">{{
-                    profil_perusahaan?.nama_perusahaan || "Loading..."
-                }}</a>
+                <a href="/" class="text-2xl font-bold text-black px-2">
+                    {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}
+                </a>
             </div>
 
-            <!-- Kanan: Ikon -->
-            <AlignJustify class="text-black w-10 h-10" />
-        </div>
-
-        <nav class="flex flex-col space-y-6 pt-4">
-            <div>
+            <!-- Menu -->
+            <div class="flex items- space-x-8">
                 <a
                     href="/"
-                    class="block text-black hover:text-gray-500 transition duration-300 text-2xl"
+                    class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium"
                 >
                     Beranda
                 </a>
-            </div>
-            <div>
                 <a
                     href="/portofolio"
-                    class="block text-black hover:text-gray-500 transition duration-300 text-2xl"
+                    class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium"
                 >
                     Portofolio
                 </a>
-            </div>
-            <div>
                 <a
                     href="/"
-                    class="block text-black hover:text-gray-500 transition duration-300 text-2xl"
+                    class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium"
                 >
                     Feedback
                 </a>
-            </div>
-            <div class="relative cursor-pointer" @click="toggleMegaMenu">
-                <a
-                    href="#"
-                    class="block text-black hover:text-gray-500 transition duration-300 text-2xl pr-10"
-                >
-                    Lainnya
-                </a>
-                <ChevronDown
-                    class="absolute right-0 top-1/2 transform -translate-y-1/2 text-black"
-                />
+                <div class="relative cursor-pointer" @click="toggleMegaMenu">
+                    <span
+                        class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium flex items-center"
+                    >
+                        Lainnya
+                        <ChevronDown class="ml-1 w-5 h-5" />
+                    </span>
+                </div>
             </div>
 
-            <Transition
-                name="fade-slide"
-                enter-active-class="transition duration-300"
-                leave-active-class="transition duration-300"
-            >
-                <MegaMenu v-if="showMegaMenu" />
-            </Transition>
-        </nav>
-    </div>
+            <div>
+                <a
+                    href="/login"
+                    class="bg-[#2C4173] text-white px-8 py-2 rounded-full text-lg font-semibold shadow hover:bg-[#1e2d4d] transition"
+                >
+                    Login
+                </a>
+            </div>
+        </div>
+
+        <!-- Untuk mega menu -->
+        <Transition
+            name="fade-slide"
+            enter-active-class="transition duration-300"
+            leave-active-class="transition duration-300"
+        >
+            <MegaMenu
+                v-if="showMegaMenu"
+                class="fixed left-0 top-[72px] w-screen z-40"
+                @click.self="showMegaMenu = false"
+            />
+        </Transition>
+
+        <!-- Login Button -->
+    </nav>
+    <!-- Add padding top to prevent content hidden behind navbar -->
+    <div class="pt-20"></div>
 </template>

@@ -31,151 +31,91 @@ defineOptions({ name: "MegaMenu" });
 </script>
 
 <template>
-    <div name="mega-menu">
-        <div class="mt-6">
-            <span class="font-bold text-sm">Informasi</span>
-            <div class="space-y-4 p-4 text-xl font-semibold">
-                <a
-                    href="/artikel"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <FileText class="w-5 h-5" />
-                    <div>Artikel</div>
-                </a>
-
-                <a
-                    href="/galeri"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <Image class="w-5 h-5" />
-                    <div>Galeri</div>
-                </a>
-
-                <a
-                    href="/unduhan"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <Download class="w-5 h-5" />
-                    <div>Unduhan</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="mt-6">
-            <span class="font-bold text-sm">Kegiatan</span>
-            <div class="space-y-4 p-4 text-xl font-semibold">
-                <a
-                    href="/event"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <Calendar class="w-5 h-5" />
-                    <div>Event</div>
-                </a>
-
-                <a
-                    href="/lowongan"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <BriefcaseBusiness class="w-5 h-5" />
-                    <div>Lowongan</div>
-                </a>
-            </div>
-        </div>
-
-        <div class="mt-6">
-            <span class="font-bold text-sm">Tentang kami</span>
-            <div class="space-y-4 p-4 text-xl font-semibold">
-                <a
-                    href="/profil"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <Building2 class="w-5 h-5" />
-                    <div>Profil Perusahaan</div>
-                </a>
-
-                <a
-                    href="/visi-misi"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <Binoculars class="w-5 h-5" />
-                    <div>Visi Misi Perusahaan</div>
-                </a>
-
-                <a
-                    href="/struktur"
-                    class="flex items-center gap-3 text-black hover:text-gray-500 transition duration-300"
-                >
-                    <Users class="w-5 h-5" />
-                    <div>Struktur Organisasi</div>
-                </a>
-            </div>
-        </div>
-
-        <div
-            className=" p-6 flex-col justify-start items-start gap-4 bg-gray-100 mt-6 rounded-xl shadow-xl shadow-radius-2xl"
-        >
-            <div className=" justify-start text-sm font-semibold leading-tight">
-                Artikel terbaik kami
-            </div>
-            <div className="py-2 flex flex-col justify-start items-start gap-4">
-                <!-- Only render if articles array exists and has items -->
-                <template v-if="articles && articles.length > 0">
-                    <img
-                        className="w-full h-48 rounded-2xl"
-                        :src="getImageUrl(articles[0].thumbnail_artikel)"
-                        :alt="articles[0].judul_artikel"
-                    />
-                    <div
-                        className="w-full flex flex-col justify-start items-start gap-2"
+    <div
+        name="mega-menu"
+        class="w-screen bg-gray-100 shadow-xl"
+        style="padding: 2rem 0"
+    >
+        <div class="max-w-6xl mx-auto flex flex-row gap-16 px-8 justify-center">
+            <!-- Tentang Kami -->
+            <div>
+                <div class="font-bold text-xl mb-6">Tentang Kami</div>
+                <div class="flex flex-col gap-6 text-lg font-medium">
+                    <a
+                        href="/profil"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
                     >
-                        <div
-                            className="flex flex-col justify-start items-start gap-1"
-                        >
-                            <div
-                                className="justify-start text-base font-semibold leading-normal"
-                            >
-                                {{ articles[0].judul_artikel }}
-                            </div>
-                            <div
-                                className="justify-start text-sm font-normal leading-tight"
-                            >
-                                Pelajari lebih lanjut tentang artikel ini.
-                            </div>
-                        </div>
-                        <a
-                            :href="`/artikel/${articles[0].slug}`"
-                            className="justify-start text-sm font-normal underline leading-tight"
-                        >
-                            Read more
-                        </a>
-                    </div>
-                </template>
-
-                <!-- Fallback if no articles are available -->
-                <template v-else>
-                    <div
-                        className="w-full h-48 rounded-2xl bg-gray-200 flex items-center justify-center"
+                        <Building2 class="w-7 h-7" />
+                        <span>Profil Perusahaan</span>
+                    </a>
+                    <a
+                        href="/visi-misi"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
                     >
-                        <p className="text-gray-500">Loading artikel...</p>
-                    </div>
-                </template>
-            </div>
-            <div
-                data-alternate="False"
-                data-icon-position="Trailing"
-                data-small="False"
-                data-style="Link"
-                className="py-1 rounded-[100px] inline-flex justify-center items-center gap-2"
-            >
-                <div
-                    className="justify-start text-base font-medium leading-normal"
-                >
-                    Join
+                        <Binoculars class="w-7 h-7" />
+                        <span>Visi Misi Perusahaan</span>
+                    </a>
+                    <a
+                        href="/sejarah"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
+                    >
+                        <ScrollText class="w-7 h-7" />
+                        <span>Sejarah Perusahaan</span>
+                    </a>
+                    <a
+                        href="/struktur"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
+                    >
+                        <Users class="w-7 h-7" />
+                        <span>Struktur Organisasi</span>
+                    </a>
                 </div>
-                <div className="w-6 h-6 relative overflow-hidden">
-                    <div
-                        className="w-2 h-3 left-[8.29px] top-[5.54px] absolute bg-Color-Scheme-2-Text"
-                    />
+            </div>
+            <!-- Informasi -->
+            <div>
+                <div class="font-bold text-xl mb-6">Informasi</div>
+                <div class="flex flex-col gap-6 text-lg font-medium">
+                    <a
+                        href="/artikel"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
+                    >
+                        <FileText class="w-7 h-7" />
+                        <span>Artikel</span>
+                    </a>
+                    <a
+                        href="/galeri"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
+                    >
+                        <Image class="w-7 h-7" />
+                        <span>Galeri</span>
+                    </a>
+                    <a
+                        href="/unduhan"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
+                    >
+                        <Download class="w-7 h-7" />
+                        <span>Unduhan</span>
+                    </a>
+                </div>
+            </div>
+            <!-- Kegiatan -->
+            <div>
+                <div class="font-bold text-xl mb-6">Kegiatan</div>
+                <div class="flex flex-col gap-6 text-lg font-medium">
+                    <a
+                        href="/event"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
+                    >
+                        <Calendar class="w-7 h-7" />
+                        <span>Event</span>
+                    </a>
+                    <a
+                        href="/lowongan"
+                        class="flex items-center gap-4 text-black hover:text-gray-500 transition"
+                    >
+                        <BriefcaseBusiness class="w-7 h-7" />
+                        <span>Lowongan</span>
+                    </a>
                 </div>
             </div>
         </div>
