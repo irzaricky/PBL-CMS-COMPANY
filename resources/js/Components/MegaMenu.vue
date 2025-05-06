@@ -71,7 +71,8 @@
                 <div className="w-full flex flex-col justify-start items-start gap-2">
                     <div className=" flex flex-col justify-start items-start gap-1">
                         <div className=" justify-start text-base font-semibold leading-normal">
-                            Artikel bagus</div>
+                            {{ articles?.judul_artikel ||
+                    "Loading..." }}</div>
                         <div className=" justify-start text-sm font-normal leading-tight">
                             Pelajari lebih lanjut tentang artikel ini.</div>
                     </div>
@@ -91,8 +92,23 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "MegaMenu",
-};
+<script setup>
+import { ref, onMounted, computed } from "vue";
+import axios from 'axios';
+const articles = ref([]);
+onMounted(() => {
+    fetchArticles();
+});
+
+async function fetchArticles() {
+    try {
+        const response = await axios.get("/api/artikel/id/1");
+        articles.value = response.data.data;
+    } catch (error) {
+        console.error("Error fetching articles:", error);
+    }   
+}
+
+
+defineOptions({ name: "MegaMenu" });
 </script>

@@ -5,9 +5,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome');
-});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -32,7 +29,7 @@ Route::get('/example', function () {
     return Inertia::render('Example');
 });
 
-// Event
+
 Route::prefix('event')->group(function () {
     Route::get('/', function () {
         return Inertia::render('Event/ListView');
@@ -50,3 +47,62 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+
+
+Route::prefix('portofolio')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Event/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+Route::prefix('feedback')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Event/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+Route::prefix('galeri')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Event/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+Route::prefix('unduhan')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Event/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+Route::prefix('lowongan')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Event/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+Route::prefix('lamaran')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Event/ListView');
+    });
+
+    Route::get('/{slug}', action: function ($slug) {
+        return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+
+

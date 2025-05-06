@@ -23,6 +23,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
+use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -36,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->spa()
             ->topNavigation()
+            ->globalSearch(false)
             ->id('admin')
             ->path('admin')
             ->brandName(ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
@@ -74,21 +76,14 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
             ])
-            // ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
-            //     return $builder->items([
-            //         NavigationItem::make('Dashboard')
-            //             ->icon('heroicon-o-home')
-            //             ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
-            //             ->url(fn (): string => Dashboard::getUrl()),
-            //         ...UserResource::getNavigationItems(),
-            //         ...UnduhanResource::getNavigationItems(),
-            //     ]);
-            // });
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()
                     ->icon('heroicon-s-power')
-                    ->label('Keluar dari halaman admin')
+                    ->label('Keluar dashboard')
                     ->url('/'), // Mengarah ke halaman utama
-            ]);;
+            ])
+            ->plugins([
+                FilamentBackgroundsPlugin::make(),
+            ]);
     }
 }

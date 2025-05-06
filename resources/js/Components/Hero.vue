@@ -9,10 +9,13 @@
         <div
             class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center text-white text-center px-4 z-10">
             <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 sm:mb-6">Judul Utama</h1>
-            <p class="text-lg sm:text-xl mb-6 sm:mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel quidem eum possimus? Totam quia soluta incidunt</p>
+            <p class="text-lg sm:text-xl mb-6 sm:mb-8">Lorem ipsum dolor sit amet consectetur adipisicing elit. Vel
+                quidem eum possimus? Totam quia soluta incidunt</p>
             <div class="flex sm:flex-row gap-6 sm:gap-8">
-                <button class="bg-white text-black px-6 py-3 rounded-lg text-lg sm:text-xl"> <a href="/admin">Admin</a></button>
-                <button class="bg-transparent border border-white px-6 py-3 rounded-lg text-lg sm:text-xl"><a href="/admin">Admin</a></button>
+                <button class="bg-white text-black px-6 py-3 rounded-lg text-lg sm:text-xl"> <a
+                        href="/admin">Admin</a></button>
+                <button class="bg-transparent border border-white px-6 py-3 rounded-lg text-lg sm:text-xl"><a
+                        href="/admin/register">Register Admin Test</a></button>
             </div>
         </div>
     </div>
@@ -21,11 +24,15 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
+
 const images = [
-    'https://placehold.co/600x400?text=Gambar+1',
-    'https://placehold.co/600x400?text=Gambar+2',
-    'https://placehold.co/600x400?text=Gambar+3'
-]
+    '/images/swisnl/filament-backgrounds/curated-by-swis/01.jpg',
+    '/images/swisnl/filament-backgrounds/curated-by-swis/02.jpg',
+    '/images/swisnl/filament-backgrounds/curated-by-swis/03.jpg',
+    '/images/swisnl/filament-backgrounds/curated-by-swis/04.jpg',
+    '/images/swisnl/filament-backgrounds/curated-by-swis/05.jpg',
+    '/images/swisnl/filament-backgrounds/curated-by-swis/06.jpg',
+];
 
 const currentImage = ref(0)
 let intervalId
@@ -48,7 +55,7 @@ onBeforeUnmount(() => {
     }
 
     100% {
-        transform: scale(1.25) translate(5%, 5%);
+        transform: scale(1.25) translate(20%, 20%);
     }
 }
 
