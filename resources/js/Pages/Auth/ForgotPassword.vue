@@ -1,7 +1,7 @@
 <script setup>
 import GuestLayout from '@/Deprecated Layouts/GuestLayout.vue';
 import InputError from '@/Deprecated Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
+import InputLabel from '@/Deprecated Components/InputLabel.vue';
 import PrimaryButton from '@/Deprecated Components/PrimaryButton.vue';
 import TextInput from '@/Deprecated Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';

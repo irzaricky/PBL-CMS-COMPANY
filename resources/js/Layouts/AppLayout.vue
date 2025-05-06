@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
-import Navbar from '@/Components/Navbar.vue';
-import Hero from '@/Components/Hero.vue';
-import Benefit from '@/Components/Benefit.vue';
+import { ref } from "vue";
+import Navbar from "@/Components/Navbar.vue";
+import Hero from "@/Components/Hero.vue";
+import Benefit from "@/Components/Benefit.vue";
 
 const showingNavigationDropdown = ref(false);
 </script>
@@ -11,11 +11,9 @@ const showingNavigationDropdown = ref(false);
     <div>
         <Navbar />
         <Hero />
-        <Benefit /> 
+        <Benefit />
         <main>
-            <slot>
-
-            </slot>
+            <slot> </slot>
         </main>
     </div>
 </template>
