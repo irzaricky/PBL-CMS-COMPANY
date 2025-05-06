@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\LowonganResource\Pages;
 
-use App\Filament\Resources\LowonganResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\LowonganResource;
+use App\Filament\Resources\LowonganResource\Widgets\LowonganStats;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListLowongans extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = LowonganResource::class;
 
     protected function getHeaderActions(): array
@@ -18,12 +21,19 @@ class ListLowongans extends ListRecords
         ];
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            LowonganStats::class,
+        ];
+    }
+
     public function getTabs(): array
     {
         return [
             null => Tab::make('Semua')
                 ->query(fn($query) => $query->orderBy('created_at', 'desc')),
-            'Aktif' => Tab::make()
+            'Dipublikasi' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->where('tanggal_dibuka', '<=', now())
                     ->where('tanggal_ditutup', '>=', now())

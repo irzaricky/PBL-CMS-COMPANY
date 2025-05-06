@@ -2,19 +2,29 @@
 
 namespace App\Filament\Resources\LamaranResource\Pages;
 
-use App\Filament\Resources\LamaranResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\LamaranResource;
+use App\Filament\Resources\LamaranResource\Widgets\LamaranStats;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListLamarans extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = LamaranResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            LamaranStats::class,
         ];
     }
 

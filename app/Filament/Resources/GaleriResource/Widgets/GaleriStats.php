@@ -13,7 +13,7 @@ class GaleriStats extends BaseWidget
 {
     use InteractsWithPageTable;
 
-    protected static ?string $pollingInterval = '2s';
+    protected static ?string $pollingInterval = '5s';
 
     protected function getTablePage(): string
     {
@@ -30,31 +30,32 @@ class GaleriStats extends BaseWidget
 
         return [
             Stat::make('Total Galeri', $this->getPageTableQuery()->count())
-                ->description('Total semua galeri')
+                ->description('Total semua galeri menurut filter')
                 ->color('primary'),
 
             Stat::make('Total Unduhan', Number::format($this->getPageTableQuery()->sum('jumlah_unduhan')))
-                ->description('Total semua unduhan')
+                ->description('Total semua unduhan menurut filter')
                 ->color('success'),
 
             Stat::make('Rata-rata Unduhan', Number::format($this->getPageTableQuery()->avg('jumlah_unduhan') ?? 0, 0))
-                ->description('Rata-rata unduhan per galeri')
+                ->description('Rata-rata unduhan menurut filter')
                 ->color('warning'),
 
             Stat::make('Total Ukuran Storage', $this->formatBytes($totalStorage))
-                ->description('Total ukuran file di galeri')
+                ->description('Total ukuran file menurut filter')
                 ->color('info'),
         ];
     }
 
-    private function formatBytes($bytes): string 
+    private function formatBytes($bytes): string
     {
-        if ($bytes <= 0) return '0 Bytes';
-    
+        if ($bytes <= 0)
+            return '0 Bytes';
+
         $units = ['Bytes', 'KB', 'MB', 'GB'];
         $decimals = 2;
         $factor = floor((strlen($bytes) - 1) / 3);
-        
+
         return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . ' ' . $units[$factor];
     }
 }

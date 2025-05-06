@@ -13,7 +13,7 @@ class EditLowongan extends EditRecord
 
     protected function getRedirectUrl(): string
     {
-        return $this->previousUrl ?? $this->getResource()::getUrl('index');
+        return $this->getResource()::getUrl('index');
     }
     protected function getHeaderActions(): array
     {

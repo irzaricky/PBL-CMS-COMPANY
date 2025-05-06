@@ -33,6 +33,9 @@ class ListArtikels extends ListRecords
         return [
             null => Tab::make('Semua')
                 ->query(fn($query) => $query->orderBy('judul_artikel', 'asc')),
+            'Aktif' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('judul_artikel', 'asc')),
             'Terbaru' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),

@@ -32,7 +32,8 @@ class ListEvents extends ListRecords
     {
         return [
             null => Tab::make('Semua')
-                ->query(fn($query) => $query->orderBy('waktu_start_event', 'asc')),
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('waktu_start_event', 'asc')),
             'Akan Datang' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->where('waktu_start_event', '>', now())

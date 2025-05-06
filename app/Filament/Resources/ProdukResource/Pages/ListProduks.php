@@ -27,11 +27,15 @@ class ListProduks extends ListRecords
             ProdukStats::class,
         ];
     }
+
     public function getTabs(): array
     {
         return [
             null => Tab::make('Semua')
                 ->query(fn($query) => $query->orderBy('nama_produk', 'asc')),
+            'Aktif' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('nama_produk', 'asc')),
             'Terbaru' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),

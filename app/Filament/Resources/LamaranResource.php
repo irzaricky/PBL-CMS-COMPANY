@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\LamaranResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\LamaranResource\RelationManagers;
+use App\Filament\Resources\LamaranResource\Widgets\LamaranStats;
 
 class LamaranResource extends Resource
 {
@@ -179,6 +180,13 @@ class LamaranResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            LamaranStats::class,
         ];
     }
 

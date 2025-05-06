@@ -2,19 +2,29 @@
 
 namespace App\Filament\Resources\TestimoniResource\Pages;
 
-use App\Filament\Resources\TestimoniResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\TestimoniResource;
+use App\Filament\Resources\TestimoniResource\Widgets\TestimoniStats;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListTestimonis extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = TestimoniResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            TestimoniStats::class,
         ];
     }
 

@@ -2,13 +2,16 @@
 
 namespace App\Filament\Resources\UnduhanResource\Pages;
 
-use App\Filament\Resources\UnduhanResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\UnduhanResource;
+use App\Filament\Resources\UnduhanResource\Widgets\UnduhanStats;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListUnduhans extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = UnduhanResource::class;
 
     protected function getHeaderActions(): array
@@ -18,17 +21,27 @@ class ListUnduhans extends ListRecords
         ];
     }
 
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            UnduhanStats::class,
+        ];
+    }
+
     public function getTabs(): array
     {
         return [
             null => Tab::make('Semua')
                 ->query(fn($query) => $query->orderBy('nama_unduhan', 'asc')),
-            'Terpopuler' => Tab::make()
+            'Aktif' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
-                    ->orderBy('jumlah_unduhan', 'desc')),
+                    ->orderBy('nama_unduhan', 'asc')),
             'Terbaru' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),
+            'Terpopuler' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('jumlah_unduhan', 'desc')),
             'Diarsipkan' => Tab::make()
                 ->query(fn($query) => $query->onlyTrashed()),
         ];

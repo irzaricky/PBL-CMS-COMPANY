@@ -2,16 +2,17 @@
 
 namespace App\Filament\Resources\EventResource\Widgets;
 
-use App\Filament\Resources\EventResource\Pages\ListEvents;
+use App\Models\Event;
 use Illuminate\Support\Number;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
+use App\Filament\Resources\EventResource\Pages\ListEvents;
 
 class EventStats extends BaseWidget
 {
     use InteractsWithPageTable;
-    protected static ?string $pollingInterval = '2s';
+    protected static ?string $pollingInterval = '5s';
 
     protected function getTablePage(): string
     {
@@ -22,22 +23,24 @@ class EventStats extends BaseWidget
     {
         return [
             Stat::make('Total Event', $this->getPageTableQuery()->count())
-                ->description('Total semua event')
+                ->description('Total semua event menurut filter')
                 ->color('primary'),
 
-            Stat::make('Event Aktif', $this->getPageTableQuery()->where('waktu_start_event', '<=', now())
+            Stat::make('Event Aktif', Event::query()
+                ->where('waktu_start_event', '<=', now())
                 ->where('waktu_end_event', '>=', now())
                 ->count())
                 ->description('Event yang sedang berlangsung')
                 ->color('success'),
 
-            Stat::make('Event Akan Datang', $this->getPageTableQuery()->where('waktu_start_event', '>', now())
+            Stat::make('Event Akan Datang', Event::query()
+                ->where('waktu_start_event', '>', now())
                 ->count())
                 ->description('Event yang belum dimulai')
                 ->color('warning'),
 
             Stat::make('Rata-rata Pendaftar', Number::format((float) $this->getPageTableQuery()->avg('jumlah_pendaftar'), 0))
-                ->description('Rata-rata pendaftar per event')
+                ->description('Rata-rata pendaftar per event menurut filter')
                 ->color('info'),
         ];
     }

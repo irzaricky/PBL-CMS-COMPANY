@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\FeedbackResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FeedbackResource\RelationManagers;
+use App\Filament\Resources\FeedbackResource\Widgets\FeedbackStats;
 
 class FeedbackResource extends Resource
 {
@@ -129,6 +130,13 @@ class FeedbackResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+             FeedbackStats::class,
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\StrukturOrganisasiResource\Pages;
 use App\Filament\Resources\StrukturOrganisasiResource\RelationManagers;
+use App\Filament\Resources\StrukturOrganisasiResource\Widgets\StrukturOrganisasiStats;
 use App\Models\StrukturOrganisasi;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -168,6 +169,13 @@ class StrukturOrganisasiResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            StrukturOrganisasiStats::class,
         ];
     }
 

@@ -180,7 +180,7 @@ class LowonganResource extends Resource
                     ->label('Status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
-                        'Aktif' => 'success',
+                        'Dipublikasi' => 'success',
                         'Ditutup' => 'danger',
                         default => 'secondary',
                     })
@@ -188,7 +188,7 @@ class LowonganResource extends Resource
                         $now = now();
 
                         if ($now->between($record->tanggal_dibuka, $record->tanggal_ditutup)) {
-                            return 'Aktif';
+                            return 'Dipublikasi';
                         }
 
                         if ($now->isAfter($record->tanggal_ditutup)) {
@@ -235,7 +235,7 @@ class LowonganResource extends Resource
                     ]),
 
                 Tables\Filters\Filter::make('active')
-                    ->label('Aktif')
+                    ->label('Dipublikasi')
                     ->query(fn(Builder $query): Builder => $query
                         ->where('tanggal_dibuka', '<=', now())
                         ->where('tanggal_ditutup', '>=', now())),

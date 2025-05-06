@@ -18,6 +18,7 @@ use App\Filament\Resources\UnduhanResource\Pages;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UnduhanResource\RelationManagers;
+use App\Filament\Resources\UnduhanResource\Widgets\UnduhanStats;
 
 class UnduhanResource extends Resource
 {
@@ -222,6 +223,13 @@ class UnduhanResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            UnduhanStats::class,
         ];
     }
 

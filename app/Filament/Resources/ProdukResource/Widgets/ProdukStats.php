@@ -15,7 +15,7 @@ class ProdukStats extends BaseWidget
 {
     use InteractsWithPageTable;
 
-    protected static ?string $pollingInterval = '2s';
+    protected static ?string $pollingInterval = '5s';
 
     protected function getTablePage(): string
     {
@@ -27,14 +27,14 @@ class ProdukStats extends BaseWidget
 
         return [
             Stat::make('Total Produk', $this->getPageTableQuery()->count())
-                ->description('Total produk yang ada')
+                ->description('Total produk menurut filter')
                 ->color('primary'),
 
-            Stat::make('Produk Aktif', $this->getPageTableQuery()->whereNull('deleted_at')->count())
+            Stat::make('Produk Aktif', Produk::query()->whereNull('deleted_at')->count())
                 ->description('Produk yang tersedia')
                 ->color('success'),
 
-            Stat::make('Produk Diarsipkan', $this->getPageTableQuery()->whereNotNull('deleted_at')->count())
+            Stat::make('Produk Diarsipkan', Produk::query()->withTrashed()->whereNotNull('deleted_at')->count())
                 ->description('Produk yang diarsipkan')
                 ->color('warning'),
 

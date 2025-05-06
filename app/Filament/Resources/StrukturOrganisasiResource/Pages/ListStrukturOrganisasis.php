@@ -2,19 +2,29 @@
 
 namespace App\Filament\Resources\StrukturOrganisasiResource\Pages;
 
-use App\Filament\Resources\StrukturOrganisasiResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use Filament\Pages\Concerns\ExposesTableToWidgets;
+use App\Filament\Resources\StrukturOrganisasiResource;
+use App\Filament\Resources\StrukturOrganisasiResource\Widgets\StrukturOrganisasiStats;
 
 class ListStrukturOrganisasis extends ListRecords
 {
+    use ExposesTableToWidgets;
     protected static string $resource = StrukturOrganisasiResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            StrukturOrganisasiStats::class,
         ];
     }
 

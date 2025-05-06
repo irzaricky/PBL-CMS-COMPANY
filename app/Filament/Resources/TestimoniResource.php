@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TestimoniResource\Pages;
 use App\Filament\Resources\TestimoniResource\RelationManagers;
+use App\Filament\Resources\TestimoniResource\Widgets\TestimoniStats;
 use App\Models\Testimoni;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -198,6 +199,13 @@ class TestimoniResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            TestimoniStats::class,
         ];
     }
 

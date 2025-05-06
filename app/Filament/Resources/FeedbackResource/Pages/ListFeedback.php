@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\FeedbackResource\Pages;
 
-use App\Filament\Resources\FeedbackResource;
 use Filament\Actions;
-use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Components\Tab;
+use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\FeedbackResource;
+use App\Filament\Resources\FeedbackResource\Widgets\FeedbackStats;
 
 class ListFeedback extends ListRecords
 {
@@ -15,6 +16,13 @@ class ListFeedback extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            FeedbackStats::class,
         ];
     }
 
