@@ -75,7 +75,7 @@ function getImageUrl(image) {
 </style>
 
 <template>
-    <nav class="w-full bg-primary shadow-sm fixed top-0 left-0 z-50">
+    <nav class="w-full px-16 bg-primary shadow-sm fixed top-0 left-0 z-50">
         <div class="container mx-auto flex items-center justify-between py-2">
             <!-- Logo -->
             <div class="flex items-center space-x-2">
