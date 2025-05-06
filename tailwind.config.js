@@ -19,10 +19,10 @@ export default {
             screens: {
                 // range 0px - 640px
                 android: "640px",
-                // range 1024px - 1280px
-                laptop: "1024px",
-                // range 1280px - 1440px
-                desktop: "1280px",
+                // range 640px - 1280px
+                laptop: "1280px",
+                // range 1280px - 1920px
+                desktop: "1920px",
             },
             colors: {
                 // putih

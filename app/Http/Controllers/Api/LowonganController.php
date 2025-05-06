@@ -18,9 +18,17 @@ class LowonganController extends Controller
      */
     public function index()
     {
-        $lowongan = Lowongan::orderBy('created_at', 'desc')->paginate(10);
+        try {
+            $lowongan = Lowongan::orderBy('created_at', 'desc')->paginate(10);
 
-        return LowonganListResource::collection($lowongan);
+            return LowonganListResource::collection($lowongan);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Lowongan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
