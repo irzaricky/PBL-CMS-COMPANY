@@ -74,4 +74,28 @@ class EventController extends Controller
             ], 404);
         }
     }
+
+    /**
+     * Get the most recent event
+     * 
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
+    public function getMostRecentEvent()
+    {
+        try {
+            $event = Event::orderBy('waktu_start_event', 'desc')
+                ->take(1)
+                ->get();
+
+            return EventListResource::collection($event);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Event',
+                'error' => $e->getMessage(),
+                'data' => [],
+            ], 500);
+        }
+    }
 }

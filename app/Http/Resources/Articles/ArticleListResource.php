@@ -17,7 +17,7 @@ class ArticleListResource extends JsonResource
         return [
             'id_artikel' => $this->id_artikel,
             'judul_artikel' => $this->judul_artikel,
-            // 'konten_artikel' => substr($this->konten_artikel, 0, 100) . '...', tidak usah dikirimkan
+            'konten_artikel' => substr($this->konten_artikel, 0, 100) . '...',
             'thumbnail_artikel' => $this->thumbnail_artikel,
             'created_at' => $this->created_at,
             'kategoriArtikel' => [

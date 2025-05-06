@@ -1,16 +1,8 @@
 <script setup>
-import { AlignJustify, ChevronDown } from "lucide-vue-next";
-import MegaMenu from "./MegaMenu.vue";
+import { ChevronDown } from "lucide-vue-next";
+import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
-
-// Define props
-const props = defineProps({
-    slug: {
-        type: String,
-        required: true,
-    },
-});
 
 // Reactive variables
 const profil_perusahaan = ref(null);
@@ -83,8 +75,8 @@ function getImageUrl(image) {
 </style>
 
 <template>
-    <nav class="w-full bg-white shadow-sm fixed top-0 left-0 z-50">
-        <div class="container mx-auto flex items-center justify-between py-4">
+    <nav class="w-full bg-primary shadow-sm fixed top-0 left-0 z-50">
+        <div class="container mx-auto flex items-center justify-between py-2">
             <!-- Logo -->
             <div class="flex items-center space-x-2">
                 <div
@@ -96,7 +88,7 @@ function getImageUrl(image) {
                         class="h-full w-full object-contain"
                     />
                 </div>
-                <a href="/" class="text-2xl font-bold text-black px-2">
+                <a href="/" class="text-h4-bold text-typography-dark px-2">
                     {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}
                 </a>
             </div>
@@ -105,25 +97,25 @@ function getImageUrl(image) {
             <div class="flex items- space-x-8">
                 <a
                     href="/"
-                    class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium"
+                    class="text-typography-dark hover:text-typography-hover2 transition duration-300 text-h5-bold"
                 >
                     Beranda
                 </a>
                 <a
                     href="/portofolio"
-                    class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium"
+                    class="text-typography-dark hover:text-typography-hover2 transition duration-300 text-h5-bold"
                 >
                     Portofolio
                 </a>
                 <a
                     href="/"
-                    class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium"
+                    class="text-typography-dark hover:text-typography-hover2 transition duration-300 text-h5-bold"
                 >
                     Feedback
                 </a>
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
-                        class="text-black hover:text-gray-500 transition duration-300 text-xl font-medium flex items-center"
+                        class="text-typography-dark hover:text-typography-hover2 transition duration-300 text-h5-bold flex items-center"
                     >
                         Lainnya
                         <ChevronDown class="ml-1 w-5 h-5" />
@@ -134,7 +126,7 @@ function getImageUrl(image) {
             <div>
                 <a
                     href="/login"
-                    class="bg-[#2C4173] text-white px-8 py-2 rounded-full text-lg font-semibold shadow hover:bg-[#1e2d4d] transition"
+                    class="bg-secondary text-primary px-8 py-2 rounded-xl-figma text-h5-bold shadow hover:bg-typography-hover1 transition"
                 >
                     Login
                 </a>
@@ -149,7 +141,7 @@ function getImageUrl(image) {
         >
             <MegaMenu
                 v-if="showMegaMenu"
-                class="fixed left-0 top-[72px] w-screen z-40"
+                class="fixed left-0 top-[64px] w-screen z-40"
                 @click.self="showMegaMenu = false"
             />
         </Transition>
@@ -157,5 +149,5 @@ function getImageUrl(image) {
         <!-- Login Button -->
     </nav>
     <!-- Add padding top to prevent content hidden behind navbar -->
-    <div class="pt-20"></div>
+    <div class="pt-16"></div>
 </template>

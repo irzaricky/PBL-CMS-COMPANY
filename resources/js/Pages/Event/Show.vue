@@ -18,7 +18,7 @@ onMounted(() => {
 async function fetchEvent() {
     try {
         loading.value = true;
-        const response = await axios.get(`/api/events/${props.slug}`);
+        const response = await axios.get(`/api/event/${props.slug}`);
         event.value = response.data.data;
         loading.value = false;
     } catch (err) {

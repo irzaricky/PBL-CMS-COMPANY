@@ -21,6 +21,7 @@ return new class extends Migration {
             $table->date('tanggal_dibuka');
             $table->date('tanggal_ditutup');
             $table->tinyInteger('tenaga_dibutuhkan')->unsigned();
+            $table->string('slug', 100)->unique();
             $table->softDeletes();
             $table->timestamps();
         });

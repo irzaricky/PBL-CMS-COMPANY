@@ -14,7 +14,7 @@ onMounted(() => {
 // Fungsi untuk mengambil event dari API
 async function fetchEvents() {
     try {
-        const response = await axios.get("/api/events");
+        const response = await axios.get("/api/event");
         events.value = response.data.data;
         loading.value = false;
     } catch (error) {

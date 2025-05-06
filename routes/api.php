@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\ArtikelController;
+use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 
 // Artikel
@@ -33,10 +34,13 @@ Route::prefix('artikel')->group(function () {
 
 
 // Event
-Route::prefix('events')->group(function () {
+Route::prefix('event')->group(function () {
 
     // Untuk mengambil semua event
     Route::get('/', [EventController::class, 'index']);
+
+    // untuk mengambil event yang baru saja dibuat
+    Route::get('/newest', [EventController::class, 'getMostRecentEvent']);
 
     // untuk mengambil event berdasarkan id
     Route::get('/id/{id}', [EventController::class, 'getEventById']);
@@ -48,4 +52,14 @@ Route::prefix('events')->group(function () {
 // Profil Perusahaan
 Route::prefix('profil-perusahaan')->group(function () {
     Route::get('/', [ProfilPerusahaanController::class, 'index']);
+});
+
+// lowongan
+Route::prefix('lowongan')->group(function () {
+    // Untuk mengambil semua lowongan
+    Route::get('/', [LowonganController::class, 'index']);
+
+    // untuk mengambil lowongan terbaru
+    Route::get('/newest', [LowonganController::class, 'getMostRecentLowongan']);
+
 });

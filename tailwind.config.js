@@ -16,13 +16,23 @@ export default {
             fontFamily: {
                 custom: ["Plus Jakarta Sans", "sans-serif"],
             },
+            screens: {
+                // range 0px - 640px
+                android: "640px",
+                // range 1024px - 1280px
+                laptop: "1024px",
+                // range 1280px - 1440px
+                desktop: "1280px",
+            },
             colors: {
+                // putih
                 primary: "#F1F1F1",
+                // agak biru
                 secondary: "#31487A",
                 typography: {
+                    // agak biru
                     main: "#31487A",
                     dark: "#2C2C2C",
-                    light: "#F1F1F1",
                     hover1: "#223255",
                     hover2: "#909090",
                 },
@@ -32,13 +42,20 @@ export default {
                 "lg-figma": "15px", // untuk 15px rounded
             },
             fontSize: {
-                h1: ["56px", { lineHeight: "1.1", fontWeight: "700" }],
-                h2: ["48px", { lineHeight: "1.1", fontWeight: "700" }],
-                h3: ["46px", { lineHeight: "1.1", fontWeight: "700" }],
-                h4: ["24px", { lineHeight: "1.1", fontWeight: "700" }],
-                h5: ["18px", { lineHeight: "1.1", fontWeight: "700" }],
-                h6: ["15px", { lineHeight: "1.1", fontWeight: "700" }],
-                "body-bold": ["16px", { lineHeight: "1.5", fontWeight: "700" }],
+                h1: ["56px", { lineHeight: "1.5", fontWeight: "400" }],
+                h2: ["48px", { lineHeight: "1.5", fontWeight: "400" }],
+                h3: ["46px", { lineHeight: "1.5", fontWeight: "400" }],
+                h4: ["24px", { lineHeight: "1.5", fontWeight: "400" }],
+                h5: ["18px", { lineHeight: "1.5", fontWeight: "400" }],
+                h6: ["15px", { lineHeight: "1.5", fontWeight: "400" }],
+                "h1-bold": ["56px", { lineHeight: "1.1", fontWeight: "700" }],
+                "h2-bold": ["48px", { lineHeight: "1.1", fontWeight: "700" }],
+                "h3-bold": ["46px", { lineHeight: "1.1", fontWeight: "700" }],
+                "h4-bold": ["24px", { lineHeight: "1.1", fontWeight: "700" }],
+                "h5-bold": ["18px", { lineHeight: "1.1", fontWeight: "700" }],
+                "h6-bold": ["15px", { lineHeight: "1.1", fontWeight: "700" }],
+                body: ["16px", { lineHeight: "1.5", fontWeight: "400" }],
+                "body-bold": ["16px", { lineHeight: "1.1", fontWeight: "700" }],
             },
         },
     },

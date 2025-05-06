@@ -39,6 +39,7 @@ class Lowongan extends Model
         'tanggal_ditutup',
         'status_lowongan',
         'tenaga_dibutuhkan',
+        'slug',
     ];
 
     /**
