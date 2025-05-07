@@ -74,8 +74,7 @@ class ArtikelController extends Controller
     {
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->where('id_artikel', $id)
-                ->firstOrFail();
+                ->findOrFail($id);
 
             return new ArticleViewResource($article);
         } catch (\Exception $e) {

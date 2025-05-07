@@ -69,8 +69,7 @@ class GaleriController extends Controller
     {
         try {
             $galeri = Galeri::with(relations: ['kategoriGaleri', 'user:id_user,name'])
-                ->where('id_galeri', $id)
-                ->firstOrFail();
+                ->findOrFail(id: $id);
 
             return new GaleriViewResource($galeri);
         } catch (\Exception $e) {
