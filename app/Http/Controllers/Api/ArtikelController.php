@@ -53,7 +53,7 @@ class ArtikelController extends Controller
                 ->where('slug', $slug)
                 ->firstOrFail();
 
-            $article->UpdateViewCount();
+            $article->increment('jumlah_view');
             return new ArticleViewResource($article);
         } catch (\Exception $e) {
             return response()->json([

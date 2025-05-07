@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
-    protected static ?string $navigationGroup = 'Company Management';
+    protected static ?string $navigationGroup = 'Company Owner';
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
     protected static ?int $navigationSort = 1;
@@ -35,11 +35,12 @@ class ProfilPerusahaanResource extends Resource
                         Forms\Components\FileUpload::make('logo_perusahaan')
                             ->label('Logo Perusahaan')
                             ->image()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('1:1')
                             ->directory('perusahaan-logo')
                             ->disk('public')
                             ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth(100)
+                            ->imageResizeTargetHeight(100)
                             ->optimize('webp'),
 
                         Forms\Components\FileUpload::make('thumbnail_perusahaan')
@@ -47,11 +48,13 @@ class ProfilPerusahaanResource extends Resource
                             ->image()
                             ->multiple()
                             ->reorderable()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('16:9')
                             ->directory('perusahaan-images')
                             ->disk('public')
                             ->helperText('Unggah gambar untuk profil perusahaan (format: jpg, png)')
+                            ->imageEditor()
+                            ->imageResizeMode('contain')
+                            ->imageResizeTargetWidth(1280)
+                            ->imageResizeTargetHeight(720)
                             ->optimize('webp'),
 
                         Forms\Components\Select::make('id_galeri')

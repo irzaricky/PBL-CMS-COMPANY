@@ -1,79 +1,54 @@
+<script setup>
+import { ref, onMounted } from "vue";
+import axios from "axios";
+const profil_perusahaan = ref(null);
+const loading = ref(false);
+const error = ref(null);
+onMounted(() => {
+    fetchProfilPerusahaan();
+    async function fetchProfilPerusahaan() {
+        try {
+            loading.value = true;
+            const response = await axios.get(`/api/profil-perusahaan`);
+            profil_perusahaan.value = response.data.data;
+            loading.value = false;
+        } catch (err) {
+            error.value = "Event not found or an error occurred";
+            loading.value = false;
+            console.error("Error fetching profil_perusahaan:", err);
+        }
+    }
+});
+</script>
 <template>
-    <div
-        className="w-full px-8 py-16 bg-Color-Scheme-1-Background inline-flex flex-col justify-start items-start gap-12 overflow-hidden font-custom">
-        <div
-            className="self-stretch justify-start  text-3xl font-normal  leading-10">
-            Penjelasan Top Singko Adit Tolongin Dit</div>
-        <div className="self-stretch flex flex-col justify-start items-center gap-12">
-            <div className="self-stretch flex flex-col justify-start items-start gap-6 overflow-hidden">
-                <img className="self-stretch h-48 rounded-2xl" src="https://placehold.co/335x198" />
-                <div className="self-stretch flex flex-col justify-start items-start gap-6">
-                    <div className="self-stretch flex flex-col justify-start items-start gap-3">
-                        <div
-                            className="self-stretch justify-start  text-xl font-normal  leading-7">
-                            Expertise That Drives Results in Every Industry We Serve</div>
-                        <div
-                            className="self-stretch justify-start  text-base font-normal  leading-normal">
-                            Our customer-centric approach ensures that your satisfaction is our top priority.</div>
-                    </div>
-                    <div className="self-stretch flex flex-col justify-start items-start gap-2">
-                        <div data-alternate="False" data-icon-position="Trailing" data-small="False" data-style="Link"
-                            className="rounded-[100px] inline-flex justify-center items-center gap-2 overflow-hidden">
-                            <div
-                                className="justify-start text-Color-Neutral-Darkest text-base font-medium  leading-normal">
-                                Learn More</div>
-                            <div className="w-6 h-6 relative overflow-hidden">
-                                <div className="w-2 h-3 left-[8.29px] top-[5.54px] absolute bg-Color-Scheme-1-Text" />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="w-full px-16 py-28 bg-Color-Scheme-1-Background flex flex-col items-center gap-20 overflow-hidden">
+        <!-- Header -->
+        <div class="w-[768px] flex flex-col items-center gap-4">
+            <div class="text-center text-Color-Scheme-1-Text text-base font-semibold font-['Plus_Jakarta_Sans']">Lalu
             </div>
-            <div className="self-stretch flex flex-col justify-start items-start gap-6 overflow-hidden">
-                <img className="self-stretch h-48 rounded-2xl" src="https://placehold.co/335x198" />
-                <div className="self-stretch flex flex-col justify-start items-start gap-6">
-                    <div className="self-stretch flex flex-col justify-start items-start gap-3">
-                        <div
-                            className="self-stretch justify-start  text-xl font-normal  leading-7">
-                            Harness Industry Expertise to Propel Your Business Forward</div>
-                        <div
-                            className="self-stretch justify-start  text-base font-normal  leading-normal">
-                            We bring years of experience to help you navigate challenges.</div>
-                    </div>
-                    <div className="self-stretch flex flex-col justify-start items-start gap-2">
-                        <div data-alternate="False" data-icon-position="Trailing" data-small="False" data-style="Link"
-                            className="rounded-[100px] inline-flex justify-center items-center gap-2 overflow-hidden">
-                            <div
-                                className="justify-start text-Color-Neutral-Darkest text-base font-medium  leading-normal">
-                                Sign Up</div>
-                            <div className="w-6 h-6 relative overflow-hidden">
-                                <div className="w-2 h-3 left-[8.29px] top-[5.54px] absolute bg-Color-Scheme-1-Text" />
-                            </div>
+            <div
+                class="text-center text-Color-Scheme-1-Text text-5xl font-normal font-['Plus_Jakarta_Sans'] leading-[57.60px]">
+                Mengapa memilih {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}?</div>
+            <div
+                class="text-center text-Color-Scheme-1-Text text-lg font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div class="grid grid-cols-2 gap-8">
+            <div v-for="(item, index) in 4" :key="index"
+                class="bg-Color-Scheme-1-Foreground rounded-2xl border border-Color-Scheme-1-Border/20 flex overflow-hidden">
+                <div :class="index % 2 === 0 ? 'flex flex-row' : 'flex flex-row-reverse'" class="w-full">
+                    <!-- Text Section -->
+                    <div class="w-1/2 p-6 flex items-center">
+                        <div class="text-Color-Scheme-1-Text text-2xl font-normal font-['Plus_Jakarta_Sans']">
+                            Medium length section heading goes here
                         </div>
                     </div>
-                </div>
-            </div>
-            <div className="self-stretch flex flex-col justify-start items-start gap-6 overflow-hidden">
-                <img className="self-stretch h-48 rounded-2xl" src="https://placehold.co/335x198" />
-                <div className="self-stretch flex flex-col justify-start items-start gap-6">
-                    <div className="self-stretch flex flex-col justify-start items-start gap-3">
-                        <div
-                            className="self-stretch justify-start  text-xl font-normal  leading-7">
-                            Customer-Centric Solutions Designed for Your Unique Business Challenges</div>
-                        <div
-                            className="self-stretch justify-start  text-base font-normal  leading-normal">
-                            Our solutions are crafted with your needs at the forefront.</div>
-                    </div>
-                    <div className="self-stretch flex flex-col justify-start items-start gap-2">
-                        <div data-alternate="False" data-icon-position="Trailing" data-small="False" data-style="Link"
-                            className="rounded-[100px] inline-flex justify-center items-center gap-2 overflow-hidden">
-                            <div
-                                className="justify-start text-Color-Neutral-Darkest text-base font-medium  leading-normal">
-                                Get Started</div>
-                            <div className="w-6 h-6 relative overflow-hidden">
-                                <div className="w-2 h-3 left-[8.29px] top-[5.54px] absolute bg-Color-Scheme-1-Text" />
-                            </div>
-                        </div>
+
+                    <!-- Image Section -->
+                    <div class="w-1/2 flex items-center justify-center">
+                        <img class="h-80 object-cover" src="https://placehold.co/320x320" />
                     </div>
                 </div>
             </div>

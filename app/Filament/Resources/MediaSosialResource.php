@@ -40,9 +40,11 @@ class MediaSosialResource extends Resource
                             ->directory('media-sosial-icons')
                             ->disk('public')
                             ->required()
-                            ->imageResizeTargetWidth('64')
-                            ->imageResizeTargetHeight('64')
+
                             ->helperText('Upload icon media sosial (format: png, jpg, svg). Disarankan ukuran 64x64px.')
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth(64)
+                            ->imageResizeTargetHeight(64)
                             ->optimize('webp'),
 
                         Forms\Components\TextInput::make('link')

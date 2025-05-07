@@ -104,13 +104,15 @@ class GaleriResource extends Resource
                             ->image()
                             ->multiple()
                             ->reorderable()
-                            // ->imageResizeMode('cover')
-                            // ->imageCropAspectRatio('16:9')
                             ->directory('galeri-images')
                             ->maxFiles(10)
                             ->helperText('Upload hingga 10 gambar (format: jpg, png, webp)')
                             ->disk('public')
                             ->columnSpanFull()
+                            ->imageEditor()
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth(width: 1280)
+                            ->imageResizeTargetHeight(720)
                             ->optimize('webp'),
 
                         Forms\Components\RichEditor::make('deskripsi_galeri')

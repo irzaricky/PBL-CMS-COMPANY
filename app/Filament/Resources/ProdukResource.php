@@ -100,12 +100,14 @@ class ProdukResource extends Resource
                             ->image()
                             ->multiple()
                             ->reorderable()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('1:1')
                             ->directory('produk-images')
                             ->helperText('Upload gambar produk (format: jpg, png, webp)')
                             ->disk('public')
                             ->columnSpanFull()
+                            ->imageEditor()
+                            ->imageResizeMode('contain')
+                            ->imageResizeTargetWidth(1280)
+                            ->imageResizeTargetHeight(720)
                             ->optimize('webp'),
 
                         Forms\Components\RichEditor::make('deskripsi_produk')

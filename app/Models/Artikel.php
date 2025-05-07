@@ -66,9 +66,4 @@ class Artikel extends Model
     {
         return $this->hasMany(KontenSlider::class, 'id_artikel', 'id_artikel');
     }
-
-    public function UpdateViewCount()
-    {
-        $this->increment('jumlah_view');
-    }
 }

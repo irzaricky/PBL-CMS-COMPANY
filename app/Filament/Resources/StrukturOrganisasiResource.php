@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class StrukturOrganisasiResource extends Resource
 {
     protected static ?string $model = StrukturOrganisasi::class;
-    protected static ?string $navigationGroup = 'Company Management';
+    protected static ?string $navigationGroup = 'Company Owner';
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $recordTitleAttribute = 'name';
 
