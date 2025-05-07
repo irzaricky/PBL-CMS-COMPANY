@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\ArtikelController;
 use App\Http\Controllers\Api\GaleriController;
 use App\Http\Controllers\Api\LowonganController;
+use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 
 // Artikel
@@ -77,6 +78,11 @@ Route::prefix('profil-perusahaan')->group(function () {
 
     // Untuk mengambil semua proful perusahaan
     Route::get('/', [ProfilPerusahaanController::class, 'index']);
+});
+
+// Produk
+Route::prefix('produk')->group(function () {
+    Route::get('/', [ProdukController::class, 'index']);
 });
 
 // lowongan
