@@ -21,7 +21,6 @@ class GaleriViewResource extends JsonResource
                 'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
             ],
-            'id_kategori_galeri' => $this->id_kategori_galeri,
             'judul_galeri' => $this->judul_galeri,
             'thumbnail_galeri' => $this->thumbnail_galeri,
             'deskripsi_galeri' => $this->deskripsi_galeri,
