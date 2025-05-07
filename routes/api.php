@@ -82,8 +82,19 @@ Route::prefix('profil-perusahaan')->group(function () {
 
 // Produk
 Route::prefix('produk')->group(function () {
+
+    // Untuk mengambil semua produk
     Route::get('/', [ProdukController::class, 'index']);
+
+    // untuk mengambil artikel berdasarkan id
+    Route::get('/id/{id}', [ProdukController::class, 'getProdukById']);
+
+    // untuk mengambil artikel berdasarkan slug
+    Route::get('/{slug}', [ProdukController::class, 'getProdukBySlug']);
+
 });
+
+
 
 // lowongan
 Route::prefix('lowongan')->group(function () {

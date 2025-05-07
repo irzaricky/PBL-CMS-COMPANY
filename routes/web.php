@@ -19,6 +19,7 @@ Route::get('/example', function () {
     return Inertia::render('Example');
 });
 
+// Rute group untuk artikel
 Route::prefix('artikel')->group(function () {
     Route::get('/', function () {
         return Inertia::render('Artikel/ListView');
@@ -29,6 +30,7 @@ Route::prefix('artikel')->group(function () {
     })->name('artikel.show');
 });
 
+// Rute group untuk event
 Route::prefix('event')->group(function () {
     Route::get('/', function () {
         return Inertia::render('Event/ListView');
@@ -39,6 +41,8 @@ Route::prefix('event')->group(function () {
     })->name('event.show');
 });
 
+
+// Rute group untuk galeri
 Route::prefix('galeri')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Galeri/ListView');
@@ -49,6 +53,7 @@ Route::prefix('galeri')->group(function () {
     });
 });
 
+// Rute group untuk portofolio
 Route::prefix('portofolio')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Event/ListView');
@@ -59,18 +64,7 @@ Route::prefix('portofolio')->group(function () {
     });
 });
 
-// Route::prefix('feedback')->group(function () {
-//     Route::get('/', action: function () {
-//         return Inertia::render('Event/ListView');
-//     });
-
-//     Route::get('/{slug}', action: function ($slug) {
-//         return Inertia::render('Event/Show', ['slug' => $slug]);
-//     });
-// });
-
-
-
+// Rute group untuk unduhan
 Route::prefix('unduhan')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Event/ListView');
@@ -81,6 +75,7 @@ Route::prefix('unduhan')->group(function () {
     });
 });
 
+// Rute group untuk lowongan
 Route::prefix('lowongan')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Event/ListView');
@@ -91,15 +86,16 @@ Route::prefix('lowongan')->group(function () {
     });
 });
 
-// Route::prefix('lamaran')->group(function () {
-//     Route::get('/', action: function () {
-//         return Inertia::render('Event/ListView');
-//     });
+// Rute group untuk produk
+Route::prefix('produk')->group(function () {
+    Route::get('/', function () {
+        return Inertia::render('Produk/ListView');
+    })->name('produk.list');
 
-//     Route::get('/{slug}', action: function ($slug) {
-//         return Inertia::render('Event/Show', ['slug' => $slug]);
-//     });
-// });
+    Route::get('/{slug}', function ($slug) {
+        return Inertia::render('Produk/Show', ['slug' => $slug]);
+    })->name('produk.show');
+});
 
 
 Route::middleware('auth')->group(function () {

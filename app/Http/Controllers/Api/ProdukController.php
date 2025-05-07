@@ -1,26 +1,78 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Models\Produk;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProdukResource;
+use App\Http\Resources\Produk\ProdukListResource;
+use App\Http\Resources\Produk\ProdukViewResource;
 
 class ProdukController extends Controller
 {
-    // Menampilkan daftar produk
+    /**
+     * Menampilkan daftar produk
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index()
     {
-        $produk = Produk::with('kategoriProduk')->latest()->paginate(10);
-        return ProdukResource::collection($produk);
+        try {
+            $produk = Produk::with('kategoriProduk')->latest()->paginate(10);
+            return ProdukListResource::collection($produk);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Produk',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+
     }
 
-    // Menampilkan produk berdasarkan ID
-    public function show($id)
+    /**
+     * Menampilkan produk berdasarkan slug
+     * 
+     * @param string $slug
+     * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
+     */
+    public function getProdukBySlug($slug)
     {
-        $produk = Produk::with('kategoriProduk')->findOrFail($id);
-        return new ProdukResource($produk);
+        try {
+            $produk = Produk::with(['kategoriProduk'])
+                ->where('slug', $slug)
+                ->firstOrFail();
+
+            return new ProdukViewResource($produk);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Produk Tidak Ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        }
+    }
+
+    /**
+     * Menampilkan produk berdasarkan ID
+     * 
+     * @param int $id
+     * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
+     */
+    public function getProdukById($id)
+    {
+        try {
+            $produk = Produk::with('kategoriProduk')->findOrFail($id);
+            return new ProdukViewResource($produk);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Produk tidak ditemukan',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 
     // Membuat produk baru
