@@ -95,8 +95,7 @@ class UnduhanResource extends Resource
                             ->required()
                             ->disk('public')
                             ->downloadable()
-                            ->helperText('Upload file untuk diunduh (format: pdf, doc, docx, xls, xlsx, ppt, pptx, zip)')
-                            ->optimize('webp'),
+                            ->helperText('Upload file untuk diunduh (format: pdf, doc, docx, xls, xlsx, ppt, pptx, zip)'),
 
                         Forms\Components\RichEditor::make('deskripsi')
                             ->label('Deskripsi Unduhan')

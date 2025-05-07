@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\ArtikelController;
+use App\Http\Controllers\Api\GaleriController;
 use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 
@@ -31,8 +32,6 @@ Route::prefix('artikel')->group(function () {
 
 });
 
-
-
 // Event
 Route::prefix('event')->group(function () {
 
@@ -49,13 +48,40 @@ Route::prefix('event')->group(function () {
     Route::get('/{slug}', [EventController::class, 'getEventBySlug']);
 });
 
+// Galeri
+Route::prefix('galeri')->group(function () {
+
+    // Untuk mengambil semua galeri
+    Route::get('/', [GaleriController::class, 'index']);
+
+    // Untuk mengambil semua kategori galeri
+    Route::get('/categories', [GaleriController::class, 'getCategories']);
+
+    // untuk search artikel berdasarkan judul atau isi galeri
+    Route::get('/search', [GaleriController::class, 'search']);
+
+    // Untuk mengunduh galeri dan menambah jumlah unduhan
+    Route::get('/download/{id}', [GaleriController::class, 'downloadGaleri']);
+
+    // untuk mengambil galeri berdasarkan id
+    Route::get('/id/{id}', [GaleriController::class, 'getGaleriById']);
+
+    // Untuk mengambil galeri berdasarkan slug
+    Route::get('/{slug}', [GaleriController::class, 'getGaleriBySlug']);
+});
+
+
+
 // Profil Perusahaan
 Route::prefix('profil-perusahaan')->group(function () {
+
+    // Untuk mengambil semua proful perusahaan
     Route::get('/', [ProfilPerusahaanController::class, 'index']);
 });
 
 // lowongan
 Route::prefix('lowongan')->group(function () {
+
     // Untuk mengambil semua lowongan
     Route::get('/', [LowonganController::class, 'index']);
 
@@ -63,3 +89,4 @@ Route::prefix('lowongan')->group(function () {
     Route::get('/newest', [LowonganController::class, 'getMostRecentLowongan']);
 
 });
+

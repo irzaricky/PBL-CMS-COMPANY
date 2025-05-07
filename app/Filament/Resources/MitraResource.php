@@ -20,7 +20,7 @@ use App\Services\FileHandlers\SingleFileHandler;
 class MitraResource extends Resource
 {
     protected static ?string $model = Mitra::class;
-    protected static ?string $navigationGroup = 'Company Management';
+    protected static ?string $navigationGroup = 'Company Owner';
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $recordTitleAttribute = 'nama';
 
@@ -39,11 +39,12 @@ class MitraResource extends Resource
                         Forms\Components\FileUpload::make('logo')
                             ->label('Logo Perusahaan')
                             ->image()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('1:1')
                             ->directory('mitra-logos')
                             ->disk('public')
                             ->helperText('Upload logo perusahaan (format: jpg, png, svg)')
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth(100)
+                            ->imageResizeTargetHeight(100)
                             ->optimize('webp'),
 
                         Forms\Components\Textarea::make('alamat_mitra')

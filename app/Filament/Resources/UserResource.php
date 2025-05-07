@@ -55,11 +55,13 @@ class UserResource extends Resource
                         Forms\Components\FileUpload::make('foto_profil')
                             ->label('Foto Profil')
                             ->image()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('1:1')
                             ->directory('profile-photos')
                             ->disk('public')
-                            ->optimize('webp'),
+                            ->imageResizeMode('cover')
+                            ->imageResizeTargetWidth(100)
+                            ->imageResizeTargetHeight(100)
+                            ->optimize('webp')
+                        ,
                         Forms\Components\Textarea::make('alamat')
                             ->label('Alamat')
                             ->rows(3)

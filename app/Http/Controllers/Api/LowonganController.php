@@ -39,7 +39,6 @@ class LowonganController extends Controller
     public function getMostRecentLowongan()
     {
         try {
-            $today = now()->format('Y-m-d');
             $lowongan = Lowongan::orderBy('created_at', 'desc')
                 ->take(1)
                 ->get();
