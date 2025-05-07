@@ -40,7 +40,11 @@ class AdminPanelProvider extends PanelProvider
             ->globalSearch(false)
             ->id('admin')
             ->path('admin')
-            ->brandName(ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
+            ->brandName(
+                \Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')
+                ? (ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
+                : 'Admin Panel'
+            )
             ->login()
             ->unsavedChangesAlerts()
             ->globalSearch(false)
