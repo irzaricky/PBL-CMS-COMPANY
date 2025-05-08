@@ -20,10 +20,10 @@ onMounted(async () => {
     <AppLayout>
         <Hero />
         <Benefit />
-        <div v-if="featureToggles.produk">
+        <div v-if="featureToggles.produk_module">
             <Produk />
         </div>
-        <div v-if="featureToggles.artikel">
+        <div v-if="featureToggles.artikel_module">
             <Artikel />
         </div>
     </AppLayout>
