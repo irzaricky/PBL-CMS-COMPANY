@@ -86,10 +86,10 @@ function stripHtmlTags(html) {
 
 <template>
     <div
-        class="w-full px-6 lg:px-16 py-28 bg-Color-Scheme-1-Background flex flex-col gap-20 overflow-hidden font-custom">
+        class="w-full px-6 lg:px-16 py-28 bg-Color-Scheme-1-Background flex flex-col gap-20 overflow-hidden font-custom bg-secondary">
         <!-- Header -->
         <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
-            <div class="flex flex-col gap-4">
+            <div class="flex flex-col gap-4 text-white">
                 <div class="text-Color-Scheme-1-Text text-base font-semibold leading-normal">
                     Blog
                 </div>
@@ -104,8 +104,8 @@ function stripHtmlTags(html) {
             </div>
             <div>
                 <div
-                    class="px-6 py-2.5 bg-Opacity-Neutral-Darkest-5/5 rounded-full outline outline-1 outline-Opacity-Transparent/0 flex justify-center items-center gap-2">
-                    <div class="text-Color-Neutral-Darkest text-base font-medium leading-normal">
+                    class="px-6 py-2.5 bg-Opacity-Neutral-Darkest-5/5 rounded-full outline outline-1 outline-white flex justify-center items-center gap-2">
+                    <div class="text-white text-base font-medium leading-normal">
                         View all
                     </div>
                 </div>
@@ -116,8 +116,8 @@ function stripHtmlTags(html) {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
             <div v-for="article in articles" :key="article.id"
                 class="bg-Color-Scheme-1-Foreground rounded-2xl border border-Color-Scheme-1-Border/20 flex flex-col overflow-hidden">
-                <img class="w-full h-72 object-cover" :src="getImageUrl(article.gambar)" />
-                <div class="p-6 flex flex-col gap-6">
+                <img class="w-full h-72 object-cover" :src="getImageUrl(article.thumbnail_artikel)" />
+                <div class="p-6 flex flex-col gap-6 bg-white">
                     <div class="flex flex-col gap-2">
                         <div
                             class="inline-flex items-center rounded-full border border-Color-Scheme-1-Border/20 px-4 py-1 w-fit">
