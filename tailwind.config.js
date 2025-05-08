@@ -29,6 +29,8 @@ export default {
                 primary: "#F1F1F1",
                 // agak biru
                 secondary: "#31487A",
+                // agak abu-abu
+                gray: "#D6DAE5",
                 typography: {
                     // agak biru
                     main: "#31487A",
