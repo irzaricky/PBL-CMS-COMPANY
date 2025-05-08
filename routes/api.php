@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\GaleriController;
 use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
+use App\Http\Controllers\Api\FeatureToggleController;
 
 // Artikel
 Route::prefix('artikel')->group(function () {
@@ -71,6 +72,7 @@ Route::prefix('galeri')->group(function () {
     Route::get('/{slug}', [GaleriController::class, 'getGaleriBySlug']);
 });
 
+Route::get('/feature-toggles', [FeatureToggleController::class, 'index']);
 
 
 // Profil Perusahaan
