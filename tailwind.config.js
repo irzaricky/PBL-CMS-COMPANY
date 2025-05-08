@@ -30,7 +30,7 @@ export default {
                 // agak biru
                 secondary: "#31487A",
                 // agak abu-abu
-                gray: "#D6DAE5",
+                third: "#D6DAE5",
                 typography: {
                     // agak biru
                     main: "#31487A",
