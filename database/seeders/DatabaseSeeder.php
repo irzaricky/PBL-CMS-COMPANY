@@ -54,6 +54,7 @@ class DatabaseSeeder extends Seeder
             KontenSliderSeeder::class,
             MitraSeeder::class,
             StrukturOrganisasiSeeder::class,
+            FeatureToggleSeeder::class,
         ]);
     }
 }

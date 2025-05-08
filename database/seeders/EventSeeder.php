@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\File;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class EventSeeder extends Seeder
 {
@@ -17,6 +19,16 @@ class EventSeeder extends Seeder
         $faker = Faker::create('id_ID');
 
         $events = [];
+
+        // bagian proses image
+        $sourcePath = database_path('seeders/seeder_image/');
+        $targetPath = 'event-thumbnails';
+
+        // Pastikan folder target ada
+        Storage::disk('public')->makeDirectory($targetPath);
+
+        // Ambil semua file di folder seeder_image
+        $files = array_values(array_filter(scandir($sourcePath), fn($f) => !in_array($f, ['.', '..'])));
 
         // Generate 20 event dengan Faker
         for ($i = 1; $i <= 20; $i++) {
@@ -37,10 +49,20 @@ class EventSeeder extends Seeder
 
             $deskripsi = $this->generateEventDescription($faker, $fakerEN);
 
+            // Pilih gambar random
+            $originalFile = $files[array_rand($files)];
+
+            // Buat nama baru biar unik
+            $newFileName = Str::random(10) . '-' . $originalFile;
+
+            // Copy ke storage
+            Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+
             $events[] = [
                 'id_event' => $i,
                 'nama_event' => ucfirst($namaEvent),
                 'deskripsi_event' => $deskripsi,
+                'thumbnail_event' => json_encode($targetPath . '/' . $newFileName),
                 'lokasi_event' => $lokasi,
                 'link_lokasi_event' => 'https://maps.app.goo.gl/TkgARfqzGjPkxFRcA',
                 'waktu_start_event' => $startDate,

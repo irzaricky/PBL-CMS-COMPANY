@@ -94,8 +94,5 @@ class FeatureToggleResource extends Resource
             'edit' => Pages\EditFeatureToggle::route('/{record}/edit'),
         ];
     }
-    public static function canCreate(): bool
-    {
-        return false;
-    }
+
 }
