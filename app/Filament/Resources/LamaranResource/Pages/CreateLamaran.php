@@ -9,9 +9,4 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateLamaran extends CreateRecord
 {
     protected static string $resource = LamaranResource::class;
-
-    protected function getRedirectUrl(): string
-    {
-        return $this->getResource()::getUrl('index');
-    }
 }
