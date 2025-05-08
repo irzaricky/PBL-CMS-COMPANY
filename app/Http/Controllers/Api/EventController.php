@@ -63,8 +63,7 @@ class EventController extends Controller
     public function getEventById($id)
     {
         try {
-            $event = Event::where('id_event', $id)
-                ->firstOrFail();
+            $event = Event::firstOrFail($id);
             return new EventViewResource($event);
         } catch (\Exception $e) {
             return response()->json([

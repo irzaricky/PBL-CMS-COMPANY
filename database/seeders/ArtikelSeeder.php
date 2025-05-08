@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\File;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ArtikelSeeder extends Seeder
 {
@@ -13,10 +15,24 @@ class ArtikelSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
         $artikels = [];
-        $usedSlugs = [];
 
+        // bagian proses image
+        $sourcePath = database_path('seeders/seeder_image/');
+        $targetPath = 'artikel-thumbnails';
+        Storage::disk('public')->makeDirectory($targetPath);
+        // Ambil semua file di folder seeder_image
+        $files = array_values(array_filter(scandir($sourcePath), fn($f) => !in_array($f, ['.', '..'])));
 
         for ($i = 1; $i <= 100; $i++) {
+            // Pilih gambar random
+            $originalFile = $files[array_rand($files)];
+
+            // Buat nama baru biar unik
+            $newFileName = Str::random(10) . '-' . $originalFile;
+
+            // Copy ke storage
+            Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+
             // Judul artikel
             $judul = Faker::create('en_US')->unique()->bs();
 
@@ -29,6 +45,7 @@ class ArtikelSeeder extends Seeder
                 'id_user' => rand(3, 5),
                 'judul_artikel' => $judul,
                 'konten_artikel' => $konten,
+                'thumbnail_artikel' => json_encode($targetPath . '/' . $newFileName),
                 'jumlah_view' => $faker->numberBetween(100, 10000),
                 'slug' => Str::slug($judul),
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),

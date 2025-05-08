@@ -68,14 +68,14 @@ onBeforeUnmount(() => {
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-4">
-                        <button
-                            class="px-6 py-2.5 bg-white text-black font-medium text-base rounded-full shadow hover:opacity-90 transition">
-                            Button
-                        </button>
-                        <button
-                            class="px-6 py-2.5 bg-white/10 text-white font-medium text-base rounded-full border border-transparent hover:bg-white/20 transition">
-                            Button
-                        </button>
+                        <a href="/admin"
+                            class="px-6 py-2.5 bg-white text-black font-medium text-base rounded-full shadow hover:opacity-90 transition inline-block text-center">
+                            Admin
+                        </a>
+                        <a href="/admin"
+                            class="px-6 py-2.5 bg-white/10 text-white font-medium text-base rounded-full border border-transparent hover:bg-white/20 transition inline-block text-center">
+                            Another admin
+                        </a>
                     </div>
                 </div>
             </div>

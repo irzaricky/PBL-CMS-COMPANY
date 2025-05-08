@@ -2,7 +2,7 @@
 import { ChevronDown, Menu } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import { ref, onMounted } from "vue";
-import axios from "axios";
+import axios from "axios"; 
 
 // Reactive variables
 const profil_perusahaan = ref(null);
@@ -132,7 +132,7 @@ function getImageUrl(image) {
         <!-- Desktop MegaMenu (overlay) -->
         <Transition name="fade-slide">
             <MegaMenu v-if="showMegaMenu && !isMobile" class="fixed left-0 top-[64px] w-screen z-40"
-                @click.self="showMegaMenu = false" />
+                @click.self="showMegaMenu = false" /> 
         </Transition>
     </nav>
 

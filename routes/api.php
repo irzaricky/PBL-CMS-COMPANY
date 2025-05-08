@@ -6,7 +6,9 @@ use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\ArtikelController;
 use App\Http\Controllers\Api\GaleriController;
 use App\Http\Controllers\Api\LowonganController;
+use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
+use App\Http\Controllers\Api\FeatureToggleController;
 
 // Artikel
 Route::prefix('artikel')->group(function () {
@@ -70,6 +72,7 @@ Route::prefix('galeri')->group(function () {
     Route::get('/{slug}', [GaleriController::class, 'getGaleriBySlug']);
 });
 
+Route::get('/feature-toggles', [FeatureToggleController::class, 'index']);
 
 
 // Profil Perusahaan
@@ -78,6 +81,22 @@ Route::prefix('profil-perusahaan')->group(function () {
     // Untuk mengambil semua proful perusahaan
     Route::get('/', [ProfilPerusahaanController::class, 'index']);
 });
+
+// Produk
+Route::prefix('produk')->group(function () {
+
+    // Untuk mengambil semua produk
+    Route::get('/', [ProdukController::class, 'index']);
+
+    // untuk mengambil artikel berdasarkan id
+    Route::get('/id/{id}', [ProdukController::class, 'getProdukById']);
+
+    // untuk mengambil artikel berdasarkan slug
+    Route::get('/{slug}', [ProdukController::class, 'getProdukBySlug']);
+
+});
+
+
 
 // lowongan
 Route::prefix('lowongan')->group(function () {

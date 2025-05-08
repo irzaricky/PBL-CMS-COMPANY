@@ -2,16 +2,28 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\File;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class GaleriSeeder extends Seeder
 {
     public function run(): void
     {
         $faker = Faker::create('id_ID');
+
+        // bagian proses image
+        $sourcePath = database_path('seeders/seeder_image/');
+        $targetPath = 'galeri-images';
+
+        // Pastikan folder target ada
+        Storage::disk('public')->makeDirectory($targetPath);
+
+        // Ambil semua file di folder seeder_image
+        $files = array_values(array_filter(scandir($sourcePath), fn($f) => !in_array($f, ['.', '..'])));
 
         $titles = [
             'Kantor Baru',
@@ -56,40 +68,27 @@ class GaleriSeeder extends Seeder
             'Pelatihan Komunikasi',
             'Pelatihan Negosiasi',
             'Pelatihan Presentasi',
-            'Pelatihan Public Speaking',
-            'Pelatihan Manajemen Waktu',
-            'Pelatihan Manajemen Proyek',
-            'Pelatihan Manajemen Risiko',
-            'Pelatihan Manajemen Perubahan',
-            'Pelatihan Manajemen Kualitas',
-            'Pelatihan Manajemen Strategis',
-            'Pelatihan Manajemen Operasional',
-            'Pelatihan Manajemen Sumber Daya Manusia',
-            'Pelatihan Manajemen Keuangan',
-            'Pelatihan Manajemen Pemasaran',
-            'Pelatihan Manajemen Penjualan',
-            'Pelatihan Manajemen Produksi',
-            'Pelatihan Manajemen Rantai Pasokan',
-            'Pelatihan Manajemen Teknologi',
-            'Pelatihan Manajemen Inovasi',
-            'Pelatihan Manajemen Pengetahuan',
-            'Pelatihan Manajemen Perubahan Organisasi',
-            'Pelatihan Manajemen Kinerja',
-            'Pelatihan Manajemen Konflik',
-            'Pelatihan Manajemen Hubungan Pelanggan',
-            'Pelatihan Manajemen Hubungan Masyarakat',
-            'Pelatihan Manajemen Hubungan Investor',
         ];
 
-        for ($i = 1; $i <= 60; $i++) {
+        for ($i = 1; $i <= 20; $i++) {
             $title = $faker->unique()->randomElement($titles);
             $slug = Str::slug($title);
+
+            // Pilih gambar random
+            $originalFile = $files[array_rand($files)];
+
+            // Buat nama baru biar unik
+            $newFileName = Str::random(10) . '-' . $originalFile;
+
+            // Copy ke storage
+            Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
 
             $galeries[] = [
                 'id_galeri' => $i,
                 'id_user' => $faker->numberBetween(1, 5),
                 'id_kategori_galeri' => $faker->numberBetween(1, 3),
                 'judul_galeri' => $title,
+                'thumbnail_galeri' => json_encode($targetPath . '/' . $newFileName),
                 'deskripsi_galeri' => $faker->paragraph(rand(1, 3)),
                 'slug' => $slug,
                 'jumlah_unduhan' => $faker->numberBetween(5, int2: 1000),
