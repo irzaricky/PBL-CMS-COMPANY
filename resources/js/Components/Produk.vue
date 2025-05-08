@@ -28,10 +28,15 @@ async function fetchProduk() {
         return shuffled.slice(0, count);
     }
 }
-function getImageUrl(path) {
-        return `/storage/${path}`;
+function getImageUrl(image) {
+    if (!image) return "/image/placeholder.webp";
+
+    if (typeof image === "object" && image !== null) {
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
     }
 
+    return `/storage/${image}`;
+}
 </script>
 
 <template>

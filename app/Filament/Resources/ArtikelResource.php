@@ -141,7 +141,7 @@ class ArtikelResource extends Resource
                     ->label('Thumbnail')
                     ->circular()
                     ->stacked()
-                    ->limit(3)
+                    ->limit(1)
                     ->limitedRemainingText()
                     ->extraImgAttributes(['class' => 'object-cover']),
 

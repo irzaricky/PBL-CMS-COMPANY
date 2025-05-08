@@ -141,7 +141,7 @@ class GaleriResource extends Resource
                     ->label('Gambar')
                     ->circular()
                     ->stacked()
-                    ->limit(3)
+                    ->limit(1)
                     ->limitedRemainingText()
                     ->extraImgAttributes(['class' => 'object-cover']),
 
