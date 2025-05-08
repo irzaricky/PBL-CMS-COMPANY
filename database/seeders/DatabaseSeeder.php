@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +12,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $files = Storage::disk('public')->allFiles();
+        $directories = Storage::disk('public')->allDirectories();
+
+        // Hapus semua file kecuali .gitignore
+        foreach ($files as $file) {
+            if (basename($file) !== '.gitignore') {
+                Storage::disk('public')->delete($file);
+            }
+        }
+
+        // Hapus semua folder mulai dari yang terdalam
+        foreach (array_reverse($directories) as $directory) {
+            Storage::disk('public')->deleteDirectory($directory);
+        }
+
         $this->call([
             ShieldSeeder::class,
             FilamentUserSeeder::class,
