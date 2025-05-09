@@ -20,7 +20,7 @@ class ProdukController extends Controller
     public function index()
     {
         try {
-            $produk = Produk::with('kategoriProduk')->latest()->paginate(10);
+            $produk = Produk::with('kategoriProduk')->whereNull('deleted_at')->latest()->paginate(10);
             return ProdukListResource::collection($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -43,6 +43,7 @@ class ProdukController extends Controller
         try {
             $produk = Produk::with(['kategoriProduk'])
                 ->where('slug', $slug)
+                ->whereNull('deleted_at')
                 ->firstOrFail();
 
             return new ProdukViewResource($produk);
@@ -64,7 +65,7 @@ class ProdukController extends Controller
     public function getProdukById($id)
     {
         try {
-            $produk = Produk::with('kategoriProduk')->findOrFail($id);
+            $produk = Produk::with('kategoriProduk')->whereNull('deleted_at')->findOrFail($id);
             return new ProdukViewResource($produk);
         } catch (\Exception $e) {
             return response()->json([

@@ -20,7 +20,7 @@ class ProfilPerusahaanController extends Controller
     public function index(Request $request)
     {
         try {
-            $ProfilPerusahaan = ProfilPerusahaan::query()->firstOrFail();
+            $ProfilPerusahaan = ProfilPerusahaan::query()->whereNull('deleted_at')->firstOrFail();
 
             return new ProfilPerusahaanViewResource($ProfilPerusahaan);
         } catch (\Exception $e) {
@@ -41,7 +41,7 @@ class ProfilPerusahaanController extends Controller
     public function getDataNavbar(Request $request)
     {
         try {
-            $ProfilPerusahaan = ProfilPerusahaan::query()->firstOrFail();
+            $ProfilPerusahaan = ProfilPerusahaan::query()->whereNull('deleted_at')->firstOrFail();
 
             return new ProfilPerusahaanNavbarResource($ProfilPerusahaan);
         } catch (\Exception $e) {

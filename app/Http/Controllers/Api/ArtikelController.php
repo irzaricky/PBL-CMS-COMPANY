@@ -21,6 +21,7 @@ class ArtikelController extends Controller
     {
         try {
             $query = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc');
 
             // Filter berdasarkan kategori jika ada parameter category_id
@@ -51,6 +52,7 @@ class ArtikelController extends Controller
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
                 ->where('slug', $slug)
+                ->whereNull('deleted_at')
                 ->firstOrFail();
 
             $article->increment('jumlah_view');
@@ -74,6 +76,7 @@ class ArtikelController extends Controller
     {
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->whereNull('deleted_at')
                 ->findOrFail($id);
 
             return new ArticleViewResource($article);
@@ -94,7 +97,7 @@ class ArtikelController extends Controller
     public function getCategories()
     {
         try {
-            $categories = KategoriArtikel::all();
+            $categories = KategoriArtikel::whereNull('deleted_at')->get();
             return response()->json([
                 'status' => 'success',
                 'data' => $categories
@@ -125,7 +128,8 @@ class ArtikelController extends Controller
                 return $this->index($request);
             }
 
-            $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name']);
+            $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->whereNull('deleted_at');
 
             // Jika ada query pencarian, artikel akan dicari berdasarkan judul
             if (!empty($query)) {
@@ -169,6 +173,7 @@ class ArtikelController extends Controller
     {
         try {
             $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                ->whereNull('deleted_at')
                 ->orderBy('jumlah_view', 'desc')
                 ->take(1)
                 ->get();
