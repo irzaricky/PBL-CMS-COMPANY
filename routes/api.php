@@ -78,8 +78,11 @@ Route::get('/feature-toggles', [FeatureToggleController::class, 'index']);
 // Profil Perusahaan
 Route::prefix('profil-perusahaan')->group(function () {
 
-    // Untuk mengambil semua proful perusahaan
+    // Untuk mengambil profil perusahaan
     Route::get('/', [ProfilPerusahaanController::class, 'index']);
+
+    // Untuk mengambil profil perusahaan untuk navbar
+    Route::get('/navbar', [ProfilPerusahaanController::class, 'getDataNavbar']);
 });
 
 // Produk
