@@ -1,6 +1,11 @@
+HERO VUE
+
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { usePage } from '@inertiajs/vue3'
 
+
+const user = usePage().props.auth.user
 
 const images = [
     '/images/swisnl/filament-backgrounds/curated-by-swis/01.jpg',
@@ -59,7 +64,7 @@ onBeforeUnmount(() => {
                 <div class="w-full lg:w-[560px] flex flex-col justify-start items-start gap-8">
                     <div class="flex flex-col gap-6">
                         <h1 class="text-white text-4xl lg:text-6xl leading-[48px] lg:leading-[67.2px] font-normal">
-                            Medium length hero headline goes here
+                            Selamat datang {{ user?.name ?? 'pengunjung' }}!
                         </h1>
                         <p class="text-white text-base lg:text-lg leading-normal lg:leading-relaxed font-normal">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros

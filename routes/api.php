@@ -10,6 +10,10 @@ use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\FeatureToggleController;
 
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
 // Artikel
 Route::prefix('artikel')->group(function () {
 
