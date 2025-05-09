@@ -74,7 +74,7 @@ class MediaSosialResource extends Resource
                 Tables\Columns\TextColumn::make('nama_media_sosial')
                     ->label('Nama Media Sosial')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\ImageColumn::make('icon')
                     ->label('Icon')
@@ -99,13 +99,11 @@ class MediaSosialResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(),
             ])
             ->filters([

@@ -136,35 +136,29 @@ class ProdukResource extends Resource
                 Tables\Columns\TextColumn::make('nama_produk')
                     ->label('Nama Produk')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('kategoriProduk.nama_kategori_produk')
                     ->label('Kategori')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('harga_produk')
                     ->label('Harga')
-                    ->sortable()
                     ->money('IDR'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

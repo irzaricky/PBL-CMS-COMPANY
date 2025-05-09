@@ -71,7 +71,7 @@ class FeedbackResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengguna')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('subjek_feedback')
                     ->label('Subjek')
@@ -81,7 +81,7 @@ class FeedbackResource extends Resource
                 Tables\Columns\TextColumn::make('tanggal_feedback')
                     ->label('Tanggal')
                     ->date('d F Y')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\IconColumn::make('tanggapan_feedback')
                     ->label('Ditanggapi')
@@ -93,13 +93,11 @@ class FeedbackResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -136,7 +134,7 @@ class FeedbackResource extends Resource
     public static function getWidgets(): array
     {
         return [
-             FeedbackStats::class,
+            FeedbackStats::class,
         ];
     }
 

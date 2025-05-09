@@ -128,12 +128,10 @@ class CaseStudyResource extends Resource
                 Tables\Columns\TextColumn::make('judul_case_study')
                     ->label('Judul')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('mitra.nama')
                     ->label('Mitra')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('status_case_study')
@@ -153,18 +151,16 @@ class CaseStudyResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

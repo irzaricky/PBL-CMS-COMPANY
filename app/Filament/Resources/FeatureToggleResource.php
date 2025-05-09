@@ -42,7 +42,7 @@ class FeatureToggleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('key')
                     ->label('Feature')
-                    ->sortable(),
+                ,
                 Tables\Columns\TextColumn::make('label')
                     ->label('Label'),
                 Tables\Columns\ToggleColumn::make('status_aktif')

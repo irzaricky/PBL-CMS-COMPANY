@@ -129,17 +129,14 @@ class UnduhanResource extends Resource
                 Tables\Columns\TextColumn::make('nama_unduhan')
                     ->label('Nama Unduhan')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('kategoriUnduhan.nama_kategori_unduhan')
                     ->label('Kategori')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengunggah')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('lokasi_file')
@@ -150,24 +147,21 @@ class UnduhanResource extends Resource
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
                     ->numeric()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

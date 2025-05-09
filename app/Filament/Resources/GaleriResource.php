@@ -148,22 +148,18 @@ class GaleriResource extends Resource
                 Tables\Columns\TextColumn::make('judul_galeri')
                     ->label('Judul')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('kategoriGaleri.nama_kategori_galeri')
                     ->label('Kategori')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengunggah')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
-                    ->sortable()
                     ->numeric()
                     ->alignCenter()
                     ->badge(),
@@ -171,18 +167,16 @@ class GaleriResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

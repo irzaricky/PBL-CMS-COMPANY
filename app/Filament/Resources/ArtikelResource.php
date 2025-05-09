@@ -148,40 +148,33 @@ class ArtikelResource extends Resource
                 Tables\Columns\TextColumn::make('judul_artikel')
                     ->label('Judul')
                     ->searchable()
-                    ->sortable()
                     ->limit(50),
 
                 Tables\Columns\TextColumn::make('kategoriArtikel.nama_kategori_artikel')
                     ->label('Kategori')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Penulis')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->sortable(),
+                    ->dateTime('d M Y H:i'),
 
                 Tables\Columns\TextColumn::make('jumlah_view')
                     ->label('Jumlah View')
-                    ->sortable()
                     ->alignCenter()
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

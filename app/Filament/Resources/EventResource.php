@@ -147,7 +147,6 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('nama_event')
                     ->label('Nama Event')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('lokasi_event')
@@ -170,18 +169,15 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('waktu_start_event')
                     ->label('Mulai')
                     ->dateTime('d M Y - H:i')
-                    ->sortable()
                     ->icon('heroicon-o-calendar'),
 
                 Tables\Columns\TextColumn::make('waktu_end_event')
                     ->label('Selesai')
                     ->dateTime('d M Y - H:i')
-                    ->sortable()
                     ->icon('heroicon-o-clock'),
 
                 Tables\Columns\TextColumn::make('jumlah_pendaftar')
                     ->label('Jumlah Pendaftar')
-                    ->sortable()
                     ->alignCenter()
                     ->icon('heroicon-o-user-group')
                     ->color('primary'),
@@ -213,7 +209,6 @@ class EventResource extends Resource
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
