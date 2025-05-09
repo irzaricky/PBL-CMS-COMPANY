@@ -53,7 +53,5 @@ class CaseStudySeeder extends Seeder
                 'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ]);
         }
-
-        $this->command->info('Case Study seeder has been completed successfully.');
     }
 }
