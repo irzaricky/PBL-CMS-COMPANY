@@ -54,11 +54,10 @@ class FeatureToggleResource extends Resource
                 //
             ])
             ->actions([])
-            ->bulkActions([ // Menambahkan BulkAction untuk aktif/nonaktifkan
-                Tables\Actions\BulkAction::make('activate_all') // Bulk Action untuk aktifkan semua
+            ->bulkActions([
+                Tables\Actions\BulkAction::make('activate_all') 
                     ->label('Aktifkan semua')
                     ->action(function (Collection $records) {
-                        // Mengupdate status_aktif menjadi true (aktif) untuk semua yang terpilih
                         $records->each(function ($record) {
                             $record->update(['status_aktif' => true]);
                         });
@@ -66,10 +65,9 @@ class FeatureToggleResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success'),
 
-                Tables\Actions\BulkAction::make('deactivate_all') // Bulk Action untuk nonaktifkan semua
+                Tables\Actions\BulkAction::make('deactivate_all')
                     ->label('Nonaktifkan semua')
                     ->action(function (Collection $records) {
-                        // Mengupdate status_aktif menjadi false (nonaktif) untuk semua yang terpilih
                         $records->each(function ($record) {
                             $record->update(['status_aktif' => false]);
                         });

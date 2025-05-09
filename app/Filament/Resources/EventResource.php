@@ -231,10 +231,14 @@ class EventResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Event berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Event berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Event berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_event');

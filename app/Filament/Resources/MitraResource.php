@@ -164,7 +164,6 @@ class MitraResource extends Resource
                     ->query(fn(Builder $query): Builder => $query->where('tanggal_kemitraan', '>=', now()->subMonths(3))),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('toggleStatus')
                     ->label(

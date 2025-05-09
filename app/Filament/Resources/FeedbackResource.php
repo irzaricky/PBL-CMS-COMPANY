@@ -79,12 +79,13 @@ class FeedbackResource extends Resource
                     ->limit(50),
 
                 Tables\Columns\TextColumn::make('tanggal_feedback')
-                    ->label('Tanggal')
+                    ->label('Tanggal Feedback')
                     ->date('d F Y')
                 ,
 
                 Tables\Columns\IconColumn::make('tanggapan_feedback')
                     ->label('Ditanggapi')
+                    ->alignCenter()
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')

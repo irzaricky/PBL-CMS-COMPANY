@@ -239,6 +239,9 @@ class LowonganResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Lowongan berhasil diarsipkan')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');
@@ -246,6 +249,7 @@ class LowonganResource extends Resource
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Lowongan berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Lowongan berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');

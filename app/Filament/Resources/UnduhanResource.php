@@ -176,10 +176,14 @@ class UnduhanResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Unduhan berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Unduhan berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Unduhan berhasil dihapus permanen')
                     ->before(function ($record) {
                         SingleFileHandler::deleteFile($record, 'lokasi_file');
@@ -187,6 +191,7 @@ class UnduhanResource extends Resource
                 Tables\Actions\Action::make('download')
                     ->label('Unduh')
                     ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
                     ->url(fn(Unduhan $record) => url('storage/' . $record->lokasi_file))
                     ->openUrlInNewTab(),
             ])

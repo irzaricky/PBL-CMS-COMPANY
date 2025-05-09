@@ -168,10 +168,6 @@ class TestimoniResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make()
-                    //     ->before(function (Collection $records) {
-                    //         MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_testimoni');
-                    //     }),
                     Tables\Actions\BulkAction::make('updateStatus')
                         ->label('Update Status')
                         ->icon('heroicon-o-eye')

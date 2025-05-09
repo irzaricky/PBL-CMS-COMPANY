@@ -178,7 +178,7 @@ class CaseStudyResource extends Resource
             ->actions([
                 Tables\Actions\Action::make('publish')
                     ->label('Publikasikan')
-                    ->icon('heroicon-o-check-circle')
+                    ->icon('heroicon-s-check-circle')
                     ->color('success')
                     ->action(function (CaseStudy $record): void {
                         $record->status_case_study = 'published';
@@ -189,8 +189,8 @@ class CaseStudyResource extends Resource
 
                 Tables\Actions\Action::make('draft')
                     ->label('Jadikan Draft')
-                    ->icon('heroicon-o-document-text')
-                    ->color('warning')
+                    ->icon('heroicon-s-document-text')
+                    ->color('danger')
                     ->action(function (CaseStudy $record): void {
                         $record->status_case_study = 'draft';
                         $record->save();
@@ -200,10 +200,14 @@ class CaseStudyResource extends Resource
 
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Case study berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Case study berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Case study berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_case_study');

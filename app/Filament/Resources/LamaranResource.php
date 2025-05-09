@@ -174,13 +174,6 @@ class LamaranResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
     public static function getWidgets(): array
     {
         return [
