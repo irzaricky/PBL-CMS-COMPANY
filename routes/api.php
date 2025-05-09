@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\FeatureToggleController;
+use App\Http\Controllers\Api\CaseStudyController;
 
 // Artikel
 Route::prefix('artikel')->group(function () {
@@ -112,3 +113,17 @@ Route::prefix('lowongan')->group(function () {
 
 });
 
+// Case Study
+Route::prefix('case-study')->group(function () {
+    // Untuk mengambil semua case study (published)
+    Route::get('/', [CaseStudyController::class, 'index']);
+
+    // Untuk search case study
+    Route::get('/search', [CaseStudyController::class, 'search']);
+
+    // Untuk mengambil case study berdasarkan id
+    Route::get('/id/{id}', [CaseStudyController::class, 'getCaseStudyById']);
+
+    // Untuk mengambil case study berdasarkan slug (termasuk menambah view)
+    Route::get('/{slug}', [CaseStudyController::class, 'getCaseStudyBySlug']);
+});
