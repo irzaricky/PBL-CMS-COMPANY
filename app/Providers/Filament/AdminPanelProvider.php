@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use Directory;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\Widgets;
@@ -23,10 +24,12 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
+use Intervention\Image\ImageServiceProvider;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -88,7 +91,12 @@ class AdminPanelProvider extends PanelProvider
                     ->url('/'), // Mengarah ke halaman utama
             ])
             ->plugins([
-                FilamentBackgroundsPlugin::make(),
+                FilamentBackgroundsPlugin::make()
+                    ->remember(900)
+                    ->imageProvider(MyImages::make()
+                        ->directory(
+                            'images\swisnl\filament-backgrounds\triangles'
+                        )),
             ]);
     }
 }
