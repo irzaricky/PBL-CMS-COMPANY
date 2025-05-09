@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\ProfilPerusahaan;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ProfilPerusahaanResource extends JsonResource
+class ProfilPerusahaanViewResource extends JsonResource
 {
     /**
      * Transform the resource into an array.

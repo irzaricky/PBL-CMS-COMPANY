@@ -3,9 +3,7 @@
 namespace App\Filament\Resources\ArtikelResource\Widgets;
 
 use App\Models\Artikel;
-use Flowframe\Trend\Trend;
 use Illuminate\Support\Number;
-use Flowframe\Trend\TrendValue;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageTable;

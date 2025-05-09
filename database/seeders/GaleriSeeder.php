@@ -56,11 +56,8 @@ class GaleriSeeder extends Seeder
             // Generate array untuk menyimpan multiple images
             $images = [];
 
-            // Tentukan jumlah gambar untuk galeri ini (1-3 gambar)
-            $imageCount = rand(1, 3);
-
             // Pilih dan proses beberapa gambar
-            for ($j = 0; $j < $imageCount; $j++) {
+            for ($j = 0; $j < 3; $j++) {
                 // Pilih gambar random
                 $originalFile = $files[array_rand($files)];
 

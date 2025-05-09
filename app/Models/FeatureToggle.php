@@ -9,14 +9,32 @@ class FeatureToggle extends Model
 {
     use HasFactory;
 
-    protected $table = 'feature_toggles'; 
 
-    // Menentukan atribut yang bisa diisi
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'feature_toggles';
+
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'feature_id';
+
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'key',
         'label',
         'status_aktif',
     ];
 
-    public $timestamps = false; // Jika tidak ingin menggunakan timestamps
+    public $timestamps = false;
 }

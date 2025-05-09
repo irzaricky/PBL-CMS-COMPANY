@@ -56,13 +56,6 @@ class ProfilPerusahaanResource extends Resource
                             ->imageResizeTargetWidth(1280)
                             ->imageResizeTargetHeight(720)
                             ->optimize('webp'),
-
-                        Forms\Components\Select::make('id_galeri')
-                            ->label('Galeri Terkait')
-                            ->relationship('galeri', 'judul_galeri')
-                            ->searchable()
-                            ->preload()
-                            ->helperText('Pilih galeri yang terkait dengan perusahaan (opsional)'),
                     ]),
 
                 Forms\Components\Section::make('Kontak dan Deskripsi')
@@ -85,6 +78,30 @@ class ProfilPerusahaanResource extends Resource
                             ->label('Deskripsi Perusahaan')
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('perusahaan-attachments')
+                            ->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Sejarah, Visi dan Misi')
+                    ->schema([
+                        Forms\Components\RichEditor::make('sejarah_perusahaan')
+                            ->label('Sejarah Perusahaan')
+                            ->disableToolbarButtons([
+                                'attachFiles'
+                            ])
+                            ->columnSpanFull(),
+
+                        Forms\Components\RichEditor::make('visi_perusahaan')
+                            ->label('Visi Perusahaan')
+                            ->disableToolbarButtons([
+                                'attachFiles'
+                            ])
+                            ->columnSpanFull(),
+
+                        Forms\Components\RichEditor::make('misi_perusahaan')
+                            ->label('Misi Perusahaan')
+                            ->disableToolbarButtons([
+                                'attachFiles'
+                            ])
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -111,15 +128,26 @@ class ProfilPerusahaanResource extends Resource
 
                 Tables\Columns\TextColumn::make('alamat_perusahaan')
                     ->label('Alamat')
-                    ->limit(50)
-                    ->tooltip(fn(ProfilPerusahaan $record): string => $record->alamat_perusahaan)
+                    ->limit(30)
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('galeri.judul_galeri')
-                    ->label('Galeri Terkait')
-                    ->searchable()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('sejarah_perusahaan')
+                    ->label('Sejarah')
+                    ->limit(20)
+                    ->html()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('visi_perusahaan')
+                    ->label('Visi')
+                    ->limit(20)
+                    ->html()
+                    ->toggleable(),
+
+                Tables\Columns\TextColumn::make('misi_perusahaan')
+                    ->label('Misi')
+                    ->limit(20)
+                    ->html()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')

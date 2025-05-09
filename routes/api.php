@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\FeatureToggleController;
+use App\Http\Controllers\Api\CaseStudyController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -82,8 +83,11 @@ Route::get('/feature-toggles', [FeatureToggleController::class, 'index']);
 // Profil Perusahaan
 Route::prefix('profil-perusahaan')->group(function () {
 
-    // Untuk mengambil semua proful perusahaan
+    // Untuk mengambil profil perusahaan
     Route::get('/', [ProfilPerusahaanController::class, 'index']);
+
+    // Untuk mengambil profil perusahaan untuk navbar
+    Route::get('/navbar', [ProfilPerusahaanController::class, 'getDataNavbar']);
 });
 
 // Produk
@@ -113,3 +117,17 @@ Route::prefix('lowongan')->group(function () {
 
 });
 
+// Case Study
+Route::prefix('case-study')->group(function () {
+    // Untuk mengambil semua case study (published)
+    Route::get('/', [CaseStudyController::class, 'index']);
+
+    // Untuk search case study
+    Route::get('/search', [CaseStudyController::class, 'search']);
+
+    // Untuk mengambil case study berdasarkan id
+    Route::get('/id/{id}', [CaseStudyController::class, 'getCaseStudyById']);
+
+    // Untuk mengambil case study berdasarkan slug (termasuk menambah view)
+    Route::get('/{slug}', [CaseStudyController::class, 'getCaseStudyBySlug']);
+});

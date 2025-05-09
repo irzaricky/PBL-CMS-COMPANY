@@ -9,7 +9,7 @@ onMounted(() => {
     async function fetchProfilPerusahaan() {
         try {
             loading.value = true;
-            const response = await axios.get(`/api/profil-perusahaan`);
+            const response = await axios.get(`/api/profil-perusahaan/navbar`);
             profil_perusahaan.value = response.data.data;
             loading.value = false;
         } catch (err) {
