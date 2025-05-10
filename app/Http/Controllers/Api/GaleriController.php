@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Models\Galeri;
 use Illuminate\Http\Request;
 use App\Models\KategoriGaleri;
@@ -22,6 +23,7 @@ class GaleriController extends Controller
     {
         try {
             $query = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
+                ->where('status_galeri', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
             $galeri = $query->paginate(10);
@@ -46,6 +48,7 @@ class GaleriController extends Controller
     {
         try {
             $galeri = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
+                ->where('status_galeri', ContentStatus::TERPUBLIKASI)
                 ->where('slug', $slug)
                 ->firstOrFail();
 
@@ -69,6 +72,7 @@ class GaleriController extends Controller
     {
         try {
             $galeri = Galeri::with(relations: ['kategoriGaleri', 'user:id_user,name'])
+                ->where('status_galeri', ContentStatus::TERPUBLIKASI)
                 ->findOrFail(id: $id);
 
             return new GaleriViewResource($galeri);
@@ -120,7 +124,8 @@ class GaleriController extends Controller
                 return $this->index($request);
             }
 
-            $galerisQuery = Galeri::with(['kategoriGaleri', 'user:id_user,name']);
+            $galerisQuery = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
+                ->where('status_galeri', ContentStatus::TERPUBLIKASI);
 
             // Jika ada query pencarian, galeri akan dicari berdasarkan judul
             if (!empty($query)) {
@@ -164,7 +169,8 @@ class GaleriController extends Controller
     public function downloadGaleri($id)
     {
         try {
-            $galeri = Galeri::findOrFail($id);
+            $galeri = Galeri::where('status_galeri', ContentStatus::TERPUBLIKASI)
+                ->findOrFail($id);
 
             // Increment the download counter
             $galeri->increment('jumlah_unduhan');

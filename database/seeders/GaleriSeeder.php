@@ -79,6 +79,7 @@ class GaleriSeeder extends Seeder
                 'thumbnail_galeri' => json_encode($images),
                 'deskripsi_galeri' => $faker->paragraph(rand(1, 3)),
                 'slug' => $slug,
+                'status_galeri' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
                 'jumlah_unduhan' => $faker->numberBetween(5, 1000),
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
                 'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
