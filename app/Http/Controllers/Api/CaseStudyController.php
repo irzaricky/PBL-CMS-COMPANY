@@ -11,7 +11,7 @@ use App\Http\Resources\CaseStudy\CaseStudyListResource;
 class CaseStudyController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mengambil daftar case study
      */
     public function index(Request $request)
     {
@@ -38,7 +38,7 @@ class CaseStudyController extends Controller
     }
 
     /**
-     * Display the specified resource by id.
+     * Mengambil case study berdasarkan id
      */
     public function getCaseStudyById($id)
     {
@@ -60,7 +60,7 @@ class CaseStudyController extends Controller
     }
 
     /**
-     * Display the specified resource by slug.
+     * Mengambil case study berdasarkan slug
      */
     public function getCaseStudyBySlug($slug)
     {
@@ -81,7 +81,7 @@ class CaseStudyController extends Controller
     }
 
     /**
-     * Search case studies
+     * Mencari case study berdasarkan judul atau serta mitra
      */
     public function search(Request $request)
     {

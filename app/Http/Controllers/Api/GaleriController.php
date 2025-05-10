@@ -13,7 +13,7 @@ use App\Http\Resources\Galeri\GaleriDownloadResource;
 class GaleriController extends Controller
 {
     /**
-     * Get all Galeri
+     * Mengambil daftar galeri
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -38,7 +38,7 @@ class GaleriController extends Controller
     }
 
     /**
-     * Get a single galeri by slug
+     * Mengambil galeri berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Galeri\GaleriViewResource|\Illuminate\Http\JsonResponse
@@ -62,7 +62,7 @@ class GaleriController extends Controller
     }
 
     /**
-     * Get the galeri by id
+     * Mengambil galeri berdasarkan id
      * 
      * @param int $id
      * @return \App\Http\Resources\Galeri\GaleriViewResource|\Illuminate\Http\JsonResponse
@@ -85,7 +85,7 @@ class GaleriController extends Controller
     }
 
     /**
-     * Get all categories
+     * Mengambil kategori galeri
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -107,7 +107,7 @@ class GaleriController extends Controller
     }
 
     /**
-     * Search galeries by title or content
+     * Mencari galeri berdasarkan judul atau serta kategori
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -160,10 +160,10 @@ class GaleriController extends Controller
     }
 
     /**
-     * Download a gallery item and increment the download counter
+     * Mendownload galeri dan menambah jumlah unduhan
      * 
      * @param int $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return \App\Http\Resources\Galeri\GaleriDownloadResource|\Illuminate\Http\JsonResponse
      */
     public function downloadGaleri($id)
     {
@@ -173,12 +173,7 @@ class GaleriController extends Controller
             // Increment the download counter
             $galeri->increment('jumlah_unduhan');
 
-            // Return the gallery data
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Download berhasil',
-                'data' => new GaleriDownloadResource($galeri)
-            ]);
+            return new GaleriDownloadResource($galeri);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

@@ -7,6 +7,11 @@ use App\Http\Controllers\Controller;
 
 class FeatureToggleController extends Controller
 {
+    /**
+     * Mengambil daftar fitur yang diaktifkan
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index()
     {
         $features = FeatureToggle::select('key', 'status_aktif')

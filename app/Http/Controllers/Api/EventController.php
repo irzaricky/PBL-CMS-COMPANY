@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class EventController extends Controller
 {
     /**
-     * Get all events
+     * Mengambil daftar event
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -35,7 +35,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get a single article by slug
+     * Mengambil daftar event berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
@@ -57,7 +57,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get the article by id
+     * Mengambil daftar event berdasarkan id
      * 
      * @param int $id
      * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
@@ -77,7 +77,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get the most recent event
+     * Mengambil event terbaru
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */

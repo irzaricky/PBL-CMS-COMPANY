@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class ArtikelController extends Controller
 {
     /**
-     * Get all articles
+     * Mengambil daftar artikel
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -44,7 +44,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get a single article by slug
+     * Mengambil artikel berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Articles\ArticleViewResource|\Illuminate\Http\JsonResponse
@@ -70,7 +70,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get the article by id
+     * Mengambil artikel berdasarkan ID
      * 
      * @param int $id
      * @return \App\Http\Resources\Articles\ArticleViewResource|\Illuminate\Http\JsonResponse
@@ -94,7 +94,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get all categories
+     * Mengambil semua kategori artikel
      * 
      * @return \Illuminate\Http\JsonResponse
      */
@@ -116,7 +116,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Search articles by title or content
+     * Mencari artikel berdasarkan judul atau serta kategori
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -176,7 +176,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get the most viewed articles
+     * Mengambil artikel dengan jumlah view terbanyak
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */

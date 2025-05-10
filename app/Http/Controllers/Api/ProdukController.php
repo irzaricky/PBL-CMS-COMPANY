@@ -12,7 +12,7 @@ use App\Http\Resources\Produk\ProdukViewResource;
 class ProdukController extends Controller
 {
     /**
-     * Menampilkan daftar produk
+     * Mengambil daftar produk
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -33,7 +33,7 @@ class ProdukController extends Controller
     }
 
     /**
-     * Menampilkan produk berdasarkan slug
+     * Mengambil produk berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
@@ -57,7 +57,7 @@ class ProdukController extends Controller
     }
 
     /**
-     * Menampilkan produk berdasarkan ID
+     * Mengambil produk berdasarkan ID
      * 
      * @param int $id
      * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
@@ -74,47 +74,5 @@ class ProdukController extends Controller
                 'error' => $e->getMessage()
             ], 404);
         }
-    }
-
-    // Membuat produk baru
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'id_kategori_produk' => 'required|exists:kategori_produk,id_kategori_produk',
-            'nama_produk' => 'required|string|max:100',
-            'thumbnail_produk' => 'nullable|array',
-            'harga_produk' => 'required|string|max:50',
-            'slug' => 'required|string|unique:produk,slug|max:100',
-            'deskripsi_produk' => 'nullable|string',
-        ]);
-
-        $produk = Produk::create($validated);
-        return new ProdukResource($produk);
-    }
-
-    // Memperbarui data produk
-    public function update(Request $request, $id)
-    {
-        $produk = Produk::findOrFail($id);
-
-        $validated = $request->validate([
-            'id_kategori_produk' => 'required|exists:kategori_produk,id_kategori_produk',
-            'nama_produk' => 'required|string|max:100',
-            'thumbnail_produk' => 'nullable|array',
-            'harga_produk' => 'required|string|max:50',
-            'slug' => 'required|string|max:100|unique:produk,slug,' . $produk->id_produk,
-            'deskripsi_produk' => 'nullable|string',
-        ]);
-
-        $produk->update($validated);
-        return new ProdukResource($produk);
-    }
-
-    // Menghapus produk
-    public function destroy($id)
-    {
-        $produk = Produk::findOrFail($id);
-        $produk->delete();
-        return response()->json(null, 204);
     }
 }

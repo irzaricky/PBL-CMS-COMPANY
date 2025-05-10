@@ -173,7 +173,8 @@ class ArtikelResource extends Resource
                     ->options([
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
