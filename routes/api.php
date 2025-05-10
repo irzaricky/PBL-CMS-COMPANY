@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\FeatureToggleController;
 use App\Http\Controllers\Api\CaseStudyController;
+use App\Http\Controllers\Api\UnduhanController;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -130,4 +131,28 @@ Route::prefix('case-study')->group(function () {
 
     // Untuk mengambil case study berdasarkan slug (termasuk menambah view)
     Route::get('/{slug}', [CaseStudyController::class, 'getCaseStudyBySlug']);
+});
+
+// Unduhan
+Route::prefix('unduhan')->group(function () {
+    // Untuk mengambil semua unduhan yang terpublikasi
+    Route::get('/', [UnduhanController::class, 'index']);
+
+    // Untuk mengambil semua kategori unduhan
+    Route::get('/categories', [UnduhanController::class, 'getCategories']);
+
+    // Untuk search unduhan berdasarkan nama atau kategori
+    Route::get('/search', [UnduhanController::class, 'search']);
+
+    // Untuk mengambil unduhan dengan jumlah download terbanyak
+    Route::get('/most-downloaded', [UnduhanController::class, 'getMostDownloaded']);
+
+    // Untuk mengunduh unduhan dan menambah jumlah unduhan
+    Route::get('/download/{id}', [UnduhanController::class, 'downloadUnduhan']);
+
+    // Untuk mengambil unduhan berdasarkan id
+    Route::get('/id/{id}', [UnduhanController::class, 'getUnduhanById']);
+
+    // Untuk mengambil unduhan berdasarkan slug
+    Route::get('/{slug}', [UnduhanController::class, 'getUnduhanBySlug']);
 });

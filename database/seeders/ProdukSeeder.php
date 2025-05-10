@@ -73,6 +73,7 @@ class ProdukSeeder extends Seeder
                 'thumbnail_produk' => json_encode($images),
                 'harga_produk' => 'Rp ' . number_format($randomProduct['harga'] * $faker->randomFloat(1, 0.8, 1.2), 0, ',', '.'),
                 'slug' => Str::slug($randomProduct['nama'] . ' ' . $faker->words(2, true)),
+                'status_produk' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
                 'deskripsi_produk' => $faker->paragraph(2),
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt->addDays(rand(0, 30)),

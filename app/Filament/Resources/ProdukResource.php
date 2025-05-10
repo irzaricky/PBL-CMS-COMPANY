@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use App\Filament\Resources\ProdukResource\Widgets\ProdukStats;
 use App\Filament\Resources\ProdukResource\Pages;
 use App\Filament\Resources\ProdukResource\RelationManagers;
@@ -91,6 +92,15 @@ class ProdukResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->dehydrated()
                             ->helperText('Akan terisi otomatis berdasarkan nama produk'),
+
+                        Forms\Components\Select::make('status_produk')
+                            ->label('Status Produk')
+                            ->options([
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
+                            ])
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
@@ -146,6 +156,14 @@ class ProdukResource extends Resource
                     ->label('Harga')
                     ->money('IDR'),
 
+                Tables\Columns\SelectColumn::make('status_produk')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
@@ -165,6 +183,13 @@ class ProdukResource extends Resource
                 Tables\Filters\SelectFilter::make('id_kategori_produk')
                     ->label('Kategori')
                     ->relationship('kategoriProduk', 'nama_kategori_produk'),
+
+                Tables\Filters\SelectFilter::make('status_produk')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

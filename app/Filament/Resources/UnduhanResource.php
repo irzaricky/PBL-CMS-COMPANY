@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Unduhan;
@@ -83,6 +84,15 @@ class UnduhanResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->dehydrated()
                             ->helperText('Akan terisi otomatis berdasarkan nama unduhan'),
+
+                        Forms\Components\Select::make('status_unduhan')
+                            ->label('Status Unduhan')
+                            ->options([
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
+                            ])
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
 
                 Forms\Components\Section::make('File & Konten')
@@ -141,6 +151,7 @@ class UnduhanResource extends Resource
 
                 Tables\Columns\TextColumn::make('lokasi_file')
                     ->label('File')
+                    ->formatStateUsing(fn(string $state): string => basename($state))
                     ->searchable()
                     ->toggleable(),
 
@@ -148,6 +159,14 @@ class UnduhanResource extends Resource
                     ->label('Jumlah Unduhan')
                     ->numeric()
                 ,
+
+                Tables\Columns\SelectColumn::make('status_unduhan')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -172,6 +191,13 @@ class UnduhanResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Pengunggah')
                     ->relationship('user', 'name'),
+
+                Tables\Filters\SelectFilter::make('status_unduhan')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

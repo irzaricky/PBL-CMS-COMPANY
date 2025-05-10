@@ -98,7 +98,7 @@ class GaleriResource extends Resource
                             ->helperText('Akan terisi otomatis berdasarkan judul'),
 
                         Forms\Components\Select::make('status_galeri')
-                            ->label('Status Artikel')
+                            ->label('Status Galeri')
                             ->options([
                                 ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()

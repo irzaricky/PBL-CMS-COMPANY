@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MediaSosial extends Model
 {
@@ -32,5 +33,9 @@ class MediaSosial extends Model
         'icon',
         'link',
         'status'
+    ];
+
+    protected $casts = [
+        'status' => ContentStatus::class,
     ];
 }

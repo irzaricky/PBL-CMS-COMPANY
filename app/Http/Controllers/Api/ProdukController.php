@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -17,10 +18,19 @@ class ProdukController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $produk = Produk::with('kategoriProduk')->latest()->paginate(10);
+            $query = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->latest();
+
+            // Filter berdasarkan kategori jika ada parameter category_id
+            if ($request->has('category_id')) {
+                $query->where('id_kategori_produk', $request->category_id);
+            }
+
+            $produk = $query->paginate(10);
             return ProdukListResource::collection($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -29,7 +39,6 @@ class ProdukController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 
     /**
@@ -43,6 +52,7 @@ class ProdukController extends Controller
         try {
             $produk = Produk::with(['kategoriProduk'])
                 ->where('slug', $slug)
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
                 ->firstOrFail();
 
             return new ProdukViewResource($produk);
@@ -64,7 +74,9 @@ class ProdukController extends Controller
     public function getProdukById($id)
     {
         try {
-            $produk = Produk::with('kategoriProduk')->findOrFail($id);
+            $produk = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->findOrFail($id);
             return new ProdukViewResource($produk);
         } catch (\Exception $e) {
             return response()->json([
