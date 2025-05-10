@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enums\ContentStatus;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     /**
@@ -19,8 +20,7 @@ return new class extends Migration {
             $table->text('konten_artikel');
             $table->integer('jumlah_view')->default(0);
             $table->string('slug', 100)->unique();
-            $table->enum('status_artikel', ['terpublikasi', 'tidak terpublikasi'])
-                ->default('tidak terpublikasi');
+            $table->string('status_artikel')->default(ContentStatus::TIDAK_TERPUBLIKASI->value);
             $table->timestamps();
             $table->softDeletes();
         });

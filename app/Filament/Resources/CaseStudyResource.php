@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use App\Filament\Resources\CaseStudyResource\Pages;
 use App\Filament\Resources\CaseStudyResource\RelationManagers;
 use App\Filament\Resources\CaseStudyResource\Widgets\CaseStudyStats;
@@ -72,10 +73,10 @@ class CaseStudyResource extends Resource
                         Forms\Components\Select::make('status_case_study')
                             ->label('Status')
                             ->options([
-                                'draft' => 'Draft',
-                                'published' => 'Dipublikasikan',
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                             ])
-                            ->default('draft')
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
                             ->required(),
 
                         Forms\Components\Textarea::make('deskripsi_case_study')
@@ -134,19 +135,13 @@ class CaseStudyResource extends Resource
                     ->label('Mitra')
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('status_case_study')
+                Tables\Columns\SelectColumn::make('status_case_study')
                     ->label('Status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'published' => 'success',
-                        'draft' => 'warning',
-                        default => 'gray',
-                    })
-                    ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'published' => 'Dipublikasikan',
-                        'draft' => 'Draft',
-                        default => $state,
-                    }),
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -171,33 +166,11 @@ class CaseStudyResource extends Resource
                 Tables\Filters\SelectFilter::make('status_case_study')
                     ->label('Status')
                     ->options([
-                        'published' => 'Dipublikasikan',
-                        'draft' => 'Draft',
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ]),
             ])
             ->actions([
-                Tables\Actions\Action::make('publish')
-                    ->label('Publikasikan')
-                    ->icon('heroicon-s-check-circle')
-                    ->color('success')
-                    ->action(function (CaseStudy $record): void {
-                        $record->status_case_study = 'published';
-                        $record->save();
-                    })
-                    ->requiresConfirmation()
-                    ->visible(fn(CaseStudy $record): bool => $record->status_case_study === 'draft'),
-
-                Tables\Actions\Action::make('draft')
-                    ->label('Jadikan Draft')
-                    ->icon('heroicon-s-document-text')
-                    ->color('danger')
-                    ->action(function (CaseStudy $record): void {
-                        $record->status_case_study = 'draft';
-                        $record->save();
-                    })
-                    ->requiresConfirmation()
-                    ->visible(fn(CaseStudy $record): bool => $record->status_case_study === 'published'),
-
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('arsipkan')
@@ -215,34 +188,6 @@ class CaseStudyResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('publish')
-                        ->label('Publikasikan')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->action(function (Collection $records): void {
-                            foreach ($records as $record) {
-                                $record->status_case_study = 'published';
-                                $record->save();
-                            }
-                        })
-                        ->deselectRecordsAfterCompletion()
-                        ->requiresConfirmation()
-                        ->successNotificationTitle('Case study berhasil dipublikasikan'),
-
-                    Tables\Actions\BulkAction::make('draft')
-                        ->label('Jadikan Draft')
-                        ->icon('heroicon-o-document-text')
-                        ->color('warning')
-                        ->action(function (Collection $records): void {
-                            foreach ($records as $record) {
-                                $record->status_case_study = 'draft';
-                                $record->save();
-                            }
-                        })
-                        ->deselectRecordsAfterCompletion()
-                        ->requiresConfirmation()
-                        ->successNotificationTitle('Case study berhasil dijadikan draft'),
-
                     Tables\Actions\DeleteBulkAction::make()
                         ->successNotificationTitle('Case study berhasil diarsipkan')
                         ->before(function (Collection $records) {

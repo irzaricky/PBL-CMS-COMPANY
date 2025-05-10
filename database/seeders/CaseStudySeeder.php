@@ -48,7 +48,7 @@ class CaseStudySeeder extends Seeder
                 'deskripsi_case_study' => $caseStudy['deskripsi_case_study'],
                 'isi_case_study' => $caseStudy['isi_case_study'],
                 'thumbnail_case_study' => null,
-                'status_case_study' => rand(0, 1) ? 'published' : 'draft',
+                'status_case_study' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
                 'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ]);

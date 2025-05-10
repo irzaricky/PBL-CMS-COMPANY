@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -18,7 +19,7 @@ return new class extends Migration {
             $table->json('thumbnail_case_study')->nullable();
             $table->text('deskripsi_case_study')->nullable();
             $table->text('isi_case_study')->nullable();
-            $table->enum('status_case_study', ['draft', 'published'])->default('draft');
+            $table->string('status_case_study')->default(ContentStatus::TIDAK_TERPUBLIKASI->value);
             $table->timestamps();
             $table->softDeletes();
         });
