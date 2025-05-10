@@ -19,7 +19,7 @@ class LowonganController extends Controller
     public function index()
     {
         try {
-            $lowongan = Lowongan::whereNull('deleted_at')->orderBy('created_at', 'desc')->paginate(10);
+            $lowongan = Lowongan::orderBy('created_at', 'desc')->paginate(10);
 
             return LowonganListResource::collection($lowongan);
         } catch (\Exception $e) {
@@ -39,8 +39,7 @@ class LowonganController extends Controller
     public function getMostRecentLowongan()
     {
         try {
-            $lowongan = Lowongan::whereNull('deleted_at')
-                ->orderBy('created_at', 'desc')
+            $lowongan = Lowongan::orderBy('created_at', 'desc')
                 ->take(1)
                 ->get();
 

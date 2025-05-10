@@ -22,7 +22,6 @@ class GaleriController extends Controller
     {
         try {
             $query = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
-                ->whereNull('deleted_at')
                 ->orderBy('created_at', 'desc');
 
             $galeri = $query->paginate(10);
@@ -48,7 +47,6 @@ class GaleriController extends Controller
         try {
             $galeri = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
                 ->where('slug', $slug)
-                ->whereNull('deleted_at')
                 ->firstOrFail();
 
             return new GaleriViewResource($galeri);
@@ -71,7 +69,6 @@ class GaleriController extends Controller
     {
         try {
             $galeri = Galeri::with(relations: ['kategoriGaleri', 'user:id_user,name'])
-                ->whereNull('deleted_at')
                 ->findOrFail(id: $id);
 
             return new GaleriViewResource($galeri);
@@ -123,8 +120,7 @@ class GaleriController extends Controller
                 return $this->index($request);
             }
 
-            $galerisQuery = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
-                ->whereNull('deleted_at');
+            $galerisQuery = Galeri::with(['kategoriGaleri', 'user:id_user,name']);
 
             // Jika ada query pencarian, galeri akan dicari berdasarkan judul
             if (!empty($query)) {
@@ -168,7 +164,7 @@ class GaleriController extends Controller
     public function downloadGaleri($id)
     {
         try {
-            $galeri = Galeri::whereNull('deleted_at')->findOrFail($id);
+            $galeri = Galeri::findOrFail($id);
 
             // Increment the download counter
             $galeri->increment('jumlah_unduhan');

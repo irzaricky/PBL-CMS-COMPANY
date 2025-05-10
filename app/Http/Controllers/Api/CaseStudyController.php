@@ -18,8 +18,7 @@ class CaseStudyController extends Controller
     {
         try {
             $query = CaseStudy::with(['mitra'])
-                ->where('status_case_study', ContentStatus::TERPUBLIKASI)
-                ->whereNull('deleted_at');
+                ->where('status_case_study', ContentStatus::TERPUBLIKASI);
 
             // Filter by mitra if provided
             if ($request->has('mitra')) {
@@ -47,7 +46,6 @@ class CaseStudyController extends Controller
             $caseStudy = CaseStudy::with(['mitra'])
                 ->where('case_study_id', $id)
                 ->where('status_case_study', ContentStatus::TERPUBLIKASI)
-                ->whereNull('deleted_at')
                 ->firstOrFail();
 
             return new CaseStudyViewResource($caseStudy);
@@ -69,7 +67,6 @@ class CaseStudyController extends Controller
             
             $caseStudy = CaseStudy::where('slug_case_study', $slug)
                 ->where('status_case_study', ContentStatus::TERPUBLIKASI)
-                ->whereNull('deleted_at')
                 ->firstOrFail();
 
             return new CaseStudyViewResource($caseStudy);
@@ -97,8 +94,7 @@ class CaseStudyController extends Controller
 
         
         $CaseStudyQuery = CaseStudy::with(['mitra'])
-            ->where('status_case_study', ContentStatus::TERPUBLIKASI)
-            ->whereNull('deleted_at');
+            ->where('status_case_study', ContentStatus::TERPUBLIKASI);
 
         // Jika ada query pencarian, artikel akan dicari berdasarkan judul
         if (!empty($query)) {

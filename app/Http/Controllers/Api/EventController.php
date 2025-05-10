@@ -20,7 +20,6 @@ class EventController extends Controller
     {
         try {
             $events = Event::where('waktu_start_event', '>', Carbon::now())
-                ->whereNull('deleted_at')
                 ->orderBy('waktu_start_event', 'asc')
                 ->paginate(10);
 
@@ -44,7 +43,6 @@ class EventController extends Controller
     {
         try {
             $event = Event::where('slug', $slug)
-                ->whereNull('deleted_at')
                 ->firstOrFail();
             return new EventViewResource($event);
         } catch (\Exception $e) {
@@ -65,7 +63,7 @@ class EventController extends Controller
     public function getEventById($id)
     {
         try {
-            $event = Event::whereNull('deleted_at')->findOrFail($id);
+            $event = Event::findOrFail($id);
             return new EventViewResource($event);
         } catch (\Exception $e) {
             return response()->json([
@@ -84,9 +82,8 @@ class EventController extends Controller
     public function getMostRecentEvent()
     {
         try {
-            $event = Event::whereNull('deleted_at')
-                ->orderBy('waktu_start_event', 'desc')
-                ->take(1)
+            $event = Event::orderBy('waktu_start_event', 'desc')
+                ->take(5)
                 ->get();
 
             return EventListResource::collection($event);

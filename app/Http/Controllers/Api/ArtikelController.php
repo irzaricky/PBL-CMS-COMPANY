@@ -22,7 +22,6 @@ class ArtikelController extends Controller
     {
         try {
             $query = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->whereNull('deleted_at')
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
@@ -53,7 +52,6 @@ class ArtikelController extends Controller
     {
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->whereNull('deleted_at')
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->where('slug', $slug)
                 ->firstOrFail();
@@ -79,7 +77,6 @@ class ArtikelController extends Controller
     {
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->whereNull('deleted_at')
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->findOrFail($id);
 
@@ -133,14 +130,7 @@ class ArtikelController extends Controller
             }
 
             $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->whereNull('deleted_at')
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI);
-
-            // Show unpublished articles if user has permission
-            if ($request->has('show_all') && $request->user() && $request->user()->can('view unpublished articles')) {
-                $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                    ->whereNull('deleted_at');
-            }
 
             // Jika ada query pencarian, artikel akan dicari berdasarkan judul
             if (!empty($query)) {
@@ -184,7 +174,6 @@ class ArtikelController extends Controller
     {
         try {
             $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->whereNull('deleted_at')
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('jumlah_view', 'desc')
                 ->take(5)
