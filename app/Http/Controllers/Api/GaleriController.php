@@ -92,7 +92,7 @@ class GaleriController extends Controller
     public function getCategories()
     {
         try {
-            $categories = KategoriGaleri::whereNull('deleted_at')->get();
+            $categories = KategoriGaleri::get();
             return response()->json([
                 'status' => 'success',
                 'data' => $categories

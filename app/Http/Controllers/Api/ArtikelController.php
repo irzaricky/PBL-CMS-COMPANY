@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Artikel;
 use App\Models\KategoriArtikel;
@@ -22,6 +23,7 @@ class ArtikelController extends Controller
         try {
             $query = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
                 ->whereNull('deleted_at')
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
             // Filter berdasarkan kategori jika ada parameter category_id
@@ -51,8 +53,9 @@ class ArtikelController extends Controller
     {
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->where('slug', $slug)
                 ->whereNull('deleted_at')
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
+                ->where('slug', $slug)
                 ->firstOrFail();
 
             $article->increment('jumlah_view');
@@ -77,6 +80,7 @@ class ArtikelController extends Controller
         try {
             $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
                 ->whereNull('deleted_at')
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->findOrFail($id);
 
             return new ArticleViewResource($article);
@@ -97,7 +101,7 @@ class ArtikelController extends Controller
     public function getCategories()
     {
         try {
-            $categories = KategoriArtikel::whereNull('deleted_at')->get();
+            $categories = KategoriArtikel::get();
             return response()->json([
                 'status' => 'success',
                 'data' => $categories
@@ -129,7 +133,14 @@ class ArtikelController extends Controller
             }
 
             $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
-                ->whereNull('deleted_at');
+                ->whereNull('deleted_at')
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI);
+
+            // Show unpublished articles if user has permission
+            if ($request->has('show_all') && $request->user() && $request->user()->can('view unpublished articles')) {
+                $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+                    ->whereNull('deleted_at');
+            }
 
             // Jika ada query pencarian, artikel akan dicari berdasarkan judul
             if (!empty($query)) {
@@ -174,8 +185,9 @@ class ArtikelController extends Controller
         try {
             $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
                 ->whereNull('deleted_at')
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('jumlah_view', 'desc')
-                ->take(1)
+                ->take(5)
                 ->get();
 
             return ArticleListResource::collection($articles);

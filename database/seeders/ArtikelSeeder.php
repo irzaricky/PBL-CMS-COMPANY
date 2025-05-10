@@ -55,6 +55,7 @@ class ArtikelSeeder extends Seeder
                 'thumbnail_artikel' => json_encode($images),
                 'jumlah_view' => $faker->numberBetween(100, 10000),
                 'slug' => Str::slug($judul),
+                'status_artikel' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
                 'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ];

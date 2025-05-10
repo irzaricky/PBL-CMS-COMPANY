@@ -31,14 +31,14 @@ class ListArtikels extends ListRecords
     public function getTabs(): array
     {
         return [
-            null => Tab::make('Semua')
-                ->query(fn($query) => $query->orderBy('judul_artikel', 'asc')),
-            'Aktif' => Tab::make()
-                ->query(fn($query) => $query->whereNull('deleted_at')
-                    ->orderBy('judul_artikel', 'asc')),
+            'Semua' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')->orderBy('judul_artikel', 'asc')),
             'Terbaru' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),
+            'Terpopuler' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('jumlah_view', 'desc')),
             'Trending' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('jumlah_view', 'desc')

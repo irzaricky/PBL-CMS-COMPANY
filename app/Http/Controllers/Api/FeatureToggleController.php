@@ -9,7 +9,9 @@ class FeatureToggleController extends Controller
 {
     public function index()
     {
-        $features = FeatureToggle::select('key', 'status_aktif')->whereNull('deleted_at')->get()->pluck('status_aktif', 'key');
+        $features = FeatureToggle::select('key', 'status_aktif')
+            ->get()
+            ->pluck('status_aktif', 'key');
 
         return response()->json([
             'data' => $features,

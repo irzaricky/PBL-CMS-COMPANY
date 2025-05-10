@@ -19,6 +19,8 @@ return new class extends Migration {
             $table->text('konten_artikel');
             $table->integer('jumlah_view')->default(0);
             $table->string('slug', 100)->unique();
+            $table->enum('status_artikel', ['terpublikasi', 'tidak terpublikasi'])
+                ->default('tidak terpublikasi');
             $table->timestamps();
             $table->softDeletes();
         });
