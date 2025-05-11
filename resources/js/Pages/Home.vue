@@ -4,6 +4,7 @@ import Hero from "../Components/Hero.vue";
 import Benefit from "../Components/Benefit.vue";
 import Produk from "@/Components/Produk.vue";
 import Artikel from "@/Components/Artikel.vue";
+import CallToAction from "../Components/CallToAction.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
@@ -26,5 +27,6 @@ onMounted(async () => {
         <div v-if="featureToggles.artikel_module">
             <Artikel />
         </div>
+        <CallToAction />
     </AppLayout>
 </template>
