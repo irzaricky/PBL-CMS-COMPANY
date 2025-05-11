@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TestimoniResource\Pages;
 
+use App\Enums\ContentStatus;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -31,13 +32,13 @@ class ListTestimonis extends ListRecords
     public function getTabs(): array
     {
         return [
-            null => Tab::make('Semua')
+            'Semua' => Tab::make()
                 ->query(fn($query) => $query->orderBy('created_at', 'desc')),
-            'Ditampilkan' => Tab::make()
-                ->query(fn($query) => $query->where('status', 'Ditampilkan')
+            'Terpublikasi' => Tab::make()
+                ->query(fn($query) => $query->where('status', ContentStatus::TERPUBLIKASI->value)
                     ->orderBy('created_at', 'desc')),
-            'Tidak Ditampilkan' => Tab::make()
-                ->query(fn($query) => $query->where('status', 'Tidak Ditampilkan')
+            'Tidak Terpublikasi' => Tab::make()
+                ->query(fn($query) => $query->where('status', ContentStatus::TIDAK_TERPUBLIKASI->value)
                     ->orderBy('created_at', 'desc')),
             'Rating Tertinggi' => Tab::make()
                 ->query(fn($query) => $query->orderBy('rating', 'desc')),
