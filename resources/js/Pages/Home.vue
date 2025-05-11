@@ -5,6 +5,7 @@ import Benefit from "../Components/Benefit.vue";
 import Produk from "@/Components/Produk.vue";
 import Artikel from "@/Components/Artikel.vue";
 import CallToAction from "../Components/CallToAction.vue";
+import Feedback from "../Components/Feedback.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
@@ -28,5 +29,6 @@ onMounted(async () => {
             <Artikel />
         </div>
         <CallToAction />
+        <Feedback />
     </AppLayout>
 </template>
