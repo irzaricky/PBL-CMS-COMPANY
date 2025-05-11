@@ -14,7 +14,7 @@ onMounted(() => {
 async function fetchProfilPerusahaan() {
     try {
         loading.value = true;
-        const response = await axios.get(`/api/profil-perusahaan`);
+        const response = await axios.get(`/api/profil-perusahaan/`);
         profil_perusahaan.value = response.data.data;
         loading.value = false;
     } catch (err) {
@@ -41,15 +41,14 @@ function getImageUrl(image) {
             <!-- Wrapper untuk pusat grid -->
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-10 mx-auto lg:items-stretch">
                 <!-- Kolom 1 -->
-                <div class="lg:w-[120%]">
+                <div v-if="profil_perusahaan" class="lg:w-[120%]">
                     <div class="flex items-center justify-center h-32">
                         <img :src="getImageUrl(profil_perusahaan?.logo_perusahaan)" alt="Logo Perusahaan"
                             class="w-20 object-contain" />
                     </div>
-                    <h4 class="font-bold text-center text-lg">{{ profil_perusahaan.nama_perusahaan }}</h4>
+                    <h4 class="font-bold text-center text-lg">{{ profil_perusahaan?.nama_perusahaan }}</h4>
                     <p class="mt-4 text-center">
-                        Perusahaan kami bekerja di bidang pengembangan teknologi yang telah bekerja sama dengan banyak
-                        client
+                        {{ profil_perusahaan?.sejarah_perusahaan || 'Sejarah perusahaan belum tersedia.' }}
                     </p>
                     <div class="mt-6">
                         <h4 class="font-bold pb-1">Contact Us</h4>
