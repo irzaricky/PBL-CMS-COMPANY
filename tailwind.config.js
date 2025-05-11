@@ -31,12 +31,15 @@ export default {
                 secondary: "#31487A",
                 // agak abu-abu
                 third: "#D6DAE5",
+                // abu-abu
+                fourth: "#D8D8D8",
                 typography: {
                     // agak biru
                     main: "#31487A",
                     dark: "#2C2C2C",
                     hover1: "#223255",
                     hover2: "#909090",
+                    hover3: "#D6DAE5",
                 },
             },
             borderRadius: {
@@ -58,6 +61,9 @@ export default {
                 "h6-bold": ["15px", { lineHeight: "1.1", fontWeight: "700" }],
                 body: ["16px", { lineHeight: "1.5", fontWeight: "400" }],
                 "body-bold": ["16px", { lineHeight: "1.1", fontWeight: "700" }],
+            },
+            boxShadow: {
+                'text-shadow-sm': '0px 4px 4px rgba(214, 218, 229, 1.00)',
             },
         },
     },

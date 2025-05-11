@@ -41,7 +41,7 @@ onBeforeUnmount(() => {
 }
 </style>
 <template>
-    <div class="relative w-full h-full">
+    <div class="relative w-full h-full overflow-x-hidden overflow-y-hidden">
         <!-- Gambar Latar -->
         <div v-for="(image, index) in images" :key="index"
             class="absolute inset-0 bg-center bg-cover transition-opacity duration-[2000ms]"
