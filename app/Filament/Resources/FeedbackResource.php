@@ -40,7 +40,7 @@ class FeedbackResource extends Resource
                             ->maxLength(200)
                             ->disabled(),
 
-                        Forms\Components\DatePicker::make('tanggal_feedback')
+                        Forms\Components\DatePicker::make('created_at')
                             ->label('Tanggal Feedback')
                             ->required()
                             ->default(now())
@@ -78,7 +78,7 @@ class FeedbackResource extends Resource
                     ->searchable()
                     ->limit(50),
 
-                Tables\Columns\TextColumn::make('tanggal_feedback')
+                Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Feedback')
                     ->date('d F Y')
                 ,
@@ -90,11 +90,6 @@ class FeedbackResource extends Resource
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
                     ->state(fn(Feedback $record): bool => !empty($record->tanggapan_feedback)),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')

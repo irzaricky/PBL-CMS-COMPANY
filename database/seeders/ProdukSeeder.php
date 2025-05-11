@@ -40,8 +40,8 @@ class ProdukSeeder extends Seeder
             ['nama' => 'Sistem Keamanan Data Enterprise', 'kategori' => 3, 'harga' => 4500000],
         ];
 
-        // Generate 50 products
-        for ($i = 1; $i <= 50; $i++) {
+        // Generate 20 products
+        for ($i = 1; $i <= 20; $i++) {
             $randomProduct = $faker->randomElement($products);
             $createdAt = Carbon::now()->subYear()->addDays(rand(0, 365));
 

@@ -15,7 +15,6 @@ return new class extends Migration {
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('subjek_feedback', 200);
             $table->text('isi_feedback');
-            $table->date('tanggal_feedback');
             $table->text('tanggapan_feedback')->nullable();
             $table->timestamps();
         });
