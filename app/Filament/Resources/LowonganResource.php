@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Lowongan;
@@ -123,6 +124,15 @@ class LowonganResource extends Resource
                                         'after_or_equal' => 'Tanggal ditutup tidak boleh sebelum tanggal dibuka.',
                                     ]),
                             ]),
+
+                        Forms\Components\Select::make('status_lowongan')
+                            ->label('Status Lowongan')
+                            ->options([
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
+                            ])
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
             ]);
     }
@@ -177,11 +187,19 @@ class LowonganResource extends Resource
                     ->date('d M Y')
                 ,
 
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\SelectColumn::make('status_lowongan')
                     ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
+
+                Tables\Columns\TextColumn::make('periode_status')
+                    ->label('Periode')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
-                        'Dipublikasi' => 'success',
+                        'Dibuka' => 'success',
                         'Ditutup' => 'danger',
                         default => 'secondary',
                     })
@@ -189,7 +207,7 @@ class LowonganResource extends Resource
                         $now = now();
 
                         if ($now->between($record->tanggal_dibuka, $record->tanggal_ditutup)) {
-                            return 'Dipublikasi';
+                            return 'Dibuka';
                         }
 
                         if ($now->isAfter($record->tanggal_ditutup)) {
@@ -231,10 +249,17 @@ class LowonganResource extends Resource
                     ]),
 
                 Tables\Filters\Filter::make('active')
-                    ->label('Dipublikasi')
+                    ->label('Periode Dibuka')
                     ->query(fn(Builder $query): Builder => $query
                         ->where('tanggal_dibuka', '<=', now())
                         ->where('tanggal_ditutup', '>=', now())),
+
+                Tables\Filters\SelectFilter::make('status_lowongan')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
