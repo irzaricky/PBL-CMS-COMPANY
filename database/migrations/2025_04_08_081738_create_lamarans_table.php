@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->string('portfolio', 200)->nullable();
             $table->enum('status_lamaran', ['Diterima', 'Diproses', 'Ditolak'])->default('Diproses');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
