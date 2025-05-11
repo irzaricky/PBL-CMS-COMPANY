@@ -33,11 +33,13 @@ function getImageUrl(image) {
 
     return `/storage/${image}`;
 }
+const mapUrl = ref("");
+
 </script>
 
 <template>
-    <footer class="bg-secondary text-white w-full font-custom text-sm">
-        <div class="px-5 pt-5 lg:px-10 ">
+    <footer class="bg-secondary text-white w-full font-custom text-sm top-12">
+        <div class="px-5 pt-5 lg:px-10 top-12 ">
             <!-- Wrapper untuk pusat grid -->
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-10 mx-auto lg:items-stretch">
                 <!-- Kolom 1 -->
@@ -85,7 +87,7 @@ function getImageUrl(image) {
                         <div class="flex items-start gap-2">
                             <MapPin class="w-10 lg:w-20 self-center" />
                             <span class="leading-relaxed">
-                                Jl. Teluk Kumai Barat, Perak Utara, Kec. Pabean Cantikan, Surabaya, Jawa Timur 60165
+                                {{ profil_perusahaan?.alamat_perusahaan || 'Alamat perusahaan belum tersedia.' }}
                             </span>
                         </div>
                     </div>
@@ -104,10 +106,13 @@ function getImageUrl(image) {
 
                 <!-- Kolom 4 -->
                 <div class="flex flex-col justify-center h-full">
-                    <div class="w-full aspect-[4/3] rounded-lg overflow-hidden">
-                        <iframe class="w-full h-full"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.172995216175!2d110.81382747500246!3d-7.55610799245767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a176daa5fd6d1%3A0x271738c6ffd2b4f8!2sBIIS%20Corp%20Solo%20-%20Jasa%20Pembuatan%20Software%2C%20ERP%2C%20Website%2C%20dan%20Digital%20Marketing!5e0!3m2!1sid!2sid!4v1746690887263!5m2!1sid!2sid"
-                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <div
+                        v-if="profil_perusahaan?.link_alamat_perusahaan && profil_perusahaan.link_alamat_perusahaan.includes('https://www.google.com/maps/embed?pb=')">
+                        <div class="w-full aspect-[4/3] rounded-lg overflow-hidden">
+                            <iframe v-bind:src="profil_perusahaan.link_alamat_perusahaan" class="w-full h-full"
+                                allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -116,7 +121,7 @@ function getImageUrl(image) {
         <!-- Copyright -->
         <div class="bg-white text-black h-10 mt-10">
             <p class="text-center leading-10">
-                Hak Cipta © 2025. Hak Cipta dilindungi. Biiscorp
+                © 2025 {{ profil_perusahaan?.nama_perusahaan }}.
             </p>
         </div>
     </footer>

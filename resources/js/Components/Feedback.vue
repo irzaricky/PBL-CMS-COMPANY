@@ -3,7 +3,7 @@ import { ChevronRight } from "lucide-vue-next";
 </script>
 
 <template>
-    <div class="px-20 md:px-20 lg:px-20 font-custom">
+    <div class="px-20 md:px-20 lg:px-20 font-custom bottom-6 bg-transparent">
         <div class="relative w-full max-w-7xl mx-auto">
             <!-- Wrapper with background -->
             <div

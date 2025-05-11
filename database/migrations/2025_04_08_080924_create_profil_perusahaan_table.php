@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('logo_perusahaan', 200)->nullable();
             $table->text('deskripsi_perusahaan')->nullable();
             $table->string('alamat_perusahaan', 200);
+            $table->string('link_alamat_perusahaan')->nullable();
             $table->string('email_perusahaan', 50);
             $table->text('sejarah_perusahaan')->nullable();
             $table->text('visi_perusahaan')->nullable();
