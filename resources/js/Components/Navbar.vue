@@ -142,9 +142,6 @@ function getImageUser(imagePath) {
                 </template>
             </div>
 
-
-
-
             <!-- Burger icon -->
             <div class="lg:hidden flex items-center">
                 <Menu class="w-7 h-7 text-black cursor-pointer" @click="toggleMobileMenu" />
@@ -164,15 +161,17 @@ function getImageUser(imagePath) {
             class="lg:hidden fixed top-[64px] left-0 w-full bg-white px-6 pt-8 pb-8 flex flex-col space-y-4 shadow z-40 font-custom text-black max-h-[calc(100vh-64px)] overflow-y-auto">
             <!-- User Info Mobile -->
             <template v-if="user">
-                <div class="flex items-center space-x-4 pb-4 border-b border-gray-200">
+                <a href="/admin/profile"
+                    class="flex items-center space-x-4 pb-4 border-b border-gray-200 hover:bg-gray-50 px-2 py-2 rounded-md transition">
                     <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
                         class="w-12 h-12 rounded-full object-cover border border-gray-300" />
                     <div class="flex flex-col">
-                        <span class="font-semibold text-base">{{ user.name }}</span>
+                        <span class="font-semibold text-base text-black">{{ user.name }}</span>
                         <span class="text-sm text-gray-500">{{ user.email }}</span>
                     </div>
-                </div>
+                </a>
             </template>
+
             <a href="/" class="text-2xl py-1">Beranda</a>
             <a href="/portofolio" class="text-2xl py-1">Portofolio</a>
             <a href="/" class="text-2xl py-1">Feedback</a>
