@@ -35,23 +35,50 @@ onBeforeUnmount(() => {
     0% {
         transform: scale(1) translate(0, 0);
     }
-
     100% {
         transform: scale(1.25) translate(20%, 20%);
     }
 }
 
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-position: center;
+    background-size: cover;
+    transition: opacity 2s ease-in-out;
+    z-index: 0; /* Ensure it's behind the content */
+}
+
 .animate-zoomPan {
     animation: zoomPan 40s ease-in-out forwards;
 }
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10; /* Ensure it's above the background */
+}
+
+.content {
+    position: relative;
+    z-index: 20; /* Ensure it's above the overlay */
+}
 </style>
+
 <template>
     <div class="relative w-full h-full">
         <!-- Gambar Latar -->
         <div v-for="(image, index) in images" :key="index"
-            class="absolute inset-0 bg-center bg-cover transition-opacity duration-[2000ms]"
-            :style="{ backgroundImage: `url(${image})` }"
-            :class="[index === currentImage ? 'opacity-100 z-0 animate-zoomPan' : 'opacity-0 z-0']">
+            class="background-image transition-opacity"
+            :style="{ backgroundImage: `url(${image})`, opacity: index === currentImage ? 1 : 0 }"
+            :class="{ 'animate-zoomPan': index === currentImage }">
         </div>
 
         <!-- Overlay hitam transparan -->
@@ -77,9 +104,9 @@ onBeforeUnmount(() => {
                             class="px-6 py-2.5 bg-white text-black font-medium text-base rounded-full shadow hover:opacity-90 transition inline-block text-center">
                             Admin
                         </a>
-                        <a href="/admin"
+                        <a href="/logout"
                             class="px-6 py-2.5 bg-white/10 text-white font-medium text-base rounded-full border border-transparent hover:bg-white/20 transition inline-block text-center">
-                            Another admin
+                            Logout
                         </a>
                     </div>
                 </div>
