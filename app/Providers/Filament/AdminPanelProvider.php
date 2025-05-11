@@ -12,24 +12,26 @@ use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
+use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
 use App\Filament\Resources\UnduhanResource;
+use App\Models\User;
+use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 use Filament\Http\Middleware\DisableBladeIconComponents;
-use Intervention\Image\ImageServiceProvider;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 
 
 class AdminPanelProvider extends PanelProvider
@@ -40,15 +42,16 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->spa()
             ->topNavigation()
-            ->globalSearch(false)
-            ->id('admin')
-            ->path('admin')
             ->brandName(
                 \Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')
                 ? (ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
                 : 'Admin Panel'
             )
+            ->globalSearch(false)
+            ->id('admin')
+            ->path('admin')
             ->login()
+            ->profile(EditProfile::class)
             ->unsavedChangesAlerts()
             ->globalSearch(false)
             ->font('Plus jakarta Sans')
@@ -88,7 +91,7 @@ class AdminPanelProvider extends PanelProvider
                 'heroicon-o-home' => MenuItem::make()
                     ->icon('heroicon-s-power')
                     ->label('Keluar dashboard')
-                    ->url('/'), // Mengarah ke halaman utama
+                    ->url('/'),
             ])
             ->plugins([
                 FilamentBackgroundsPlugin::make()
