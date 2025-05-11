@@ -123,12 +123,16 @@ function getImageUser(imagePath) {
             <!-- Desktop Login / Foto Profil -->
             <div class="hidden lg:flex items-center space-x-3">
                 <template v-if="user">
-                    <div class="flex flex-col items-end text-right mr-2">
-                        <span class="text-black text-sm font-semibold">{{ user.name }}</span>
-                        <span class="text-gray-600 text-xs">{{ user.email }}</span>
-                    </div>
-                    <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
-                        class="w-10 h-10 rounded-full object-cover border border-gray-300" />
+                    <a href="/admin/profile" class="flex items-center space-x-2 group">
+                        <div class="flex flex-col items-end text-right">
+                            <span class="text-black text-sm font-semibold group-hover:underline">
+                                {{ user.name }}
+                            </span>
+                            <span class="text-gray-600 text-xs">{{ user.email }}</span>
+                        </div>
+                        <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
+                            class="w-10 h-10 rounded-full object-cover border border-gray-300" />
+                    </a>
                 </template>
                 <template v-else>
                     <a href="/login"
@@ -137,6 +141,7 @@ function getImageUser(imagePath) {
                     </a>
                 </template>
             </div>
+
 
 
 
