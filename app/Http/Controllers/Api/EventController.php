@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class EventController extends Controller
 {
     /**
-     * Get all events
+     * Mengambil daftar event
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -34,7 +34,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get a single article by slug
+     * Mengambil daftar event berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
@@ -55,7 +55,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get the article by id
+     * Mengambil daftar event berdasarkan id
      * 
      * @param int $id
      * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
@@ -63,7 +63,7 @@ class EventController extends Controller
     public function getEventById($id)
     {
         try {
-            $event = Event::firstOrFail($id);
+            $event = Event::findOrFail($id);
             return new EventViewResource($event);
         } catch (\Exception $e) {
             return response()->json([
@@ -75,7 +75,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get the most recent event
+     * Mengambil event terbaru
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -83,7 +83,7 @@ class EventController extends Controller
     {
         try {
             $event = Event::orderBy('waktu_start_event', 'desc')
-                ->take(1)
+                ->take(5)
                 ->get();
 
             return EventListResource::collection($event);

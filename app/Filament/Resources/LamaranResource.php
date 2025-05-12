@@ -92,12 +92,11 @@ class LamaranResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pelamar')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('lowongan.judul_lowongan')
                     ->label('Lowongan')
                     ->searchable()
-                    ->sortable()
                     ->limit(50),
 
                 Tables\Columns\IconColumn::make('cv')
@@ -126,12 +125,11 @@ class LamaranResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Lamaran')
                     ->dateTime('d M Y H:i')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -149,6 +147,11 @@ class LamaranResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
+                    ->successNotificationTitle('Artikel berhasil diarsipkan'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -174,13 +177,6 @@ class LamaranResource extends Resource
                         }),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
     }
 
     public static function getWidgets(): array

@@ -49,20 +49,32 @@ class EventSeeder extends Seeder
 
             $deskripsi = $this->generateEventDescription($faker, $fakerEN);
 
-            // Pilih gambar random
-            $originalFile = $files[array_rand($files)];
+            // Generate array untuk menyimpan multiple images
+            $images = [];
 
-            // Buat nama baru biar unik
-            $newFileName = Str::random(10) . '-' . $originalFile;
+            // Tentukan jumlah gambar untuk event ini (1-3 gambar)
+            $imageCount = rand(1, 3);
 
-            // Copy ke storage
-            Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+            // Pilih dan proses beberapa gambar
+            for ($j = 0; $j < $imageCount; $j++) {
+                // Pilih gambar random
+                $originalFile = $files[array_rand($files)];
+
+                // Buat nama baru biar unik
+                $newFileName = Str::random(10) . '-' . $originalFile;
+
+                // Copy ke storage
+                Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+
+                // Tambahkan path gambar ke array images
+                $images[] = $targetPath . '/' . $newFileName;
+            }
 
             $events[] = [
                 'id_event' => $i,
                 'nama_event' => ucfirst($namaEvent),
                 'deskripsi_event' => $deskripsi,
-                'thumbnail_event' => json_encode($targetPath . '/' . $newFileName),
+                'thumbnail_event' => json_encode($images),
                 'lokasi_event' => $lokasi,
                 'link_lokasi_event' => 'https://maps.app.goo.gl/TkgARfqzGjPkxFRcA',
                 'waktu_start_event' => $startDate,
@@ -139,3 +151,4 @@ class EventSeeder extends Seeder
         return $deskripsi;
     }
 }
+

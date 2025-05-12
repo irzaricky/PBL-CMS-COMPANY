@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Lowongan;
 use Illuminate\Http\Request;
@@ -12,14 +13,18 @@ use Illuminate\Support\Facades\DB;
 class LowonganController extends Controller
 {
     /**
-     * Get all job vacancies
+     * Mengambil daftar lowongan
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index()
     {
         try {
-            $lowongan = Lowongan::orderBy('created_at', 'desc')->paginate(10);
+            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
+                ->where('tanggal_dibuka', '<=', now())
+                ->where('tanggal_ditutup', '>=', now())
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
             return LowonganListResource::collection($lowongan);
         } catch (\Exception $e) {
@@ -32,14 +37,17 @@ class LowonganController extends Controller
     }
 
     /**
-     * Get upcoming job vacancies
+     * Mengambil lowongan terbaru
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function getMostRecentLowongan()
     {
         try {
-            $lowongan = Lowongan::orderBy('created_at', 'desc')
+            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
+                ->where('tanggal_dibuka', '<=', now())
+                ->where('tanggal_ditutup', '>=', now())
+                ->orderBy('created_at', 'desc')
                 ->take(1)
                 ->get();
 

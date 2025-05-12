@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->text('isi_testimoni');
             $table->json('thumbnail_testimoni')->nullable();
             $table->tinyInteger('rating')->unsigned()->comment('Rating dari 1-5');
-            $table->enum('status', ['Ditampilkan', 'Tidak Ditampilkan'])->default('Tidak Ditampilkan')->comment('Status testimoni');
+            $table->string('status')->default('tidak terpublikasi')->comment('Status testimoni');
             $table->timestamps();
         });
     }

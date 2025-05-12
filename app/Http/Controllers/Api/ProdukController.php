@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,15 +13,24 @@ use App\Http\Resources\Produk\ProdukViewResource;
 class ProdukController extends Controller
 {
     /**
-     * Menampilkan daftar produk
+     * Mengambil daftar produk
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $produk = Produk::with('kategoriProduk')->latest()->paginate(10);
+            $query = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->latest();
+
+            // Filter berdasarkan kategori jika ada parameter category_id
+            if ($request->has('category_id')) {
+                $query->where('id_kategori_produk', $request->category_id);
+            }
+
+            $produk = $query->paginate(10);
             return ProdukListResource::collection($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -29,11 +39,10 @@ class ProdukController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 
     /**
-     * Menampilkan produk berdasarkan slug
+     * Mengambil produk berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
@@ -43,6 +52,7 @@ class ProdukController extends Controller
         try {
             $produk = Produk::with(['kategoriProduk'])
                 ->where('slug', $slug)
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
                 ->firstOrFail();
 
             return new ProdukViewResource($produk);
@@ -56,7 +66,7 @@ class ProdukController extends Controller
     }
 
     /**
-     * Menampilkan produk berdasarkan ID
+     * Mengambil produk berdasarkan ID
      * 
      * @param int $id
      * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
@@ -64,7 +74,9 @@ class ProdukController extends Controller
     public function getProdukById($id)
     {
         try {
-            $produk = Produk::with('kategoriProduk')->findOrFail($id);
+            $produk = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->findOrFail($id);
             return new ProdukViewResource($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -73,47 +85,5 @@ class ProdukController extends Controller
                 'error' => $e->getMessage()
             ], 404);
         }
-    }
-
-    // Membuat produk baru
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'id_kategori_produk' => 'required|exists:kategori_produk,id_kategori_produk',
-            'nama_produk' => 'required|string|max:100',
-            'thumbnail_produk' => 'nullable|array',
-            'harga_produk' => 'required|string|max:50',
-            'slug' => 'required|string|unique:produk,slug|max:100',
-            'deskripsi_produk' => 'nullable|string',
-        ]);
-
-        $produk = Produk::create($validated);
-        return new ProdukResource($produk);
-    }
-
-    // Memperbarui data produk
-    public function update(Request $request, $id)
-    {
-        $produk = Produk::findOrFail($id);
-
-        $validated = $request->validate([
-            'id_kategori_produk' => 'required|exists:kategori_produk,id_kategori_produk',
-            'nama_produk' => 'required|string|max:100',
-            'thumbnail_produk' => 'nullable|array',
-            'harga_produk' => 'required|string|max:50',
-            'slug' => 'required|string|max:100|unique:produk,slug,' . $produk->id_produk,
-            'deskripsi_produk' => 'nullable|string',
-        ]);
-
-        $produk->update($validated);
-        return new ProdukResource($produk);
-    }
-
-    // Menghapus produk
-    public function destroy($id)
-    {
-        $produk = Produk::findOrFail($id);
-        $produk->delete();
-        return response()->json(null, 204);
     }
 }

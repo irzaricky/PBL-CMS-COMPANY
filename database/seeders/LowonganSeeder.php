@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -21,6 +22,7 @@ class LowonganSeeder extends Seeder
                 'tanggal_dibuka' => now(),
                 'tanggal_ditutup' => now()->addDays(30),
                 'tenaga_dibutuhkan' => 2,
+                'status_lowongan' => ContentStatus::TERPUBLIKASI->value,
             ],
             [
                 'id_lowongan' => 2,
@@ -33,6 +35,7 @@ class LowonganSeeder extends Seeder
                 'tanggal_dibuka' => now(),
                 'tanggal_ditutup' => now()->addDays(14),
                 'tenaga_dibutuhkan' => 1,
+                'status_lowongan' => ContentStatus::TERPUBLIKASI->value,
             ],
             [
                 'id_lowongan' => 3,
@@ -45,6 +48,7 @@ class LowonganSeeder extends Seeder
                 'tanggal_dibuka' => now(),
                 'tanggal_ditutup' => now()->addDays(7),
                 'tenaga_dibutuhkan' => 3,
+                'status_lowongan' => ContentStatus::TIDAK_TERPUBLIKASI->value,
             ],
         ]);
     }

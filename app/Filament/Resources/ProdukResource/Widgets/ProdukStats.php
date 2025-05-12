@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources\ProdukResource\Widgets;
 
+use App\Enums\ContentStatus;
 use App\Filament\Resources\ProdukResource\Pages\ListProduks;
 use App\Models\Produk;
-use Flowframe\Trend\Trend;
 use Illuminate\Support\Number;
-use Flowframe\Trend\TrendValue;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -30,20 +29,17 @@ class ProdukStats extends BaseWidget
                 ->description('Total produk menurut filter')
                 ->color('primary'),
 
-            Stat::make('Produk Aktif', Produk::query()->whereNull('deleted_at')->count())
-                ->description('Produk yang tersedia')
+            Stat::make('Terpublikasi', Produk::query()->where('status_produk', ContentStatus::TERPUBLIKASI)->whereNull('deleted_at')->count())
+                ->description('Produk yang sudah dipublikasikan')
                 ->color('success'),
 
-            Stat::make('Produk Diarsipkan', Produk::query()->withTrashed()->whereNotNull('deleted_at')->count())
-                ->description('Produk yang diarsipkan')
+            Stat::make('Tidak Terpublikasi', Produk::query()->where('status_produk', ContentStatus::TIDAK_TERPUBLIKASI)->whereNull('deleted_at')->count())
+                ->description('Produk masih sebagai draft')
                 ->color('warning'),
 
-            Stat::make('Produk Bulan Ini', Produk::query()
-                ->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year)
-                ->count())
-                ->description('Produk yang ditambahkan bulan ini')
-                ->color('info'),
+            Stat::make('Diarsipkan', Produk::query()->onlyTrashed()->count())
+                ->description('Produk yang diarsipkan')
+                ->color('danger'),
         ];
     }
 }

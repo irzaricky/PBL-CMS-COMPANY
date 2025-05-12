@@ -21,7 +21,7 @@ class MitraResource extends Resource
 {
     protected static ?string $model = Mitra::class;
     protected static ?string $navigationGroup = 'Company Owner';
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static ?string $navigationIcon = 'heroicon-s-user-plus';
     protected static ?string $recordTitleAttribute = 'nama';
 
     public static function form(Form $form): Form
@@ -102,7 +102,7 @@ class MitraResource extends Resource
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama Mitra')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('alamat_mitra')
                     ->label('Alamat')
@@ -135,18 +135,16 @@ class MitraResource extends Resource
                 Tables\Columns\TextColumn::make('tanggal_kemitraan')
                     ->label('Tanggal Kemitraan')
                     ->date('d M Y')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -166,7 +164,6 @@ class MitraResource extends Resource
                     ->query(fn(Builder $query): Builder => $query->where('tanggal_kemitraan', '>=', now()->subMonths(3))),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('toggleStatus')
                     ->label(

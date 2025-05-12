@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Galeri;
@@ -95,6 +96,15 @@ class GaleriResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->dehydrated()
                             ->helperText('Akan terisi otomatis berdasarkan judul'),
+
+                        Forms\Components\Select::make('status_galeri')
+                            ->label('Status Galeri')
+                            ->options([
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
+                            ])
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
@@ -141,48 +151,49 @@ class GaleriResource extends Resource
                     ->label('Gambar')
                     ->circular()
                     ->stacked()
-                    ->limit(3)
+                    ->limit(1)
                     ->limitedRemainingText()
                     ->extraImgAttributes(['class' => 'object-cover']),
 
                 Tables\Columns\TextColumn::make('judul_galeri')
                     ->label('Judul')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('kategoriGaleri.nama_kategori_galeri')
                     ->label('Kategori')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengunggah')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
-                    ->sortable()
                     ->numeric()
                     ->alignCenter()
                     ->badge(),
 
+                Tables\Columns\SelectColumn::make('status_galeri')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->sortable(),
+                    ->dateTime('d M Y H:i'),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -193,14 +204,25 @@ class GaleriResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Pengunggah')
                     ->relationship('user', 'name'),
+
+                Tables\Filters\SelectFilter::make('status_galeri')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Galeri berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Galeri berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Galeri berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_galeri');

@@ -27,11 +27,16 @@ async function fetchProduk() {
         const shuffled = array.sort(() => 0.5 - Math.random());
         return shuffled.slice(0, count);
     }
-    function getImageUrl(path) {
-        return `/storage/${path}`;
-    }
 }
+function getImageUrl(image) {
+    if (!image) return "/image/placeholder.webp";
 
+    if (typeof image === "object" && image !== null) {
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
+    }
+
+    return `/storage/${image}`;
+}
 </script>
 
 <template>
@@ -50,7 +55,7 @@ async function fetchProduk() {
             <div v-for="item in produk" :key="item.id_produk"
                 class="relative group p-6 rounded-2xl bg-cover bg-center bg-no-repeat flex flex-col h-96 overflow-hidden"
                 :style="item.thumbnail_produk && item.thumbnail_produk.length > 0
-                    ? `background-image: url('${getImageUrl(item.thumbnail_produk[0])}')`
+                    ? `background-image: url('${getImageUrl(item.thumbnail_produk)}')`
                     : 'background-color: #ccc'">
 
 

@@ -40,27 +40,40 @@ class ProdukSeeder extends Seeder
             ['nama' => 'Sistem Keamanan Data Enterprise', 'kategori' => 3, 'harga' => 4500000],
         ];
 
-        // Generate 50 products
-        for ($i = 1; $i <= 50; $i++) {
+        // Generate 20 products
+        for ($i = 1; $i <= 20; $i++) {
             $randomProduct = $faker->randomElement($products);
             $createdAt = Carbon::now()->subYear()->addDays(rand(0, 365));
 
-            // Pilih gambar random
-            $originalFile = $files[array_rand($files)];
+            // Generate array untuk menyimpan multiple images
+            $images = [];
 
-            // Buat nama baru biar unik
-            $newFileName = Str::random(10) . '-' . $originalFile;
+            // Tentukan jumlah gambar untuk produk ini (1-3 gambar)
+            $imageCount = rand(1, 3);
 
-            // Copy ke storage
-            Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+            // Pilih dan proses beberapa gambar
+            for ($j = 0; $j < $imageCount; $j++) {
+                // Pilih gambar random
+                $originalFile = $files[array_rand($files)];
+
+                // Buat nama baru biar unik
+                $newFileName = Str::random(10) . '-' . $originalFile;
+
+                // Copy ke storage
+                Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+
+                // Tambahkan path gambar ke array images
+                $images[] = $targetPath . '/' . $newFileName;
+            }
 
             DB::table('produk')->insert([
                 'id_produk' => $i,
                 'id_kategori_produk' => $randomProduct['kategori'],
                 'nama_produk' => $randomProduct['nama'] . ' ' . $faker->words(2, true),
-                'thumbnail_produk' => json_encode($targetPath . '/' . $newFileName),
+                'thumbnail_produk' => json_encode($images),
                 'harga_produk' => 'Rp ' . number_format($randomProduct['harga'] * $faker->randomFloat(1, 0.8, 1.2), 0, ',', '.'),
                 'slug' => Str::slug($randomProduct['nama'] . ' ' . $faker->words(2, true)),
+                'status_produk' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
                 'deskripsi_produk' => $faker->paragraph(2),
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt->addDays(rand(0, 30)),

@@ -29,13 +29,15 @@ class ProfilPerusahaan extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'id_galeri',
         'nama_perusahaan',
         'thumbnail_perusahaan',
         'logo_perusahaan',
         'deskripsi_perusahaan',
         'alamat_perusahaan',
         'email_perusahaan',
+        'sejarah_perusahaan',
+        'visi_perusahaan',
+        'misi_perusahaan',
     ];
 
     /**
@@ -46,12 +48,4 @@ class ProfilPerusahaan extends Model
     protected $casts = [
         'thumbnail_perusahaan' => 'array',
     ];
-
-    /**
-     * Get the gallery associated with the company profile.
-     */
-    public function galeri()
-    {
-        return $this->belongsTo(Galeri::class, 'id_galeri', 'id_galeri');
-    }
 }

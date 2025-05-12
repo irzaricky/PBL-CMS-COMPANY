@@ -14,6 +14,7 @@ class GaleriSeeder extends Seeder
     public function run(): void
     {
         $faker = Faker::create('id_ID');
+        $galeries = [];
 
         // bagian proses image
         $sourcePath = database_path('seeders/seeder_image/');
@@ -46,52 +47,40 @@ class GaleriSeeder extends Seeder
             'Kegiatan Sosial',
             'Perayaan Ulang Tahun',
             'Kegiatan Lingkungan',
-            'Peluncuran Website',
-            'Pameran Produk',
-            'Kegiatan Olahraga',
-            'Pelatihan Kepemimpinan',
-            'Kunjungan Pelanggan',
-            'Pameran Seni',
-            'Pelatihan Keamanan',
-            'Kegiatan CSR',
-            'Pelatihan Soft Skill',
-            'Pelatihan Hard Skill',
-            'Pelatihan Manajemen',
-            'Pelatihan Penjualan',
-            'Pelatihan Pemasaran',
-            'Pelatihan Teknologi',
-            'Pelatihan Keuangan',
-            'Pelatihan SDM',
-            'Pelatihan Kesehatan',
-            'Pelatihan Keselamatan',
-            'Pelatihan Lingkungan',
-            'Pelatihan Komunikasi',
-            'Pelatihan Negosiasi',
-            'Pelatihan Presentasi',
         ];
 
         for ($i = 1; $i <= 20; $i++) {
             $title = $faker->unique()->randomElement($titles);
             $slug = Str::slug($title);
 
-            // Pilih gambar random
-            $originalFile = $files[array_rand($files)];
+            // Generate array untuk menyimpan multiple images
+            $images = [];
 
-            // Buat nama baru biar unik
-            $newFileName = Str::random(10) . '-' . $originalFile;
+            // Pilih dan proses beberapa gambar
+            for ($j = 0; $j < 3; $j++) {
+                // Pilih gambar random
+                $originalFile = $files[array_rand($files)];
 
-            // Copy ke storage
-            Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+                // Buat nama baru biar unik
+                $newFileName = Str::random(10) . '-' . $originalFile;
+
+                // Copy ke storage
+                Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+
+                // Tambahkan path gambar ke array images
+                $images[] = $targetPath . '/' . $newFileName;
+            }
 
             $galeries[] = [
                 'id_galeri' => $i,
                 'id_user' => $faker->numberBetween(1, 5),
                 'id_kategori_galeri' => $faker->numberBetween(1, 3),
                 'judul_galeri' => $title,
-                'thumbnail_galeri' => json_encode($targetPath . '/' . $newFileName),
+                'thumbnail_galeri' => json_encode($images),
                 'deskripsi_galeri' => $faker->paragraph(rand(1, 3)),
                 'slug' => $slug,
-                'jumlah_unduhan' => $faker->numberBetween(5, int2: 1000),
+                'status_galeri' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
+                'jumlah_unduhan' => $faker->numberBetween(5, 1000),
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
                 'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ];

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,10 +36,12 @@ class Produk extends Model
         'harga_produk',
         'slug',
         'deskripsi_produk',
+        'status_produk',
     ];
 
     protected $casts = [
         'thumbnail_produk' => 'array',
+        'status_produk' => ContentStatus::class,
     ];
 
     /**

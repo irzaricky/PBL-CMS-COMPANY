@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\LowonganResource\Widgets;
 
+use App\Enums\ContentStatus;
 use App\Filament\Resources\LowonganResource\Pages\ListLowongans;
 use App\Models\Lowongan;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -26,20 +27,21 @@ class LowonganStats extends BaseWidget
                 ->description('Total lowongan menurut filter')
                 ->color('primary'),
 
-            Stat::make('Lowongan Aktif', Lowongan::query()
+            Stat::make('Terpublikasi', Lowongan::query()
+                ->where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
+                ->whereNull('deleted_at')
+                ->count())
+                ->description('Lowongan yang dipublikasi')
+                ->color('success'),
+
+
+            Stat::make('Periode Dibuka', Lowongan::query()
                 ->where('tanggal_dibuka', '<=', now())
                 ->where('tanggal_ditutup', '>=', now())
                 ->whereNull('deleted_at')
                 ->count())
-                ->description('Lowongan yang sedang dibuka')
-                ->color('success'),
-
-            Stat::make('Lowongan Bulan Ini', $this->getPageTableQuery()
-                ->whereMonth('created_at', now()->month)
-                ->whereYear('created_at', now()->year)
-                ->count())
-                ->description('Lowongan yang dibuat bulan ini')
-                ->color('warning'),
+                ->description('Lowongan yang sedang dalam periode dibuka')
+                ->color('info'),
         ];
     }
 }

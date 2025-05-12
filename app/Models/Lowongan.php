@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -52,6 +53,7 @@ class Lowongan extends Model
         'tanggal_ditutup' => 'date',
         'gaji' => 'decimal:2',
         'thumbnail_lowongan' => 'array',
+        'status_lowongan' => ContentStatus::class,
     ];
 
     /**

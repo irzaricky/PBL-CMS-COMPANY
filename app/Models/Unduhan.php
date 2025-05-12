@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -35,7 +36,13 @@ class Unduhan extends Model
         'slug',
         'lokasi_file',
         'deskripsi',
-        'jumlah_unduhan'
+        'jumlah_unduhan',
+        'status_unduhan'
+    ];
+
+    protected $casts = [
+        'status_unduhan' => ContentStatus::class,
+        'thumbnail_unduhan' => 'array',
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Unduhan;
@@ -83,6 +84,15 @@ class UnduhanResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->dehydrated()
                             ->helperText('Akan terisi otomatis berdasarkan nama unduhan'),
+
+                        Forms\Components\Select::make('status_unduhan')
+                            ->label('Status Unduhan')
+                            ->options([
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
+                            ])
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
 
                 Forms\Components\Section::make('File & Konten')
@@ -129,45 +139,48 @@ class UnduhanResource extends Resource
                 Tables\Columns\TextColumn::make('nama_unduhan')
                     ->label('Nama Unduhan')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('kategoriUnduhan.nama_kategori_unduhan')
                     ->label('Kategori')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengunggah')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('lokasi_file')
                     ->label('File')
+                    ->formatStateUsing(fn(string $state): string => basename($state))
                     ->searchable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
                     ->numeric()
-                    ->sortable(),
+                ,
+
+                Tables\Columns\SelectColumn::make('status_unduhan')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -178,14 +191,25 @@ class UnduhanResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Pengunggah')
                     ->relationship('user', 'name'),
+
+                Tables\Filters\SelectFilter::make('status_unduhan')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Unduhan berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Unduhan berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Unduhan berhasil dihapus permanen')
                     ->before(function ($record) {
                         SingleFileHandler::deleteFile($record, 'lokasi_file');
@@ -193,6 +217,7 @@ class UnduhanResource extends Resource
                 Tables\Actions\Action::make('download')
                     ->label('Unduh')
                     ->icon('heroicon-o-arrow-down-tray')
+                    ->color('success')
                     ->url(fn(Unduhan $record) => url('storage/' . $record->lokasi_file))
                     ->openUrlInNewTab(),
             ])

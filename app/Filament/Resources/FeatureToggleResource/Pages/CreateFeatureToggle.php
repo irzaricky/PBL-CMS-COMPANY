@@ -9,4 +9,9 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateFeatureToggle extends CreateRecord
 {
     protected static string $resource = FeatureToggleResource::class;
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }

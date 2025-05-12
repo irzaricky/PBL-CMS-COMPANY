@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Mail\Mailables\Content;
 
 class TestimoniSeeder extends Seeder
 {
@@ -16,6 +18,7 @@ class TestimoniSeeder extends Seeder
                 'id_user' => 9, // Test User 1
                 'isi_testimoni' => 'Layanan yang sangat baik dan profesional. Sangat membantu dalam pengembangan sistem kami.',
                 'rating' => 5,
+                'status' => ContentStatus::TERPUBLIKASI->value,
                 'created_at' => Carbon::now()->subDays(14),
                 'updated_at' => Carbon::now()->subDays(14),
             ],
@@ -24,6 +27,7 @@ class TestimoniSeeder extends Seeder
                 'id_user' => 10, // Test User 2
                 'isi_testimoni' => 'Produk berkualitas dengan harga yang kompetitif. Sangat puas dengan fitur-fiturnya.',
                 'rating' => 4,
+                'status' => ContentStatus::TERPUBLIKASI->value,
                 'created_at' => Carbon::now()->subDays(10),
                 'updated_at' => Carbon::now()->subDays(10),
             ],
@@ -32,6 +36,7 @@ class TestimoniSeeder extends Seeder
                 'id_user' => 11, // Test User 3
                 'isi_testimoni' => 'Respon cepat dan solusi tepat. Tim support sangat membantu menyelesaikan masalah.',
                 'rating' => 5,
+                'status' => ContentStatus::TERPUBLIKASI->value,
                 'created_at' => Carbon::now()->subDays(7),
                 'updated_at' => Carbon::now()->subDays(7),
             ],
@@ -40,6 +45,7 @@ class TestimoniSeeder extends Seeder
                 'id_user' => 12, // Test User 4
                 'isi_testimoni' => 'Saya sangat terkesan dengan kualitas pelayanan dan keandalan produk yang ditawarkan. Perusahaan ini benar-benar memahami kebutuhan bisnis kami.',
                 'rating' => 5,
+                'status' => ContentStatus::TIDAK_TERPUBLIKASI->value,
                 'created_at' => Carbon::now()->subDays(5),
                 'updated_at' => Carbon::now()->subDays(5),
             ],
@@ -48,6 +54,7 @@ class TestimoniSeeder extends Seeder
                 'id_user' => 13, // Test User 5
                 'isi_testimoni' => 'Aplikasi yang mereka kembangkan sangat user-friendly dan sesuai dengan spesifikasi yang kami minta. Proses kerjasama yang menyenangkan dan profesional.',
                 'rating' => 4,
+                'status' => ContentStatus::TIDAK_TERPUBLIKASI->value,
                 'created_at' => Carbon::now()->subDays(2),
                 'updated_at' => Carbon::now()->subDays(2),
             ],

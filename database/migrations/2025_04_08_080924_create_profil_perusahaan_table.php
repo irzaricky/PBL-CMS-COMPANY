@@ -12,13 +12,15 @@ return new class extends Migration {
     {
         Schema::create('profil_perusahaan', function (Blueprint $table) {
             $table->id('id_profil_perusahaan');
-            $table->foreignId('id_galeri')->nullable()->constrained('galeri', 'id_galeri')->onDelete('set null');
             $table->string('nama_perusahaan', 100);
             $table->json('thumbnail_perusahaan')->nullable();
             $table->string('logo_perusahaan', 200)->nullable();
             $table->text('deskripsi_perusahaan')->nullable();
             $table->string('alamat_perusahaan', 200);
             $table->string('email_perusahaan', 50);
+            $table->text('sejarah_perusahaan')->nullable();
+            $table->text('visi_perusahaan')->nullable();
+            $table->text('misi_perusahaan')->nullable();
             $table->timestamps();
         });
     }
