@@ -7,6 +7,7 @@ import Artikel from "@/Components/Artikel.vue";
 import CallToAction from "../Components/CallToAction.vue";
 import Feedback from "../Components/Feedback.vue";
 import Galeri from "../Components/Galeri.vue";
+import Event from "@/Components/Event.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
@@ -29,8 +30,11 @@ onMounted(async () => {
         <div v-if="featureToggles.artikel_module">
             <Artikel />
         </div>
-        <div v-if="featureToggles.produk_module">
+        <div v-if="featureToggles.galeri_module">
             <Galeri />
+        </div>
+        <div v-if="featureToggles.event_module">
+            <Event />
         </div>
         <CallToAction />
         <Feedback />
