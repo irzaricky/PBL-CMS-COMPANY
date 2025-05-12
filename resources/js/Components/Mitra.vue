@@ -18,7 +18,7 @@
                         <li><img src="image/spark.svg" alt="Spark" class="h-12 max-w-none" /></li>
                         <li><img src="image/samsung.svg" alt="Samsung" class="h-12 max-w-none" /></li>
                         <li><img src="image/quora.svg" alt="Quora" class="h-12 max-w-none" /></li>
-                        <li><img src="image/sass.svg" alt="Sass" class="h-12 max-w-none" /></li>
+                        <li><img src="image/sass.svg" alt="Sass" class="h-12 max-w-none pr-10" /></li>
                     </ul>
                 </div>
             </div>
