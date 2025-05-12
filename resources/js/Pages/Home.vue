@@ -8,6 +8,7 @@ import CallToAction from "../Components/CallToAction.vue";
 import Feedback from "../Components/Feedback.vue";
 import Galeri from "../Components/Galeri.vue";
 import Event from "@/Components/Event.vue";
+import Lowongan from "@/Components/Lowongan.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
@@ -35,6 +36,9 @@ onMounted(async () => {
         </div>
         <div v-if="featureToggles.event_module">
             <Event />
+        </div>
+        <div v-if="featureToggles.lowongan_module">
+            <Lowongan />
         </div>
         <CallToAction />
         <Feedback />
