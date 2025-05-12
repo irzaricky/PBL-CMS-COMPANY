@@ -5,6 +5,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Services\InstallerService;
 
 
 // Route::get('/dashboard', function () {
@@ -20,6 +21,24 @@ Route::get('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+// Include installer routes without trying to connect to the database first
+try {
+    // First, check if the vendor directory exists (dependencies installed)
+    if (!file_exists(base_path('vendor/autoload.php'))) {
+        Route::get('/install/dependencies', [App\Http\Controllers\PreInstallController::class, 'index'])->name('installer.dependencies');
+        Route::get('/install/dependencies/install', [App\Http\Controllers\PreInstallController::class, 'installDependencies'])->name('installer.dependencies.install');
+    }
+
+    // Then check installation status, but catch any database exceptions
+    $installerService = app(InstallerService::class);
+    if (!$installerService->isInstalled()) {
+        require __DIR__ . '/installer.php';
+    }
+} catch (\Exception $e) {
+    // If we get a database error, we assume we need the installer
+    require __DIR__ . '/installer.php';
+}
 
 Route::get('/', function () {
     return Inertia::render('Home');
