@@ -9,6 +9,7 @@ import Feedback from "../Components/Feedback.vue";
 import Galeri from "../Components/Galeri.vue";
 import Event from "@/Components/Event.vue";
 import Lowongan from "@/Components/Lowongan.vue";
+import Mitra from "@/Components/Mitra.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
@@ -39,6 +40,9 @@ onMounted(async () => {
         </div>
         <div v-if="featureToggles.lowongan_module">
             <Lowongan />
+        </div>
+        <div v-if="featureToggles.mitra_module">
+            <Mitra /> 
         </div>
         <CallToAction />
         <Feedback />
