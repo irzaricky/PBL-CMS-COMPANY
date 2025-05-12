@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\StrukturOrganisasiResource\Pages;
 
-use App\Enums\ContentStatus;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -33,7 +32,8 @@ class ListStrukturOrganisasis extends ListRecords
     {
         return [
             'Semua' => Tab::make()
-                ->query(fn($query) => $query->orderBy('tanggal_mulai', 'desc')),
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('tanggal_mulai', 'desc')),
             'Posisi Aktif' => Tab::make()
                 ->query(fn($query) => $query->whereHas('user', fn($query) => $query->where('status', 'aktif'))
                     ->where(function ($query) {
