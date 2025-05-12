@@ -17,7 +17,7 @@ class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
     protected static ?string $navigationGroup = 'Company Owner';
-    protected static ?string $navigationIcon = 'heroicon-s-building-office';
+    protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
     protected static ?int $navigationSort = 1;
 
@@ -38,10 +38,8 @@ class ProfilPerusahaanResource extends Resource
                             ->directory('perusahaan-logo')
                             ->disk('public')
                             ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
-                            ->imageResizeMode('cover')
-                            ->imageResizeTargetWidth(100)
-                            ->imageResizeTargetHeight(100)
-                            ->optimize('webp'),
+                            ->imageEditor(),
+                        
 
                         Forms\Components\FileUpload::make('thumbnail_perusahaan')
                             ->label('Gambar Perusahaan')
@@ -66,6 +64,20 @@ class ProfilPerusahaanResource extends Resource
                             ->maxLength(200)
                             ->rows(3)
                             ->placeholder('Masukkan alamat lengkap perusahaan'),
+
+                        Forms\Components\TextInput::make('link_alamat_perusahaan')
+                            ->label('Link Lokasi Perusahaan (Google Maps)')
+                            ->required()
+                            ->placeholder('<iframe src="https://www.google.com/maps/embed?..')
+                            ->helperText('Berikan URL Embed Google Maps untuk lokasi perusahaan')
+                            ->prefixIcon('heroicon-s-map-pin')
+                            ->suffixAction(
+                                Forms\Components\Actions\Action::make('open')
+                                    ->icon('heroicon-o-arrow-top-right-on-square')
+                                    ->tooltip('Open map in new tab')
+                                    ->url(fn($get) => $get('link_alamat_perusahaan'), true)
+                                    ->visible(fn($get) => filled($get('link_alamat_perusahaan')))
+                            ),
 
                         Forms\Components\TextInput::make('email_perusahaan')
                             ->label('Email')
@@ -130,6 +142,16 @@ class ProfilPerusahaanResource extends Resource
                     ->label('Alamat')
                     ->limit(30)
                     ->searchable(),
+
+                Tables\Columns\TextColumn::make('link_alamat_perusahaan')
+                    ->label('Link Alamat')
+                    ->searchable()
+                    ->limit(30)
+                    ->url(fn($record) => $record->link_lokasi_event)
+                    ->openUrlInNewTab()
+                    ->icon('heroicon-o-map-pin')
+                    ->tooltip('Klik untuk melihat di Google Maps')
+                    ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('sejarah_perusahaan')
                     ->label('Sejarah')

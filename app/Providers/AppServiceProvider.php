@@ -3,6 +3,9 @@
 namespace App\Providers;
 
 use Inertia\Inertia;
+use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Schema;
+use App\Models\User;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
@@ -41,6 +44,5 @@ class AppServiceProvider extends ServiceProvider
                 ];
             },
         ]);
-
     }
 }

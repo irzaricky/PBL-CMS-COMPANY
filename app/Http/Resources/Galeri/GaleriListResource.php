@@ -27,6 +27,7 @@ class GaleriListResource extends JsonResource
                 'id_kategori_galeri' => $this->kategoriGaleri->id_kategori_galeri,
                 'nama_kategori_galeri' => $this->kategoriGaleri->nama_kategori_galeri,
             ],
+            'deskripsi_galeri' => $this->deskripsi_galeri,
             'slug' => $this->slug,
             'jumlah_unduhan' => $this->jumlah_unduhan,
             'created_at' => $this->created_at,

@@ -63,4 +63,10 @@ class User extends Authenticatable
             'tanggal_lahir' => 'date',
         ];
     }
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->foto_profil
+            ? asset('storage/' . $this->foto_profil)
+            : null;
+    }
 }
