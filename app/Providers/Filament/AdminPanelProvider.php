@@ -45,7 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandName(function () {
                 try {
                     if (\Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')) {
-                        $company = \App\Models\ProfilPerusahaan::first();
+                        $company = ProfilPerusahaan::first();
                         return $company ? $company->nama_perusahaan : 'Admin Panel';
                     }
                 } catch (\Exception $e) {
