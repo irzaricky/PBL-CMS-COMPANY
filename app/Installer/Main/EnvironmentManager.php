@@ -34,13 +34,23 @@ class EnvironmentManager
             'APP_LOG_LEVEL=' . $request->app_log_level . "\n" .
             'APP_URL=' . $request->app_url . "\n" .
             'APP_INSTALLED=false' . "\n\n" .
-            'DB_CONNECTION=' . $request->database_connection . "\n" .
-            'DB_HOST=' . $request->database_hostname . "\n" .
-            'DB_PORT=' . $request->database_port . "\n" .
-            'DB_DATABASE=' . $request->database_name . "\n" .
-            'DB_USERNAME=' . $request->database_username . "\n" .
-            'DB_PASSWORD=' . ($request->database_password ?? '') . "\n\n" .
-            $env;
+            'DB_CONNECTION=' . $request->database_connection . "\n";
+
+        // Add database configuration based on connection type
+        if ($request->database_connection === 'sqlite') {
+            // For SQLite, only need to specify the database name
+            // The full path will be storage_path('app/' . $request->database_name)
+            $envFileData .= 'DB_DATABASE=' . storage_path('app/' . $request->database_name) . "\n\n";
+        } else {
+            // For MySQL
+            $envFileData .= 'DB_HOST=' . $request->database_hostname . "\n" .
+                'DB_PORT=' . $request->database_port . "\n" .
+                'DB_DATABASE=' . $request->database_name . "\n" .
+                'DB_USERNAME=' . $request->database_username . "\n" .
+                'DB_PASSWORD=' . ($request->database_password ?? '') . "\n\n";
+        }
+
+        $envFileData .= $env;
 
         try {
             // Make sure the directory exists

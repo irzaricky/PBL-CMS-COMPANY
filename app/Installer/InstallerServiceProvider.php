@@ -9,6 +9,7 @@ use App\Installer\Components\InstallError;
 use App\Installer\Components\InstallInput;
 use App\Installer\Components\InstallSelect;
 use App\Installer\Middleware\InstallMiddleware;
+use App\Installer\Middleware\CheckDatabaseConnectionMiddleware;
 
 class InstallerServiceProvider extends ServiceProvider
 {
@@ -41,6 +42,9 @@ class InstallerServiceProvider extends ServiceProvider
         view()->share('errors', app('Illuminate\Support\ViewErrorBag'));
 
         $router->middlewareGroup('installCheck', [InstallMiddleware::class]);
+
+        // Register database connection check middleware
+        $router->aliasMiddleware('check.database', CheckDatabaseConnectionMiddleware::class);
 
         Blade::component('install-input', InstallInput::class);
         Blade::component('install-error', InstallError::class);

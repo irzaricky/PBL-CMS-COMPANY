@@ -50,9 +50,29 @@ class InstallerController extends Controller
 
     public function account()
     {
-        DatabaseManager::MigrateAndSeed();
+        // Double-check database connection
+        try {
+            $dbConnection = DB::connection()->getPdo();
+            if (!$dbConnection) {
+                return redirect()->route('database_import')
+                    ->with('database_error', 'Database connection failed. Please check your configuration.');
+            }
 
-        return view('InstallerEragViews::account');
+            // If DB connection works, run migrations and seed
+            $migrationResult = DatabaseManager::MigrateAndSeed();
+
+            if ($migrationResult[0] === 'error') {
+                return redirect()->route('database_import')
+                    ->with('database_error', 'Database migration failed: ' . ($migrationResult[1] ?? 'Unknown error'))
+                    ->withErrors(['database_connection' => 'Database migration failed. Please check your database configuration.']);
+            }
+
+            return view('InstallerEragViews::account');
+        } catch (\Exception $e) {
+            return redirect()->route('database_import')
+                ->with('database_error', 'Database error: ' . $e->getMessage())
+                ->withErrors(['database_connection' => 'Database connection failed: ' . $e->getMessage()]);
+        }
     }
 
     public function saveAccount(Request $request, Redirector $redirect)
