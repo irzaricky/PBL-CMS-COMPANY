@@ -131,12 +131,12 @@ class ProfilPerusahaanResource extends Resource
                 Tables\Columns\TextColumn::make('nama_perusahaan')
                     ->label('Nama Perusahaan')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('email_perusahaan')
                     ->label('Email')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('alamat_perusahaan')
                     ->label('Alamat')
@@ -174,13 +174,11 @@ class ProfilPerusahaanResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

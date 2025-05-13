@@ -75,19 +75,19 @@ class StrukturOrganisasiResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('jabatan')
                     ->label('Posisi/Jabatan')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi Posisi/Jabatan')
                     ->searchable()
                     ->limit(50)
                     ->tooltip(fn(StrukturOrganisasi $record): string => $record->deskripsi)
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('user.status')
                     ->label('Status')
@@ -100,24 +100,21 @@ class StrukturOrganisasiResource extends Resource
                 Tables\Columns\TextColumn::make('tanggal_mulai')
                     ->label('Tanggal Mulai')
                     ->date('d M Y')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('tanggal_selesai')
                     ->label('Tanggal Selesai')
                     ->date('d M Y')
-                    ->sortable()
                     ->placeholder('-'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('tanggal_mulai', 'desc')
@@ -160,7 +157,6 @@ class StrukturOrganisasiResource extends Resource
                         })),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ]);
     }

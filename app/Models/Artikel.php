@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -37,11 +38,15 @@ class Artikel extends Model
         'konten_artikel',
         'jumlah_view',
         'slug',
+        'status_artikel',
     ];
 
     protected $casts = [
         'thumbnail_artikel' => 'array',
+        'status_artikel' => ContentStatus::class,
     ];
+
+
 
     /**
      * Get the category that this article belongs to.

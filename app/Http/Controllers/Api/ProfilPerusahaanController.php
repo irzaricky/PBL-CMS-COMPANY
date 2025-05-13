@@ -12,7 +12,7 @@ class ProfilPerusahaanController extends Controller
 {
 
     /**
-     * Get profil perusahaan for navbar
+     * Mengambil profil perusahaan
      * 
      * @param string Request $request
      * @return \App\Http\Resources\ProfilPerusahaan\ProfilPerusahaanViewResource|\Illuminate\Http\JsonResponse
@@ -33,7 +33,7 @@ class ProfilPerusahaanController extends Controller
     }
 
     /**
-     * Get profil perusahaan for navbar
+     * Mengambil profil perusahaan untuk navbar
      * 
      * @param string Request $request
      * @return \App\Http\Resources\ProfilPerusahaan\ProfilPerusahaanNavbarResource|\Illuminate\Http\JsonResponse

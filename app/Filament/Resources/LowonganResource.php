@@ -150,7 +150,6 @@ class LowonganResource extends Resource
                 Tables\Columns\TextColumn::make('judul_lowongan')
                     ->label('Judul Lowongan')
                     ->searchable()
-                    ->sortable()
                     ->limit(50),
 
                 Tables\Columns\TextColumn::make('jenis_lowongan')
@@ -166,17 +165,17 @@ class LowonganResource extends Resource
                 Tables\Columns\TextColumn::make('gaji')
                     ->label('Gaji')
                     ->money('Rp.')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('tanggal_dibuka')
                     ->label('Tanggal Dibuka')
                     ->date('d M Y')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('tanggal_ditutup')
                     ->label('Tanggal Ditutup')
                     ->date('d M Y')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
@@ -199,31 +198,26 @@ class LowonganResource extends Resource
 
                         return 'Belum Dibuka';
                     })
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('tenaga_dibutuhkan')
                     ->label('Posisi terbuka')
                     ->numeric()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pembuat')
                     ->searchable()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -245,6 +239,9 @@ class LowonganResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Lowongan berhasil diarsipkan')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');
@@ -252,6 +249,7 @@ class LowonganResource extends Resource
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Lowongan berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Lowongan berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');

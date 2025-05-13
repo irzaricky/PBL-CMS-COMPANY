@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 class LowonganController extends Controller
 {
     /**
-     * Get all job vacancies
+     * Mengambil daftar lowongan
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -32,7 +32,7 @@ class LowonganController extends Controller
     }
 
     /**
-     * Get upcoming job vacancies
+     * Mengambil lowongan terbaru
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */

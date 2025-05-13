@@ -132,11 +132,11 @@ class UserResource extends Resource
                     ->label('Tanggal Lahir')
                     ->date('d F Y')
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable(),
+                ,
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date('d F Y')
-                    ->sortable(),
+                ,
                 Tables\Columns\TextColumn::make('status_kepegawaian')
                     ->label('Status Kepegawaian')
                     ->badge()
@@ -159,15 +159,12 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: false),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime()
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Role')
-                    ->sortable()
                     ->searchable(),
             ])
             ->filters([

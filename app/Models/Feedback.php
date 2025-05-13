@@ -32,17 +32,7 @@ class Feedback extends Model
         'id_user',
         'subjek_feedback',
         'isi_feedback',
-        'tanggal_feedback',
         'tanggapan_feedback',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'tanggal_feedback' => 'date',
     ];
 
     /**

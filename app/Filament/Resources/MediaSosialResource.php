@@ -2,19 +2,20 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MediaSosialResource\Pages;
-use App\Filament\Resources\MediaSosialResource\RelationManagers;
-use App\Models\MediaSosial;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\MediaSosial;
+use App\Enums\ContentStatus;
+use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\FileHandlers\SingleFileHandler;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\MediaSosialResource\Pages;
+use App\Filament\Resources\MediaSosialResource\RelationManagers;
 
 class MediaSosialResource extends Resource
 {
@@ -56,12 +57,12 @@ class MediaSosialResource extends Resource
                             ->helperText('Masukkan URL lengkap termasuk https://'),
 
                         Forms\Components\Select::make('status')
-                            ->label('Status')
+                            ->label('Status Media Sosial')
                             ->options([
-                                'aktif' => 'Aktif',
-                                'nonaktif' => 'Nonaktif',
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
-                            ->default('aktif')
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
                             ->required(),
                     ]),
             ]);
@@ -74,7 +75,7 @@ class MediaSosialResource extends Resource
                 Tables\Columns\TextColumn::make('nama_media_sosial')
                     ->label('Nama Media Sosial')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\ImageColumn::make('icon')
                     ->label('Icon')
@@ -88,24 +89,22 @@ class MediaSosialResource extends Resource
                     ->limit(30)
                     ->tooltip(fn(MediaSosial $record): string => $record->link),
 
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\SelectColumn::make('status')
                     ->label('Status')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'aktif' => 'success',
-                        'nonaktif' => 'danger',
-                    }),
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(),
             ])
             ->filters([
@@ -117,24 +116,6 @@ class MediaSosialResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('toggleStatus')
-                    ->label(
-                        fn(MediaSosial $record): string =>
-                        $record->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan'
-                    )
-                    ->icon(
-                        fn(MediaSosial $record): string =>
-                        $record->status === 'aktif' ? 'heroicon-o-x-circle' : 'heroicon-o-check-circle'
-                    )
-                    ->color(
-                        fn(MediaSosial $record): string =>
-                        $record->status === 'aktif' ? 'danger' : 'success'
-                    )
-                    ->requiresConfirmation()
-                    ->action(function (MediaSosial $record): void {
-                        $record->status = $record->status === 'aktif' ? 'nonaktif' : 'aktif';
-                        $record->save();
-                    }),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (MediaSosial $record) {
                         SingleFileHandler::deleteFile($record, 'icon');

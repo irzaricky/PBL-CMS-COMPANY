@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->string('harga_produk', 50);
             $table->string('slug', 100)->unique();
             $table->text('deskripsi_produk')->nullable();
+            $table->string('status_produk', 50)->default('tidak terpublikasi');
             $table->softDeletes();
             $table->timestamps();
         });

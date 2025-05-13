@@ -97,7 +97,7 @@ class TestimoniResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('isi_testimoni')
                     ->label('Testimoni')
@@ -108,7 +108,7 @@ class TestimoniResource extends Resource
                 Tables\Columns\TextColumn::make('rating')
                     ->label('Rating')
                     ->formatStateUsing(fn(int $state): string => str_repeat('⭐', $state))
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('status')
                     ->label('Status')
@@ -121,12 +121,11 @@ class TestimoniResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -169,10 +168,6 @@ class TestimoniResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make()
-                    //     ->before(function (Collection $records) {
-                    //         MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_testimoni');
-                    //     }),
                     Tables\Actions\BulkAction::make('updateStatus')
                         ->label('Update Status')
                         ->icon('heroicon-o-eye')

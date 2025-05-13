@@ -2,10 +2,11 @@
 
 namespace App\Filament\Resources\CaseStudyResource\Pages;
 
-use App\Filament\Resources\CaseStudyResource;
 use Filament\Actions;
+use App\Enums\ContentStatus;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
+use App\Filament\Resources\CaseStudyResource;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 use App\Filament\Resources\CaseStudyResource\Widgets\CaseStudyStats;
 
@@ -36,11 +37,11 @@ class ListCaseStudies extends ListRecords
                     ->orderBy('judul_case_study', 'asc')),
             'Terpublikasi' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
-                    ->where('status_case_study', 'published')
+                    ->where('status_case_study', ContentStatus::TERPUBLIKASI->value)
                     ->orderBy('judul_case_study', 'asc')),
-            'Draft' => Tab::make()
+            'Tidak Terpublikasi' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
-                    ->where('status_case_study', 'draft')
+                    ->where('status_case_study', ContentStatus::TIDAK_TERPUBLIKASI->value)
                     ->orderBy('judul_case_study', 'asc')),
             'Terbaru' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
