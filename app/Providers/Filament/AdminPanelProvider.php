@@ -43,11 +43,16 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->spa()
             ->topNavigation()
-            ->brandName(
-                \Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')
-                ? (ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
-                : 'Admin Panel'
-            )
+            ->brandName(function () {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')) {
+                        $company = ProfilPerusahaan::first();
+                        return $company ? $company->nama_perusahaan : 'Admin Panel';
+                    }
+                } catch (\Exception $e) {
+                }
+                return 'Admin Panel';
+            })
             ->globalSearch(false)
             ->id('admin')
             ->path('admin')

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\LowonganResource\Pages;
 
+use App\Enums\ContentStatus;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -31,17 +32,31 @@ class ListLowongans extends ListRecords
     public function getTabs(): array
     {
         return [
-            null => Tab::make('Semua')
-                ->query(fn($query) => $query->orderBy('created_at', 'desc')),
-            'Dipublikasi' => Tab::make()
+            'Semua' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('created_at', 'desc')),
+
+            'Terpublikasi' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
+                    ->orderBy('created_at', 'desc')),
+
+            'Tidak Terpublikasi' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->where('status_lowongan', ContentStatus::TIDAK_TERPUBLIKASI->value)
+                    ->orderBy('created_at', 'desc')),
+
+            'Periode Dibuka' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->where('tanggal_dibuka', '<=', now())
                     ->where('tanggal_ditutup', '>=', now())
                     ->orderBy('created_at', 'desc')),
-            'Ditutup' => Tab::make()
+
+            'Periode Ditutup' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->where('tanggal_ditutup', '<', now())
                     ->orderBy('tanggal_ditutup', 'desc')),
+
             'Diarsipkan' => Tab::make()
                 ->query(fn($query) => $query->onlyTrashed()),
         ];

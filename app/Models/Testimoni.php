@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,6 +38,7 @@ class Testimoni extends Model
 
     protected $casts = [
         'thumbnail_testimoni' => 'array',
+        'status' => ContentStatus::class,
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use App\Filament\Resources\TestimoniResource\Pages;
 use App\Filament\Resources\TestimoniResource\RelationManagers;
 use App\Filament\Resources\TestimoniResource\Widgets\TestimoniStats;
@@ -73,12 +74,12 @@ class TestimoniResource extends Resource
                             ->disabled(),
 
                         Forms\Components\Select::make('status')
-                            ->label('Status Tampilan')
+                            ->label('Status Testimoni')
                             ->options([
-                                'Ditampilkan' => 'Ditampilkan',
-                                'Tidak Ditampilkan' => 'Tidak Ditampilkan',
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
-                            ->default('Tidak Ditampilkan')
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
                             ->required()
                             ->helperText('Pilih untuk menampilkan atau menyembunyikan testimoni ini di website'),
                     ]),
@@ -110,13 +111,13 @@ class TestimoniResource extends Resource
                     ->formatStateUsing(fn(int $state): string => str_repeat('⭐', $state))
                 ,
 
-                Tables\Columns\TextColumn::make('status')
+                Tables\Columns\SelectColumn::make('status')
                     ->label('Status')
-                    ->badge()
-                    ->colors([
-                        'success' => 'Ditampilkan',
-                        'danger' => 'Tidak Ditampilkan',
-                    ]),
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -140,31 +141,14 @@ class TestimoniResource extends Resource
                     ]),
 
                 Tables\Filters\SelectFilter::make('status')
-                    ->label('Status Tampilan')
+                    ->label('Status')
                     ->options([
-                        'Ditampilkan' => 'Ditampilkan',
-                        'Tidak Ditampilkan' => 'Tidak Ditampilkan',
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('toggleStatus')
-                    ->label(
-                        fn(Testimoni $record): string =>
-                        $record->status === 'Ditampilkan' ? 'Sembunyikan' : 'Tampilkan'
-                    )
-                    ->icon(
-                        fn(Testimoni $record): string =>
-                        $record->status === 'Ditampilkan' ? 'heroicon-o-eye-slash' : 'heroicon-o-eye'
-                    )
-                    ->color(
-                        fn(Testimoni $record): string =>
-                        $record->status === 'Ditampilkan' ? 'danger' : 'success'
-                    )
-                    ->action(function (Testimoni $record): void {
-                        $record->status = $record->status === 'Ditampilkan' ? 'Tidak Ditampilkan' : 'Ditampilkan';
-                        $record->save();
-                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -175,8 +159,8 @@ class TestimoniResource extends Resource
                             Forms\Components\Select::make('status')
                                 ->label('Status')
                                 ->options([
-                                    'Ditampilkan' => 'Ditampilkan',
-                                    'Tidak Ditampilkan' => 'Tidak Ditampilkan',
+                                    ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                    ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                                 ])
                                 ->required(),
                         ])
