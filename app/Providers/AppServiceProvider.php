@@ -2,13 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Inertia\Inertia;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Schema;
-use App\Models\User;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
@@ -31,6 +32,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Blade::component('install-input', \App\Installer\Components\InstallInput::class);
+        Blade::component('install-error', \App\Installer\Components\InstallError::class);
+        Blade::component('install-select', \App\Installer\Components\InstallSelect::class);
+
         Vite::prefetch(concurrency: 3);
 
         if (app()->environment('production')) {
