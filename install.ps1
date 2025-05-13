@@ -4,12 +4,13 @@ Write-Host "=== Laravel CMS Installer ===" -ForegroundColor Green
 # Masuk ke folder source
 Set-Location -Path ".\source"
 
-# Jalankan composer install di window baru
-Write-Host "Menjalankan 'composer install' di jendela baru..."
-Start-Process powershell -ArgumentList '-NoExit', '-Command', 'cd .\source; composer install'
+# Jalankan composer install di jendela PowerShell baru, otomatis tertutup setelah selesai
+Write-Host "`nMenjalankan 'composer install' di jendela baru..."
+Start-Process powershell -ArgumentList "-NoLogo", "-NoProfile", "-Command `"cd 'source'; composer install`""
 
-# Tunggu pengguna tekan Enter untuk lanjut
-Read-Host "`nTekan ENTER jika 'composer install' telah selesai..."
+
+# Tunggu pengguna tekan Enter
+Read-Host "`nTekan ENTER untuk melanjutkan setelah 'composer install' selesai..."
 
 # Jalankan npm install
 Write-Host "`nMenjalankan 'npm install'..."
@@ -24,7 +25,7 @@ Write-Host "`nMenjalankan 'php artisan key:generate'..."
 php artisan key:generate
 
 # Buat folder dan file SQLite jika belum ada
-Write-Host "`nMemastikan database.sqlite tersedia..."
+Write-Host "`nMenyiapkan database.sqlite..."
 if (!(Test-Path -Path ".\database")) {
     New-Item -ItemType Directory -Path ".\database" | Out-Null
 }
@@ -36,6 +37,10 @@ if (!(Test-Path -Path $sqlitePath)) {
 } else {
     Write-Host "File database.sqlite sudah ada."
 }
+
+# Jalankan migrate khusus untuk tabel users
+Write-Host "`nMenjalankan migrate hanya untuk tabel users..."
+php artisan migrate --path=database/migrations/0001_01_01_000000_create_users_table.php
 
 # Kembali ke root dan ubah nama folder source
 Set-Location -Path ".."
