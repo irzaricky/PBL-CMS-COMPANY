@@ -18,7 +18,7 @@ class ProdukSeeder extends Seeder
 
         // bagian proses image
         $sourcePath = database_path('seeders/seeder_image/');
-        $targetPath = 'produk-images';
+        $targetPath = 'produk-thumbnails';
 
         // Pastikan folder target ada
         Storage::disk('public')->makeDirectory($targetPath);

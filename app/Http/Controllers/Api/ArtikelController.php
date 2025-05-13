@@ -21,7 +21,7 @@ class ArtikelController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $query = Artikel::with(['kategoriArtikel', 'user'])
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
@@ -51,7 +51,7 @@ class ArtikelController extends Controller
     public function getArticleBySlug($slug)
     {
         try {
-            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $article = Artikel::with(['kategoriArtikel', 'user'])
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->where('slug', $slug)
                 ->firstOrFail();
@@ -76,7 +76,7 @@ class ArtikelController extends Controller
     public function getArticleById($id)
     {
         try {
-            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $article = Artikel::with(['kategoriArtikel', 'user'])
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->findOrFail($id);
 
@@ -129,7 +129,7 @@ class ArtikelController extends Controller
                 return $this->index($request);
             }
 
-            $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $articlesQuery = Artikel::with(['kategoriArtikel', 'user'])
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI);
 
             // Jika ada query pencarian, artikel akan dicari berdasarkan judul
@@ -173,10 +173,10 @@ class ArtikelController extends Controller
     public function getArticleByMostView()
     {
         try {
-            $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $articles = Artikel::with(['kategoriArtikel', 'user'])
                 ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('jumlah_view', 'desc')
-                ->take(5)
+                ->take(1)
                 ->get();
 
             return ArticleListResource::collection($articles);

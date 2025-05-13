@@ -55,8 +55,7 @@ function getImageUrl(image) {
                         }}</span>
                 </div>
             </div>
-
-            <!-- Loading skeleton jika data belum ada -->
+            
             <template v-if="!lowongans.length">
                 <div v-for="n in 1" :key="n"
                     class="flex gap-3 bg-white rounded-lg shadow transition p-3 items-center animate-pulse">

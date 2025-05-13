@@ -57,12 +57,15 @@ async function fetchArticles() {
 function getImageUrl(image) {
     if (!image) return "/image/placeholder.webp";
 
+    // Jika image adalah array (seperti thumbnail_artikel)
     if (typeof image === "object" && image !== null) {
         return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
     }
 
+    // Jika image adalah string langsung (seperti foto_profil)
     return `/storage/${image}`;
 }
+
 
 // Ambil N artikel secara acak dari array
 function getRandomArticles(array, count) {
@@ -135,11 +138,11 @@ function stripHtmlTags(html) {
 
                     </div>
                     <div class="flex items-center gap-4">
-                        <img class="w-12 h-12 rounded-full"
-                            :src="article.user?.foto_profil || 'https://placehold.co/48x48'" />
+                        <img class="w-12 h-12 rounded-full" :src="getImageUrl(article.user.foto_profil)" />
+
                         <div class="flex flex-col">
                             <div class="text-Color-Scheme-1-Text text-sm font-semibold leading-tight">
-                                {{ article.user?.name || 'Anonim' }}
+                                {{ article.user.name || 'Anonim' }}
                             </div>
                             <div class="flex items-center gap-2 text-sm text-Color-Scheme-1-Text">
                                 <span>{{ formatDate(article.created_at) }}</span>

@@ -18,7 +18,7 @@ class GaleriSeeder extends Seeder
 
         // bagian proses image
         $sourcePath = database_path('seeders/seeder_image/');
-        $targetPath = 'galeri-images';
+        $targetPath = 'galeri-thumbnails';
 
         // Pastikan folder target ada
         Storage::disk('public')->makeDirectory($targetPath);

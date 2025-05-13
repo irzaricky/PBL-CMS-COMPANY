@@ -13,6 +13,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\Register;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
@@ -55,7 +56,7 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->globalSearch(false)
             ->font('Plus jakarta Sans')
-            ->registration()
+            ->registration(Register::class)
             ->colors([
                 'primary' => '#3b82f6',
             ])

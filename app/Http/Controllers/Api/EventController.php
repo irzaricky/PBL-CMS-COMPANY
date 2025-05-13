@@ -83,7 +83,7 @@ class EventController extends Controller
     {
         try {
             $event = Event::orderBy('waktu_start_event', 'desc')
-                ->take(5)
+                ->take(1)
                 ->get();
 
             return EventListResource::collection($event);

@@ -73,7 +73,7 @@ const mapUrl = ref("");
                         <li><a href="#" class="hover:underline">Galeri</a></li>
                         <li><a href="#" class="hover:underline">Tentang Kami</a></li>
                         <li><a href="#" class="hover:underline">Unduhan</a></li>
-                        <li><a href="#" class="hover:underline">Portofolio</a></li>
+                        <li><a href="#" class="hover:underline">Produk</a></li>
                         <li><a href="#" class="hover:underline">Event</a></li>
                         <li><a href="#" class="hover:underline">Artikel</a></li>
                         <li><a href="#" class="hover:underline">Lowongan</a></li>
@@ -106,12 +106,11 @@ const mapUrl = ref("");
 
                 <!-- Kolom 4 -->
                 <div class="flex flex-col justify-center h-full">
-                    <div
-                        v-if="profil_perusahaan?.link_alamat_perusahaan && profil_perusahaan.link_alamat_perusahaan.includes('https://www.google.com/maps/embed?pb=')">
-                        <div class="w-full aspect-[4/3] rounded-lg overflow-hidden">
+                    <!-- <div -->
+                        <div class="w-full lg:aspect-[4/3] rounded-lg overflow-hidden">
                             <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7910.17971246413!2d110.8504919!3d-7.565182!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a14234667a3fd%3A0xbda63b32997616ad!2sUniversitas%20Sebelas%20Maret%20(UNS)!5e0!3m2!1sid!2sid!4v1746990931583!5m2!1sid!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         </div>
-                    </div>
+                    <!-- </div> -->
                 </div>
             </div>
         </div>
