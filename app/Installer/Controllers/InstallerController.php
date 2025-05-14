@@ -79,9 +79,16 @@ class InstallerController extends Controller
     {
         $rules = config('install.profil_perusahaan');
 
+        // Debug information
+        \Log::info('Form submission received', [
+            'has_file' => $request->hasFile('logo_perusahaan'),
+            'all_inputs' => $request->all(),
+        ]);
+
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
+            \Log::warning('Validation failed', ['errors' => $validator->errors()]);
             return $redirect->route('profil_perusahaan')->withInput()->withErrors($validator->errors());
         }
 
@@ -93,19 +100,35 @@ class InstallerController extends Controller
         // Handle logo upload if provided
         if ($request->hasFile('logo_perusahaan')) {
             $logo = $request->file('logo_perusahaan');
-            $logoName = time() . '.' . $logo->getClientOriginalExtension();
 
-            // Delete old logo file if exists
-            if ($profilPerusahaan && $profilPerusahaan->logo_perusahaan) {
-                $oldPath = storage_path('app/public/' . $profilPerusahaan->logo_perusahaan);
-                if (file_exists($oldPath)) {
-                    unlink($oldPath);
+            // Validate the file
+            if ($logo->isValid()) {
+                $logoName = time() . '.' . $logo->getClientOriginalExtension();
+
+                // Delete old logo file if exists
+                if ($profilPerusahaan && $profilPerusahaan->logo_perusahaan) {
+                    $oldPath = storage_path('app/public/' . $profilPerusahaan->logo_perusahaan);
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
                 }
-            }
 
-            // Store the file in the same directory that Filament uses (perusahaan-logo)
-            $path = $logo->storeAs('perusahaan-logo', $logoName, 'public');
-            $data['logo_perusahaan'] = $path;
+                // Make sure directory exists
+                $directory = storage_path('app/public/perusahaan-logo');
+                if (!file_exists($directory)) {
+                    mkdir($directory, 0755, true);
+                }
+
+                // Store the file in the same directory that Filament uses (perusahaan-logo)
+                $path = $logo->storeAs('perusahaan-logo', $logoName, 'public');
+                $data['logo_perusahaan'] = $path;
+            } else {
+                // Log error for debugging
+                \Log::error('Logo upload failed: ' . $logo->getErrorMessage());
+                return $redirect->route('profil_perusahaan')
+                    ->withInput()
+                    ->withErrors(['logo_perusahaan' => 'File upload failed. Please try again.']);
+            }
         }
 
         if ($profilPerusahaan) {

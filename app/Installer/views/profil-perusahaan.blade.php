@@ -28,7 +28,10 @@
 
                             <div class="col-md-12 mb-3">
                                 <label class="form-label">Logo Perusahaan</label>
-                                <input type="file" class="form-control" name="logo_perusahaan">
+                                <input type="file" class="form-control" name="logo_perusahaan"
+                                    accept="image/jpeg,image/png,image/jpg">
+                                <small class="form-text text-muted">Upload logo perusahaan (JPG, PNG, JPEG - maks.
+                                    2MB)</small>
                                 <x-install-error for="logo_perusahaan" />
                             </div>
 
