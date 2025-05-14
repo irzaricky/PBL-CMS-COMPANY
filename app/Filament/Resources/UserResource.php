@@ -97,6 +97,7 @@ class UserResource extends Resource
                                 'Kontrak' => 'Pegawai Kontrak',
                                 'Magang' => 'Pegawai Magang',
                                 'Percobaan' => 'Masa Percobaan',
+                                'Non Pegawai' => 'Non Pegawai',
                             ])
                             ->nullable(),
 
@@ -143,6 +144,7 @@ class UserResource extends Resource
                     ->alignment('center')
                     ->colors([
                         'primary' => 'Tetap',
+                        'secondary' => 'Non Pegawai',
                         'success' => 'Kontrak',
                         'warning' => 'Magang',
                         'danger' => 'Percobaan',

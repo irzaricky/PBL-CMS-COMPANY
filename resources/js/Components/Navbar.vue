@@ -108,8 +108,8 @@ function getImageUser(imagePath) {
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center space-x-8">
                 <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda</a>
-                <a href="/portofolio"
-                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">Portofolio</a>
+                <a href="/produk"
+                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">Produk</a>
                 <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback</a>
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
@@ -173,7 +173,7 @@ function getImageUser(imagePath) {
             </template>
 
             <a href="/" class="text-2xl py-1">Beranda</a>
-            <a href="/portofolio" class="text-2xl py-1">Portofolio</a>
+            <a href="/produk" class="text-2xl py-1">Produk</a>
             <a href="/" class="text-2xl py-1">Feedback</a>
 
             <!-- Tombol Lainnya -->

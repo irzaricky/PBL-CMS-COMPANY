@@ -114,7 +114,7 @@ class GaleriResource extends Resource
                             ->image()
                             ->multiple()
                             ->reorderable()
-                            ->directory('galeri-images')
+                            ->directory('galeri-thumbnails')
                             ->maxFiles(10)
                             ->helperText('Upload hingga 10 gambar (format: jpg, png, webp)')
                             ->disk('public')

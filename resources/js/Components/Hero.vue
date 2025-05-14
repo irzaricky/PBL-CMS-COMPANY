@@ -34,8 +34,7 @@ onBeforeUnmount(() => {
     }
 
     100% {
-        transform: scale(1.25) translate(0, 0);
-        /* Adjusted to keep the image within bounds */
+        transform: scale(3.25) translate(0, 0);
     }
 }
 

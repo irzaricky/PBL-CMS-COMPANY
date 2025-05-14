@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-vue-next";
 
 <template>
     <div class="px-20 md:px-20 lg:px-20 font-custom bottom-6 bg-transparent">
-        <div class="relative w-full max-w-7xl mx-auto">
+        <div class="relative w-full max-w-7xl mx-auto top-12">
             <!-- Wrapper with background -->
             <div
                 class="bg-gray-100 rounded-xl py-6 px-6 md:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 mt-14 shadow-md">
