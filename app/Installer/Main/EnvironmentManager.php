@@ -33,6 +33,7 @@ class EnvironmentManager
             'APP_DEBUG=' . $request->app_debug . "\n" .
             'APP_LOG_LEVEL=' . $request->app_log_level . "\n" .
             'APP_URL=' . $request->app_url . "\n" .
+            'APP_TIMEZONE=' . ($request->app_timezone ?? 'UTC') . "\n" .
             'APP_INSTALLED=false' . "\n\n" .
             'DB_CONNECTION=' . $request->database_connection . "\n";
 

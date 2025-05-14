@@ -82,7 +82,10 @@
                                 <x-install-error for="app_url" />
                             </div>
 
-                            <div class="col-md-4 mb-3"></div>
+                            <div class="col-md-4 mb-3">
+                                <x-timezone-select label="Timezone" required="true" name="app_timezone" />
+                                <x-install-error for="app_timezone" />
+                            </div>
 
 
                             <div class="col-md-4 mb-3">
