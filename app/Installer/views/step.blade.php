@@ -6,15 +6,22 @@
                 <form id="msform">
                     <ul id="progressbar">
                         <li class="{{ Route::currentRouteName() == 'installs' ? 'active' : '' }} {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
-                            id="RequirementsPermissions"><strong>Requirements & Permissions</strong>
+                            id="RequirementsPermissions">
+                            <i class="fas fa-check-circle"></i>
+                            <strong>Requirements & Permissions</strong>
                         </li>
                         <li class="{{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }} {{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
-                            id="DatabaseImport"><strong>Database Import</strong></li>
+                            id="DatabaseImport">
+                            <i class="fas fa-database"></i>
+                            <strong>Database Import</strong>
+                        </li>
                         <li class="{{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
                             id="profilPerusahaan">
+                            <i class="fas fa-building"></i>
                             <strong>Profil Perusahaan</strong>
                         </li>
                         <li class="{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" id="confirm">
+                            <i class="fas fa-flag-checkered"></i>
                             <strong>Finish</strong>
                         </li>
                     </ul>
