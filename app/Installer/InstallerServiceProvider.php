@@ -32,7 +32,7 @@ class InstallerServiceProvider extends ServiceProvider
             );
         });
 
-        $this->loadViewsFrom(__DIR__ . '/Views', 'InstallerEragViews');
+        $this->loadViewsFrom(__DIR__ . '/views', 'InstallerEragViews');
     }
 
     /**
@@ -47,7 +47,7 @@ class InstallerServiceProvider extends ServiceProvider
         // Register database connection check middleware
         $router->aliasMiddleware('check.database', CheckDatabaseConnectionMiddleware::class);
 
-        Blade::component('install-input', InstallInput::class);
+        Blade::component('  ', InstallInput::class);
         Blade::component('install-error', InstallError::class);
         Blade::component('install-select', InstallSelect::class);
         Blade::component('timezone-select', TimezoneSelect::class);

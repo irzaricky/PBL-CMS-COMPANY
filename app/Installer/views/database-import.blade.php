@@ -83,7 +83,12 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <x-timezone-select label="Timezone" required="true" name="app_timezone" />
+                                @component('InstallerEragViews::components.timezone-select', [
+                                    'label' => 'Timezone',
+                                    'required' => true,
+                                    'name' => 'app_timezone'
+                                ])
+                                @endcomponent
                                 <x-install-error for="app_timezone" />
                             </div>
 
