@@ -17,10 +17,10 @@ class FilamentUserSeeder extends Seeder
     {
         // Siapkan gambar dari folder seeder
         $sourcePath = database_path('seeders/seeder_image_foto_profil');
-        $targetPath = 'foto-profil';
+        $targetPath = 'profile-photos';
         Storage::disk('public')->makeDirectory($targetPath);
 
-        $files = array_values(array_filter(scandir($sourcePath), fn ($f) => !in_array($f, ['.', '..'])));
+        $files = array_values(array_filter(scandir($sourcePath), fn($f) => !in_array($f, ['.', '..'])));
 
         // Fungsi ambil dan simpan 1 gambar acak
         $getRandomProfilePicture = function () use ($files, $sourcePath, $targetPath) {
