@@ -8,6 +8,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Installer\Components\InstallError;
 use App\Installer\Components\InstallInput;
 use App\Installer\Components\InstallSelect;
+use App\Installer\Components\TimezoneSelect;
 use App\Installer\Middleware\InstallMiddleware;
 use App\Installer\Middleware\CheckDatabaseConnectionMiddleware;
 
@@ -49,5 +50,6 @@ class InstallerServiceProvider extends ServiceProvider
         Blade::component('install-input', InstallInput::class);
         Blade::component('install-error', InstallError::class);
         Blade::component('install-select', InstallSelect::class);
+        Blade::component('timezone-select', TimezoneSelect::class);
     }
 }
