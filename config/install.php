@@ -120,7 +120,7 @@ return [
 
     'profil_perusahaan' => [
         'nama_perusahaan' => 'required|string|max:100',
-        'logo_perusahaan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'logo_perusahaan' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         'deskripsi_perusahaan' => 'nullable|string',
         'alamat_perusahaan' => 'required|string|max:200',
         'link_alamat_perusahaan' => 'nullable|string|max:255',
