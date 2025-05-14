@@ -60,8 +60,8 @@ class UserResource extends Resource
                             ->imageResizeMode('cover')
                             ->imageResizeTargetWidth(100)
                             ->imageResizeTargetHeight(100)
-                            ->optimize('webp')
-                        ,
+                            ->optimize('webp'),
+
                         Forms\Components\Textarea::make('alamat')
                             ->label('Alamat')
                             ->rows(3)
@@ -219,7 +219,7 @@ class UserResource extends Resource
                 ]),
             ]);
     }
-    
+
 
     public static function getRelations(): array
     {

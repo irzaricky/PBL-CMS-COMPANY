@@ -19,7 +19,7 @@ class EditProfile extends BaseEditProfile
 					->label('Foto profil')
 					->image()
 					->disk('public')
-					->directory('foto-profil')
+					->directory('profile-photos')
 					->avatar()
 					->maxSize(1024),
 				$this->getPasswordFormComponent(),
