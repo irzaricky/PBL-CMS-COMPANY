@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import Navbar from "@/Components/Navbar.vue";
 import Footer from "@/Components/Footer.vue";
+import Feedback from "@/Components/Feedback.vue";
 
     const showingNavigationDropdown = ref(false);
 </script>
@@ -12,6 +13,7 @@ import Footer from "@/Components/Footer.vue";
         <main>
             <slot> </slot>
         </main>
+        <Feedback />
         <Footer />
     </div>
 </template>

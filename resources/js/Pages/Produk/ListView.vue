@@ -1,6 +1,7 @@
 <script setup>
 import Navbar from '@/Components/Navbar.vue';
 import Footer from '@/Components/Footer.vue';
+import AppLayout from '@/Layouts/AppLayout.vue';
 import { ref, onMounted } from "vue";
 import { Check, CheckCheck, DollarSign, Wallet } from 'lucide-vue-next';
 
@@ -41,7 +42,7 @@ function getImageUrl(image) {
 </script>
 
 <template>
-    <Navbar />
+    <AppLayout>
 
     <div class="relative w-full bg-cover bg-center bg-no-repeat px-4 md:px-8 lg:px-16 py-28 flex flex-col justify-start items-center gap-20 overflow-hidden"
         :style="produk.length ? `background-image: url('${getImageUrl(produk[0].thumbnail_produk)}')` : ''">
@@ -140,9 +141,6 @@ function getImageUrl(image) {
                 </div>
             </div>
         </div>
-
-
     </div>
-
-    <Footer />
+</AppLayout>
 </template>

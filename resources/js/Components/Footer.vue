@@ -56,10 +56,10 @@ function lihatSelengkapnya() {
 </script>
 
 <template>
-    <footer class="bg-secondary text-white w-full font-custom text-sm top-12">
-        <div class="px-5 pt-5 lg:px-10 top-12 ">
+    <footer class="bg-secondary text-white w-full font-custom text-sm">
+        <div class="px-5 pt-5 lg:px-10">
             <!-- Wrapper untuk pusat grid -->
-            <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-10 mx-auto lg:items-stretch">
+            <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-10 mx-auto lg:items-stretch mt-10">
                 <!-- Kolom 1 -->
                 <div v-if="profil_perusahaan" class="lg:w-[120%]">
                     <div class="flex items-center justify-center h-32">
