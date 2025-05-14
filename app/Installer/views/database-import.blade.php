@@ -1,6 +1,7 @@
 @section('title', 'Database Import')
 @extends('InstallerEragViews::app-layout')
 @section('content')
+
     <section class="mt-4">
         <div class="container">
             @include('InstallerEragViews::includes.database-connection-error')
@@ -98,26 +99,27 @@
                                 <x-install-input label="Database Name" required="true" name="database_name" type="text"
                                     value="{{ old('database_name') }}" />
                                 <x-install-error for="database_name" />
-                                <span class="text-muted" id="sqlite_help_text" style="display: none;">
-                                    File akan dibuat secara otomatis di storage/app/
-                                </span>
+                                <div class="text-muted small mt-1" id="sqlite_help_text" style="display: none;">
+                                    File SQLite akan otomatis dibuat di direktori <code>storage/</code> (contoh:
+                                    <code>mydb.sqlite</code>)
+                                </div>
                             </div>
 
                             <!-- MySQL specific fields -->
                             <div class="mysql-only col-md-4 mb-3" id="database_host_container">
-                                <x-install-input label="Database Host" required="true" name="database_hostname" type="text"
+                                <x-install-input label="Database Host" required="false" name="database_hostname" type="text"
                                     value="{{ old('database_hostname', '127.0.0.1') }}" />
                                 <x-install-error for="database_hostname" />
                             </div>
 
                             <div class="mysql-only col-md-4 mb-3" id="database_port_container">
-                                <x-install-input label="Database Port" required="true" name="database_port" type="text"
+                                <x-install-input label="Database Port" required="false" name="database_port" type="text"
                                     value="{{ old('database_port', '3306') }}" />
                                 <x-install-error for="database_port" />
                             </div>
 
                             <div class="mysql-only col-md-4 mb-3" id="database_user_container">
-                                <x-install-input label="Database User Name" required="true" name="database_username"
+                                <x-install-input label="Database User Name" required="false" name="database_username"
                                     type="text" value="{{ old('database_username') }}" />
                                 <x-install-error for="database_username" />
                             </div>
@@ -174,15 +176,24 @@
                         field.style.display = 'none';
                     });
 
-                    // Show SQLite help text
-                    if (sqliteHelpText) {
-                        sqliteHelpText.style.display = 'block';
-                    }
+                    // Remove required attribute from MySQL fields
+                    document.querySelectorAll('.mysql-only input').forEach(input => {
+                        // Store the original required state if needed for MySQL
+                        if (input.hasAttribute('required')) {
+                            input.setAttribute('data-was-required', 'true');
+                            input.removeAttribute('required');
+                        }
+                    });
 
                     // Move database_name field to take up more space
                     const dbNameContainer = document.getElementById('database_name_container');
                     if (dbNameContainer) {
                         dbNameContainer.className = 'col-md-8 mb-3';
+
+                        // Show SQLite help text within the database_name_container
+                        if (sqliteHelpText) {
+                            sqliteHelpText.style.display = 'block';
+                        }
                     }
                 } else {
                     // Show MySQL fields
@@ -190,15 +201,24 @@
                         field.style.display = 'block';
                     });
 
-                    // Hide SQLite help text
-                    if (sqliteHelpText) {
-                        sqliteHelpText.style.display = 'none';
-                    }
+                    // Add required attribute to MySQL fields that need it
+                    const hostnameInput = document.querySelector('input[name="database_hostname"]');
+                    const portInput = document.querySelector('input[name="database_port"]');
+                    const usernameInput = document.querySelector('input[name="database_username"]');
+
+                    if (hostnameInput) hostnameInput.setAttribute('required', 'required');
+                    if (portInput) portInput.setAttribute('required', 'required');
+                    if (usernameInput) usernameInput.setAttribute('required', 'required');
 
                     // Reset database_name field size
                     const dbNameContainer = document.getElementById('database_name_container');
                     if (dbNameContainer) {
                         dbNameContainer.className = 'col-md-4 mb-3';
+
+                        // Hide SQLite help text
+                        if (sqliteHelpText) {
+                            sqliteHelpText.style.display = 'none';
+                        }
                     }
                 }
             }            // Add event listener to database connection dropdown
@@ -206,6 +226,12 @@
 
             // Run toggle on page load
             toggleDatabaseFields();
+
+            // Set initial required attributes based on selected connection
+            document.addEventListener('DOMContentLoaded', function () {
+                // Run once to set required attributes
+                toggleDatabaseFields();
+            });
 
             // Add test connection functionality
             const testConnectionBtn = document.getElementById('test_connection_button');
@@ -241,10 +267,15 @@
                             messageDiv.className = data.success ? 'alert alert-success' : 'alert alert-danger';
                             messageDiv.innerHTML = '<strong>' + (data.success ? 'Success!' : 'Error!') + '</strong> ' + data.message;
 
-                            // Add message at the top of the form
+                            // Add message at the top of the form inside the container
                             const container = document.querySelector('.container');
                             if (container) {
-                                container.insertBefore(messageDiv, container.firstChild);
+                                const firstChild = container.querySelector(':first-child');
+                                if (firstChild) {
+                                    container.insertBefore(messageDiv, firstChild);
+                                } else {
+                                    container.appendChild(messageDiv);
+                                }
                             }
 
                             // Scroll to top to show message
@@ -260,10 +291,15 @@
                             errorDiv.className = 'alert alert-danger';
                             errorDiv.innerHTML = '<strong>Connection Error!</strong> Could not test database connection.';
 
-                            // Add error at the top of the form
+                            // Add error at the top of the form inside the container
                             const container = document.querySelector('.container');
                             if (container) {
-                                container.insertBefore(errorDiv, container.firstChild);
+                                const firstChild = container.querySelector(':first-child');
+                                if (firstChild) {
+                                    container.insertBefore(errorDiv, firstChild);
+                                } else {
+                                    container.appendChild(errorDiv);
+                                }
                             }
 
                             // Scroll to top to show error
@@ -280,12 +316,36 @@
                 previousErrors.forEach(error => error.remove());
             }
 
+            // Function to prepare the form for submission - no longer need to touch required attributes
+            function prepareFormForSubmission() {
+                // Nothing special needed - the toggleDatabaseFields function handles required attributes
+                // Just add default values for hidden MySQL fields when SQLite is selected
+                if (dbConnectionSelect.value === 'sqlite') {
+                    const hostnameInput = document.querySelector('input[name="database_hostname"]');
+                    const portInput = document.querySelector('input[name="database_port"]');
+                    const usernameInput = document.querySelector('input[name="database_username"]');
+                    const databaseInput = document.querySelector('input[name="database_name"]');
+
+                    // Make sure SQLite databases have .sqlite extension
+                    if (databaseInput && databaseInput.value && !databaseInput.value.toLowerCase().endsWith('.sqlite')) {
+                        databaseInput.value = databaseInput.value + '.sqlite';
+                    }
+
+                    if (hostnameInput && !hostnameInput.value) hostnameInput.value = '127.0.0.1';
+                    if (portInput && !portInput.value) portInput.value = '3306';
+                    if (usernameInput && !usernameInput.value) usernameInput.value = 'sqlite';
+                }
+            }
+
             form.addEventListener('submit', function (e) {
                 // Clear any previous error messages
                 clearPreviousErrors();
 
                 // Log form submission
                 console.log('Form is being submitted');
+
+                // Prepare the form before submission
+                prepareFormForSubmission();
 
                 // Get submit button and disable it
                 const nextButton = document.getElementById('next_button');
@@ -366,8 +426,13 @@
                                         '<li>Your username and password are correct</li>' +
                                         '<li>The user has proper permissions on the database</li></ul>';
 
-                                    // Add error div at the top of the form
-                                    form.insertAdjacentElement('beforebegin', errorDiv);
+                                    // Add error div at the top of the form content
+                                    const formCard = form.querySelector('.card-body');
+                                    if (formCard) {
+                                        formCard.insertAdjacentElement('afterbegin', errorDiv);
+                                    } else {
+                                        form.insertAdjacentElement('afterbegin', errorDiv);
+                                    }
 
                                     // Scroll to top to show error
                                     window.scrollTo(0, 0);
@@ -379,7 +444,7 @@
                             if (jsonData.redirect) {
                                 window.location.href = jsonData.redirect;
                             } else if (jsonData.success) {
-                                window.location.href = '{{ route('account') }}';
+                                window.location.href = '{{ route('profil_perusahaan') }}';
                             }
                         } catch (e) {
                             console.log('Not a JSON response', e);
@@ -391,7 +456,7 @@
                                 if (match) {
                                     window.location.href = match[1];
                                 } else if (status < 400) { // Only redirect on success status
-                                    window.location.href = '{{ route('account') }}';
+                                    window.location.href = '{{ route('profil_perusahaan') }}';
                                 }
                             } else {
                                 // Probably HTML response, replace current page
@@ -416,12 +481,12 @@
                         errorDiv.className = 'alert alert-danger';
                         errorDiv.innerHTML = '<strong>Connection Error!</strong><p>An error occurred while communicating with the server. Please check your connection and try again.</p>';
 
-                        // Add error message at top of form
-                        const container = document.querySelector('.container');
-                        if (container) {
-                            container.insertBefore(errorDiv, container.firstChild);
+                        // Add error message at top of form content
+                        const formCard = form.querySelector('.card-body');
+                        if (formCard) {
+                            formCard.insertAdjacentElement('afterbegin', errorDiv);
                         } else {
-                            form.insertAdjacentElement('beforebegin', errorDiv);
+                            form.insertAdjacentElement('afterbegin', errorDiv);
                         }
 
                         window.scrollTo(0, 0);

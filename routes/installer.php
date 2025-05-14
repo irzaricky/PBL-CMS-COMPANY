@@ -22,8 +22,8 @@ Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], func
     Route::post('test-database-connection', [DatabaseTestController::class, 'testConnection'])->name('test_database_connection');
 
     Route::middleware([CheckDatabaseConnectionMiddleware::class])->group(function () {
-        Route::get('account', [InstallerController::class, 'account'])->name('account');
-        Route::post('account-save', [InstallerController::class, 'saveAccount'])->name('saveAccount');
+        Route::get('profil-perusahaan', [InstallerController::class, 'profilPerusahaan'])->name('profil_perusahaan');
+        Route::post('profil-perusahaan-save', [InstallerController::class, 'saveProfilPerusahaan'])->name('saveProfilPerusahaan');
 
         Route::get('finish', [InstallerController::class, 'finish'])->name('finish');
         Route::get('finish-save', [InstallerController::class, 'finishSave'])->name('finishSave');

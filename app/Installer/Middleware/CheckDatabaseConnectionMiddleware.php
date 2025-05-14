@@ -21,8 +21,8 @@ class CheckDatabaseConnectionMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Only apply this middleware for account and finish routes during installation
-        if (in_array($request->route()->getName(), ['account', 'saveAccount', 'finish', 'finishSave'])) {
+        // Only apply this middleware for profil_perusahaan and finish routes during installation
+        if (in_array($request->route()->getName(), ['profil_perusahaan', 'saveProfilPerusahaan', 'finish', 'finishSave'])) {
             if (!$this->checkDatabaseConnection()) {
                 Log::error('Database connection not configured properly. Redirecting to database setup.');
 

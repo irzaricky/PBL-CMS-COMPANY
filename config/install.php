@@ -70,10 +70,10 @@ return [
                 'app_log_level' => 'required|string|max:50',
                 'app_url' => 'required|url',
                 'database_connection' => 'required|in:mysql,sqlite',
-                'database_hostname' => 'required_if:database_connection,mysql|string|max:50',
-                'database_port' => 'required_if:database_connection,mysql|numeric',
+                'database_hostname' => 'nullable|string|max:50',
+                'database_port' => 'nullable|numeric',
                 'database_name' => 'required|string|max:50',
-                'database_username' => 'required_if:database_connection,mysql|string|max:50',
+                'database_username' => 'nullable|string|max:50',
                 'database_password' => 'nullable|string|max:50',
             ],
         ],
@@ -116,11 +116,17 @@ return [
         'VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"' . "\n" .
         'VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"',
 
-    // account
+    // profil perusahaan
 
-    'account' => [
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users|max:255',
-        'password' => 'required|string|min:6',
+    'profil_perusahaan' => [
+        'nama_perusahaan' => 'required|string|max:100',
+        'logo_perusahaan' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'deskripsi_perusahaan' => 'nullable|string',
+        'alamat_perusahaan' => 'required|string|max:200',
+        'link_alamat_perusahaan' => 'nullable|string|max:255',
+        'email_perusahaan' => 'required|email|max:50',
+        'sejarah_perusahaan' => 'nullable|string',
+        'visi_perusahaan' => 'nullable|string',
+        'misi_perusahaan' => 'nullable|string',
     ],
 ];

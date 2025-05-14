@@ -48,7 +48,7 @@ class InstallerController extends Controller
         return redirect(route('database_import'));
     }
 
-    public function account()
+    public function profilPerusahaan()
     {
         // Double-check database connection
         try {
@@ -67,7 +67,7 @@ class InstallerController extends Controller
                     ->withErrors(['database_connection' => 'Database migration failed. Please check your database configuration.']);
             }
 
-            return view('InstallerEragViews::account');
+            return view('InstallerEragViews::profil-perusahaan');
         } catch (\Exception $e) {
             return redirect()->route('database_import')
                 ->with('database_error', 'Database error: ' . $e->getMessage())
@@ -75,21 +75,29 @@ class InstallerController extends Controller
         }
     }
 
-    public function saveAccount(Request $request, Redirector $redirect)
+    public function saveProfilPerusahaan(Request $request, Redirector $redirect)
     {
-        $rules = config('install.account');
+        $rules = config('install.profil_perusahaan');
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return $redirect->route('account')->withInput()->withErrors($validator->errors());
+            return $redirect->route('profil_perusahaan')->withInput()->withErrors($validator->errors());
         }
 
-        unset($request['_token']);
+        $data = $request->except(['_token', 'logo_perusahaan']);
 
-        $request['password'] = Hash::make($request->password);
+        // Handle logo upload if provided
+        if ($request->hasFile('logo_perusahaan')) {
+            // Store the file in the same directory that Filament uses (perusahaan-logo)
+            $logo = $request->file('logo_perusahaan');
+            $logoName = time() . '.' . $logo->getClientOriginalExtension();
+            $path = $logo->storeAs('perusahaan-logo', $logoName, 'public');
+            $data['logo_perusahaan'] = $path;
+        }
 
-        DB::table('users')->insert($request->all());
+        // Create ProfilPerusahaan record
+        \App\Models\ProfilPerusahaan::create($data);
 
         return redirect(route('finish'));
     }

@@ -5,14 +5,14 @@
                 <h2 id="heading">{{ config('install.install_title') }}</h2>
                 <form id="msform">
                     <ul id="progressbar">
-                        <li class="{{ Route::currentRouteName() == 'installs' ? 'active' : '' }} {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'account' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
+                        <li class="{{ Route::currentRouteName() == 'installs' ? 'active' : '' }} {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
                             id="RequirementsPermissions"><strong>Requirements & Permissions</strong>
                         </li>
-                        <li class="{{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'account' ? 'active' : '' }} {{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
+                        <li class="{{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }} {{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
                             id="DatabaseImport"><strong>Database Import</strong></li>
-                        <li class="{{ Route::currentRouteName() == 'account' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
-                            id="account">
-                            <strong>Account</strong>
+                        <li class="{{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
+                            id="profilPerusahaan">
+                            <strong>Profil Perusahaan</strong>
                         </li>
                         <li class="{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" id="confirm">
                             <strong>Finish</strong>
@@ -20,7 +20,7 @@
                     </ul>
                     @php
                         $totalSteps = 4;
-                        $currentStep = array_search(Route::currentRouteName(), ['installs', 'database_import', 'account', 'finish']) + 1;
+                        $currentStep = array_search(Route::currentRouteName(), ['installs', 'database_import', 'profil_perusahaan', 'finish']) + 1;
                         $progressPercentage = ($currentStep / $totalSteps) * 100;
                     @endphp
                     <div class="progress" role="progressbar" aria-label="Default striped example"

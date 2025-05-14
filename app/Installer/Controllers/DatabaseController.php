@@ -32,24 +32,68 @@ class DatabaseController extends Controller
         Log::info('Form submission data:', $request->all());
         Log::info('Headers:', $request->headers->all());
 
-        // Check if database name and credentials are provided
-        if (
-            empty($request->input('database_name')) ||
-            empty($request->input('database_hostname')) ||
-            empty($request->input('database_username'))
-        ) {
-            Log::error('Missing required database information');
+        // Check if database name is provided, always required
+        if (empty($request->input('database_name'))) {
+            Log::error('Missing required database name');
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['database_fields' => ['Please provide all required database information']]
+                    'errors' => ['database_fields' => ['Please provide a database name']]
                 ], 422);
             }
 
             return $redirect->route('database_import')->withInput()->withErrors([
-                'database_fields' => 'Please provide all required database information',
+                'database_fields' => 'Please provide a database name',
             ]);
+        }
+
+        // For SQLite, ensure database name has .sqlite extension and is valid
+        if ($request->input('database_connection') === 'sqlite') {
+            $dbName = $request->input('database_name');
+
+            // Sanitize database name to only allow alphanumeric, dashes, underscores
+            $sanitizedName = preg_replace('/[^a-zA-Z0-9\-_\.]/', '', $dbName);
+
+            if ($sanitizedName !== $dbName) {
+                Log::error('Invalid SQLite database name: ' . $dbName);
+
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['database_name' => ['Database name can only contain letters, numbers, dashes, underscores and periods.']]
+                    ], 422);
+                }
+
+                return $redirect->route('database_import')->withInput()->withErrors([
+                    'database_name' => 'Database name can only contain letters, numbers, dashes, underscores and periods.',
+                ]);
+            }
+
+            // Add .sqlite extension if missing
+            if (!str_ends_with(strtolower($sanitizedName), '.sqlite')) {
+                $sanitizedName .= '.sqlite';
+            }
+
+            $request->merge(['database_name' => $sanitizedName]);
+        }
+
+        // For MySQL connection, we need additional checks
+        if ($request->input('database_connection') === 'mysql') {
+            if (empty($request->input('database_hostname')) || empty($request->input('database_username'))) {
+                Log::error('Missing required MySQL database credentials');
+
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'success' => false,
+                        'errors' => ['database_fields' => ['Please provide all required MySQL database information']]
+                    ], 422);
+                }
+
+                return $redirect->route('database_import')->withInput()->withErrors([
+                    'database_fields' => 'Please provide all required MySQL database information',
+                ]);
+            }
         }
 
         $rules = config('install.environment.form.rules');
@@ -111,12 +155,12 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'redirect' => route('account')
+                    'redirect' => route('profil_perusahaan')
                 ]);
             }
 
             // Only proceed to next step if database connection is established
-            return redirect(route('account'));
+            return redirect(route('profil_perusahaan'));
         } catch (\Exception $e) {
             Log::error('Error saving environment: ' . $e->getMessage());
 
@@ -153,12 +197,13 @@ class DatabaseController extends Controller
             return false;
         }
 
-        $settings = config("database.connections.$connection");
-
-        // Handle SQLite differently
+        $settings = config("database.connections.$connection");        // Handle SQLite differently
         if ($connection === 'sqlite') {
-            // Set database file path
-            $databasePath = storage_path('app/' . $database);
+            // Set database file path directly in storage directory
+            $databasePath = storage_path($database);
+
+            // Ensure path uses forward slashes for consistency
+            $databasePath = str_replace('\\', '/', $databasePath);
 
             // Create directory if it doesn't exist
             $dirPath = dirname($databasePath);

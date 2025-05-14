@@ -38,9 +38,9 @@ class EnvironmentManager
 
         // Add database configuration based on connection type
         if ($request->database_connection === 'sqlite') {
-            // For SQLite, only need to specify the database name
-            // The full path will be storage_path('app/' . $request->database_name)
-            $envFileData .= 'DB_DATABASE=' . storage_path('app/' . $request->database_name) . "\n\n";
+            // For SQLite, store just the database name in .env
+            // Laravel will use storage_path($request->database_name) when needed
+            $envFileData .= 'DB_DATABASE=' . $request->database_name . "\n\n";
         } else {
             // For MySQL
             $envFileData .= 'DB_HOST=' . $request->database_hostname . "\n" .
