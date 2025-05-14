@@ -45,6 +45,5 @@ onMounted(async () => {
             <Mitra /> 
         </div>
         <CallToAction />
-        <Feedback />
     </AppLayout>
 </template>

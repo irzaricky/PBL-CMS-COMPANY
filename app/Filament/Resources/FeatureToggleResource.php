@@ -88,7 +88,7 @@ class FeatureToggleResource extends Resource
     {
         return [
             'index' => Pages\ListFeatureToggles::route('/'),
-            'create' => Pages\CreateFeatureToggle::route('/create'),
+            // 'create' => Pages\CreateFeatureToggle::route('/create'),
             'edit' => Pages\EditFeatureToggle::route('/{record}/edit'),
         ];
     }
