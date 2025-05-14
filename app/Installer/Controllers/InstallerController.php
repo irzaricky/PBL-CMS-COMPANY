@@ -87,17 +87,35 @@ class InstallerController extends Controller
 
         $data = $request->except(['_token', 'logo_perusahaan']);
 
+        // Check if ProfilPerusahaan with ID 1 exists
+        $profilPerusahaan = \App\Models\ProfilPerusahaan::find(1);
+
         // Handle logo upload if provided
         if ($request->hasFile('logo_perusahaan')) {
-            // Store the file in the same directory that Filament uses (perusahaan-logo)
             $logo = $request->file('logo_perusahaan');
             $logoName = time() . '.' . $logo->getClientOriginalExtension();
+
+            // Delete old logo file if exists
+            if ($profilPerusahaan && $profilPerusahaan->logo_perusahaan) {
+                $oldPath = storage_path('app/public/' . $profilPerusahaan->logo_perusahaan);
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Store the file in the same directory that Filament uses (perusahaan-logo)
             $path = $logo->storeAs('perusahaan-logo', $logoName, 'public');
             $data['logo_perusahaan'] = $path;
         }
 
-        // Create ProfilPerusahaan record
-        \App\Models\ProfilPerusahaan::create($data);
+        if ($profilPerusahaan) {
+            // Update existing record
+            $profilPerusahaan->update($data);
+        } else {
+            // Create new record with ID 1
+            $data['id_profil_perusahaan'] = 1;
+            \App\Models\ProfilPerusahaan::create($data);
+        }
 
         return redirect(route('finish'));
     }
