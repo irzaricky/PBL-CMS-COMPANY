@@ -105,9 +105,7 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
 
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'store']);
-});
+Route::post('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'store']);
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 
 

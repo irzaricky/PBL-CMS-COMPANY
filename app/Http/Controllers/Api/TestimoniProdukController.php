@@ -27,11 +27,6 @@ class TestimoniProdukController extends Controller
     }
     public function store(Request $request, $produkId)
     {
-        $user = Auth::user();
-        if (!$user) {
-            return response()->json(['message' => 'User tidak terautentikasi'], 401);
-        }
-
         $request->validate([
             'isi_testimoni' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
@@ -41,7 +36,7 @@ class TestimoniProdukController extends Controller
         $testimoni->id_produk = $produkId;
         $testimoni->isi_testimoni = $request->isi_testimoni;
         $testimoni->rating = $request->rating;
-        $testimoni->id_user = $user->id;
+        $testimoni->id_user = $user->id ?? null;
         $testimoni->status = 'Terpublikasi';
         $testimoni->save();
 
