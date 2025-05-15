@@ -37,7 +37,7 @@ function getImageUrl(image) {
 
 <template>
     <div>
-        <div class="font-bold text-h6-bold mb-4 text-typography-main">
+        <div class="font-bold text-h5-bold mb-4 text-typography-main">
             Artikel Populer
         </div>
         <div class="flex flex-col gap-3">

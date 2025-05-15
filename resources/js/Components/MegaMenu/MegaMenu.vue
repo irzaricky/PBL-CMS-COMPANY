@@ -48,12 +48,12 @@ const menuSections = [
 <template>
     <div name="mega-menu"
         class="w-full relative z-30 lg:fixed lg:top-[64px] lg:z-50 bg-primary shadow-xl max-h-[calc(100vh-64px)] overflow-y-auto pt-6 pb-8">
-        <div class="max-w-6xl mx-auto flex flex-col lg:flex-row gap-12 px-6 lg:px-8 justify-center">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 px-6 lg:px-8 justify-center">
             <!-- Menu Sections -->
-            <div class="flex-3 w-full lg:w-3/4 flex flex-col lg:flex-row gap-12 lg:gap-32">
+            <div class="flex-3 w-full lg:w-3/4 flex flex-col lg:flex-row gap-16 lg:gap-32">
                 <div v-for="section in menuSections" :key="section.title">
-                    <div class="font-bold text-h6-bold mb-6 text-typography-main">{{ section.title }}</div>
-                    <div class="flex flex-col gap-6 text-h5 font-medium">
+                    <div class="font-bold text-h5-bold mb-6 text-typography-main">{{ section.title }}</div>
+                    <div class="flex flex-col gap-6 text-h5 font-semibold">
                         <a v-for="link in section.links" :key="link.href" :href="link.href"
                             class="flex items-center gap-4 text-typography-dark hover:text-typography-hover2 transition">
                             <component :is="link.icon" class="w-7 h-7" />

@@ -39,17 +39,17 @@ const mapUrl = ref("");
 
 <template>
     <footer class="bg-secondary text-white w-full font-custom text-sm top-12">
-        <div class="px-5 pt-5 lg:px-10 top-12 ">
+        <div class="px-5 pt-10 lg:px-10 top-12">
             <!-- Wrapper untuk pusat grid -->
             <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-10 mx-auto lg:items-stretch">
                 <!-- Kolom 1 -->
-                <div v-if="profil_perusahaan" class="lg:w-[120%]">
-                    <div class="flex items-center justify-center h-32">
+                <div v-if="profil_perusahaan" class="lg:w-[120%] relative z-20 mt-28 sm:mt-32 md:mt-24">
+                    <div class="flex items-center justify-center pt-4">
                         <img :src="getImageUrl(profil_perusahaan?.logo_perusahaan)" alt="Logo Perusahaan"
-                            class="w-20 object-contain" />
+                            class="w-20 sm:w-24 md:w-28 object-contain" />
                     </div>
                     <h4 class="font-bold text-center text-lg">{{ profil_perusahaan?.nama_perusahaan }}</h4>
-                    <p class="mt-4 text-center">
+                    <p class="mt-2 text-center">
                         {{ profil_perusahaan?.sejarah_perusahaan || 'Sejarah perusahaan belum tersedia.' }}
                     </p>
                     <div class="mt-6">

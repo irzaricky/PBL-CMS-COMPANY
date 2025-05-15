@@ -107,13 +107,13 @@ function getImageUser(imagePath) {
 
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center space-x-8">
-                <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda</a>
+                <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg font-semibold">Beranda</a>
                 <a href="/portofolio"
-                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">Portofolio</a>
-                <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback</a>
+                    class="text-typography-dark hover:text-typography-hover2 transition text-lg font-semibold">Portofolio</a>
+                <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg font-semibold">Feedback</a>
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
-                        class="text-typography-dark hover:text-typography-hover2 transition text-lg flex items-center">
+                        class="text-typography-dark hover:text-typography-hover2 transition text-lg font-semibold flex items-center">
                         Lainnya
                         <ChevronDown class="w-4" />
                     </span>
@@ -136,7 +136,7 @@ function getImageUser(imagePath) {
                 </template>
                 <template v-else>
                     <a href="/login"
-                        class="bg-secondary text-primary px-8 py-2 rounded-xl-figma shadow hover:bg-typography-hover1 transition">
+                        class="bg-secondary text-primary text-lg font-semibold px-8 py-2 rounded-xl-figma shadow hover:bg-typography-hover1 transition">
                         Login
                     </a>
                 </template>
