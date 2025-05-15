@@ -3,7 +3,8 @@ import { ChevronDown, Menu } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import { ref, onMounted, computed } from "vue";
 import axios from "axios";
-import { usePage } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
+
 
 // Reactive variables
 const profil_perusahaan = ref(null);
@@ -100,17 +101,19 @@ function getImageUser(imagePath) {
                     <img :src="getImageUrl(profil_perusahaan?.logo_perusahaan)" alt="Logo Perusahaan"
                         class="h-full w-full object-contain" />
                 </div>
-                <a href="/" class="text-h4-bold text-typography-dark px-2">
-                    {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}
-                </a>
+                <Link href="/" class="text-h4-bold text-typography-dark px-2">
+                {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}
+                </Link>
             </div>
 
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center space-x-8">
-                <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda</a>
-                <a href="/produk"
-                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">Produk</a>
-                <a href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback</a>
+                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda
+                </Link>
+                <Link href="/produk" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Produk
+                </Link>
+                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback
+                </Link>
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
                         class="text-typography-dark hover:text-typography-hover2 transition text-lg flex items-center">
@@ -161,28 +164,26 @@ function getImageUser(imagePath) {
             class="lg:hidden fixed top-[64px] left-0 w-full bg-white px-6 pt-8 pb-8 flex flex-col space-y-4 shadow z-40 font-custom text-black max-h-[calc(100vh-64px)] overflow-y-auto">
             <!-- User Info Mobile -->
             <template v-if="user">
-                <a href="/admin/profile"
+                <Link href="/admin/profile"
                     class="flex items-center space-x-4 pb-4 border-b border-gray-200 hover:bg-gray-50 px-2 py-2 rounded-md transition">
-                    <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
-                        class="w-12 h-12 rounded-full object-cover border border-gray-300" />
-                    <div class="flex flex-col">
-                        <span class="font-semibold text-base text-black">{{ user.name }}</span>
-                        <span class="text-sm text-gray-500">{{ user.email }}</span>
-                    </div>
-                </a>
+                <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
+                    class="w-12 h-12 rounded-full object-cover border border-gray-300" />
+                <div class="flex flex-col">
+                    <span class="font-semibold text-base text-black">{{ user.name }}</span>
+                    <span class="text-sm text-gray-500">{{ user.email }}</span>
+                </div>
+                </Link>
             </template>
 
-            <a href="/" class="text-2xl py-1">Beranda</a>
-            <a href="/produk" class="text-2xl py-1">Produk</a>
-            <a href="/" class="text-2xl py-1">Feedback</a>
+            <Link href="/" class="text-2xl py-1">Beranda</Link>
+            <Link href="/produk" class="text-2xl py-1">Produk</Link>
+            <Link href="/" class="text-2xl py-1">Feedback</Link>
 
             <!-- Tombol Lainnya -->
             <div class="text-2xl py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">
                 <span>Lainnya</span>
                 <ChevronDown class="w-5 h-5" />
             </div>
-
-
 
             <!-- Mobile MegaMenu (inline inside dropdown) -->
             <div v-if="showMegaMenu && isMobile" class="pt-4">

@@ -8,7 +8,7 @@ use App\Models\Testimoni;
 use App\Http\Resources\TestimoniResource;
 use Illuminate\Http\Request;
 
-class TestimoniController extends Controller
+class TestimoniProdukController extends Controller
 {
     /**
      * Mengambil daftar testimoni yang terpublikasi
