@@ -36,8 +36,8 @@ class FeedbackSeeder extends Seeder
                 'id_user' => $faker->numberBetween(9, 13),
                 'subjek_feedback' => $faker->randomElement($subjects),
                 'isi_feedback' => $faker->paragraph(rand(1, 3)),
-                'tanggal_feedback' => $faker->dateTimeBetween('-3 months', 'now'),
                 'tanggapan_feedback' => $hasResponse ? $faker->paragraph(rand(1, 2)) : null,
+                'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ];
         }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,7 +16,7 @@ return new class extends Migration {
             $table->string('nama_media_sosial', 50);
             $table->string('icon', 200)->nullable();
             $table->string('link', 100);
-            $table->enum('status', ['aktif', 'nonaktif'])->default('nonaktif');
+            $table->string('status')->default(ContentStatus::TIDAK_TERPUBLIKASI->value);
             $table->timestamps();
         });
     }

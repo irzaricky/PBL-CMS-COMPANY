@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\ContentStatus;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Artikel;
@@ -103,6 +104,15 @@ class ArtikelResource extends Resource
                             ->unique(ignoreRecord: true)
                             ->dehydrated()
                             ->helperText('Akan terisi otomatis berdasarkan judul'),
+
+                        Forms\Components\Select::make('status_artikel')
+                            ->label('Status Artikel')
+                            ->options([
+                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
+                            ])
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
@@ -148,40 +158,41 @@ class ArtikelResource extends Resource
                 Tables\Columns\TextColumn::make('judul_artikel')
                     ->label('Judul')
                     ->searchable()
-                    ->sortable()
                     ->limit(50),
 
                 Tables\Columns\TextColumn::make('kategoriArtikel.nama_kategori_artikel')
                     ->label('Kategori')
-                    ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Penulis')
-                    ->sortable()
                     ->searchable(),
+
+                Tables\Columns\SelectColumn::make('status_artikel')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->sortable(),
+                    ->dateTime('d M Y H:i'),
 
                 Tables\Columns\TextColumn::make('jumlah_view')
                     ->label('Jumlah View')
-                    ->sortable()
                     ->alignCenter()
                     ->toggleable(isToggledHiddenByDefault: false),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -192,14 +203,25 @@ class ArtikelResource extends Resource
                 Tables\Filters\SelectFilter::make('id_user')
                     ->label('Penulis')
                     ->relationship('user', 'name'),
+
+                Tables\Filters\SelectFilter::make('status_artikel')
+                    ->label('Status')
+                    ->options([
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
                     ->successNotificationTitle('Artikel berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
                     ->successNotificationTitle('Artikel berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
                     ->successNotificationTitle('Artikel berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_artikel');

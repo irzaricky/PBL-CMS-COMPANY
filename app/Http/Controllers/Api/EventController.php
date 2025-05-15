@@ -12,7 +12,7 @@ use Carbon\Carbon;
 class EventController extends Controller
 {
     /**
-     * Get all events
+     * Mengambil daftar event
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -34,7 +34,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get a single article by slug
+     * Mengambil daftar event berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
@@ -55,7 +55,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get the article by id
+     * Mengambil daftar event berdasarkan id
      * 
      * @param int $id
      * @return \App\Http\Resources\Events\EventViewResource|\Illuminate\Http\JsonResponse
@@ -63,7 +63,7 @@ class EventController extends Controller
     public function getEventById($id)
     {
         try {
-            $event = Event::firstOrFail($id);
+            $event = Event::findOrFail($id);
             return new EventViewResource($event);
         } catch (\Exception $e) {
             return response()->json([
@@ -75,7 +75,7 @@ class EventController extends Controller
     }
 
     /**
-     * Get the most recent event
+     * Mengambil event terbaru
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
@@ -92,8 +92,50 @@ class EventController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal Memuat Event',
-                'error' => $e->getMessage(),
-                'data' => [],
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mencari event berdasarkan judul atau lokasi
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $query = $request->input('query');
+
+            // validasi input, jika tidak ada query maka kembalikan semua event
+            if (empty($query)) {
+                return $this->index();
+            }
+
+            $eventsQuery = Event::where(function ($q) use ($query) {
+                $q->where('nama_event', 'LIKE', '%' . $query . '%')
+                    ->orWhere('lokasi_event', 'LIKE', '%' . $query . '%')
+                    ->orWhere('deskripsi_event', 'LIKE', '%' . $query . '%');
+            });
+
+            $events = $eventsQuery->orderBy('waktu_start_event', 'asc')->paginate(10);
+
+            // Check if no events were found
+            if ($events->isEmpty()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Tidak ada event yang sesuai dengan pencarian',
+                    'data' => []
+                ], 200);
+            }
+
+            return EventListResource::collection($events);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mencari event',
+                'error' => $e->getMessage()
             ], 500);
         }
     }

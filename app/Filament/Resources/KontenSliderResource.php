@@ -88,23 +88,21 @@ class KontenSliderResource extends Resource
                 Tables\Columns\TextColumn::make('judul_header')
                     ->label('Judul Header')
                     ->searchable()
-                    ->sortable()
                     ->limit(30),
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pembuat')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -134,11 +132,6 @@ class KontenSliderResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
-                // ]),
             ]);
     }
 

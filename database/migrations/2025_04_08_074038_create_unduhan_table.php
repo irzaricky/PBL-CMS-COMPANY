@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('lokasi_file', 200);
             $table->text('deskripsi')->nullable();
             $table->bigInteger('jumlah_unduhan')->default(0);
+            $table->string('status_unduhan', 50)->default('tidak terpublikasi');
             $table->softDeletes();
             $table->timestamps();
         });

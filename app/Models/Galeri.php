@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,10 +37,12 @@ class Galeri extends Model
         'deskripsi_galeri',
         'slug',
         'jumlah_unduhan',
+        'status_galeri',
     ];
 
     protected $casts = [
         'thumbnail_galeri' => 'array',
+        'status_galeri' => ContentStatus::class,
     ];
 
     /**

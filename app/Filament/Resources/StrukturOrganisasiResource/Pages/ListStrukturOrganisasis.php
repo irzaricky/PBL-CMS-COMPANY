@@ -31,8 +31,9 @@ class ListStrukturOrganisasis extends ListRecords
     public function getTabs(): array
     {
         return [
-            null => Tab::make('Semua')
-                ->query(fn($query) => $query->orderBy('tanggal_mulai', 'desc')),
+            'Semua' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->orderBy('tanggal_mulai', 'desc')),
             'Posisi Aktif' => Tab::make()
                 ->query(fn($query) => $query->whereHas('user', fn($query) => $query->where('status', 'aktif'))
                     ->where(function ($query) {
@@ -46,6 +47,8 @@ class ListStrukturOrganisasis extends ListRecords
                         ->orWhere('tanggal_selesai', '<', now());
                 })
                     ->orderBy('tanggal_selesai', 'desc')),
+            'Diarsipkan' => Tab::make()
+                ->query(fn($query) => $query->onlyTrashed()),
         ];
     }
 }

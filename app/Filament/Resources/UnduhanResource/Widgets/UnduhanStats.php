@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UnduhanResource\Widgets;
 
+use App\Enums\ContentStatus;
 use App\Models\Unduhan;
 use Illuminate\Support\Number;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -23,17 +24,17 @@ class UnduhanStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Unduhan', $this->getPageTableQuery()->count())
-                ->description('Total File Unduhan menurut filter')
-                ->color('primary'),
-
-            Stat::make('Total Download', Number::format($this->getPageTableQuery()->sum('jumlah_unduhan')))
-                ->description('Total file yang diunduh menurut filter')
+            Stat::make('Terpublikasi', Unduhan::query()->where('status_unduhan', ContentStatus::TERPUBLIKASI)->whereNull('deleted_at')->count())
+                ->description('File yang sudah dipublikasikan')
                 ->color('success'),
 
-            Stat::make('Rata-rata Download', Number::format((float) $this->getPageTableQuery()->avg('jumlah_unduhan'), 0))
-                ->description('Rata-rata download menurut filter')
+            Stat::make('Tidak Terpublikasi', Unduhan::query()->where('status_unduhan', ContentStatus::TIDAK_TERPUBLIKASI)->whereNull('deleted_at')->count())
+                ->description('File masih sebagai draft')
                 ->color('warning'),
+
+            Stat::make('Total Download', Number::format(Unduhan::query()->sum('jumlah_unduhan')))
+                ->description('Total file yang diunduh')
+                ->color('primary'),
 
             Stat::make('Unduhan Bulan Ini', Unduhan::query()
                 ->whereMonth('created_at', now()->month)

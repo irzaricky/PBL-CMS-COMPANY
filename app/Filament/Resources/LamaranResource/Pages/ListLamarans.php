@@ -42,6 +42,8 @@ class ListLamarans extends ListRecords
             'Ditolak' => Tab::make()
                 ->query(fn($query) => $query->where('status_lamaran', 'Ditolak')
                     ->orderBy('created_at', 'desc')),
+            'Diarsipkan' => Tab::make()
+                ->query(fn($query) => $query->onlyTrashed()),
         ];
     }
 }

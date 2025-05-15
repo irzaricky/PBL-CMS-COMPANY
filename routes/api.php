@@ -10,10 +10,27 @@ use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\FeatureToggleController;
 use App\Http\Controllers\Api\CaseStudyController;
+use App\Http\Controllers\Api\UnduhanController;
+use App\Http\Controllers\Api\MediaSosialController;
+use App\Http\Controllers\Api\TestimoniController;
+use App\Http\Controllers\Api\MitraController;
+use App\Http\Controllers\Api\StrukturOrganisasiController;
+use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\LamaranController;
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 });
+
+// Post feedback (AUTENTIKASI BELUM DITAMBAHKAN)
+Route::post('/feedback', [FeedbackController::class, 'store']);
+
+// Lamaran routes (AUTENTIKASI BELUM DITAMBAHKAN)
+Route::post('/lamaran', [LamaranController::class, 'store']);
+Route::get('/lamaran/user/{userId}', [LamaranController::class, 'getByUserId']);
+
 
 // Artikel
 Route::prefix('artikel')->group(function () {
@@ -48,6 +65,9 @@ Route::prefix('event')->group(function () {
     // untuk mengambil event yang baru saja dibuat
     Route::get('/newest', [EventController::class, 'getMostRecentEvent']);
 
+    // untuk search event berdasarkan nama atau lokasi
+    Route::get('/search', [EventController::class, 'search']);
+
     // untuk mengambil event berdasarkan id
     Route::get('/id/{id}', [EventController::class, 'getEventById']);
 
@@ -79,6 +99,26 @@ Route::prefix('galeri')->group(function () {
 
 Route::get('/feature-toggles', [FeatureToggleController::class, 'index']);
 
+// Media Sosial
+Route::get('/media-sosial', [MediaSosialController::class, 'index']);
+
+// Testimoni
+Route::get('/testimoni', [TestimoniController::class, 'index']);
+
+// Mitra
+Route::prefix('mitra')->group(function () {
+    // Untuk mengambil semua mitra yang aktif
+    Route::get('/', [MitraController::class, 'index']);
+
+    // Untuk search mitra berdasarkan nama
+    Route::get('/search', [MitraController::class, 'search']);
+
+    // Untuk mengambil mitra berdasarkan id
+    Route::get('/{id}', [MitraController::class, 'getMitraById']);
+});
+
+// Struktur Organisasi
+Route::get('/struktur-organisasi', [StrukturOrganisasiController::class, 'index']);
 
 // Profil Perusahaan
 Route::prefix('profil-perusahaan')->group(function () {
@@ -96,10 +136,13 @@ Route::prefix('produk')->group(function () {
     // Untuk mengambil semua produk
     Route::get('/', [ProdukController::class, 'index']);
 
-    // untuk mengambil artikel berdasarkan id
+    // untuk search produk berdasarkan nama atau deskripsi
+    Route::get('/search', [ProdukController::class, 'search']);
+
+    // untuk mengambil produk berdasarkan id
     Route::get('/id/{id}', [ProdukController::class, 'getProdukById']);
 
-    // untuk mengambil artikel berdasarkan slug
+    // untuk mengambil produk berdasarkan slug
     Route::get('/{slug}', [ProdukController::class, 'getProdukBySlug']);
 
 });
@@ -115,6 +158,14 @@ Route::prefix('lowongan')->group(function () {
     // untuk mengambil lowongan terbaru
     Route::get('/newest', [LowonganController::class, 'getMostRecentLowongan']);
 
+    // untuk search lowongan
+    Route::get('/search', [LowonganController::class, 'search']);
+
+    // untuk mengambil lowongan berdasarkan id
+    Route::get('/id/{id}', [LowonganController::class, 'getLowonganById']);
+
+    // untuk mengambil lowongan berdasarkan slug
+    Route::get('/{slug}', [LowonganController::class, 'getLowonganBySlug']);
 });
 
 // Case Study
@@ -130,4 +181,28 @@ Route::prefix('case-study')->group(function () {
 
     // Untuk mengambil case study berdasarkan slug (termasuk menambah view)
     Route::get('/{slug}', [CaseStudyController::class, 'getCaseStudyBySlug']);
+});
+
+// Unduhan
+Route::prefix('unduhan')->group(function () {
+    // Untuk mengambil semua unduhan yang terpublikasi
+    Route::get('/', [UnduhanController::class, 'index']);
+
+    // Untuk mengambil semua kategori unduhan
+    Route::get('/categories', [UnduhanController::class, 'getCategories']);
+
+    // Untuk search unduhan berdasarkan nama atau kategori
+    Route::get('/search', [UnduhanController::class, 'search']);
+
+    // Untuk mengambil unduhan dengan jumlah download terbanyak
+    Route::get('/most-downloaded', [UnduhanController::class, 'getMostDownloaded']);
+
+    // Untuk mengunduh unduhan dan menambah jumlah unduhan
+    Route::get('/download/{id}', [UnduhanController::class, 'downloadUnduhan']);
+
+    // Untuk mengambil unduhan berdasarkan id
+    Route::get('/id/{id}', [UnduhanController::class, 'getUnduhanById']);
+
+    // Untuk mengambil unduhan berdasarkan slug
+    Route::get('/{slug}', [UnduhanController::class, 'getUnduhanBySlug']);
 });

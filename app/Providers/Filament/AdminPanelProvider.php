@@ -13,6 +13,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\Register;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
@@ -42,11 +43,16 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->spa()
             ->topNavigation()
-            ->brandName(
-                \Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')
-                ? (ProfilPerusahaan::first()->nama_perusahaan ?? 'Admin Panel')
-                : 'Admin Panel'
-            )
+            ->brandName(function () {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')) {
+                        $company = ProfilPerusahaan::first();
+                        return $company ? $company->nama_perusahaan : 'Admin Panel';
+                    }
+                } catch (\Exception $e) {
+                }
+                return 'Admin Panel';
+            })
             ->globalSearch(false)
             ->id('admin')
             ->path('admin')
@@ -55,7 +61,7 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->globalSearch(false)
             ->font('Plus jakarta Sans')
-            ->registration()
+            ->registration(Register::class)
             ->colors([
                 'primary' => '#3b82f6',
             ])

@@ -40,7 +40,7 @@ class FeedbackResource extends Resource
                             ->maxLength(200)
                             ->disabled(),
 
-                        Forms\Components\DatePicker::make('tanggal_feedback')
+                        Forms\Components\DatePicker::make('created_at')
                             ->label('Tanggal Feedback')
                             ->required()
                             ->default(now())
@@ -71,35 +71,29 @@ class FeedbackResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengguna')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('subjek_feedback')
                     ->label('Subjek')
                     ->searchable()
                     ->limit(50),
 
-                Tables\Columns\TextColumn::make('tanggal_feedback')
-                    ->label('Tanggal')
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Tanggal Feedback')
                     ->date('d F Y')
-                    ->sortable(),
+                ,
 
                 Tables\Columns\IconColumn::make('tanggapan_feedback')
                     ->label('Ditanggapi')
+                    ->alignCenter()
                     ->boolean()
                     ->trueIcon('heroicon-o-check-circle')
                     ->falseIcon('heroicon-o-x-circle')
                     ->state(fn(Feedback $record): bool => !empty($record->tanggapan_feedback)),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
@@ -136,7 +130,7 @@ class FeedbackResource extends Resource
     public static function getWidgets(): array
     {
         return [
-             FeedbackStats::class,
+            FeedbackStats::class,
         ];
     }
 

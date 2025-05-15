@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -40,6 +41,7 @@ class CaseStudy extends Model
 
     protected $casts = [
         'thumbnail_case_study' => 'array',
+        'status_case_study' => ContentStatus::class,
     ];
 
     /**

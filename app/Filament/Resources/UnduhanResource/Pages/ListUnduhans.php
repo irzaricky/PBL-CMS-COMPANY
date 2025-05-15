@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\UnduhanResource\Pages;
 
+use App\Enums\ContentStatus;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -31,17 +32,28 @@ class ListUnduhans extends ListRecords
     public function getTabs(): array
     {
         return [
-            null => Tab::make('Semua')
-                ->query(fn($query) => $query->orderBy('nama_unduhan', 'asc')),
-            'Aktif' => Tab::make()
+            'Semua' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('nama_unduhan', 'asc')),
+
+            'Terpublikasi' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->where('status_unduhan', ContentStatus::TERPUBLIKASI->value)
+                    ->orderBy('created_at', 'desc')),
+
+            'Tidak Terpublikasi' => Tab::make()
+                ->query(fn($query) => $query->whereNull('deleted_at')
+                    ->where('status_unduhan', ContentStatus::TIDAK_TERPUBLIKASI->value)
+                    ->orderBy('created_at', 'desc')),
+
             'Terbaru' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),
+
             'Terpopuler' => Tab::make()
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('jumlah_unduhan', 'desc')),
+
             'Diarsipkan' => Tab::make()
                 ->query(fn($query) => $query->onlyTrashed()),
         ];

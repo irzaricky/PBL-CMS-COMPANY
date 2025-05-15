@@ -42,7 +42,7 @@ class FeatureToggleResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('key')
                     ->label('Feature')
-                    ->sortable(),
+                ,
                 Tables\Columns\TextColumn::make('label')
                     ->label('Label'),
                 Tables\Columns\ToggleColumn::make('status_aktif')
@@ -54,11 +54,10 @@ class FeatureToggleResource extends Resource
                 //
             ])
             ->actions([])
-            ->bulkActions([ // Menambahkan BulkAction untuk aktif/nonaktifkan
-                Tables\Actions\BulkAction::make('activate_all') // Bulk Action untuk aktifkan semua
+            ->bulkActions([
+                Tables\Actions\BulkAction::make('activate_all') 
                     ->label('Aktifkan semua')
                     ->action(function (Collection $records) {
-                        // Mengupdate status_aktif menjadi true (aktif) untuk semua yang terpilih
                         $records->each(function ($record) {
                             $record->update(['status_aktif' => true]);
                         });
@@ -66,10 +65,9 @@ class FeatureToggleResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success'),
 
-                Tables\Actions\BulkAction::make('deactivate_all') // Bulk Action untuk nonaktifkan semua
+                Tables\Actions\BulkAction::make('deactivate_all')
                     ->label('Nonaktifkan semua')
                     ->action(function (Collection $records) {
-                        // Mengupdate status_aktif menjadi false (nonaktif) untuk semua yang terpilih
                         $records->each(function ($record) {
                             $record->update(['status_aktif' => false]);
                         });
@@ -90,7 +88,7 @@ class FeatureToggleResource extends Resource
     {
         return [
             'index' => Pages\ListFeatureToggles::route('/'),
-            'create' => Pages\CreateFeatureToggle::route('/create'),
+            // 'create' => Pages\CreateFeatureToggle::route('/create'),
             'edit' => Pages\EditFeatureToggle::route('/{record}/edit'),
         ];
     }

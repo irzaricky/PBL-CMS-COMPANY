@@ -12,7 +12,11 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
 
 class StrukturOrganisasiResource extends Resource
 {
@@ -20,6 +24,14 @@ class StrukturOrganisasiResource extends Resource
     protected static ?string $navigationGroup = 'Company Owner';
     protected static ?string $navigationIcon = 'heroicon-s-users';
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -75,55 +87,56 @@ class StrukturOrganisasiResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('jabatan')
                     ->label('Posisi/Jabatan')
                     ->searchable()
-                    ->sortable(),
+                ,
 
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi Posisi/Jabatan')
                     ->searchable()
                     ->limit(50)
                     ->tooltip(fn(StrukturOrganisasi $record): string => $record->deskripsi)
-                    ->sortable(),
+                ,
 
-                Tables\Columns\TextColumn::make('user.status')
-                    ->label('Status')
-                    ->badge()
-                    ->colors([
-                        'success' => 'aktif',
-                        'danger' => 'nonaktif',
-                    ]),
+                Tables\Columns\SelectColumn::make('user.status')
+                    ->label('Status Pengguna')
+                    ->options([
+                        'aktif' => 'Aktif',
+                        'nonaktif' => 'Nonaktif',
+                    ])
+                    ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('tanggal_mulai')
                     ->label('Tanggal Mulai')
-                    ->date('d M Y')
-                    ->sortable(),
+                    ->date('d M Y'),
 
                 Tables\Columns\TextColumn::make('tanggal_selesai')
                     ->label('Tanggal Selesai')
                     ->date('d M Y')
-                    ->sortable()
                     ->placeholder('-'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
+                    ->dateTime('d M Y H:i')
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('tanggal_mulai', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('user.status')
-                    ->label('Status')
+                    ->label('Status Pengguna')
                     ->options([
                         'aktif' => 'Aktif',
                         'nonaktif' => 'Nonaktif',
@@ -160,8 +173,27 @@ class StrukturOrganisasiResource extends Resource
                         })),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make()
+                    ->label('arsipkan')
+                    ->icon('heroicon-s-archive-box-arrow-down')
+                    ->color('warning')
+                    ->successNotificationTitle('Struktur organisasi berhasil diarsipkan'),
+                Tables\Actions\RestoreAction::make()
+                    ->successNotificationTitle('Struktur organisasi berhasil dipulihkan'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
+                    ->successNotificationTitle('Struktur organisasi berhasil dihapus permanen'),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->successNotificationTitle('Struktur organisasi berhasil diarsipkan'),
+                    RestoreBulkAction::make()
+                        ->successNotificationTitle('Struktur organisasi berhasil dipulihkan'),
+                    ForceDeleteBulkAction::make()
+                        ->successNotificationTitle('Struktur organisasi berhasil dihapus permanen'),
+                ]),
             ]);
     }
 

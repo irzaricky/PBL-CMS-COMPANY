@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CaseStudyResource\Widgets;
 
+use App\Enums\ContentStatus;
 use App\Models\CaseStudy;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Filament\Widgets\Concerns\InteractsWithPageTable;
@@ -25,11 +26,11 @@ class CaseStudyStats extends BaseWidget
                 ->description('Jumlah keseluruhan case study')
                 ->color('primary'),
 
-            Stat::make('Terpublikasi', CaseStudy::query()->where('status_case_study', 'published')->whereNull('deleted_at')->count())
+            Stat::make('Terpublikasi', CaseStudy::query()->where('status_case_study', ContentStatus::TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('Case study yang sudah dipublikasikan')
                 ->color('success'),
 
-            Stat::make('Draft', CaseStudy::query()->where('status_case_study', 'draft')->whereNull('deleted_at')->count())
+            Stat::make('Tidak Terpublikasi', CaseStudy::query()->where('status_case_study', ContentStatus::TIDAK_TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('Case study masih sebagai draft')
                 ->color('warning'),
 

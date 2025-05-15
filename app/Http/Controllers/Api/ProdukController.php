@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Models\Produk;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -12,15 +13,24 @@ use App\Http\Resources\Produk\ProdukViewResource;
 class ProdukController extends Controller
 {
     /**
-     * Menampilkan daftar produk
+     * Mengambil daftar produk
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $produk = Produk::with('kategoriProduk')->latest()->paginate(10);
+            $query = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->latest();
+
+            // Filter berdasarkan kategori jika ada parameter category_id
+            if ($request->has('category_id')) {
+                $query->where('id_kategori_produk', $request->category_id);
+            }
+
+            $produk = $query->paginate(10);
             return ProdukListResource::collection($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -29,11 +39,10 @@ class ProdukController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
-
     }
 
     /**
-     * Menampilkan produk berdasarkan slug
+     * Mengambil produk berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
@@ -43,6 +52,7 @@ class ProdukController extends Controller
         try {
             $produk = Produk::with(['kategoriProduk'])
                 ->where('slug', $slug)
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
                 ->firstOrFail();
 
             return new ProdukViewResource($produk);
@@ -56,7 +66,7 @@ class ProdukController extends Controller
     }
 
     /**
-     * Menampilkan produk berdasarkan ID
+     * Mengambil produk berdasarkan ID
      * 
      * @param int $id
      * @return \App\Http\Resources\Produk\ProdukViewResource|\Illuminate\Http\JsonResponse
@@ -64,7 +74,9 @@ class ProdukController extends Controller
     public function getProdukById($id)
     {
         try {
-            $produk = Produk::with('kategoriProduk')->findOrFail($id);
+            $produk = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->findOrFail($id);
             return new ProdukViewResource($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -75,45 +87,57 @@ class ProdukController extends Controller
         }
     }
 
-    // Membuat produk baru
-    public function store(Request $request)
+    /**
+     * Mencari produk berdasarkan nama produk atau deskripsi
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request)
     {
-        $validated = $request->validate([
-            'id_kategori_produk' => 'required|exists:kategori_produk,id_kategori_produk',
-            'nama_produk' => 'required|string|max:100',
-            'thumbnail_produk' => 'nullable|array',
-            'harga_produk' => 'required|string|max:50',
-            'slug' => 'required|string|unique:produk,slug|max:100',
-            'deskripsi_produk' => 'nullable|string',
-        ]);
+        try {
+            $query = $request->input('query');
+            $categoryId = $request->input('category_id');
 
-        $produk = Produk::create($validated);
-        return new ProdukResource($produk);
-    }
+            // Validasi input, jika tidak ada query dan category_id, kembalikan semua produk
+            if (empty($query) && empty($categoryId)) {
+                return $this->index($request);
+            }
 
-    // Memperbarui data produk
-    public function update(Request $request, $id)
-    {
-        $produk = Produk::findOrFail($id);
+            $produkQuery = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI);
 
-        $validated = $request->validate([
-            'id_kategori_produk' => 'required|exists:kategori_produk,id_kategori_produk',
-            'nama_produk' => 'required|string|max:100',
-            'thumbnail_produk' => 'nullable|array',
-            'harga_produk' => 'required|string|max:50',
-            'slug' => 'required|string|max:100|unique:produk,slug,' . $produk->id_produk,
-            'deskripsi_produk' => 'nullable|string',
-        ]);
+            // Jika ada query pencarian, produk akan dicari berdasarkan nama atau deskripsi
+            if (!empty($query)) {
+                $produkQuery->where(function ($q) use ($query) {
+                    $q->where('nama_produk', 'LIKE', "%{$query}%")
+                        ->orWhere('deskripsi_produk', 'LIKE', "%{$query}%");
+                });
+            }
 
-        $produk->update($validated);
-        return new ProdukResource($produk);
-    }
+            // Jika ada category_id, produk akan dicari berdasarkan kategori
+            if (!empty($categoryId)) {
+                $produkQuery->where('id_kategori_produk', $categoryId);
+            }
 
-    // Menghapus produk
-    public function destroy($id)
-    {
-        $produk = Produk::findOrFail($id);
-        $produk->delete();
-        return response()->json(null, 204);
+            $produk = $produkQuery->orderBy('created_at', 'desc')->paginate(10);
+
+            // Check if no products were found
+            if ($produk->isEmpty()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Tidak ada produk yang sesuai dengan pencarian',
+                    'data' => []
+                ], 200);
+            }
+
+            return ProdukListResource::collection($produk);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Mencari Produk',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

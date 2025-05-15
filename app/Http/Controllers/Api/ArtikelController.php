@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Artikel;
 use App\Models\KategoriArtikel;
@@ -12,7 +13,7 @@ use Illuminate\Http\Request;
 class ArtikelController extends Controller
 {
     /**
-     * Get all articles
+     * Mengambil daftar artikel
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -20,7 +21,8 @@ class ArtikelController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $query = Artikel::with(['kategoriArtikel', 'user'])
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
             // Filter berdasarkan kategori jika ada parameter category_id
@@ -41,7 +43,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get a single article by slug
+     * Mengambil artikel berdasarkan slug
      * 
      * @param string $slug
      * @return \App\Http\Resources\Articles\ArticleViewResource|\Illuminate\Http\JsonResponse
@@ -49,7 +51,8 @@ class ArtikelController extends Controller
     public function getArticleBySlug($slug)
     {
         try {
-            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $article = Artikel::with(['kategoriArtikel', 'user'])
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->where('slug', $slug)
                 ->firstOrFail();
 
@@ -65,7 +68,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get the article by id
+     * Mengambil artikel berdasarkan ID
      * 
      * @param int $id
      * @return \App\Http\Resources\Articles\ArticleViewResource|\Illuminate\Http\JsonResponse
@@ -73,7 +76,8 @@ class ArtikelController extends Controller
     public function getArticleById($id)
     {
         try {
-            $article = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $article = Artikel::with(['kategoriArtikel', 'user'])
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->findOrFail($id);
 
             return new ArticleViewResource($article);
@@ -87,14 +91,14 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get all categories
+     * Mengambil semua kategori artikel
      * 
      * @return \Illuminate\Http\JsonResponse
      */
     public function getCategories()
     {
         try {
-            $categories = KategoriArtikel::all();
+            $categories = KategoriArtikel::get();
             return response()->json([
                 'status' => 'success',
                 'data' => $categories
@@ -109,7 +113,7 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Search articles by title or content
+     * Mencari artikel berdasarkan judul atau serta kategori
      * 
      * @param Request $request
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
@@ -125,7 +129,8 @@ class ArtikelController extends Controller
                 return $this->index($request);
             }
 
-            $articlesQuery = Artikel::with(['kategoriArtikel', 'user:id_user,name']);
+            $articlesQuery = Artikel::with(['kategoriArtikel', 'user'])
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI);
 
             // Jika ada query pencarian, artikel akan dicari berdasarkan judul
             if (!empty($query)) {
@@ -161,14 +166,15 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Get the most viewed articles
+     * Mengambil artikel dengan jumlah view terbanyak
      * 
      * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function getArticleByMostView()
     {
         try {
-            $articles = Artikel::with(['kategoriArtikel', 'user:id_user,name'])
+            $articles = Artikel::with(['kategoriArtikel', 'user'])
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
                 ->orderBy('jumlah_view', 'desc')
                 ->take(1)
                 ->get();

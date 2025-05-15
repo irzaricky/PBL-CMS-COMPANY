@@ -3,8 +3,8 @@ import { ChevronRight } from "lucide-vue-next";
 </script>
 
 <template>
-    <div class="px-6 md:px-20 lg:px-20 font-custom pt-36 md:pt-20 bg-transparent relative">
-        <div class="relative w-full max-w-7xl mx-auto">
+    <div class="px-20 md:px-20 lg:px-20 font-custom bottom-6 bg-transparent">
+        <div class="relative w-full max-w-7xl mx-auto top-12">
             <!-- Wrapper with background -->
             <div class="absolute left-1/2 transform -translate-x-1/2 bg-gray-100 rounded-xl py-6 px-4 md:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 -top-16 sm:-top-20 md:-top-16 lg:-top-12 shadow-md w-[95%] z-10">
 

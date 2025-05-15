@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ContentStatus;
 use App\Models\CaseStudy;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,14 +12,13 @@ use App\Http\Resources\CaseStudy\CaseStudyListResource;
 class CaseStudyController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Mengambil daftar case study
      */
     public function index(Request $request)
     {
         try {
             $query = CaseStudy::with(['mitra'])
-                ->where('status_case_study', 'published')
-                ->whereNull('deleted_at');
+                ->where('status_case_study', ContentStatus::TERPUBLIKASI);
 
             // Filter by mitra if provided
             if ($request->has('mitra')) {
@@ -38,15 +38,14 @@ class CaseStudyController extends Controller
     }
 
     /**
-     * Display the specified resource by id.
+     * Mengambil case study berdasarkan id
      */
     public function getCaseStudyById($id)
     {
         try {
             $caseStudy = CaseStudy::with(['mitra'])
                 ->where('case_study_id', $id)
-                ->where('status_case_study', 'published')
-                ->whereNull('deleted_at')
+                ->where('status_case_study', ContentStatus::TERPUBLIKASI)
                 ->firstOrFail();
 
             return new CaseStudyViewResource($caseStudy);
@@ -60,14 +59,14 @@ class CaseStudyController extends Controller
     }
 
     /**
-     * Display the specified resource by slug.
+     * Mengambil case study berdasarkan slug
      */
     public function getCaseStudyBySlug($slug)
     {
         try {
+            
             $caseStudy = CaseStudy::where('slug_case_study', $slug)
-                ->where('status_case_study', 'published')
-                ->whereNull('deleted_at')
+                ->where('status_case_study', ContentStatus::TERPUBLIKASI)
                 ->firstOrFail();
 
             return new CaseStudyViewResource($caseStudy);
@@ -81,7 +80,7 @@ class CaseStudyController extends Controller
     }
 
     /**
-     * Search case studies
+     * Mencari case study berdasarkan judul atau serta mitra
      */
     public function search(Request $request)
     {
@@ -93,9 +92,9 @@ class CaseStudyController extends Controller
             return $this->index($request);
         }
 
+        
         $CaseStudyQuery = CaseStudy::with(['mitra'])
-            ->where('status_case_study', 'published')
-            ->whereNull('deleted_at');
+            ->where('status_case_study', ContentStatus::TERPUBLIKASI);
 
         // Jika ada query pencarian, artikel akan dicari berdasarkan judul
         if (!empty($query)) {

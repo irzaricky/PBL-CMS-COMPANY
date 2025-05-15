@@ -15,12 +15,4 @@ class CreateCaseStudy extends CreateRecord
     {
         return $this->getResource()::getUrl('index');
     }
-
-    /**
-     * Format uploaded files during creation
-     */
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        return MultipleFileHandler::formatFileData($data, 'thumbnail_case_study');
-    }
 }
