@@ -47,7 +47,15 @@ class AppServiceProvider extends ServiceProvider
             },
         ]);
 
-        $logo = \App\Models\ProfilPerusahaan::first()?->logo_perusahaan ?? 'favicon.ico';
+        $profil = \App\Models\ProfilPerusahaan::first();
+        $logo = $profil?->logo_perusahaan ?? 'favicon.ico';
+        $titlePerusahaan = $profil?->nama_perusahaan ?? 'Sistem Informasi Manajemen';
+
+        // Share values to views
         View::share('logoPerusahaan', $logo);
+        View::share('titlePerusahaan', $titlePerusahaan);
+
+        // Set the application name (for title)
+        config(['app.name' => $titlePerusahaan]);
     }
 }
