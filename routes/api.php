@@ -104,8 +104,10 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 // Testimoni
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
 
-// routes/api.php
-Route::post('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'store']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'store']);
+});
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 
 
