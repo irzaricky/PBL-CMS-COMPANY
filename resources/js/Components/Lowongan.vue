@@ -108,7 +108,7 @@ function formatGaji(angka) {
 
                     <!-- Tombol Apply -->
                     <a :href="`/lowongan/${lowongan.slug}`"
-                        class="inline-block w-fit px-5 py-2 bg-Opacity-Neutral-Darkest-5/5 rounded-full text-base font-medium text-Color-Neutral-Darkest">
+                        class="inline-block w-fit px-5 py-2 bg-secondary rounded-full text-base font-medium text-white">
                         Apply Now
                     </a>
                 </div>

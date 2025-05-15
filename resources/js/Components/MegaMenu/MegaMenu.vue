@@ -56,7 +56,7 @@ const menuSections = [
                     <div class="flex flex-col gap-6 text-h5 font-medium">
                         <a v-for="link in section.links" :key="link.href" :href="link.href"
                             class="flex items-center gap-4 text-typography-dark hover:text-typography-hover2 transition">
-                            <component :is="link.icon" class="w-7 h-7" />
+                            <component :is="link.icon" class="w-5" />
                             <span>{{ link.label }}</span>
                         </a>
                     </div>

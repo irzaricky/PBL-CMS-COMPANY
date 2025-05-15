@@ -67,7 +67,7 @@ function lihatSelengkapnya() {
                             class="w-20 object-contain" />
                     </div>
                     <h4 class="font-bold text-center text-lg">{{ profil_perusahaan?.nama_perusahaan }}</h4>
-                    <p class="mt-4 text-center">
+                    <p class="mt-4 text-left">
                         {{ truncatedSejarah }}
                         <span v-if="showReadMore" class="text-blue-400 cursor-pointer" @click="lihatSelengkapnya">
                             ... Baca selengkapnya
