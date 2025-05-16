@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Widgets;
+namespace App\Filament\Widgets\Admin;
 
 use Filament\Support\RawJs;
 use Illuminate\Support\Facades\Storage;

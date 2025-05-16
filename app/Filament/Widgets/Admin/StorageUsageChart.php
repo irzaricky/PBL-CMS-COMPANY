@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Widgets;
+namespace App\Filament\Widgets\Admin;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +11,6 @@ class StorageUsageChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'storageUsageChart';
     protected static ?string $heading = 'Penggunaan Storage';
-    protected static ?int $contentHeight = 300;
     protected static ?int $sort = 2;
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';

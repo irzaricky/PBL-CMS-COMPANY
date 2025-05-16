@@ -2,26 +2,21 @@
 
 namespace App\Providers\Filament;
 
-use Directory;
+
 use Filament\Pages;
 use Filament\Panel;
-use App\Models\User;
-use Filament\Widgets;
 use Filament\PanelProvider;
-use Filament\Pages\Dashboard;
+use App\Filament\Widgets\Admin\TotalUsersWidget;
+use App\Filament\Widgets\Admin\UsersByRoleWidget;
+use App\Filament\Widgets\Admin\StorageUsageChart;
+use App\Filament\Widgets\Admin\StorageUsageByFeatureChart;
+use App\Filament\Widgets\Admin\RemainingStorageWidget;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
-use Filament\Support\Colors\Color;
 use App\Filament\Pages\Auth\Register;
-use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
-use App\Filament\Resources\UserResource;
-use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
-use Filament\Navigation\NavigationBuilder;
-use App\Filament\Resources\UnduhanResource;
-use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -71,9 +66,19 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                
+                    // Admin widgets
+                TotalUsersWidget::class,
+                UsersByRoleWidget::class,
+                StorageUsageChart::class,
+                StorageUsageByFeatureChart::class,
+                RemainingStorageWidget::class,
+
+                // Content Manager widgets
+
+                // Customer manager widgets
+
+                // Director widgets
             ])
             ->middleware([
                 EncryptCookies::class,

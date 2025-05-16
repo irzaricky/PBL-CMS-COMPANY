@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Widgets;
+namespace App\Filament\Widgets\Admin;
 
 use App\Models\User;
 use Filament\Support\RawJs;
@@ -11,7 +11,7 @@ class UsersByRoleWidget extends ApexChartWidget
 {
     protected static ?string $chartId = 'usersByRole';
     protected static ?string $heading = 'Pegawai berdasarkan role';
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
     protected static bool $deferLoading = true;
 
     protected function getOptions(): array

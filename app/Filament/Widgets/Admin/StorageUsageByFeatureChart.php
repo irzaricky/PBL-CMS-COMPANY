@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Widgets;
+namespace App\Filament\Widgets\Admin;
 
 use Illuminate\Support\Facades\Storage;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
