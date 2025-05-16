@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Enums\ContentStatus;
 use App\Models\CaseStudy;
 use App\Models\Mitra;
+use Carbon\Carbon;
 use Faker\Factory as Faker;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;

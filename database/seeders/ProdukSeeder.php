@@ -41,7 +41,7 @@ class ProdukSeeder extends Seeder
         ];
 
         // Generate 20 products
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             $randomProduct = $faker->randomElement($products);
             $createdAt = Carbon::now()->subYear()->addDays(rand(0, 365));
 
@@ -59,8 +59,10 @@ class ProdukSeeder extends Seeder
                 // Buat nama baru biar unik
                 $newFileName = Str::random(10) . '-' . $originalFile;
 
-                // Copy ke storage
+                // Copy ke storage dan set modification time
                 Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+                $fullPath = Storage::disk('public')->path($targetPath . '/' . $newFileName);
+                touch($fullPath, $createdAt->getTimestamp());
 
                 // Tambahkan path gambar ke array images
                 $images[] = $targetPath . '/' . $newFileName;

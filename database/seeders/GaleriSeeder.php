@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Http\File;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
@@ -56,6 +57,9 @@ class GaleriSeeder extends Seeder
             // Generate array untuk menyimpan multiple images
             $images = [];
 
+            // Generate random date between 1 year ago and now
+            $randomDate = Carbon::now()->subYear()->addDays(rand(0, 365));
+
             // Pilih dan proses beberapa gambar
             for ($j = 0; $j < 3; $j++) {
                 // Pilih gambar random
@@ -64,8 +68,10 @@ class GaleriSeeder extends Seeder
                 // Buat nama baru biar unik
                 $newFileName = Str::random(10) . '-' . $originalFile;
 
-                // Copy ke storage
+                // Copy ke storage dan set modified time
+                $fullPath = Storage::disk('public')->path($targetPath . '/' . $newFileName);
                 Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+                touch($fullPath, $randomDate->timestamp);
 
                 // Tambahkan path gambar ke array images
                 $images[] = $targetPath . '/' . $newFileName;

@@ -5,22 +5,22 @@ namespace App\Providers\Filament;
 use Directory;
 use Filament\Pages;
 use Filament\Panel;
+use App\Models\User;
 use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use App\Filament\Pages\Auth\Register;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
-use App\Filament\Pages\Auth\Register;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
 use App\Filament\Resources\UnduhanResource;
-use App\Models\User;
 use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -32,6 +32,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 
@@ -92,6 +93,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                FilamentApexChartsPlugin::make()
             ])
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()
