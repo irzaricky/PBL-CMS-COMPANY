@@ -19,11 +19,11 @@ use App\Http\Controllers\Api\TestimoniProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-});
+});    
 
 // Post feedback (AUTENTIKASI BELUM DITAMBAHKAN)
 Route::post('/feedback', [FeedbackController::class, 'store']);
@@ -104,9 +104,8 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 // Testimoni
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
 
-
-Route::post('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'store']);
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
+Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
 
 
 // Mitra

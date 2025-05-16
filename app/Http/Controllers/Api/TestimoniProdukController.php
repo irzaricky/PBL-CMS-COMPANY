@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\TestimoniProduk;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\TestimoniProdukResource;
 
@@ -30,13 +31,14 @@ class TestimoniProdukController extends Controller
         $request->validate([
             'isi_testimoni' => 'required|string',
             'rating' => 'required|integer|min:1|max:5',
+            'id_user' => 'required|exists:users,id_user',
         ]);
 
         $testimoni = new TestimoniProduk();
         $testimoni->id_produk = $produkId;
         $testimoni->isi_testimoni = $request->isi_testimoni;
         $testimoni->rating = $request->rating;
-        $testimoni->id_user = $user->id ?? null;
+        $testimoni->id_user = $request->id_user;
         $testimoni->status = 'Terpublikasi';
         $testimoni->save();
 

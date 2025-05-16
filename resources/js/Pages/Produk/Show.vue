@@ -11,7 +11,11 @@ const activeImageIndex = ref(0)
 const page = usePage()
 const isLoggedIn = computed(() => !!page.props.auth.user)
 const testimoniList = ref([])
-const newTestimoni = ref({ isi_testimoni: '', rating: 5 })
+const newTestimoni = ref({
+    isi_testimoni: '',
+    rating: 5,
+    id_user: page.props.auth.user?.id_user ?? null, // ← ini ditambah
+})
 
 // Fetch produk dan testimoni saat komponen mount
 onMounted(() => {
@@ -63,21 +67,24 @@ async function submitTestimoni() {
         return
     }
     try {
-        await axios.post(`/api/testimoni/produk/${item.value.id_produk}`, newTestimoni.value)
+        await axios.post(
+            `/api/testimoni/produk/${item.value.id_produk}`,
+            newTestimoni.value,
+        )
+
         alert('Testimoni berhasil dikirim dan menunggu persetujuan')
 
         // Reset form
         newTestimoni.value.isi_testimoni = ''
         newTestimoni.value.rating = 5
 
-        // Refresh list testimoni agar langsung update
+        // Refresh list testimoni
         await fetchTestimoni()
     } catch (err) {
         alert('Gagal mengirim testimoni')
         console.error(err)
     }
 }
-axios.defaults.withCredentials = true
 </script>
 
 
@@ -221,7 +228,8 @@ axios.defaults.withCredentials = true
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full rounded-full px-5 py-2 bg-secondary text-white hover:bg-black transition">
+                    <button type="submit"
+                        class="w-full rounded-full px-5 py-2 bg-secondary text-white hover:bg-black transition">
                         Kirim
                     </button>
                 </form>
