@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DummyUser extends Seeder
 {
@@ -12,42 +14,24 @@ class DummyUser extends Seeder
      */
     public function run(): void
     {
-        $userData = [
-            [
-                'name' => 'Test User 1',
-                'email' => 'testuser1@example.com',
-                'password' => bcrypt('password123'),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Test User 2',
-                'email' => 'testuser2@example.com',
-                'password' => bcrypt('password123'),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Test User 3',
-                'email' => 'testuser3@example.com',
-                'password' => bcrypt('password123'),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Test User 4',
-                'email' => 'testuser4@example.com',
-                'password' => bcrypt('password123'),
-                'email_verified_at' => now(),
-            ],
-            [
-                'name' => 'Test User 5',
-                'email' => 'testuser5@example.com',
-                'password' => bcrypt('password123'),
-                'email_verified_at' => now(),
-            ],
-        ];
 
-        foreach ($userData as $user) {
+        User::create([
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'password' => Hash::make('password123'),
+            'email_verified_at' => now(),
+        ]);
+
+        $faker = \Faker\Factory::create();
+
+        for ($i = 0; $i < 50; $i++) {
             User::create([
-                ...$user
+                'name' => $faker->name(),
+                'email' => $faker->unique()->safeEmail(),
+                'password' => Hash::make('password123'),
+                'status_kepegawaian' => $faker->randomElement(['Kontrak', 'Magang', 'Non Pegawai']),
+                'email_verified_at' => now(),
+                'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ]);
         }
     }
