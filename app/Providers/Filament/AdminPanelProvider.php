@@ -27,9 +27,8 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Swis\Filament\Backgrounds\ImageProviders\MyImages;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\DisableBladeIconComponents;
-use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -92,6 +91,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                AuthUIEnhancerPlugin::make()
+                    ->formPanelPosition('right')
+                    ->mobileFormPanelPosition('bottom')
+                    ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+                    ->formPanelWidth('40%'),
             ])
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()
@@ -99,13 +103,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Keluar dashboard')
                     ->url('/'),
             ])
-            ->plugins([
-                FilamentBackgroundsPlugin::make()
-                    ->remember(900)
-                    ->imageProvider(MyImages::make()
-                        ->directory(
-                            'images\swisnl\filament-backgrounds\triangles'
-                        )),
-            ]);
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }
