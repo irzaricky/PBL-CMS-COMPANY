@@ -132,12 +132,11 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('tanggal_lahir')
                     ->label('Tanggal Lahir')
                     ->date('d F Y')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                ,
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date('d F Y')
-                ,
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status_kepegawaian')
                     ->label('Status Kepegawaian')
                     ->badge()

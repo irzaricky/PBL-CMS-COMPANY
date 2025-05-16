@@ -35,7 +35,7 @@ class ProfilPerusahaanResource extends Resource
                         Forms\Components\FileUpload::make('logo_perusahaan')
                             ->label('Logo Perusahaan')
                             ->image()
-                            ->directory('perusahaan-logo')
+                            ->directory('logo-perusahaan')
                             ->disk('public')
                             ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
                             ->imageEditor()

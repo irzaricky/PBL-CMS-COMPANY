@@ -2,13 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use Inertia\Inertia;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Schema;
-use App\Models\User;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
 use Filament\Http\Responses\Auth\Contracts\LogoutResponse as LogoutResponseContract;
@@ -24,6 +25,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginResponseContract::class, \App\Http\Responses\LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, \App\Http\Responses\LogoutResponse::class);
         $this->app->bind(RegistrationResponseContract::class, \App\Http\Responses\RegistrationResponse::class);
+
     }
 
     /**
@@ -44,5 +46,16 @@ class AppServiceProvider extends ServiceProvider
                 ];
             },
         ]);
+
+        $profil = \App\Models\ProfilPerusahaan::first();
+        $logo = $profil?->logo_perusahaan ?? 'favicon.ico';
+        $titlePerusahaan = $profil?->nama_perusahaan ?? 'Sistem Informasi Manajemen';
+
+        // Share values to views
+        View::share('logoPerusahaan', $logo);
+        View::share('titlePerusahaan', $titlePerusahaan);
+
+        // Set the application name (for title)
+        config(['app.name' => $titlePerusahaan]);
     }
 }
