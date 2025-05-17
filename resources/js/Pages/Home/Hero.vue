@@ -5,12 +5,12 @@ import { usePage } from '@inertiajs/vue3'
 const user = usePage().props.auth.user
 
 const images = [
-    '/images/swisnl/filament-backgrounds/curated-by-swis/01.jpg',
-    '/images/swisnl/filament-backgrounds/curated-by-swis/02.jpg',
-    '/images/swisnl/filament-backgrounds/curated-by-swis/03.jpg',
-    '/images/swisnl/filament-backgrounds/curated-by-swis/04.jpg',
-    '/images/swisnl/filament-backgrounds/curated-by-swis/05.jpg',
-    '/images/swisnl/filament-backgrounds/curated-by-swis/06.jpg',
+    '/image/21.jpg',
+    '/image/22.jpg',
+    '/image/23.jpg',
+    '/image/24.jpg',
+    '/image/25.jpg',
+    '/image/26.jpg',
 ];
 
 const currentImage = ref(0)

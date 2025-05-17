@@ -2,7 +2,7 @@
 import { ref } from "vue";
 import Navbar from "@/Components/Navbar.vue";
 import Footer from "@/Components/Footer.vue";
-import Feedback from "@/Components/Feedback.vue";
+import Feedback from "@/Components/Home/Feedback.vue";
 
     const showingNavigationDropdown = ref(false);
 </script>

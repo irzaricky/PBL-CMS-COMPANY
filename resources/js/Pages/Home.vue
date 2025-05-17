@@ -1,15 +1,15 @@
 <script setup>
 import AppLayout from "../Layouts/AppLayout.vue";
-import Hero from "../Components/Hero.vue";
-import Benefit from "../Components/Benefit.vue";
-import Produk from "@/Components/Produk.vue";
-import Artikel from "@/Components/Artikel.vue";
-import CallToAction from "../Components/CallToAction.vue";
-import Feedback from "../Components/Feedback.vue";
-import Galeri from "../Components/Galeri.vue";
-import Event from "@/Components/Event.vue";
-import Lowongan from "@/Components/Lowongan.vue";
-import Mitra from "@/Components/Mitra.vue";
+import Hero from "../Components/Home/Hero.vue";
+import Benefit from "../Components/Home/Benefit.vue";
+import Produk from "@/Components/Home/Produk.vue";
+import Artikel from "@/Components/Home/Artikel.vue";
+import CallToAction from "../Components/Home/CallToAction.vue";
+import Feedback from "../Components/Home/Feedback.vue";
+import Galeri from "../Components/Home/Galeri.vue";
+import Event from "@/Components/Home/Event.vue";
+import Lowongan from "@/Components/Home/Lowongan.vue";
+import Mitra from "@/Components/Home/Mitra.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
