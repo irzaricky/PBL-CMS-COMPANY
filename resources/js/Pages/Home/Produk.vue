@@ -44,10 +44,9 @@ function getImageUrl(image) {
         class="w-full px-6 lg:px-16 py-28 bg-Color-Scheme-1-Background flex flex-col items-center gap-20 overflow-hidden font-custom">
         <!-- Judul Section -->
         <div class="text-center max-w-[768px] flex flex-col items-center gap-4">
-            <div class="text-base font-semibold text-Color-Scheme-1-Text">Masih ragu?</div>
+            <div class="text-base font-semibold text-Color-Scheme-1-Text">Mau lihat lebih jauh?</div>
             <div class="text-5xl font-normal text-Color-Scheme-1-Text">Jelajahi produk kami</div>
-            <div class="text-lg font-normal text-Color-Scheme-1-Text">Lorem ipsum dolor sit amet, consectetur adipiscing
-                elit.</div>
+            <div class="text-lg font-normal text-Color-Scheme-1-Text">Lihat list lengkap produk, atau sekadar Window Shopping.</div>
         </div>
 
         <!-- Grid Produk -->

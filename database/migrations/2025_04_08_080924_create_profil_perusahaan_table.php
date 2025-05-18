@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->text('sejarah_perusahaan')->nullable();
             $table->text('visi_perusahaan')->nullable();
             $table->text('misi_perusahaan')->nullable();
-            $table->enum('tema_perusahaan', ['#31487A', '#793354', '#796C2F'])->default('#31487A')->nullable();
+            $table->enum('tema_perusahaan', ['#31487A', '#793354', '#796C2F', '#1B4332', '#3E1F47'])->default('#31487A')->nullable();
             $table->timestamps();
         });
     }

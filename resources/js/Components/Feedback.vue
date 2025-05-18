@@ -10,7 +10,7 @@ import { ChevronRight } from "lucide-vue-next";
                 class="bg-gray-100 rounded-xl py-6 px-6 md:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 mt-14 shadow-md">
 
                 <!-- Heading -->
-                <div class="text-secondary text-xl sm:text-2xl md:text-3xl font-bold text-center md:text-left">
+                <div class="text-secondary text-xl md:pr-10 lg:pr-10 sm:text-2xl md:text-3xl font-bold text-center md:text-left">
                     Berikan feedbackmu agar kami lebih baik!
                 </div>
 

@@ -44,9 +44,9 @@ function getImageUrl(image) {
 
             <!-- Left Side: Header dan Panah -->
             <div class="w-full lg:w-1/4 flex flex-col items-center lg:items-start text-center lg:text-left gap-4">
-                <div class="text-Color-Scheme-1-Text text-base font-semibold">Halo!</div>
+                <div class="text-Color-Scheme-1-Text text-base font-semibold">Kami percaya bahwa setiap pertemuan membawa peluang.</div>
                 <h2 class="text-4xl lg:text-6xl font-custom font-thin lg:font-normal text-white">
-                    Ikuti Event Kami
+                    Event Terkini
                 </h2>
                 <div class="relative w-full h-10 overflow-hidden hidden lg:block">
                     <img src="image/arrow-right.png" alt="Panah"

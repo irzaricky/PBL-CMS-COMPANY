@@ -94,25 +94,25 @@ function stripHtmlTags(html) {
         <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
             <div class="flex flex-col gap-4 text-white">
                 <div class="text-Color-Scheme-1-Text text-base font-semibold leading-normal">
-                    Blog
+                    Artikel
                 </div>
                 <div class="flex flex-col gap-6">
                     <div class="text-Color-Scheme-1-Text text-5xl font-normal leading-[57.60px]">
-                        Short heading goes here
+                        Wawasan terbaru dari kami
                     </div>
                     <div class="text-Color-Scheme-1-Text text-lg font-normal leading-relaxed">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Baca artikel-artikel pilihan seputar bisnis, inovasi, dan kegiatan terbaru perusahaan.
                     </div>
                 </div>
             </div>
-            <div>
+            <a href="/artikel">
                 <div
                     class="px-6 py-2.5 bg-Opacity-Neutral-Darkest-5/5 rounded-full outline outline-1 outline-white flex justify-center items-center gap-2">
                     <div class="text-white text-base font-medium leading-normal">
-                        View all
+                        Lihat semua
                     </div>
                 </div>
-            </div>
+            </a>
         </div>
 
         <!-- Cards -->

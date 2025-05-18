@@ -72,9 +72,8 @@ function getImage(image) {
 
 		<!-- Judul -->
 		<div class="w-full max-w-[768px] flex flex-col items-center gap-6 text-center">
-			<h2 class="text-Color-Scheme-1-Text text-4xl lg:text-5xl font-normal leading-tight">Image Gallery</h2>
-			<p class="text-Color-Scheme-1-Text text-base lg:text-lg leading-relaxed">Lorem ipsum dolor sit amet,
-				consectetur adipiscing elit.</p>
+			<h2 class="text-Color-Scheme-1-Text text-4xl lg:text-5xl font-normal leading-tight">Cerita dalam galeri</h2>
+			<p class="text-Color-Scheme-1-Text text-base lg:text-lg leading-relaxed">Setiap foto punya cerita. Yuk, lihat keseruan dan kebersamaan tim kami dari balik lensa.</p>
 		</div>
 
 		<!-- Kontainer Galeri -->

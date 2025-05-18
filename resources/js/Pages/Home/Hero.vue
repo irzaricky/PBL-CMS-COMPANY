@@ -96,19 +96,17 @@ onBeforeUnmount(() => {
                             Selamat datang {{ user?.name ?? 'pengunjung' }}!
                         </h1>
                         <p class="text-white text-base lg:text-lg leading-normal lg:leading-relaxed font-normal">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros
-                            elementum tristique. Duis cursus, mi quis viverra ornare, eros dolor interdum nulla, ut
-                            commodo diam libero vitae erat.
+                           Temukan informasi terkini seputar produk, event, lowongan kerja, hingga kisah menarik lewat artikel dan galeri kami.
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-4">
-                        <a href="/admin"
+                        <a href="/produk"
                             class="px-6 py-2.5 bg-white text-black font-medium text-base rounded-full shadow hover:opacity-90 transition inline-block text-center">
-                            Admin
+                            Lihat semua produk kami
                         </a>
-                        <a href="/logout"
+                        <a href="/event"
                             class="px-6 py-2.5 bg-white/10 text-white font-medium text-base rounded-full border border-transparent hover:bg-white/20 transition inline-block text-center">
-                            Logout
+                            Event terdekat
                         </a>
                     </div>
                 </div>

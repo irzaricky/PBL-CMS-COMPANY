@@ -3,21 +3,21 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const lowongan = ref([])
+const profil_perusahaan = ref(null);
 const loading = ref(false)
 const error = ref(null)
 const currentIndex = ref(0) // untuk slider gambar
 
-onMounted(() => {
-    fetchLowongan()
-})
 
 onMounted(() => {
+    fetchLowongan()
+    fetchProfilPerusahaan()
     // Slider otomatis
     setInterval(() => {
         if (lowongan.value.length > 0) {
             currentIndex.value = (currentIndex.value + 1) % lowongan.value.length
         }
-    }, 4000) // 4 detik slide
+    }, 4000)
 })
 
 async function fetchLowongan() {
@@ -32,6 +32,19 @@ async function fetchLowongan() {
         console.error('Error fetching lowongan:', err)
     } finally {
         loading.value = false
+    }
+}
+
+async function fetchProfilPerusahaan() {
+    try {
+        loading.value = true;
+        const response = await axios.get(`/api/profil-perusahaan/navbar`);
+        profil_perusahaan.value = response.data.data;
+    } catch (err) {
+        error.value = "Profil perusahaan tidak ditemukan atau terjadi kesalahan";
+        console.error("Error fetching profil_perusahaan:", err);
+    } finally {
+        loading.value = false;
     }
 }
 
@@ -65,11 +78,11 @@ function formatGaji(angka) {
         class="w-full px-6 py-20 lg:px-16 lg:py-28 bg-Color-Scheme-1-Background flex flex-col gap-20 items-center font-custom">
         <!-- Header -->
         <div class="w-full max-w-2xl flex flex-col gap-4 items-center text-center">
-            <h4 class="text-base font-semibold text-Color-Scheme-1-Text">Tagline</h4>
-            <h2 class="text-5xl font-normal text-Color-Scheme-1-Text leading-[1.2]">Open Positions</h2>
+            <h4 class="text-base font-semibold text-Color-Scheme-1-Text">{{ profil_perusahaan?.nama_perusahaan || "Memuat" }} </h4>
+            <h2 class="text-5xl font-normal text-Color-Scheme-1-Text leading-[1.2]">Peluang Karier Eksklusif</h2>
             <p class="text-lg text-Color-Scheme-1-Text leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum
-                tristique.
+                Kami membuka kesempatan untuk kamu yang ingin berkembang dan berkontribusi dalam tim kami. Yuk, daftar
+                sekarang!
             </p>
         </div>
 
@@ -97,7 +110,8 @@ function formatGaji(angka) {
                     <div class="flex flex-wrap gap-6">
                         <div class="flex items-center gap-3">
                             <AlarmClock class="w-6 h-6 text-Color-Scheme-1-Text" />
-                            <span class="text-lg text-Color-Scheme-1-Text">Ditutup pada {{ formatTanggal(lowongan.tanggal_ditutup)
+                            <span class="text-lg text-Color-Scheme-1-Text">Ditutup pada {{
+                                formatTanggal(lowongan.tanggal_ditutup)
                                 }}</span>
                         </div>
                         <div class="flex items-center gap-3">
