@@ -11,8 +11,9 @@ class UsersByRoleWidget extends ApexChartWidget
 {
     protected static ?string $chartId = 'usersByRole';
     protected static ?string $heading = 'Pegawai berdasarkan role';
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 2;
     protected static bool $deferLoading = true;
+    protected int|string|array $columnSpan = 'sm';
 
     protected function getOptions(): array
     {
@@ -35,17 +36,8 @@ class UsersByRoleWidget extends ApexChartWidget
             ],
             'colors' => ['#0ea5e9', '#22c55e', '#f59e0b', '#ef4444', '#6366f1'],
             'stroke' => [
-                'show' => false,
-            ],
-            'dataLabels' => [
-                'enabled' => true,
-            ],
-            'plotOptions' => [
-                'pie' => [
-                    'donut' => [
-                        'size' => '50%',
-                    ],
-                ],
+                'show' => true,
+                'width' => 2,
             ],
             'responsive' => [
                 [

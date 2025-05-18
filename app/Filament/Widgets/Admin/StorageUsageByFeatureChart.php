@@ -10,7 +10,7 @@ class StorageUsageByFeatureChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'storageUsageByFeature';
     protected static ?string $heading = 'Penggunaan Storage per Fitur';
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 5;
 
     protected function getOptions(): array
     {
@@ -66,19 +66,15 @@ class StorageUsageByFeatureChart extends ApexChartWidget
             ],
             'series' => $data,
             'labels' => $labels,
+            'stroke' => [
+                'show' => true,
+                'width' => 2,
+            ],
             'legend' => [
                 'position' => 'bottom',
                 'horizontalAlign' => 'center',
             ],
             'colors' => ['#3b82f6', '#ef4444', '#22c55e', '#f59e0b', '#6366f1'],
-            'stroke' => [
-                'show' => true,
-            ],
-            'tooltip' => [
-                'y' => [
-                    'formatter' => 'function (value) { return value + " MB"; }',
-                ],
-            ],
             'dataLabels' => [
                 'enabled' => true,
             ],

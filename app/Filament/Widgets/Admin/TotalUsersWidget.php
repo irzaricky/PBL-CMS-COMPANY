@@ -10,7 +10,8 @@ class TotalUsersWidget extends BaseWidget
 {
     protected static ?int $sort = 1;
     protected static bool $isLazy = true;
-
+    protected int|string|array $columnSpan = 'sm';
+    protected static string $view = 'filament.widgets.total-users-stats';
     protected function getStats(): array
     {
         $totalUsers = User::count();
@@ -21,17 +22,26 @@ class TotalUsersWidget extends BaseWidget
             Stat::make('Total user', $totalUsers)
                 ->description('Total seluruh user')
                 ->descriptionIcon('heroicon-m-users')
-                ->color('primary'),
+                ->color('primary')
+                ->extraAttributes([
+                    'class' => 'primary-stat'
+                ]),
 
             Stat::make('User Aktif', $activeUsers)
                 ->description('User dengan status aktif')
-                ->descriptionIcon('heroicon-m-user-group')
-                ->color('success'),
+                ->descriptionIcon(icon: 'heroicon-m-user-group')
+                ->color('primary')
+                ->extraAttributes([
+                    'class' => 'primary-stat'
+                ]),
 
             Stat::make('User Baru', $newUsersThisMonth)
                 ->description('Bergabung bulan ini')
                 ->descriptionIcon('heroicon-m-user-plus')
-                ->color('info'),
+                ->color('primary')
+                ->extraAttributes([
+                    'class' => 'primary-stat'
+                ]),
         ];
     }
 

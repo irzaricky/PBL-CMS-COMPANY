@@ -71,8 +71,8 @@ class AdminPanelProvider extends PanelProvider
                 TotalUsersWidget::class,
                 UsersByRoleWidget::class,
                 StorageUsageChart::class,
-                StorageUsageByFeatureChart::class,
                 RemainingStorageWidget::class,
+                StorageUsageByFeatureChart::class,
 
                 // Content Manager widgets
 
