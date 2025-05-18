@@ -5,29 +5,30 @@ namespace App\Providers\Filament;
 use Directory;
 use Filament\Pages;
 use Filament\Panel;
+use App\Models\User;
 use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
+use Filament\Facades\Filament;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use App\Filament\Pages\Auth\Register;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
-use App\Filament\Pages\Auth\Register;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
 use App\Filament\Resources\UnduhanResource;
-use App\Models\User;
 use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Filament\Http\Middleware\AuthenticateSession;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -62,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Plus jakarta Sans')
             ->registration(Register::class)
             ->colors([
-                'primary' => '#3b82f6',
+                'primary' => '#000000',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

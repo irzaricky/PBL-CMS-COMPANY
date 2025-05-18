@@ -80,6 +80,7 @@ class ProfilPerusahaanSeeder extends Seeder
                 'sejarah_perusahaan' => $sejarahPerusahaan,
                 'visi_perusahaan' => $visiPerusahaan,
                 'misi_perusahaan' => $misiPerusahaan,
+                'tema_perusahaan' => '#31487A',
             ],
         ]);
     }

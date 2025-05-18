@@ -17,7 +17,7 @@ class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
     protected static ?string $navigationGroup = 'Company Owner';
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static ?string $navigationIcon = 'heroicon-s-building-office';
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
     protected static ?int $navigationSort = 1;
 
@@ -116,6 +116,23 @@ class ProfilPerusahaanResource extends Resource
                                 'attachFiles'
                             ])
                             ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Tema Perusahaan')
+                    ->schema([
+                        Forms\Components\Select::make('tema_perusahaan')
+                            ->label('Tema Perusahaan')
+                            ->options([
+                                '#31487A' => 'Biru',
+                                '#793354' => 'Merah',
+                                '#796C2F' => 'Hijau',
+                            ])
+                            ->default('#31487A')
+                            ->required()
+                            ->reactive()
+                            ->native(false)
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('tema_perusahaan', $state);
+                            }),
                     ]),
             ]);
     }
