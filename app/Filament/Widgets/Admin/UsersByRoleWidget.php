@@ -15,6 +15,12 @@ class UsersByRoleWidget extends ApexChartWidget
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'sm';
 
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_UsersByRoleWidget');
+    }
+
     protected function getOptions(): array
     {
         $roleData = DB::table('model_has_roles')
@@ -77,10 +83,5 @@ class UsersByRoleWidget extends ApexChartWidget
             }
         }
         JS);
-    }
-
-    public static function canView(): bool
-    {
-        return auth()->user()?->hasRole('super_admin');
     }
 }

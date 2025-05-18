@@ -12,6 +12,11 @@ class StorageUsageByFeatureChart extends ApexChartWidget
     protected static ?string $heading = 'Penggunaan Storage per Fitur';
     protected static ?int $sort = 5;
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_StorageUsageByFeatureChart');
+    }
+
     protected function getOptions(): array
     {
         $publicPath = Storage::disk('public')->path('');
@@ -105,8 +110,5 @@ class StorageUsageByFeatureChart extends ApexChartWidget
         JS);
     }
 
-    public static function canView(): bool
-    {
-        return auth()->user()?->hasRole('super_admin');
-    }
+
 }

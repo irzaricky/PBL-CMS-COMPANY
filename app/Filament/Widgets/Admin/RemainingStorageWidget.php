@@ -15,7 +15,7 @@ class RemainingStorageWidget extends ApexChartWidget
 
     public static function canView(): bool
     {
-        return auth()->user()?->hasRole('super_admin');
+        return auth()->user()?->can('widget_RemainingStorageWidget');
     }
 
     protected function getDiskSpace(): array

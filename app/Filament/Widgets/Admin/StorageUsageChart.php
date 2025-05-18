@@ -19,6 +19,11 @@ class StorageUsageChart extends ApexChartWidget
     protected int|string|array $columnSpan = 'full';
     public ?string $filter = 'week';
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_StorageUsageChart');
+    }
+
     private function calculateStorageSize(): array
     {
         $cacheKey = 'storage_size_data';
@@ -147,10 +152,7 @@ class StorageUsageChart extends ApexChartWidget
         JS);
     }
 
-    public static function canView(): bool
-    {
-        return auth()->user()?->hasRole('super_admin');
-    }
+
 
     protected function getFilters(): ?array
     {

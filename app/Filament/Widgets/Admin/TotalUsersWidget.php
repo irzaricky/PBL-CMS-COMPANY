@@ -12,6 +12,12 @@ class TotalUsersWidget extends BaseWidget
     protected static bool $isLazy = true;
     protected int|string|array $columnSpan = 'sm';
     protected static string $view = 'filament.widgets.total-users-stats';
+
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_TotalUsersWidget');
+    }
     protected function getStats(): array
     {
         $totalUsers = User::count();
@@ -45,8 +51,4 @@ class TotalUsersWidget extends BaseWidget
         ];
     }
 
-    public static function canView(): bool
-    {
-        return auth()->user()?->hasRole('super_admin');
-    }
 }
