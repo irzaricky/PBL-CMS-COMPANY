@@ -100,6 +100,13 @@ class StorageUsageChart extends ApexChartWidget
                     'data' => $storageData->pluck('size')->toArray(),
                 ],
             ],
+            'xaxis' => [
+                'categories' => $storageData->pluck('date')->toArray(),
+                'type' => 'category',
+                'labels' => [
+                    'rotate' => -45,
+                ],
+            ],
             'colors' => ['#0ea5e9'],
             'stroke' => ['curve' => 'smooth'],
             'fill' => [
@@ -114,6 +121,7 @@ class StorageUsageChart extends ApexChartWidget
             ],
             'dataLabels' => ['enabled' => false],
         ];
+
     }
 
     protected function extraJsOptions(): ?RawJs
@@ -135,19 +143,6 @@ class StorageUsageChart extends ApexChartWidget
                     }
                 }
             },
-            tooltip: {
-                x: {
-                    formatter: function (val) {
-                        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-                        return new Date(val).toLocaleDateString('id-ID', options);
-                    }
-                },
-                y: {
-                    formatter: function (val) {
-                        return val.toFixed(2) + ' MB';
-                    }
-                }
-            }
         }
         JS);
     }
