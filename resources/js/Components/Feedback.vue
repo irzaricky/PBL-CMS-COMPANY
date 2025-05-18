@@ -11,7 +11,7 @@ import { ChevronRight } from "lucide-vue-next";
 
                 <!-- Heading -->
                 <div class="text-secondary text-xl sm:text-2xl md:text-3xl font-bold text-center md:text-left">
-                    Give Your feedback to our company
+                    Berikan feedbackmu agar kami lebih baik!
                 </div>
 
                 <!-- Button -->

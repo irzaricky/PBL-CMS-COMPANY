@@ -4,30 +4,43 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { usePage, Link } from '@inertiajs/vue3'
 
-const props = defineProps({ slug: String })
+//local prop
+const localProps = defineProps({ slug: String })
+
+//global prop nggo tema
+const page = usePage()
+const globalProps = page.props
+
+const props = {
+    ...localProps,
+    ...globalProps
+}
+
+// === DATA
 const item = ref(null)
 const loading = ref(false)
 const activeImageIndex = ref(0)
-const page = usePage()
-const isLoggedIn = computed(() => !!page.props.auth.user)
+const isLoggedIn = computed(() => !!props.auth.user)
 const testimoniList = ref([])
 const newTestimoni = ref({
     isi_testimoni: '',
     rating: 5,
-    id_user: page.props.auth.user?.id_user ?? null, // ← ini ditambah
+    id_user: props.auth.user?.id_user ?? null,
 })
 
-// Fetch produk dan testimoni saat komponen mount
+// === LIFECYCLE
 onMounted(() => {
     fetchProduk()
+    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary)
 })
 
+// === FUNCTION
 async function fetchProduk() {
     try {
         loading.value = true
         const response = await axios.get(`/api/produk/${props.slug}`)
         item.value = response.data.data
-        await fetchTestimoni() // langsung fetch testimoni setelah produk didapat
+        await fetchTestimoni()
     } catch (err) {
         console.error('Produk not found or error:', err)
     } finally {
@@ -73,12 +86,8 @@ async function submitTestimoni() {
         )
 
         alert('Testimoni berhasil dikirim dan menunggu persetujuan')
-
-        // Reset form
         newTestimoni.value.isi_testimoni = ''
         newTestimoni.value.rating = 5
-
-        // Refresh list testimoni
         await fetchTestimoni()
     } catch (err) {
         alert('Gagal mengirim testimoni')
@@ -86,6 +95,7 @@ async function submitTestimoni() {
     }
 }
 </script>
+
 
 
 <template>
@@ -127,7 +137,7 @@ async function submitTestimoni() {
                             <ol class="inline-flex items-center space-x-1 md:space-x-3">
                                 <li>
                                     <Link href="/"
-                                        class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600">
+                                        class="inline-flex items-center text-sm text-gray-500 hover:text-secondary">
                                     <Home class="w-4 h-4 mr-2" />
                                     Home
                                     </Link>
@@ -135,7 +145,7 @@ async function submitTestimoni() {
                                 <li class="inline-flex items-center">
                                     <ChevronRight class="w-4 h-4 text-gray-400" />
                                     <Link href="/produk"
-                                        class="ml-1 inline-flex items-center text-sm text-gray-500 hover:text-blue-600">
+                                        class="ml-1 inline-flex items-center text-sm text-gray-500 hover:text-secondary">
                                     <ShoppingBag class="w-4 h-4 mr-2" />
                                     Produk
                                     </Link>
@@ -151,7 +161,7 @@ async function submitTestimoni() {
                     </div>
 
                     <!-- Title & Price -->
-                    <h1 class="text-4xl font-bold">{{ item.nama_produk }}</h1>
+                    <h1 class="text-4xl text-secondary font-bold">{{ item.nama_produk }}</h1>
                     <div class="flex items-center gap-4">
                         <span class="text-xl font-semibold">{{ item.harga_produk.toLocaleString('id-ID') }}</span>
                         <div class="flex items-center gap-3">
@@ -208,8 +218,8 @@ async function submitTestimoni() {
             </div>
 
             <!-- FORM TESTIMONI -->
-            <div v-if="isLoggedIn" class="w-full max-w-3xl mx-auto mt-10">
-                <span class="text-sm text-gray-500">Sudah membeli dan menggunakan?</span>
+            <div v-if="isLoggedIn, item" class="w-full max-w-3xl mx-auto mt-10">
+                <span class="text-sm text-gray-500">Sudah membeli dan menggunakan {{ item.nama_produk }}?</span>
                 <h2 class="text-xl font-semibold mb-3">Tulis pengalamanmu sendiri</h2>
                 <form @submit.prevent="submitTestimoni" class="space-y-4 border rounded-xl shadow bg-white p-4">
                     <textarea v-model="newTestimoni.isi_testimoni"

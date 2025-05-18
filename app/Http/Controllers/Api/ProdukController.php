@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProdukResource;
 use App\Http\Resources\Produk\ProdukListResource;
 use App\Http\Resources\Produk\ProdukViewResource;
+use App\Models\KategoriProduk;
 
 class ProdukController extends Controller
 {
@@ -136,6 +137,23 @@ class ProdukController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal Mencari Produk',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getCategories()
+    {
+        try {
+            $categories = KategoriProduk::get();
+            return response()->json([
+                'status' => 'success',
+                'data' => $categories
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memuat kategori',
                 'error' => $e->getMessage()
             ], 500);
         }

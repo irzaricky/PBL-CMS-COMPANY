@@ -49,9 +49,9 @@ class FeatureToggleResource extends Resource
                 Tables\Columns\TextColumn::make('status_aktif')
                     ->label('Status Aktif')
                     ->badge()
-                    ->formatStateUsing(fn (bool $state): string => $state ? 'Aktif' : 'Nonaktif')
-                    ->color(fn (bool $state): string => $state ? 'success' : 'danger')
-                    ->icon(fn (bool $state): string => $state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle'),
+                    ->formatStateUsing(fn(bool $state): string => $state ? 'Aktif' : 'Nonaktif')
+                    ->color(fn(bool $state): string => $state ? 'success' : 'danger')
+                    ->icon(fn(bool $state): string => $state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle'),
             ])
             ->filters([
                 //
@@ -61,18 +61,18 @@ class FeatureToggleResource extends Resource
                     ->label('Perlihatkan')
                     ->icon('heroicon-s-eye')
                     ->color('success')
-                    ->action(fn (FeatureToggle $record) => $record->update(['status_aktif' => true]))
-                    ->visible(fn (FeatureToggle $record) => !$record->status_aktif),
-                    
+                    ->action(fn(FeatureToggle $record) => $record->update(['status_aktif' => true]))
+                    ->visible(fn(FeatureToggle $record) => !$record->status_aktif),
+
                 Tables\Actions\Action::make('hide')
                     ->label('Sembunyikan')
                     ->icon('heroicon-s-eye-slash')
                     ->color('danger')
-                    ->action(fn (FeatureToggle $record) => $record->update(['status_aktif' => false]))
-                    ->visible(fn (FeatureToggle $record) => $record->status_aktif),
+                    ->action(fn(FeatureToggle $record) => $record->update(['status_aktif' => false]))
+                    ->visible(fn(FeatureToggle $record) => $record->status_aktif),
             ])
             ->bulkActions([
-                Tables\Actions\BulkAction::make('activate_all') 
+                Tables\Actions\BulkAction::make('activate_all')
                     ->label('Aktifkan semua')
                     ->action(function (Collection $records) {
                         $records->each(function ($record) {
@@ -109,5 +109,8 @@ class FeatureToggleResource extends Resource
             'edit' => Pages\EditFeatureToggle::route('/{record}/edit'),
         ];
     }
-
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 }

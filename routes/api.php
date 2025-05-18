@@ -23,7 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-});    
+});
 
 // Post feedback (AUTENTIKASI BELUM DITAMBAHKAN)
 Route::post('/feedback', [FeedbackController::class, 'store']);
@@ -145,8 +145,12 @@ Route::prefix('produk')->group(function () {
     // untuk mengambil produk berdasarkan id
     Route::get('/id/{id}', [ProdukController::class, 'getProdukById']);
 
+     // untuk mengambil kategori produk
+    Route::get('/categories', [ProdukController::class, 'getCategories']);
+
     // untuk mengambil produk berdasarkan slug
     Route::get('/{slug}', [ProdukController::class, 'getProdukBySlug']);
+   
 });
 
 
