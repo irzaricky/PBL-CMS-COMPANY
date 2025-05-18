@@ -48,9 +48,37 @@ class GaleriSeeder extends Seeder
             'Kegiatan Sosial',
             'Perayaan Ulang Tahun',
             'Kegiatan Lingkungan',
+            'Peluncuran Website',
+            'Kunjungan Pelanggan',
+            'Pelatihan Keamanan',
+            'Pameran Produk',
+            'Kegiatan Olahraga',
+            'Pelatihan Manajemen',
+            'Kegiatan CSR',
+            'Pelatihan Soft Skill',
+            'Pelatihan Hard Skill',
+            'Pelatihan Kepemimpinan',
+            'Pelatihan Komunikasi',
+            'Pelatihan Tim Kerja',
+            'Pelatihan Kreativitas',
+            'Pelatihan Inovasi',
+            'Pelatihan Digital Marketing',
+            'Pelatihan SEO',
+            'Pelatihan Media Sosial',
+            'Pelatihan Desain Grafis',
+            'Pelatihan Video Editing',
+            'Pelatihan Fotografi',
+            'Pelatihan Public Speaking',
+            'Pelatihan Manajemen Waktu',
+            'Pelatihan Negosiasi',
+            'Pelatihan Analisis Data',
+            'Pelatihan Manajemen Proyek',
+            'Pelatihan Pengembangan Diri',
+            'Pelatihan Keterampilan Teknis',
+            'Pelatihan Keterampilan Interpersonal',
         ];
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 40; $i++) {
             $title = $faker->unique()->randomElement($titles);
             $slug = Str::slug($title);
 

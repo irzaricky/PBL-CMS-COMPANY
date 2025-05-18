@@ -11,10 +11,28 @@ use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use App\Filament\Widgets\Admin\StorageUsageChart;
 use App\Filament\Widgets\Admin\StorageUsageByFeatureChart;
 use App\Filament\Widgets\Admin\RemainingStorageWidget;
+use App\Filament\Widgets\ContentManager\Artikel\TrendArticlesChart;
+use App\Filament\Widgets\ContentManager\Artikel\TopArticlesByViews;
+use App\Filament\Widgets\ContentManager\CaseStudy\CaseStudyStatusChart;
+use App\Filament\Widgets\ContentManager\Event\UpcomingEventsChart;
+use App\Filament\Widgets\ContentManager\Galeri\GaleriDownloadsChart;
+use App\Filament\Widgets\ContentManager\Galeri\GaleriStatusChart;
+use App\Filament\Widgets\ContentManager\General\ContentCountsChart;
+use App\Filament\Widgets\ContentManager\General\ContentTrendsChart;
+use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
+use App\Filament\Widgets\ContentManager\Produk\TopProducts;
+use App\Filament\Widgets\ContentManager\Unduhan\DocumentDownloadsChart;
+use App\Filament\Widgets\ContentManager\Unduhan\TopDownloads;
+use App\Filament\Widgets\ContentManager\Unduhan\UnduhanStatusChart;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Widgets\ContentManager\Event\EventStatusChart;
+use App\Filament\Widgets\ContentManager\Event\EventTrendsChart;
+use App\Filament\Widgets\ContentManager\Event\TopEventsStatsWidget;
+use App\Filament\Widgets\ContentManager\Galeri\GaleriTrendsChart;
+use App\Filament\Widgets\ContentManager\Galeri\TopGaleriesStatsWidget;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Session\Middleware\StartSession;
@@ -74,7 +92,33 @@ class AdminPanelProvider extends PanelProvider
                 RemainingStorageWidget::class,
                 StorageUsageByFeatureChart::class,
 
-                // Content Manager widgets
+                    // Content Manager widgets
+                ContentCountsChart::class,
+                ContentTrendsChart::class,
+
+                TopArticlesByViews::class,
+                TrendArticlesChart::class,
+
+                CaseStudyStatusChart::class,
+
+                TopEventsStatsWidget::class,
+                EventTrendsChart::class,
+                UpcomingEventsChart::class,
+                EventStatusChart::class,
+
+
+                TopGaleriesStatsWidget::class,
+                GaleriTrendsChart::class,
+                GaleriDownloadsChart::class,
+                GaleriStatusChart::class,
+
+                TopProducts::class,
+                ProductsByStatusChart::class,
+
+
+                TopDownloads::class,
+                DocumentDownloadsChart::class,
+                UnduhanStatusChart::class,
 
                 // Customer manager widgets
 

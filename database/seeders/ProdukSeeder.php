@@ -41,7 +41,7 @@ class ProdukSeeder extends Seeder
         ];
 
         // Generate 20 products
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 80; $i++) {
             $randomProduct = $faker->randomElement($products);
             $createdAt = Carbon::now()->subYear()->addDays(rand(0, 365));
 
