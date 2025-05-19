@@ -39,15 +39,20 @@ class SingleFileHandler
         }
 
         $oldFile = $record->getOriginal($attribute);
-        $newFile = $formData[$attribute] ?? $record->$attribute;
 
-        // Jika file baru secara eksplisit kosong, berarti user menghapus
-        $isFileRemoved = array_key_exists($attribute, $formData) && empty($newFile);
+        // Jika field tidak ada di form data, artinya user tidak mengganti file → jangan hapus
+        if (!array_key_exists($attribute, $formData)) {
+            return;
+        }
 
-        if (!empty($oldFile) && $isFileRemoved && Storage::disk('public')->exists($oldFile)) {
+        $newFile = $formData[$attribute];
+
+        // Hanya hapus jika file lama berbeda dari file baru
+        if (!empty($oldFile) && $oldFile !== $newFile && Storage::disk('public')->exists($oldFile)) {
             Storage::disk('public')->delete($oldFile);
         }
     }
+
 
 
     /**
