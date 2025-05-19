@@ -19,7 +19,7 @@ use App\Http\Controllers\Api\TestimoniProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -104,9 +104,8 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 // Testimoni
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
 
-
-Route::post('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'store']);
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
+Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
 
 
 // Mitra
@@ -146,8 +145,12 @@ Route::prefix('produk')->group(function () {
     // untuk mengambil produk berdasarkan id
     Route::get('/id/{id}', [ProdukController::class, 'getProdukById']);
 
+     // untuk mengambil kategori produk
+    Route::get('/categories', [ProdukController::class, 'getCategories']);
+
     // untuk mengambil produk berdasarkan slug
     Route::get('/{slug}', [ProdukController::class, 'getProdukBySlug']);
+   
 });
 
 

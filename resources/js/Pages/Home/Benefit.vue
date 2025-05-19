@@ -21,16 +21,16 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div
-        class="w-full px-6 lg:px-16 py-28 bg-secondary text-white flex flex-col items-center gap-20 overflow-hidden">
+    <div class="w-full px-6 lg:px-16 py-28 bg-secondary text-white flex flex-col items-center gap-20 overflow-hidden">
         <!-- Header -->
         <div class="w-full max-w-[768px] flex flex-col items-center gap-4 text-center">
-            <div class="text-Color-Scheme-1-Text text-base font-semibold font-['Plus_Jakarta_Sans']">Jadi</div>
-            <div class="text-Color-Scheme-1-Text text-5xl font-normal font-['Plus_Jakarta_Sans'] leading-[57.60px]">
-                Mengapa memilih {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}?
+            <div class="text-whute text-base font-semibold font-custom">Jadi</div>
+            <div class="text-white text-5xl font-normal font-custom leading-[57.60px]">
+                Kenapa sih harus ke sini?
             </div>
-            <div class="text-Color-Scheme-1-Text text-lg font-normal font-['Plus_Jakarta_Sans'] leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            <div class="text-white text-lg font-normal font-custom leading-relaxed">
+                Karena {{ profil_perusahaan?.nama_perusahaan || "Loading..." }} ini bukan cuma informatif, tapi
+                juga nyaman dan seru buat dijelajahi! 
             </div>
         </div>
 
@@ -44,7 +44,7 @@ onMounted(() => {
                 ]">
                     <!-- Text Section -->
                     <div class="w-full lg:w-1/2 p-6 flex items-center">
-                        <div class="text-Color-Scheme-1-Text text-2xl font-normal font-['Plus_Jakarta_Sans']">
+                        <div class="text-white text-2xl font-normal font-custom">
                             Medium length section heading goes here
                         </div>
                     </div>

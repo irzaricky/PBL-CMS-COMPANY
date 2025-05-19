@@ -17,7 +17,7 @@ class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
     protected static ?string $navigationGroup = 'Company Owner';
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static ?string $navigationIcon = 'heroicon-s-building-office';
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
     protected static ?int $navigationSort = 1;
 
@@ -38,8 +38,7 @@ class ProfilPerusahaanResource extends Resource
                             ->directory('logo-perusahaan')
                             ->disk('public')
                             ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
-                            ->imageEditor()
-                            ->optimize('webp'),
+                            ->imageEditor(),
                         
 
                         Forms\Components\FileUpload::make('thumbnail_perusahaan')
@@ -53,8 +52,7 @@ class ProfilPerusahaanResource extends Resource
                             ->imageEditor()
                             ->imageResizeMode('contain')
                             ->imageResizeTargetWidth(1280)
-                            ->imageResizeTargetHeight(720)
-                            ->optimize('webp'),
+                            ->imageResizeTargetHeight(720),
                     ]),
 
                 Forms\Components\Section::make('Kontak dan Deskripsi')
@@ -116,6 +114,27 @@ class ProfilPerusahaanResource extends Resource
                                 'attachFiles'
                             ])
                             ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Tampilan')
+                    ->description('Pilih tema warna untuk tampilan website')
+                    ->schema([
+                        Forms\Components\Select::make('tema_perusahaan')
+                            ->label('Tema Perusahaan')
+                            ->helperText('Perlu refresh untuk mengambil perubahan')
+                            ->options([
+                                '#31487A' => 'YlnMn Blue',
+                                '#793354' => 'Quinacridone Magenta',
+                                '#796C2F' => 'Field Drab',
+                                '#1B4332' => 'Brunswick Green',
+                                '#3E1F47' => 'Purple Taupe',
+                            ])
+                            ->default('#31487A')
+                            ->required()
+                            ->reactive()
+                            ->native(false)
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                $set('tema_perusahaan', $state);
+                            }),
                     ]),
             ]);
     }

@@ -38,7 +38,7 @@ function getImageUrl(image) {
 
 <template>
     <div>
-        <div class="font-bold text-h5-bold mb-4 text-typography-main">
+        <div class="font-bold text-h6-bold mb-4 text-secondary">
             Lowongan Terbaru
         </div>
         <div class="flex flex-col gap-3">
@@ -48,7 +48,7 @@ function getImageUrl(image) {
                     class="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
                 <div class="flex flex-col overflow-hidden">
                     <a :href="`/lowongan/${lowongan.slug}`"
-                        class="text-h6-bold text-typography-main truncate hover:underline">
+                        class="text-h6-bold text-secondary truncate hover:underline">
                         {{ lowongan.judul_lowongan }}
                     </a>
                     <span class="text-xs text-typography-dark line-clamp-2 mt-1">{{ lowongan.deskripsi_pekerjaan

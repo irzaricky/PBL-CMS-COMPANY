@@ -1,26 +1,36 @@
 <script setup>
-import Navbar from '@/Components/Navbar.vue';
-import Footer from '@/Components/Footer.vue';
-import { Icon } from "@iconify/vue";
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { usePage } from '@inertiajs/vue3';
 
 const produk = ref([]);
 const searchQuery = ref('');
 const searching = ref(false);
 let debounceTimer = null;
+const { props } = usePage()
 
 onMounted(() => {
     fetchProduk();
     fetchKategori();
+    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary)
 });
 
-const fetchProduk = async (query = '') => {
+const selectedCategory = ref(null);
+
+const filterByCategory = (categoryId) => {
+    selectedCategory.value = categoryId;
+    fetchProduk(searchQuery.value, categoryId);
+};
+
+const fetchProduk = async (query = '', categoryId = null) => {
     try {
         searching.value = true;
-        let url = query.length > 0 ? '/api/produk/search' : '/api/produk';
-        const params = query.length > 0 ? { query } : {};
+        let url = query.length > 0 || categoryId !== null ? '/api/produk/search' : '/api/produk';
+        const params = {};
+        if (query.length > 0) params.query = query;
+        if (categoryId !== null) params.category_id = categoryId;
+
         const response = await axios.get(url, { params });
         produk.value = response.data.data;
     } catch (error) {
@@ -35,14 +45,14 @@ const handleSearch = () => {
     if (debounceTimer) clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(() => {
-        fetchProduk(searchQuery.value);
-    }, 500); // debounce 500ms
+        fetchProduk(searchQuery.value, selectedCategory.value);
+    }, 500);
 };
 
 const categories = ref([]);
 async function fetchKategori() {
     try {
-        const response = await axios.get("/api/produk/kategori");
+        const response = await axios.get("/api/produk/categories");
         categories.value = response.data.data;
     } catch (error) {
         console.error("Error fetching categories:", error);
@@ -99,26 +109,28 @@ function getImageUrl(image) {
             </div>
         </div>
 
-        <div
-            class="max-w-screen-xl mx-auto px-4 lg:px-8 py-28 bg-Color-Scheme-1-Background flex flex-col items-center gap-20 overflow-hidden">
-            <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end">
-                <div class="w-full lg:w-3/4 flex flex-col gap-4">
-                    <div class="text-Color-Scheme-1-Text text-base font-semibold font-custom">Tagline</div>
-                    <div class="flex flex-col gap-4">
-                        <div class="text-Color-Scheme-1-Text text-5xl font-normal font-custom leading-tight">Products
-                        </div>
-                        <div class="text-Color-Scheme-1-Text text-lg font-normal font-custom leading-relaxed">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-8 lg:mt-0">
-                    <button
-                        class="px-6 py-2.5 bg-Opacity-Neutral-Darkest-5/5 rounded-full outline outline-1 text-Color-Neutral-Darkest text-base font-medium font-custom">
-                        Lihat di marketplace
-                    </button>
-                </div>
+        <div class="max-w-screen-xl mx-auto px-4 lg:px-8 py-8 flex flex-col items-center gap-20 overflow-hidden">
+
+            <!-- Filter Kategori -->
+            <div class="w-full flex flex-wrap gap-2 mt-6 font-custom">
+                <!-- Tombol 'Semua' -->
+                <button @click="filterByCategory(null)" class="px-4 py-2 rounded-xl text-sm font-medium transition"
+                    :class="selectedCategory === null
+                        ? 'bg-secondary text-white'
+                        : 'bg-gray-200 text-gray-800 hover:bg-black hover:text-white'">
+                    Semua
+                </button>
+
+                <!-- Tombol per kategori -->
+                <button v-for="category in categories" :key="category.id_kategori_produk"
+                    @click="filterByCategory(category.id_kategori_produk)"
+                    class="px-4 py-2 rounded-xl text-sm font-medium transition" :class="selectedCategory === category.id_kategori_produk
+                        ? 'bg-secondary text-white'
+                        : 'bg-gray-200 text-gray-800 hover:bg-black hover:text-white'">
+                    {{ category.nama_kategori_produk }}
+                </button>
             </div>
+
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full font-custom">
                 <div v-for="item in produk" :key="item.id_produk"
@@ -157,6 +169,24 @@ function getImageUrl(image) {
                             Lihat Detail
                         </a>
                     </div>
+                </div>
+            </div>
+            <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end">
+                <div class="w-full lg:w-3/4 flex flex-col gap-4">
+                    <div class="text-Color-Scheme-1-Text text-base font-semibold font-custom">Tagline</div>
+                    <div class="flex flex-col gap-4">
+                        <div class="text-Color-Scheme-1-Text text-5xl font-normal font-custom leading-tight">Products
+                        </div>
+                        <div class="text-Color-Scheme-1-Text text-lg font-normal font-custom leading-relaxed">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 lg:mt-0">
+                    <button
+                        class="px-6 py-2.5 bg-Opacity-Neutral-Darkest-5/5 rounded-full outline outline-1 text-Color-Neutral-Darkest text-base font-medium font-custom">
+                        Lihat di marketplace
+                    </button>
                 </div>
             </div>
         </div>

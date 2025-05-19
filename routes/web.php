@@ -14,11 +14,14 @@ Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login')->name('filament.auth.login');
 
-
 Route::get('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+// Route::get('/login', function () {
+//     return Inertia::render('Login');
+// })->name('login');
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -27,7 +30,6 @@ Route::get('/', function () {
 Route::get('/example', function () {
     return Inertia::render('Example');
 });
-
 
 // Rute group untuk artikel
 Route::prefix('artikel')->group(function () {

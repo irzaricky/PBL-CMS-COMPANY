@@ -39,6 +39,7 @@ class ProfilPerusahaan extends Model
         'sejarah_perusahaan',
         'visi_perusahaan',
         'misi_perusahaan',
+        'tema_perusahaan',
     ];
 
     /**

@@ -9,8 +9,8 @@ import { ChevronRight } from "lucide-vue-next";
             <div class="bg-third rounded-xl py-6 px-4 md:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 -top-16 sm:-top-20 md:-top-16 lg:-top-12 shadow-md w-[95%] z-10">
 
                 <!-- Heading -->
-                <div class="text-secondary text-base sm:text-sm md:text-xl lg:text-2xl font-bold text-center md:text-left">
-                    Give Your Feedback to Our Company
+                <div class="text-secondary text-xl md:pr-10 lg:pr-10 sm:text-2xl md:text-3xl font-bold text-center md:text-left">
+                    Berikan feedbackmu agar kami lebih baik!
                 </div>
 
                 <!-- Button -->

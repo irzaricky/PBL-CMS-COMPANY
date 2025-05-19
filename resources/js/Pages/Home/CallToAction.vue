@@ -4,7 +4,7 @@
             <!-- Heading -->
             <h1 class="text-3xl sm:text-4xl md:text-4xl lg:text-5xl font-extrabold text-center text-secondary"
                 style="line-height: 1.3 !important;">
-                Let's Join With Us To Create Your Best Website
+                Temukan siapa kami dan ke mana kami melangkah.
             </h1>
 
             <div class="pt-6">

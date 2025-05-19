@@ -1,23 +1,25 @@
 <script setup>
 import AppLayout from "../Layouts/AppLayout.vue";
-import Hero from "../Components/Hero.vue";
-import Benefit from "../Components/Benefit.vue";
-import Produk from "@/Components/Produk.vue";
-import Artikel from "@/Components/Artikel.vue";
-import CallToAction from "../Components/CallToAction.vue";
-import Feedback from "../Components/Feedback.vue";
-import Galeri from "../Components/Galeri.vue";
-import Event from "@/Components/Event.vue";
-import Lowongan from "@/Components/Lowongan.vue";
-import Mitra from "@/Components/Mitra.vue";
+import Hero from "../Pages/Home/Hero.vue";
+import Benefit from "../Pages/Home/Benefit.vue";
+import Produk from "@/Pages/Home/Produk.vue";
+import Artikel from "@/Pages/Home/Artikel.vue";
+import CallToAction from "../Pages/Home/CallToAction.vue";
+import Galeri from "../Pages/Home/Galeri.vue";
+import Event from "@/Pages/Home/Event.vue";
+import Lowongan from "@/Pages/Home/Lowongan.vue";
+import Mitra from "@/Pages/Home/Mitra.vue";
 import { ref, onMounted } from "vue";
+import { usePage } from '@inertiajs/vue3'
 import axios from "axios";
 
 const featureToggles = ref({});
+const { props } = usePage()
 
 onMounted(async () => {
     const response = await axios.get('/api/feature-toggles');
     featureToggles.value = response.data.data;
+    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary)
 });
 </script>
 
