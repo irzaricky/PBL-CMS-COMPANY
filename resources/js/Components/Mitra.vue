@@ -1,10 +1,10 @@
 <template>
     <div class="relative font-custom antialiased">
         <main class="relative flex flex-col justify-center bg-secondary overflow-hidden">
-            <div class="w-full max-w-7xl mx-auto px-4 md:px-6 py-24 text-center">
+            <div class="w-full max-w-7xl mx-auto px-4 md:px-6 py-20 text-center">
 
-                <h2 class="text-2xl md:text-3xl font-bold text-white mb-10">
-                    Ingin bermitra bersama kami?
+                <h2 class="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-14">
+                    Our Mitra
                 </h2>
 
                 <div class="w-full inline-flex flex-nowrap overflow-hidden"

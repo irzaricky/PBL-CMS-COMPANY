@@ -112,6 +112,24 @@ Route::prefix('produk')->group(function () {
     })->name('produk.show');
 });
 
+// Rute group untuk Tentang Kami
+Route::prefix('tentangkami')->group(function () {
+    Route::get('/profilperusahaan', function () {
+        return Inertia::render('TentangKami/ProfilPerusahaan');
+    })->name('tentangkami.profilperusahaan');
+
+    Route::get('/visimisiperusahaan', function () {
+        return Inertia::render('TentangKami/VisiMisiPerusahaan');
+    })->name('tentangkami.visimisiperusahaan');
+
+    Route::get('/sejarahperusahaan', function () {
+        return Inertia::render('TentangKami/SejarahPerusahaan');
+    })->name('tentangkami.sejarahperusahaan');
+
+    Route::get('/strukturorganisasi', function () {
+        return Inertia::render('TentangKami/StrukturOrganisasi');
+    })->name('tentangkami.strukturorganisasi');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

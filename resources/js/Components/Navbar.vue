@@ -108,17 +108,17 @@ function getImageUser(imagePath) {
 
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center space-x-8">
-                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda
+                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold">Beranda
                 </Link>
-                <Link href="/produk" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Produk
+                <Link href="/produk" class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold">Produk
                 </Link>
-                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback
+                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold">Feedback
                 </Link>
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
-                        class="text-typography-dark hover:text-typography-hover2 transition text-lg font-semibold flex items-center">
+                        class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold flex items-center">
                         Lainnya
-                        <ChevronDown class="w-4" />
+                        <ChevronDown class="w-5 h-5" />
                     </span>
                 </div>
             </div>
@@ -175,12 +175,12 @@ function getImageUser(imagePath) {
                 </Link>
             </template>
 
-            <Link href="/" class="text-2xl py-1">Beranda</Link>
-            <Link href="/produk" class="text-2xl py-1">Produk</Link>
-            <Link href="/" class="text-2xl py-1">Feedback</Link>
+            <Link href="/" class="text-base font-semibold py-1">Beranda</Link>
+            <Link href="/produk" class="text-base font-semibold py-1">Produk</Link>
+            <Link href="/" class="text-base font-semibold py-1">Feedback</Link>
 
             <!-- Tombol Lainnya -->
-            <div class="text-2xl py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">
+            <div class="text-base font-semibold py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">
                 <span>Lainnya</span>
                 <ChevronDown class="w-5 h-5" />
             </div>

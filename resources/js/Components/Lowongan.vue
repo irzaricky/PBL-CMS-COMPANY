@@ -65,7 +65,6 @@ function formatGaji(angka) {
         class="w-full px-6 py-20 lg:px-16 lg:py-28 bg-Color-Scheme-1-Background flex flex-col gap-20 items-center font-custom">
         <!-- Header -->
         <div class="w-full max-w-2xl flex flex-col gap-4 items-center text-center">
-            <h4 class="text-base font-semibold text-Color-Scheme-1-Text">Tagline</h4>
             <h2 class="text-5xl font-normal text-Color-Scheme-1-Text leading-[1.2]">Open Positions</h2>
             <p class="text-lg text-Color-Scheme-1-Text leading-relaxed">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum

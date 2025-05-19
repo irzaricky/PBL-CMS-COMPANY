@@ -67,7 +67,7 @@ function lihatSelengkapnya() {
                             class="w-20 sm:w-24 md:w-28 object-contain" />
                     </div>
                     <h4 class="font-bold text-center text-lg">{{ profil_perusahaan?.nama_perusahaan }}</h4>
-                    <p class="mt-4 text-left">
+                    <p class="mt-4 text-left font-semibold text-sm">
                         {{ truncatedSejarah }}
                         <span v-if="showReadMore" class="text-blue-400 cursor-pointer" @click="lihatSelengkapnya">
                             ... Baca selengkapnya
@@ -75,13 +75,13 @@ function lihatSelengkapnya() {
                     </p>
 
                     <div class="mt-6">
-                        <h4 class="font-bold pb-1">Contact Us</h4>
-                        <div class="flex items-center gap-2">
-                            <Phone class="w-4" />
+                        <h4 class="font-bold text-2xl pb-1">Contact Us</h4>
+                        <div class="flex items-center gap-2 font-semibold text-sm">
+                            <Phone class="w-5" />
                             <span>(031) 33101059</span>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <Mail class="w-4" />
+                        <div class="flex items-center gap-2 font-semibold text-sm">
+                            <Mail class="w-5" />
                             <span>marketing@biiscorp.com</span>
                         </div>
                     </div>
@@ -89,8 +89,8 @@ function lihatSelengkapnya() {
 
                 <!-- Kolom 2 -->
                 <div class="flex flex-col justify-center h-full lg:col-span-2 lg:pl-20">
-                    <h4 class="font-bold mb-4">Quick Links</h4>
-                    <ul class="grid grid-cols-2 gap-y-2">
+                    <h4 class="font-bold text-2xl mb-4">Quick Links</h4>
+                    <ul class="grid grid-cols-2 gap-y-2 font-semibold text-base">
                         <li><a href="#" class="hover:underline">Beranda</a></li>
                         <li><a href="#" class="hover:underline">Galeri</a></li>
                         <li><a href="#" class="hover:underline">Tentang Kami</a></li>
@@ -105,8 +105,8 @@ function lihatSelengkapnya() {
                 <!-- Kolom 3 -->
                 <div class="space-y-6 flex flex-col justify-center h-full">
                     <div>
-                        <h4 class="font-bold mb-4">Our Location</h4>
-                        <div class="flex items-start gap-2">
+                        <h4 class="font-bold text-2xl mb-4">Our Location</h4>
+                        <div class="flex items-start gap-2 font-semibold text-sm">
                             <MapPin class="w-10 lg:w-20 self-center" />
                             <span class="leading-relaxed">
                                 {{ profil_perusahaan?.alamat_perusahaan || 'Alamat perusahaan belum tersedia.' }}
@@ -114,7 +114,7 @@ function lihatSelengkapnya() {
                         </div>
                     </div>
                     <div>
-                        <h4 class="font-bold mb-4">Follow Us</h4>
+                        <h4 class="font-bold text-2xl mb-4">Follow Us</h4>
                         <div class="flex flex-wrap gap-4">
                             <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
                             <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-tiktok"></i></a>
@@ -142,7 +142,7 @@ function lihatSelengkapnya() {
 
         <!-- Copyright -->
         <div class="bg-white text-black h-10 mt-10">
-            <p class="text-center leading-10">
+            <p class="text-center font-semibold text-base leading-10">
                 © 2025 {{ profil_perusahaan?.nama_perusahaan }}.
             </p>
         </div>

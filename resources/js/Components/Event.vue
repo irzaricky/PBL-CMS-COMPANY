@@ -36,15 +36,27 @@ function getImageUrl(image) {
     }
     return `/storage/${image}`;
 }
+
+// Format date and time
+function formatDate(date) {
+    if (!date) return "";
+    return new Date(date).toLocaleDateString("id-ID", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
+}
 </script>
 
 <template>
-    <div class="w-full px-6 lg:px-16 py-28 bg-secondary text-white flex flex-col items-center overflow-hidden font-custom">
-        <div class="w-full flex flex-col lg:flex-row items-center lg:items-start gap-10">
+    <div
+        class="w-full px-6 lg:px-16 py-20 bg-secondary text-white flex flex-col items-center overflow-hidden font-custom">
+        <div class="w-full flex flex-col lg:flex-row items-center lg:justify-center lg:items-center gap-10">
 
             <!-- Left Side: Header dan Panah -->
-            <div class="w-full lg:w-1/4 flex flex-col items-center lg:items-start text-center lg:text-left gap-4">
-                <div class="text-Color-Scheme-1-Text text-base font-semibold">Halo!</div>
+            <div
+                class="w-full h-full justify-center lg:w-1/4 flex flex-col items-center lg:items-start text-center lg:text-left gap-4">
                 <h2 class="text-4xl lg:text-6xl font-custom font-thin lg:font-normal text-white">
                     Ikuti Event Kami
                 </h2>
@@ -57,25 +69,43 @@ function getImageUrl(image) {
             <!-- Right Side: Event Cards -->
             <div class="w-full lg:w-3/4 flex flex-col lg:flex-row lg:flex-nowrap gap-8">
                 <div v-for="event in events" :key="event.slug"
-                    class="relative group rounded-2xl overflow-hidden w-full lg:w-1/3">
+                    class="relative group rounded-2xl overflow-hidden w-full lg:w-1/3 bg-primary text-typography-dark">
 
                     <!-- Gambar Event -->
-                    <img :src="getImageUrl(event.thumbnail_event)" alt=""
-                        class="w-full h-72 lg:h-96 object-cover rounded-2xl" />
+                    <div class="w-full flex justify-center px-3 py-3">
+                        <img :src="getImageUrl(event.thumbnail_event)" alt=""
+                            class="w-full h-72 lg:h-96 object-cover rounded-2xl" />
+                    </div>
 
-                    <!-- Overlay muncul di hover di bagian bawah -->
-                    <div
-                        class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-4 py-6 opacity-0 group-hover:opacity-100 transition duration-300">
-
-                        <h3 class="text-white text-lg font-semibold mb-3 text-center">
+                    <!-- Konten Informasi Event -->
+                    <div class="p-4 space-y-2">
+                        <h3 class="text-lg font-semibold">
                             {{ event.nama_event }}
                         </h3>
+                        <div class="text-sm text-gray-600 flex items-center gap-2">
+                            <CalendarDays />
+                            <span>{{ formatDate(event.waktu_start_event) }}</span>
+                        </div>
+                        <div class="text-sm text-gray-600 flex items-center gap-2">
+                            <MapPin />
+                            <span>{{ event.lokasi_event }}</span>
+                        </div>
 
-                        <div class="flex justify-center">
-                            <a :href="`/event/${event.slug}`"
-                                class="px-5 py-2 bg-white/10 text-white text-sm rounded-full hover:bg-white/20 transition">
-                                Lihat Event
-                            </a>
+                        <!--Button Lihat Detail dan Daftar Event-->
+                        <div class="flex items-center justify-between flex-wrap gap-4 pt-3">
+
+                            <!--Button Lihat Detail-->
+                                <a :href="`/event/${event.slug}`"
+                                    class="inline-flex items-center gap-2 px-3 py-3 bg-secondary text-white text-sm font-semibold rounded-lg hover:bg-secondary/90 transition">
+                                    Lihat Detail
+                                    <ChevronsRight class="w-5 h-5 text-white" />
+                                </a>
+
+                            <!--Button Daftar Event-->
+                                <a :href="`/event/${event.slug}`"
+                                    class="block text-center px-3 py-3 bg-secondary text-white text-sm font-semibold rounded-lg hover:bg-secondary/90 transition">
+                                    Daftar Event
+                                </a>
                         </div>
                     </div>
                 </div>
