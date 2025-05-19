@@ -1,8 +1,8 @@
 <script setup>
-import InputError from '@/Deprecated Components/InputError.vue';
-import InputLabel from '@/Deprecated Components/InputLabel.vue';
-import PrimaryButton from '@/Deprecated Components/PrimaryButton.vue';
-import TextInput from '@/Deprecated Components/TextInput.vue';
+import InputError from '@/Z Deprecated Components/InputError.vue';
+import InputLabel from '@/Z Deprecated Components/InputLabel.vue';
+import PrimaryButton from '@/Z Deprecated Components/PrimaryButton.vue';
+import TextInput from '@/Z Deprecated Components/TextInput.vue';
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
