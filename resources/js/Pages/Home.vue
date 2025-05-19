@@ -10,16 +10,13 @@ import Event from "@/Pages/Home/Event.vue";
 import Lowongan from "@/Pages/Home/Lowongan.vue";
 import Mitra from "@/Pages/Home/Mitra.vue";
 import { ref, onMounted } from "vue";
-import { usePage } from '@inertiajs/vue3'
 import axios from "axios";
 
 const featureToggles = ref({});
-const { props } = usePage()
 
 onMounted(async () => {
     const response = await axios.get('/api/feature-toggles');
     featureToggles.value = response.data.data;
-    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary)
 });
 </script>
 

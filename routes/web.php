@@ -31,6 +31,7 @@ Route::get('/example', function () {
     return Inertia::render('Example');
 });
 
+
 // Rute group untuk artikel
 Route::prefix('artikel')->group(function () {
     Route::get('/', function () {
@@ -75,6 +76,13 @@ Route::prefix('portofolio')->group(function () {
 
     Route::get('/{slug}', action: function ($slug) {
         return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+
+// Rute group feedback
+Route::prefix('feedback')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Feedback/Main');
     });
 });
 

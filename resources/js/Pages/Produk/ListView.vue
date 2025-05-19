@@ -8,12 +8,12 @@ const produk = ref([]);
 const searchQuery = ref('');
 const searching = ref(false);
 let debounceTimer = null;
-const { props } = usePage()
+const { props } = usePage();
 
 onMounted(() => {
     fetchProduk();
     fetchKategori();
-    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary)
+    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary);
 });
 
 const selectedCategory = ref(null);
@@ -66,6 +66,34 @@ function getImageUrl(image) {
     }
     return `/storage/${image}`;
 }
+
+const item = ref(null);
+const activeImageIndex = ref(0);
+
+const fetchLatestProduct = async () => {
+    try {
+        const response = await axios.get('/api/produk/latest');
+        item.value = response.data.data;
+    } catch (error) {
+        console.error("Gagal mengambil produk terbaru:", error);
+        item.value = null;
+    }
+};
+
+const nextImage = () => {
+    if (!item.value || !item.value.thumbnail_produk) return;
+    activeImageIndex.value = (activeImageIndex.value + 1) % item.value.thumbnail_produk.length;
+};
+
+const prevImage = () => {
+    if (!item.value || !item.value.thumbnail_produk) return;
+    activeImageIndex.value =
+        (activeImageIndex.value - 1 + item.value.thumbnail_produk.length) % item.value.thumbnail_produk.length;
+};
+
+onMounted(() => {
+    fetchLatestProduct();
+});
 </script>
 
 <template>
@@ -81,12 +109,13 @@ function getImageUrl(image) {
                 class="relative z-10 w-full max-w-3xl flex flex-col justify-start items-center gap-8 text-white text-center">
                 <!-- Heading -->
                 <div class="flex flex-col items-center gap-4">
-                    <div class="text-base font-semibold font-custom">Tagline</div>
+                    <div class="text-base font-semibold font-custom">Produk</div>
                     <div class="flex flex-col gap-6">
-                        <h2 class="text-4xl md:text-5xl font-normal font-custom leading-tight">Short heading here</h2>
+                        <h2 class="text-4xl md:text-5xl font-normal font-custom leading-tight">Belanja Praktis, Hasil
+                            Maksimal</h2>
                         <p class="text-lg font-normal font-custom leading-relaxed">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros
-                            elementum tristique.
+                            Produk pilihan dengan harga bersahabat. Temukan kebutuhanmu dengan mudah dan cepat hanya
+                            dalam satu tempat.
                         </p>
                     </div>
                 </div>
@@ -173,20 +202,86 @@ function getImageUrl(image) {
             </div>
             <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end">
                 <div class="w-full lg:w-3/4 flex flex-col gap-4">
-                    <div class="text-Color-Scheme-1-Text text-base font-semibold font-custom">Tagline</div>
+                    <div class="text-Color-Scheme-1-Text text-base font-semibold font-custom">Belum puas?</div>
                     <div class="flex flex-col gap-4">
-                        <div class="text-Color-Scheme-1-Text text-5xl font-normal font-custom leading-tight">Products
+                        <div class="text-Color-Scheme-1-Text text-5xl font-normal font-custom leading-tight">Produk
+                            Terbaru
                         </div>
                         <div class="text-Color-Scheme-1-Text text-lg font-normal font-custom leading-relaxed">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                            Coba lihat keluaran terbaru kami.
                         </div>
                     </div>
                 </div>
                 <div class="mt-8 lg:mt-0">
-                    <button
+                    <p v-if="item?.created_at"
                         class="px-6 py-2.5 bg-Opacity-Neutral-Darkest-5/5 rounded-full outline outline-1 text-Color-Neutral-Darkest text-base font-medium font-custom">
-                        Lihat di marketplace
-                    </button>
+                        Rilis:
+                        {{
+                            new Date(item.created_at).toLocaleDateString('id-ID', {
+                                day: 'numeric',
+                                month: 'long',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        })
+                        }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Terbaru Detail -->
+        <div v-if="item"
+            class="w-full px-4 lg:px-16 py-10 lg:py-20 bg-white flex flex-col items-start gap-20 font-custom">
+            <div class="flex flex-col lg:flex-row gap-10 lg:gap-20 w-full max-w-7xl mx-auto">
+                <!-- Left: Product Image -->
+                <div class="w-full lg:w-1/2 flex justify-center">
+                    <div class="relative w-full max-w-[600px] aspect-[4/3] overflow-hidden rounded-2xl">
+                        <img class="absolute inset-0 w-full h-full object-cover"
+                            :src="getImageUrl(item.thumbnail_produk?.[activeImageIndex])" alt="Product Image" />
+
+                        <!-- Nav Arrows -->
+                        <div @click="prevImage"
+                            class="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/40 hover:bg-black/60 rounded-full cursor-pointer transition">
+                            <ChevronLeft class="w-5 h-5 text-white" />
+                        </div>
+                        <div @click="nextImage"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/40 hover:bg-black/60 rounded-full cursor-pointer transition">
+                            <ChevronRight class="w-5 h-5 text-white" />
+                        </div>
+
+                        <!-- Pagination Dots -->
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                            <div v-for="(img, i) in item.thumbnail_produk" :key="i"
+                                :class="i === activeImageIndex ? 'w-2.5 h-2.5 rounded-full bg-white scale-110' : 'w-2.5 h-2.5 rounded-full bg-white opacity-30'" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Product Info -->
+                <div class="w-full lg:w-1/2 flex flex-col gap-8">
+                    <!-- Title & Price -->
+                    <h1 class="text-4xl text-secondary font-bold">{{ item.nama_produk }}</h1>
+                    <div class="flex items-center gap-4">
+                        <span class="text-xl font-semibold">{{ item.harga_produk.toLocaleString('id-ID') }}</span>
+                        <div class="flex items-center gap-3">
+                            <div class="h-6 border-l" />
+                            <span class="text-xl flex items-center gap-1">
+                                <Tag class="w-4" /> {{ item.kategori_produk.nama_kategori_produk }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <p class="text-base text-gray-700">{{ item.deskripsi_produk }}</p>
+
+                    <!-- Buy Button -->
+                    <div class="space-y-4">
+                        <button class="w-full px-6 py-2.5 bg-secondary text-white font-medium rounded-full">
+                            Beli di marketplace
+                        </button>
+                        <p class="text-xs text-center text-gray-500">Anda akan diarahkan ke halaman baru</p>
+                    </div>
                 </div>
             </div>
         </div>

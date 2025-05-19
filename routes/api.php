@@ -145,12 +145,14 @@ Route::prefix('produk')->group(function () {
     // untuk mengambil produk berdasarkan id
     Route::get('/id/{id}', [ProdukController::class, 'getProdukById']);
 
-     // untuk mengambil kategori produk
+    // untuk mengambil kategori produk
     Route::get('/categories', [ProdukController::class, 'getCategories']);
+
+    // untuk mengambil produk terbaru
+    Route::get('/latest', [ProdukController::class, 'latest']);
 
     // untuk mengambil produk berdasarkan slug
     Route::get('/{slug}', [ProdukController::class, 'getProdukBySlug']);
-   
 });
 
 

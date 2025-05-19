@@ -1,10 +1,17 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Navbar from "@/Components/Navbar.vue";
 import Footer from "@/Components/Footer.vue";
 import Feedback from "@/Components/Feedback.vue";
+import { usePage } from '@inertiajs/vue3';
 
-    const showingNavigationDropdown = ref(false);
+const theme = usePage().props.theme;
+
+onMounted(() => {
+    if (theme && theme.secondary) {
+        document.documentElement.style.setProperty('--color-secondary', theme.secondary)
+    }
+})
 </script>
 
 <template>

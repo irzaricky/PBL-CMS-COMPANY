@@ -133,7 +133,7 @@ function getImageUser(imagePath) {
                 </Link>
                 <Link href="/produk" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Produk
                 </Link>
-                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback
+                <Link href="/feedback" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback
                 </Link>
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
@@ -221,7 +221,7 @@ function getImageUser(imagePath) {
 
             <Link href="/" class="text-2xl py-1">Beranda</Link>
             <Link href="/produk" class="text-2xl py-1">Produk</Link>
-            <Link href="/" class="text-2xl py-1">Feedback</Link>
+            <Link href="/feedback" class="text-2xl py-1">Feedback</Link>
 
             <!-- Tombol Lainnya -->
             <div class="text-2xl py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">
