@@ -2,26 +2,25 @@
 
 namespace App\Providers\Filament;
 
-use Directory;
+
 use Filament\Pages;
 use Filament\Panel;
 use App\Models\User;
-use Filament\Widgets;
 use Filament\PanelProvider;
 use Filament\Pages\Dashboard;
-use Filament\Facades\Filament;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
-use App\Filament\Pages\Auth\Register;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\Register;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
 use App\Filament\Resources\UnduhanResource;
+use App\Models\User;
 use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -32,6 +31,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 
 
@@ -70,10 +70,45 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+                    // Admin widgets
+                TotalUsersWidget::class,
+                UsersByRoleWidget::class,
+                StorageUsageChart::class,
+                RemainingStorageWidget::class,
+                StorageUsageByFeatureChart::class,
 
+                    // Content Manager widgets
+                ContentCountsChart::class,
+                ContentTrendsChart::class,
+
+                TopArticlesByViews::class,
+                TrendArticlesChart::class,
+
+                CaseStudyStatusChart::class,
+
+                TopEventsStatsWidget::class,
+                EventTrendsChart::class,
+                UpcomingEventsChart::class,
+                EventStatusChart::class,
+
+
+                TopGaleriesStatsWidget::class,
+                GaleriTrendsChart::class,
+                GaleriDownloadsChart::class,
+                GaleriStatusChart::class,
+
+                TopProducts::class,
+                ProductsByStatusChart::class,
+
+
+                TopDownloads::class,
+                DocumentDownloadsChart::class,
+                UnduhanStatusChart::class,
+
+                // Customer manager widgets
+
+                // Director widgets
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -97,6 +132,7 @@ class AdminPanelProvider extends PanelProvider
                     ->mobileFormPanelPosition('bottom')
                     ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
                     ->formPanelWidth('40%'),
+                FilamentApexChartsPlugin::make()
             ])
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()

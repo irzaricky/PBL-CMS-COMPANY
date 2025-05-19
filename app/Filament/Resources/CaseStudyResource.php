@@ -220,17 +220,4 @@ class CaseStudyResource extends Resource
             'edit' => Pages\EditCaseStudy::route('/{record}/edit'),
         ];
     }
-
-    public static function getNavigationBadge(): ?string
-    {
-        /** @var class-string<Model> $modelClass */
-        $modelClass = static::$model;
-
-        return (string) $modelClass::where('status_case_study', 'draft')->whereNull('deleted_at')->count();
-    }
-
-    public static function getNavigationBadgeTooltip(): ?string
-    {
-        return 'Case study yang masih seabagai draft';
-    }
 }

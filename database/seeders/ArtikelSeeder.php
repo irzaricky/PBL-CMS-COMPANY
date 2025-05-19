@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Http\File;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
@@ -22,19 +23,22 @@ class ArtikelSeeder extends Seeder
         Storage::disk('public')->makeDirectory($targetPath);
         $files = array_values(array_filter(scandir($sourcePath), fn($f) => !in_array($f, ['.', '..'])));
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 100; $i++) {
             // Generate array untuk menyimpan multiple images
             $images = [];
 
+            // Generate random date between 1 year ago and now
+            $randomDate = Carbon::now()->subYear()->addDays(rand(0, 365));
             $imageCount = rand(1, 3);
+
             for ($j = 0; $j < $imageCount; $j++) {
-
                 $originalFile = $files[array_rand($files)];
-
                 $newFileName = Str::random(10) . '-' . $originalFile;
 
-                // Copy ke storage
+                // Copy ke storage dan set modified time
+                $fullPath = Storage::disk('public')->path($targetPath . '/' . $newFileName);
                 Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+                touch($fullPath, $randomDate->timestamp);
 
                 // Tambahkan path gambar ke array images
                 $images[] = $targetPath . '/' . $newFileName;
@@ -42,6 +46,20 @@ class ArtikelSeeder extends Seeder
 
             // Judul artikel
             $judul = Faker::create('en_US')->unique()->bs();
+
+            // Generate slug and check for duplicates
+            $baseSlug = Str::slug($judul);
+            $slug = $baseSlug;
+            $counter = 1;
+
+            // Check if slug exists in current batch or database
+            while (
+                collect($artikels)->contains('slug', $slug) ||
+                DB::table('artikel')->where('slug', $slug)->exists()
+            ) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
 
             // Generate konten HTML
             $konten = $this->generateArtikelContent($faker, $images);
@@ -53,15 +71,15 @@ class ArtikelSeeder extends Seeder
                 'judul_artikel' => $judul,
                 'konten_artikel' => $konten,
                 'thumbnail_artikel' => json_encode($images),
-                'jumlah_view' => $faker->numberBetween(100, 10000),
-                'slug' => Str::slug($judul),
+                'jumlah_view' => $faker->numberBetween(100, 100000),
+                'slug' => $slug,
                 'status_artikel' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
                 'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ];
         }
 
-        foreach (array_chunk($artikels, 100) as $chunk) {
+        foreach (array_chunk($artikels, length: 100) as $chunk) {
             DB::table('artikel')->insert($chunk);
         }
     }
