@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ProdukResource;
 use App\Http\Resources\Produk\ProdukListResource;
 use App\Http\Resources\Produk\ProdukViewResource;
+use App\Models\KategoriProduk;
 
 class ProdukController extends Controller
 {
@@ -84,6 +85,77 @@ class ProdukController extends Controller
                 'message' => 'Produk tidak ditemukan',
                 'error' => $e->getMessage()
             ], 404);
+        }
+    }
+
+    /**
+     * Mencari produk berdasarkan nama produk atau deskripsi
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
+     */
+    public function search(Request $request)
+    {
+        try {
+            $query = $request->input('query');
+            $categoryId = $request->input('category_id');
+
+            // Validasi input, jika tidak ada query dan category_id, kembalikan semua produk
+            if (empty($query) && empty($categoryId)) {
+                return $this->index($request);
+            }
+
+            $produkQuery = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI);
+
+            // Jika ada query pencarian, produk akan dicari berdasarkan nama atau deskripsi
+            if (!empty($query)) {
+                $produkQuery->where(function ($q) use ($query) {
+                    $q->where('nama_produk', 'LIKE', "%{$query}%")
+                        ->orWhere('deskripsi_produk', 'LIKE', "%{$query}%");
+                });
+            }
+
+            // Jika ada category_id, produk akan dicari berdasarkan kategori
+            if (!empty($categoryId)) {
+                $produkQuery->where('id_kategori_produk', $categoryId);
+            }
+
+            $produk = $produkQuery->orderBy('created_at', 'desc')->paginate(10);
+
+            // Check if no products were found
+            if ($produk->isEmpty()) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'Tidak ada produk yang sesuai dengan pencarian',
+                    'data' => []
+                ], 200);
+            }
+
+            return ProdukListResource::collection($produk);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Mencari Produk',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getCategories()
+    {
+        try {
+            $categories = KategoriProduk::get();
+            return response()->json([
+                'status' => 'success',
+                'data' => $categories
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memuat kategori',
+                'error' => $e->getMessage()
+            ], 500);
         }
     }
 }

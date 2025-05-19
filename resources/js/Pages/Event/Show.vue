@@ -109,7 +109,7 @@ const daysRemaining = computed(() => {
                                 ></path>
                             </svg>
                             <a
-                                href="/events"
+                                href="/event"
                                 class="ml-1 text-sm text-gray-500 hover:text-blue-600 md:ml-2"
                                 >Events</a
                             >
@@ -190,7 +190,7 @@ const daysRemaining = computed(() => {
                 </h2>
                 <p class="text-gray-600 mb-6">{{ error }}</p>
                 <a
-                    href="/events"
+                    href="/event"
                     class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                     <svg

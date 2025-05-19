@@ -18,7 +18,7 @@ class ProdukSeeder extends Seeder
 
         // bagian proses image
         $sourcePath = database_path('seeders/seeder_image/');
-        $targetPath = 'produk-images';
+        $targetPath = 'produk-thumbnails';
 
         // Pastikan folder target ada
         Storage::disk('public')->makeDirectory($targetPath);
@@ -74,7 +74,7 @@ class ProdukSeeder extends Seeder
                 'harga_produk' => 'Rp ' . number_format($randomProduct['harga'] * $faker->randomFloat(1, 0.8, 1.2), 0, ',', '.'),
                 'slug' => Str::slug($randomProduct['nama'] . ' ' . $faker->words(2, true)),
                 'status_produk' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
-                'deskripsi_produk' => $faker->paragraph(2),
+                'deskripsi_produk' => $faker->paragraph(10),
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt->addDays(rand(0, 30)),
             ]);

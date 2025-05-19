@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         foreach (array_reverse($directories) as $directory) {
             Storage::disk('public')->deleteDirectory($directory);
         }
+
         $this->call([
             ShieldSeeder::class,
             FilamentUserSeeder::class,
@@ -56,6 +57,7 @@ class DatabaseSeeder extends Seeder
             StrukturOrganisasiSeeder::class,
             FeatureToggleSeeder::class,
             CaseStudySeeder::class,
+            TestimoniProdukSeeder::class,
         ]);
     }
 }

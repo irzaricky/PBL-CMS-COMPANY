@@ -4,6 +4,7 @@ import axios from "axios";
 import { megaMenuCache } from "./MegaMenuStore";
 
 const articles = ref([]);
+const isLoading = ref(true);
 
 onMounted(() => {
     fetchArticles();
@@ -11,20 +12,17 @@ onMounted(() => {
 
 async function fetchArticles() {
     try {
-        // Check if we have valid cached data
         if (megaMenuCache.isValid("articles")) {
             articles.value = megaMenuCache.articles;
-            return;
+        } else {
+            const response = await axios.get("/api/artikel/most-viewed");
+            articles.value = response.data.data;
+            megaMenuCache.setCache("articles", response.data.data);
         }
-
-        // Otherwise fetch from API
-        const response = await axios.get("/api/artikel/most-viewed");
-        articles.value = response.data.data;
-
-        // Cache the response
-        megaMenuCache.setCache("articles", response.data.data);
     } catch (error) {
         console.error("Error fetching articles:", error);
+    } finally {
+        isLoading.value = false;
     }
 }
 
@@ -39,11 +37,28 @@ function getImageUrl(image) {
 
 <template>
     <div>
-        <div class="font-bold text-h6-bold mb-4 text-typography-main">
+        <div class="font-bold text-h6-bold mb-4 text-secondary">
             Artikel Populer
         </div>
         <div class="flex flex-col gap-3">
+            <!-- Loading Skeleton -->
             <div
+                v-if="isLoading"
+                v-for="i in 1"
+                :key="i"
+                class="flex gap-3 bg-white rounded-lg shadow p-3 items-center animate-pulse"
+            >
+                <div class="w-12 h-12 bg-gray-300 rounded-lg flex-shrink-0"></div>
+                <div class="flex flex-col gap-2 w-full">
+                    <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+                    <div class="h-3 bg-gray-200 rounded w-full"></div>
+                    <div class="h-3 bg-gray-200 rounded w-5/6"></div>
+                </div>
+            </div>
+
+            <!-- Real Data -->
+            <div
+                v-else-if="articles.length"
                 v-for="artikel in articles"
                 :key="artikel.id_artikel"
                 class="flex gap-3 bg-white rounded-lg shadow hover:shadow-lg transition p-3 items-center"
@@ -56,7 +71,7 @@ function getImageUrl(image) {
                 <div class="flex flex-col overflow-hidden">
                     <a
                         :href="`/artikel/${artikel.slug}`"
-                        class="text-h6-bold text-typography-main truncate hover:underline"
+                        class="text-h6-bold text-secondary truncate hover:underline"
                     >
                         {{ artikel.judul_artikel }}
                     </a>
@@ -66,7 +81,12 @@ function getImageUrl(image) {
                     ></span>
                 </div>
             </div>
-            <div v-if="!articles.length" class="text-typography-dark text-xs">
+
+            <!-- Empty Data -->
+            <div
+                v-else
+                class="text-typography-dark text-xs italic text-center py-2"
+            >
                 Tidak ada artikel populer.
             </div>
         </div>

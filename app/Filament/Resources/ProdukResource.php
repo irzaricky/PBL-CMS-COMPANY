@@ -110,7 +110,7 @@ class ProdukResource extends Resource
                             ->image()
                             ->multiple()
                             ->reorderable()
-                            ->directory('produk-images')
+                            ->directory('produk-thumbnails')
                             ->helperText('Upload gambar produk (format: jpg, png, webp)')
                             ->disk('public')
                             ->columnSpanFull()

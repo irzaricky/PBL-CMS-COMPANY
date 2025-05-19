@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -13,12 +12,16 @@ use Inertia\Inertia;
 
 Route::get('/login', function () {
     return redirect('/admin/login');
-})->name('filament.auth.login');
+})->name('login')->name('filament.auth.login');
 
 Route::get('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+// Route::get('/login', function () {
+//     return Inertia::render('Login');
+// })->name('login');
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -38,6 +41,7 @@ Route::prefix('artikel')->group(function () {
         return Inertia::render('Artikel/Show', ['slug' => $slug]);
     })->name('artikel.show');
 });
+
 
 // Rute group untuk event
 Route::prefix('event')->group(function () {
@@ -62,6 +66,7 @@ Route::prefix('galeri')->group(function () {
     });
 });
 
+
 // Rute group untuk portofolio
 Route::prefix('portofolio')->group(function () {
     Route::get('/', action: function () {
@@ -72,6 +77,7 @@ Route::prefix('portofolio')->group(function () {
         return Inertia::render('Event/Show', ['slug' => $slug]);
     });
 });
+
 
 // Rute group untuk unduhan
 Route::prefix('unduhan')->group(function () {
@@ -84,6 +90,7 @@ Route::prefix('unduhan')->group(function () {
     });
 });
 
+
 // Rute group untuk lowongan
 Route::prefix('lowongan')->group(function () {
     Route::get('/', action: function () {
@@ -94,6 +101,7 @@ Route::prefix('lowongan')->group(function () {
         return Inertia::render('Event/Show', ['slug' => $slug]);
     });
 });
+
 
 // Rute group untuk produk
 Route::prefix('produk')->group(function () {

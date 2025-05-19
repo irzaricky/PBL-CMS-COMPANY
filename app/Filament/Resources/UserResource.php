@@ -60,8 +60,8 @@ class UserResource extends Resource
                             ->imageResizeMode('cover')
                             ->imageResizeTargetWidth(100)
                             ->imageResizeTargetHeight(100)
-                            ->optimize('webp')
-                        ,
+                            ->optimize('webp'),
+
                         Forms\Components\Textarea::make('alamat')
                             ->label('Alamat')
                             ->rows(3)
@@ -97,6 +97,7 @@ class UserResource extends Resource
                                 'Kontrak' => 'Pegawai Kontrak',
                                 'Magang' => 'Pegawai Magang',
                                 'Percobaan' => 'Masa Percobaan',
+                                'Non Pegawai' => 'Non Pegawai',
                             ])
                             ->nullable(),
 
@@ -131,18 +132,18 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('tanggal_lahir')
                     ->label('Tanggal Lahir')
                     ->date('d F Y')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                ,
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date('d F Y')
-                ,
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status_kepegawaian')
                     ->label('Status Kepegawaian')
                     ->badge()
                     ->alignment('center')
                     ->colors([
                         'primary' => 'Tetap',
+                        'secondary' => 'Non Pegawai',
                         'success' => 'Kontrak',
                         'warning' => 'Magang',
                         'danger' => 'Percobaan',
@@ -217,6 +218,7 @@ class UserResource extends Resource
                 ]),
             ]);
     }
+
 
     public static function getRelations(): array
     {

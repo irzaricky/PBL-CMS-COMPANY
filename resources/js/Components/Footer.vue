@@ -1,11 +1,26 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { computed } from "vue";
 
 // Reactive variables
 const profil_perusahaan = ref(null);
 const loading = ref(false);
 const error = ref(null);
+
+const maxKalimat = 1
+
+const truncatedSejarah = computed(() => {
+    if (!profil_perusahaan.value?.sejarah_perusahaan) return 'Sejarah perusahaan belum tersedia.'
+
+    const kalimat = profil_perusahaan.value.sejarah_perusahaan.split(/(?<=[.!?])\s+/)
+    return kalimat.slice(0, maxKalimat).join(' ')
+})
+
+const showReadMore = computed(() => {
+    if (!profil_perusahaan.value?.sejarah_perusahaan) return false
+    return profil_perusahaan.value.sejarah_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
+})
 
 onMounted(() => {
     fetchProfilPerusahaan();
@@ -33,13 +48,18 @@ function getImageUrl(image) {
 
     return `/storage/${image}`;
 }
+function lihatSelengkapnya() {
+    alert(profil_perusahaan.value.sejarah_perusahaan)
+}
+
+
 </script>
 
 <template>
     <footer class="bg-secondary text-white w-full font-custom text-sm">
-        <div class="px-5 pt-5 lg:px-10 ">
+        <div class="px-5 pt-5 lg:px-10">
             <!-- Wrapper untuk pusat grid -->
-            <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-10 mx-auto lg:items-stretch">
+            <div class="grid grid-cols-1 gap-10 lg:grid-cols-5 lg:gap-10 mx-auto lg:items-stretch mt-10">
                 <!-- Kolom 1 -->
                 <div v-if="profil_perusahaan" class="lg:w-[120%]">
                     <div class="flex items-center justify-center h-32">
@@ -47,9 +67,13 @@ function getImageUrl(image) {
                             class="w-20 object-contain" />
                     </div>
                     <h4 class="font-bold text-center text-lg">{{ profil_perusahaan?.nama_perusahaan }}</h4>
-                    <p class="mt-4 text-center">
-                        {{ profil_perusahaan?.sejarah_perusahaan || 'Sejarah perusahaan belum tersedia.' }}
+                    <p class="mt-4 text-left">
+                        {{ truncatedSejarah }}
+                        <span v-if="showReadMore" class="text-blue-400 cursor-pointer" @click="lihatSelengkapnya">
+                            ... Baca selengkapnya
+                        </span>
                     </p>
+
                     <div class="mt-6">
                         <h4 class="font-bold pb-1">Contact Us</h4>
                         <div class="flex items-center gap-2">
@@ -71,7 +95,7 @@ function getImageUrl(image) {
                         <li><a href="#" class="hover:underline">Galeri</a></li>
                         <li><a href="#" class="hover:underline">Tentang Kami</a></li>
                         <li><a href="#" class="hover:underline">Unduhan</a></li>
-                        <li><a href="#" class="hover:underline">Portofolio</a></li>
+                        <li><a href="#" class="hover:underline">Produk</a></li>
                         <li><a href="#" class="hover:underline">Event</a></li>
                         <li><a href="#" class="hover:underline">Artikel</a></li>
                         <li><a href="#" class="hover:underline">Lowongan</a></li>
@@ -85,7 +109,7 @@ function getImageUrl(image) {
                         <div class="flex items-start gap-2">
                             <MapPin class="w-10 lg:w-20 self-center" />
                             <span class="leading-relaxed">
-                                Jl. Teluk Kumai Barat, Perak Utara, Kec. Pabean Cantikan, Surabaya, Jawa Timur 60165
+                                {{ profil_perusahaan?.alamat_perusahaan || 'Alamat perusahaan belum tersedia.' }}
                             </span>
                         </div>
                     </div>
@@ -104,11 +128,14 @@ function getImageUrl(image) {
 
                 <!-- Kolom 4 -->
                 <div class="flex flex-col justify-center h-full">
-                    <div class="w-full aspect-[4/3] rounded-lg overflow-hidden">
-                        <iframe class="w-full h-full"
-                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3955.172995216175!2d110.81382747500246!3d-7.55610799245767!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a176daa5fd6d1%3A0x271738c6ffd2b4f8!2sBIIS%20Corp%20Solo%20-%20Jasa%20Pembuatan%20Software%2C%20ERP%2C%20Website%2C%20dan%20Digital%20Marketing!5e0!3m2!1sid!2sid!4v1746690887263!5m2!1sid!2sid"
-                            allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    <!-- <div -->
+                    <div class="w-full lg:aspect-[4/3] rounded-lg overflow-hidden">
+                        <iframe
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7910.17971246413!2d110.8504919!3d-7.565182!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a14234667a3fd%3A0xbda63b32997616ad!2sUniversitas%20Sebelas%20Maret%20(UNS)!5e0!3m2!1sid!2sid!4v1746990931583!5m2!1sid!2sid"
+                            width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
+                    <!-- </div> -->
                 </div>
             </div>
         </div>
@@ -116,7 +143,7 @@ function getImageUrl(image) {
         <!-- Copyright -->
         <div class="bg-white text-black h-10 mt-10">
             <p class="text-center leading-10">
-                Hak Cipta © 2025. Hak Cipta dilindungi. Biiscorp
+                © 2025 {{ profil_perusahaan?.nama_perusahaan }}.
             </p>
         </div>
     </footer>
