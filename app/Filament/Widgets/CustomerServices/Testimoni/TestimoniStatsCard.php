@@ -12,6 +12,11 @@ class TestimoniStatsCard extends StatsOverviewWidget
     protected ?string $heading = 'Statistik Testimoni';
     protected static ?int $sort = 4;
     protected static ?string $pollingInterval = '30s';
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_TestimoniStatsCard');
+    }
     protected function getStats(): array
     {
         return [

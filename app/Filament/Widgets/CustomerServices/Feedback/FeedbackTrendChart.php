@@ -16,6 +16,11 @@ class FeedbackTrendChart extends ApexChartWidget
 
     public ?string $filter = 'last_6_months';
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_FeedbackTrendChart');
+    }
+
     protected function getFilters(): ?array
     {
         return [

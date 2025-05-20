@@ -17,6 +17,11 @@ class LowonganTrendChart extends ApexChartWidget
 
     public ?string $filter = 'last_6_months';
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_LowonganTrendChart');
+    }
+
     protected function getFilters(): ?array
     {
         return [

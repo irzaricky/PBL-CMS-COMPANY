@@ -11,6 +11,11 @@ class LamaranStatsCard extends StatsOverviewWidget
     protected ?string $heading = 'Statistik Lamaran';
     protected static ?int $sort = 2;
     protected static ?string $pollingInterval = '30s';
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_LamaranStatsCard');
+    }
     protected function getStats(): array
     {
         $startOfMonth = now()->startOfMonth();

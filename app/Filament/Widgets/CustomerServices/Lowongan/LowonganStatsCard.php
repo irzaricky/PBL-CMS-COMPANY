@@ -12,6 +12,11 @@ class LowonganStatsCard extends StatsOverviewWidget
     protected ?string $heading = 'Statistik Lowongan';
     protected static ?int $sort = 3;
     protected static ?string $pollingInterval = '30s';
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_LowonganStatsCard');
+    }
     protected function getStats(): array
     {
         $now = now();

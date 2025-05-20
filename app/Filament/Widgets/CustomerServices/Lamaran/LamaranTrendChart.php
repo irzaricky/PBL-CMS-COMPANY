@@ -16,6 +16,11 @@ class LamaranTrendChart extends ApexChartWidget
 
     public ?string $filter = 'last_6_months';
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_LamaranTrendChart');
+    }
+
     protected function getFilters(): ?array
     {
         return [

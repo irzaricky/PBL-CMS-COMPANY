@@ -12,6 +12,11 @@ class FeedbackStatsCard extends StatsOverviewWidget
     protected static ?int $sort = 1;
     protected static ?string $pollingInterval = '30s';
 
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_FeedbackStatsCard');
+    }
+
     protected function getStats(): array
     {
         return [
