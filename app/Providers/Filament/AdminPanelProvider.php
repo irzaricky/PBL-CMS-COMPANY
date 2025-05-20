@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 
+use App\Filament\Widgets\Director\ContentGrowthPerFiturTrend;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -18,6 +19,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Widgets\Admin\StorageUsageChart;
 use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use Filament\Http\Middleware\AuthenticateSession;
+use App\Filament\Widgets\Director\ContentGrowthTrend;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use App\Filament\Widgets\Admin\RemainingStorageWidget;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
@@ -42,20 +44,20 @@ use App\Filament\Widgets\ContentManager\Event\TopEventsStatsWidget;
 use App\Filament\Widgets\ContentManager\General\ContentCountsChart;
 use App\Filament\Widgets\ContentManager\General\ContentTrendsChart;
 use App\Filament\Widgets\ContentManager\Unduhan\UnduhanStatusChart;
+use App\Filament\Widgets\CustomerServices\Lamaran\LamaranStatsCard;
 use App\Filament\Widgets\ContentManager\Galeri\GaleriDownloadsChart;
+use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
 use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
+use App\Filament\Widgets\CustomerServices\Feedback\FeedbackStatsCard;
+use App\Filament\Widgets\CustomerServices\Lowongan\LowonganStatsCard;
 use App\Filament\Widgets\ContentManager\Galeri\TopGaleriesStatsWidget;
+use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
+use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
 use App\Filament\Widgets\ContentManager\CaseStudy\CaseStudyStatusChart;
 use App\Filament\Widgets\ContentManager\Unduhan\DocumentDownloadsChart;
-use App\Filament\Widgets\CustomerServices\Feedback\FeedbackStatsCard;
-use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
-use App\Filament\Widgets\CustomerServices\Lamaran\LamaranStatsCard;
-use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
-use App\Filament\Widgets\CustomerServices\Lowongan\LowonganStatsCard;
-use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
 use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniStatsCard;
 use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniTrendChart;
-
+use App\Filament\Widgets\Director\CustomerServiceActivityTrend;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -139,7 +141,10 @@ class AdminPanelProvider extends PanelProvider
                 TestimoniTrendChart::class,
 
 
-                // Director widgets
+                    // Director widgets
+                ContentGrowthTrend::class,
+                ContentGrowthPerFiturTrend::class,
+                CustomerServiceActivityTrend::class,
             ])
             ->middleware([
                 EncryptCookies::class,
