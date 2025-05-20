@@ -16,12 +16,16 @@ class ContentGrowthPerFiturTrend extends ApexChartWidget
 {
     protected static ?string $chartId = 'contentGrowthPerFiturTrend';
     protected static ?string $heading = 'Tren Pertumbuhan Konten Per Fitur';
-    protected static ?int $sort = 2;
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
 
     public ?string $filter = '6_months';
     public ?string $contentType = 'all';
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_ContentGrowthPerFiturTrend');
+    }
 
     public function filterContentType(string $type): void
     {

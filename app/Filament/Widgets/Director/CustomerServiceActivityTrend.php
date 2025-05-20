@@ -4,7 +4,6 @@ namespace App\Filament\Widgets\Director;
 
 use App\Models\Feedback;
 use App\Models\Lamaran;
-use App\Models\Lowongan;
 use App\Models\Testimoni;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
@@ -13,13 +12,17 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class CustomerServiceActivityTrend extends ApexChartWidget
 {
     protected static ?string $chartId = 'customerServiceActivityTrend';
-    protected static ?string $heading = 'Tren Aktivitas Layanan Pelanggan';
-    protected static ?int $sort = 3;
+    protected static ?string $heading = 'Tren Data Customer Service';
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
 
     public ?string $filter = '6_months';
     public ?string $activityType = 'all';
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_CustomerServiceActivityTrend');
+    }
 
     public function filterActivityType(string $type): void
     {
@@ -30,7 +33,6 @@ class CustomerServiceActivityTrend extends ApexChartWidget
     public function mount(): void
     {
         parent::mount();
-        // We're not setting activityType to 'all' here to prevent resetting it
     }
 
     // Tampilkan selector tipe aktivitas
@@ -43,7 +45,6 @@ class CustomerServiceActivityTrend extends ApexChartWidget
             'all' => 'bg-gray-100 hover:bg-gray-200',
             'feedback' => 'bg-blue-100 hover:bg-blue-200',
             'lamaran' => 'bg-green-100 hover:bg-green-200',
-            'lowongan' => 'bg-yellow-100 hover:bg-yellow-200',
             'testimoni' => 'bg-purple-100 hover:bg-purple-200',
         ];
 
@@ -136,7 +137,6 @@ class CustomerServiceActivityTrend extends ApexChartWidget
         // Get growth data for each activity type (non-cumulative)
         $feedbackGrowth = $this->getActivityGrowthPerPeriod(Feedback::class, $dates, $format);
         $lamaranGrowth = $this->getActivityGrowthPerPeriod(Lamaran::class, $dates, $format);
-        $lowonganGrowth = $this->getActivityGrowthPerPeriod(Lowongan::class, $dates, $format);
         $testimoniGrowth = $this->getActivityGrowthPerPeriod(Testimoni::class, $dates, $format);
 
         // Prepare series data based on activity filter
@@ -156,19 +156,13 @@ class CustomerServiceActivityTrend extends ApexChartWidget
             ];
         }
 
-        if ($activityFilter === 'all' || $activityFilter === 'lowongan') {
-            $series[] = [
-                'name' => 'Lowongan',
-                'data' => $lowonganGrowth,
-            ];
-        }
-
         if ($activityFilter === 'all' || $activityFilter === 'testimoni') {
             $series[] = [
                 'name' => 'Testimoni',
                 'data' => $testimoniGrowth,
             ];
-        }        return [
+        }
+        return [
             'chart' => [
                 'type' => 'line',
                 'height' => 300,
@@ -249,18 +243,17 @@ class CustomerServiceActivityTrend extends ApexChartWidget
                     formatter: function(value) {
                         return value + ' item';
                     }
-                }            },            plotOptions: {
+                }            },
+                
+                plotOptions: {
                 line: {
                     curve: 'smooth'
                 }
             },
             chart: {
                 toolbar: {
-                    show: false // Mematikan toolbar di konfigurasi JS juga
+                    show: false
                 },
-                zoom: {
-                    enabled: false // Mematikan kemampuan zoom di konfigurasi JS juga
-                }
             }
         }
         JS);
@@ -284,7 +277,6 @@ class CustomerServiceActivityTrend extends ApexChartWidget
             'all' => 'Semua Aktivitas',
             'feedback' => 'Feedback',
             'lamaran' => 'Lamaran',
-            'lowongan' => 'Lowongan',
             'testimoni' => 'Testimoni',
         ];
     }

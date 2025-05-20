@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 
-use App\Filament\Widgets\Director\ContentGrowthPerFiturTrend;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -22,8 +21,11 @@ use Filament\Http\Middleware\AuthenticateSession;
 use App\Filament\Widgets\Director\ContentGrowthTrend;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use App\Filament\Widgets\Admin\RemainingStorageWidget;
+use App\Filament\Widgets\Director\ContentManagerStats;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Swis\Filament\Backgrounds\ImageProviders\MyImages;
+use App\Filament\Widgets\Director\CustomerServiceStats;
+use App\Filament\Widgets\Director\CustomerServiceGrowth;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use App\Filament\Widgets\Admin\StorageUsageByFeatureChart;
@@ -33,8 +35,10 @@ use App\Filament\Widgets\ContentManager\Produk\TopProducts;
 use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use App\Filament\Widgets\ContentManager\Unduhan\TopDownloads;
+use App\Filament\Widgets\Director\ContentGrowthPerFiturTrend;
 use App\Filament\Widgets\ContentManager\Event\EventStatusChart;
 use App\Filament\Widgets\ContentManager\Event\EventTrendsChart;
+use App\Filament\Widgets\Director\CustomerServiceActivityTrend;
 use App\Filament\Widgets\ContentManager\Galeri\GaleriStatusChart;
 use App\Filament\Widgets\ContentManager\Galeri\GaleriTrendsChart;
 use App\Filament\Widgets\ContentManager\Event\UpcomingEventsChart;
@@ -57,7 +61,6 @@ use App\Filament\Widgets\ContentManager\CaseStudy\CaseStudyStatusChart;
 use App\Filament\Widgets\ContentManager\Unduhan\DocumentDownloadsChart;
 use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniStatsCard;
 use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniTrendChart;
-use App\Filament\Widgets\Director\CustomerServiceActivityTrend;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -142,9 +145,12 @@ class AdminPanelProvider extends PanelProvider
 
 
                     // Director widgets
+                ContentManagerStats::class,
                 ContentGrowthTrend::class,
                 ContentGrowthPerFiturTrend::class,
+                CustomerServiceStats::class,
                 CustomerServiceActivityTrend::class,
+                CustomerServiceGrowth::class,
             ])
             ->middleware([
                 EncryptCookies::class,

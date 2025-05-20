@@ -2,20 +2,17 @@
 
 namespace App\Filament\Widgets\Director;
 
-use App\Models\Artikel;
-use App\Models\CaseStudy;
-use App\Models\Event;
-use App\Models\Galeri;
-use App\Models\Produk;
-use App\Models\Unduhan;
+use App\Models\Feedback;
+use App\Models\Testimoni;
+use App\Models\Lamaran;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
-class ContentGrowthTrend extends ApexChartWidget
+class CustomerServiceGrowth extends ApexChartWidget
 {
-    protected static ?string $chartId = 'contentGrowthTrend';
-    protected static ?string $heading = 'Tren Pertumbuhan Konten';
+    protected static ?string $chartId = 'customerServiceGrowth';
+    protected static ?string $heading = 'Tren Pertumbuhan data customer service';
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
 
@@ -23,7 +20,7 @@ class ContentGrowthTrend extends ApexChartWidget
 
     public static function canView(): bool
     {
-        return auth()->user()?->can('widget_ContentGrowthTrend');
+        return auth()->user()?->can('widget_CustomerServiceGrowth');
     }
 
     protected function getContentCumulativeGrowth($modelClass, $dates, $format)
@@ -91,27 +88,20 @@ class ContentGrowthTrend extends ApexChartWidget
                     $dates->push(Carbon::now()->subMonths($i)->format($format));
                 }
                 break;
-        }        // Get cumulative growth for each content type
-        $artikelGrowth = $this->getContentCumulativeGrowth(Artikel::class, $dates, $format);
-        $galeriGrowth = $this->getContentCumulativeGrowth(Galeri::class, $dates, $format);
-        $eventGrowth = $this->getContentCumulativeGrowth(Event::class, $dates, $format);
-        $produkGrowth = $this->getContentCumulativeGrowth(Produk::class, $dates, $format);
-        $caseStudyGrowth = $this->getContentCumulativeGrowth(CaseStudy::class, $dates, $format);
-        $unduhanGrowth = $this->getContentCumulativeGrowth(Unduhan::class, $dates, $format);
+        }
+        // Ambil cumulative growth untuk setiap tipe layanan pelanggan
+        $feedbackGrowth = $this->getContentCumulativeGrowth(Feedback::class, $dates, $format);
+        $testimoniGrowth = $this->getContentCumulativeGrowth(Testimoni::class, $dates, $format);
+        $lamaranGrowth = $this->getContentCumulativeGrowth(Lamaran::class, $dates, $format);
 
-        // Debugging - Tambahkan data minimal jika kosong
-        if (empty(array_filter($artikelGrowth)))
-            $artikelGrowth = array_fill(0, count($dates), 1);
-        if (empty(array_filter($galeriGrowth)))
-            $galeriGrowth = array_fill(0, count($dates), 1);
-        if (empty(array_filter($eventGrowth)))
-            $eventGrowth = array_fill(0, count($dates), 1);
-        if (empty(array_filter($produkGrowth)))
-            $produkGrowth = array_fill(0, count($dates), 1);
-        if (empty(array_filter($caseStudyGrowth)))
-            $caseStudyGrowth = array_fill(0, count($dates), 1);
-        if (empty(array_filter($unduhanGrowth)))
-            $unduhanGrowth = array_fill(0, count($dates), 1);
+        // Jika data kosong, isi dengan 1 agar chart tetap tampil
+        if (empty(array_filter($feedbackGrowth)))
+            $feedbackGrowth = array_fill(0, count($dates), 1);
+        if (empty(array_filter($testimoniGrowth)))
+            $testimoniGrowth = array_fill(0, count($dates), 1);
+        if (empty(array_filter($lamaranGrowth)))
+            $lamaranGrowth = array_fill(0, count($dates), 1);
+
         return [
             'chart' => [
                 'type' => 'bar',
@@ -123,28 +113,16 @@ class ContentGrowthTrend extends ApexChartWidget
             ],
             'series' => [
                 [
-                    'name' => 'Artikel',
-                    'data' => $artikelGrowth,
+                    'name' => 'Feedback',
+                    'data' => $feedbackGrowth,
                 ],
                 [
-                    'name' => 'Galeri',
-                    'data' => $galeriGrowth,
+                    'name' => 'Testimoni',
+                    'data' => $testimoniGrowth,
                 ],
                 [
-                    'name' => 'Event',
-                    'data' => $eventGrowth,
-                ],
-                [
-                    'name' => 'Produk',
-                    'data' => $produkGrowth,
-                ],
-                [
-                    'name' => 'Case Study',
-                    'data' => $caseStudyGrowth,
-                ],
-                [
-                    'name' => 'Unduhan',
-                    'data' => $unduhanGrowth,
+                    'name' => 'Lamaran',
+                    'data' => $lamaranGrowth,
                 ],
             ],
             'xaxis' => [
@@ -156,9 +134,9 @@ class ContentGrowthTrend extends ApexChartWidget
                     ],
                 ],
                 'type' => 'category',
-                'tickAmount' => 6,
+                'tickAmount' => count($dates) > 6 ? 6 : count($dates),
             ],
-            'colors' => ['#4ade80', '#f472b6', '#facc15', '#3b82f6', '#a855f7', '#ef4444'],
+            'colors' => ['#4ade80', '#f472b6', '#facc15', '#3b82f6', '#a855f7'],
             'stroke' => ['curve' => 'smooth', 'width' => 2],
             'fill' => [
                 'type' => 'gradient',
@@ -179,8 +157,12 @@ class ContentGrowthTrend extends ApexChartWidget
                 'min' => 0,
                 'forceNiceScale' => true,
             ],
+            'legend' => [
+                'position' => 'top',
+            ],
         ];
     }
+
     protected function extraJsOptions(): ?RawJs
     {
         return RawJs::make(<<<'JS'
