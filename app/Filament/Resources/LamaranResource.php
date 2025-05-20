@@ -210,4 +210,8 @@ class LamaranResource extends Resource
 
         return (string) 'Sedang Diproses';
     }
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 }

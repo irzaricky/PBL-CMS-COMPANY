@@ -31,7 +31,7 @@ class ProdukController extends Controller
                 $query->where('id_kategori_produk', $request->category_id);
             }
 
-            $produk = $query->paginate(10);
+            $produk = $query->paginate(20);
             return ProdukListResource::collection($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -121,7 +121,7 @@ class ProdukController extends Controller
                 $produkQuery->where('id_kategori_produk', $categoryId);
             }
 
-            $produk = $produkQuery->orderBy('created_at', 'desc')->paginate(10);
+            $produk = $produkQuery->orderBy('created_at', 'desc')->paginate(20);
 
             // Check if no products were found
             if ($produk->isEmpty()) {
@@ -155,6 +155,31 @@ class ProdukController extends Controller
                 'status' => 'error',
                 'message' => 'Gagal memuat kategori',
                 'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function latest()
+    {
+        try {
+            $produk = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->latest() // default: order by created_at desc
+                ->first(); // Ambil satu produk terbaru
+
+            if (!$produk) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Produk Tidak Ditemukan',
+                ], 404);
+            }
+
+            return new ProdukListResource($produk);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil produk terbaru',
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

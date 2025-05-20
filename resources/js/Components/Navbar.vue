@@ -175,9 +175,10 @@ function getImageUser(imagePath) {
                 </Link>
             </template>
 
-            <Link href="/" class="text-base font-semibold py-1">Beranda</Link>
-            <Link href="/produk" class="text-base font-semibold py-1">Produk</Link>
-            <Link href="/" class="text-base font-semibold py-1">Feedback</Link>
+
+            <Link href="/" class="text-2xl py-1">Beranda</Link>
+            <Link href="/produk" class="text-2xl py-1">Produk</Link>
+            <Link href="/" class="text-2xl py-1">Feedback</Link>
 
             <!-- Tombol Lainnya -->
             <div class="text-base font-semibold py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">

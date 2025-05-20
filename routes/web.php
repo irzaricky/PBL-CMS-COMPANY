@@ -10,6 +10,10 @@ use Inertia\Inertia;
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
+// Route::get('/login', function () {
+//     return Inertia::render('Login');
+// })->name('login');
+
 Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login')->name('filament.auth.login');
@@ -19,10 +23,6 @@ Route::get('/logout', function () {
     return redirect('/');
 })->name('logout');
 
-// Route::get('/login', function () {
-//     return Inertia::render('Login');
-// })->name('login');
-
 Route::get('/', function () {
     return Inertia::render('Home');
 })->name('home');
@@ -30,6 +30,7 @@ Route::get('/', function () {
 Route::get('/example', function () {
     return Inertia::render('Example');
 });
+
 
 // Rute group untuk artikel
 Route::prefix('artikel')->group(function () {
@@ -78,6 +79,40 @@ Route::prefix('portofolio')->group(function () {
     });
 });
 
+// Rute group feedback
+Route::prefix('feedback')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Feedback/Main');
+    });
+});
+
+// Rute group Profil Perusahaan
+Route::prefix('profilperusahaan')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('ProfilPerusahaan/Main');
+    });
+});
+
+// Rute group untuk Visi Misi
+Route::prefix('visi-misi')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('VisiMisiPerusahaan/Main');
+    });
+});
+
+// Rute group untuk Sejarah Perusahaan
+Route::prefix('sejarah-perusahaan')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('SejarahPerusahaan/Main');
+    });
+});
+
+// Rute group untuk Struktur Organisasi
+Route::prefix('struktur-organisasi')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('StrukturOrganisasi/Main');
+    });
+});
 
 // Rute group untuk unduhan
 Route::prefix('unduhan')->group(function () {

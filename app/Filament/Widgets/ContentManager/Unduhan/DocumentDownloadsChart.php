@@ -1,0 +1,65 @@
+<?php
+
+namespace App\Filament\Widgets\ContentManager\Unduhan;
+
+use App\Models\Unduhan;
+use Filament\Support\RawJs;
+use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
+
+class DocumentDownloadsChart extends ApexChartWidget
+{
+    protected static ?string $heading = 'Jumlah Unduhan File Dokumen';
+    protected static ?int $sort = 7;
+    protected static bool $deferLoading = true;
+
+    protected function getOptions(): array
+    {
+        $downloads = Unduhan::query()
+            ->orderByDesc('jumlah_unduhan')
+            ->limit(10)
+            ->get();
+
+        return [
+            'chart' => [
+                'type' => 'bar',
+                'height' => 300,
+                'toolbar' => [
+                    'show' => false,
+                ],
+            ],
+            'series' => [
+                [
+                    'name' => 'Downloads',
+                    'data' => $downloads->pluck('jumlah_unduhan')->toArray(),
+                ],
+            ],
+            'xaxis' => [
+                'categories' => $downloads->pluck('nama_unduhan')->toArray(),
+                'labels' => [
+                    'style' => [
+                        'fontFamily' => 'inherit',
+                    ],
+                ],
+            ],
+            'yaxis' => [
+                'labels' => [
+                    'style' => [
+                        'fontFamily' => 'inherit',
+                    ],
+                ],
+            ],
+            'colors' => ['#6366f1'],
+            'plotOptions' => [
+                'bar' => [
+                    'borderRadius' => 3,
+                    'horizontal' => false,
+                ],
+            ],
+        ];
+    }
+
+    public static function canView(): bool
+    {
+        return auth()->user()?->can('widget_DocumentDownloadsChart');
+    }
+}

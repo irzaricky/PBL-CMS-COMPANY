@@ -81,8 +81,8 @@ class EventSeeder extends Seeder
                 'waktu_end_event' => $endDate,
                 'jumlah_pendaftar' => rand(0, 200),
                 'slug' => Str::slug($namaEvent),
-                'created_at' => now(),
-                'updated_at' => now(),
+                'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
+                'updated_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ];
         }
 

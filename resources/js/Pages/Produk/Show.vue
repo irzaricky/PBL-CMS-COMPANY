@@ -4,41 +4,37 @@ import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { usePage, Link } from '@inertiajs/vue3'
 
-//local prop
-const localProps = defineProps({ slug: String })
+// Props dari route
+const { slug } = defineProps({ slug: String })
 
-//global prop nggo tema
+// Global props dari Inertia
 const page = usePage()
-const globalProps = page.props
-
-const props = {
-    ...localProps,
-    ...globalProps
-}
+const theme = computed(() => page.props.theme)
+const user = computed(() => page.props.auth?.user)
 
 // === DATA
 const item = ref(null)
 const loading = ref(false)
 const activeImageIndex = ref(0)
-const isLoggedIn = computed(() => !!props.auth.user)
+const isLoggedIn = computed(() => !!user.value)
 const testimoniList = ref([])
+
 const newTestimoni = ref({
     isi_testimoni: '',
     rating: 5,
-    id_user: props.auth.user?.id_user ?? null,
 })
 
 // === LIFECYCLE
 onMounted(() => {
     fetchProduk()
-    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary)
+    document.documentElement.style.setProperty('--color-secondary', theme.value.secondary)
 })
 
 // === FUNCTION
 async function fetchProduk() {
     try {
         loading.value = true
-        const response = await axios.get(`/api/produk/${props.slug}`)
+        const response = await axios.get(`/api/produk/${slug}`)
         item.value = response.data.data
         await fetchTestimoni()
     } catch (err) {
@@ -79,11 +75,17 @@ async function submitTestimoni() {
         alert('Isi testimoni tidak boleh kosong')
         return
     }
+
+    if (!user.value?.id_user) {
+        alert('Silakan login terlebih dahulu.')
+        return
+    }
+
     try {
-        await axios.post(
-            `/api/testimoni/produk/${item.value.id_produk}`,
-            newTestimoni.value,
-        )
+        await axios.post(`/api/testimoni/produk/${item.value.id_produk}`, {
+            ...newTestimoni.value,
+            id_user: user.value.id_user,
+        })
 
         alert('Testimoni berhasil dikirim dan menunggu persetujuan')
         newTestimoni.value.isi_testimoni = ''
@@ -95,7 +97,6 @@ async function submitTestimoni() {
     }
 }
 </script>
-
 
 
 <template>
@@ -218,7 +219,7 @@ async function submitTestimoni() {
             </div>
 
             <!-- FORM TESTIMONI -->
-            <div v-if="isLoggedIn, item" class="w-full max-w-3xl mx-auto mt-10">
+            <div v-if="isLoggedIn && item" class="w-full max-w-3xl mx-auto mt-10">
                 <span class="text-sm text-gray-500">Sudah membeli dan menggunakan {{ item.nama_produk }}?</span>
                 <h2 class="text-xl font-semibold mb-3">Tulis pengalamanmu sendiri</h2>
                 <form @submit.prevent="submitTestimoni" class="space-y-4 border rounded-xl shadow bg-white p-4">
@@ -249,6 +250,7 @@ async function submitTestimoni() {
             <div v-else class="w-full max-w-3xl mx-auto text-sm text-gray-500 italic mt-4">
                 Login terlebih dahulu untuk menulis testimoni.
             </div>
+
 
         </div>
     </AppLayout>

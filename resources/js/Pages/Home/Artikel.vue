@@ -86,7 +86,6 @@ function stripHtmlTags(html) {
 }
 </script>
 
-
 <template>
     <div
         class="w-full px-6 lg:px-16 py-28 bg-Color-Scheme-1-Background flex flex-col gap-20 overflow-hidden font-custom bg-secondary">
@@ -118,36 +117,13 @@ function stripHtmlTags(html) {
                 class="bg-Color-Scheme-1-Foreground rounded-2xl border border-Color-Scheme-1-Border/20 flex flex-col overflow-hidden">
                 <img class="w-full h-72 object-cover" :src="getImageUrl(article.thumbnail_artikel)" />
                 <div class="p-6 flex flex-col gap-6 bg-white">
-
-                    <!--Profil Penulis dan Kategori Artikel-->
-                    <div class="flex items-center justify-between flex-wrap gap-4">
-
-                        <!--Profil Penulis Artikel-->
-                        <div class="flex items-center gap-4">
-                            <img class="w-12 h-12 rounded-full" :src="getImageUrl(article.user.foto_profil)" />
-                            <div class="flex flex-col">
-                                <div class="text-Color-Scheme-1-Text text-sm font-semibold leading-tight">
-                                    {{ article.user.name || 'Anonim' }}
-                                </div>
-                                <div class="flex items-center gap-2 text-sm text-Color-Scheme-1-Text">
-                                    <span>{{ formatDate(article.created_at) }}</span>
-                                    <span class="text-lg font-normal leading-relaxed">•</span>
-                                    <span>{{ article.readingTime }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!--Kategori Artikel-->
+                    <div class="flex flex-col gap-2">
                         <div
                             class="inline-flex items-center rounded-full border border-Color-Scheme-1-Border/20 px-4 py-1 w-fit">
                             <span class="text-Color-Neutral-Darkest text-base font-semibold leading-tight">
                                 {{ article.kategoriArtikel?.nama_kategori_artikel || 'Tanpa Kategori' }}
                             </span>
                         </div>
-                    </div>
-
-                    <!--Deskripsi Artikel-->
-                    <div class="flex flex-col gap-2">
                         <a :href="`/artikel/${article.slug}`"
                             class="text-Color-Scheme-1-Text text-2xl font-normal pb-2 hover:underline">
                             {{ article.judul_artikel }}
@@ -155,15 +131,21 @@ function stripHtmlTags(html) {
                         <div class="text-Color-Scheme-1-Text text-base font-normal line-clamp-3">
                             {{ stripHtmlTags(article.konten_artikel) || 'Tidak ada ringkasan konten.' }}
                         </div>
-                    </div>
 
-                    <!--Button Read More-->
-                    <div class="pt-3 flex justify-end">
-                        <a :href="`/artikel/${article.slug}`"
-                            class="inline-flex items-center gap-2 px-3 py-3 bg-secondary text-white text-sm font-semibold rounded-lg hover:bg-secondary/90 transition">
-                            Read More
-                            <ChevronsRight class="w-5 h-5 text-white" />
-                        </a>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <img class="w-12 h-12 rounded-full" :src="getImageUrl(article.user.foto_profil)" />
+
+                        <div class="flex flex-col">
+                            <div class="text-Color-Scheme-1-Text text-sm font-semibold leading-tight">
+                                {{ article.user.name || 'Anonim' }}
+                            </div>
+                            <div class="flex items-center gap-2 text-sm text-Color-Scheme-1-Text">
+                                <span>{{ formatDate(article.created_at) }}</span>
+                                <span class="text-lg font-normal leading-relaxed">•</span>
+                                <span>{{ article.readingTime }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
