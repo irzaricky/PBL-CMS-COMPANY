@@ -1,4 +1,5 @@
 <script setup>
+import { Link } from "@inertiajs/vue3";
 import { ChevronRight } from "lucide-vue-next";
 </script>
 
@@ -10,16 +11,16 @@ import { ChevronRight } from "lucide-vue-next";
                 class="bg-gray-100 rounded-xl py-6 px-6 md:px-12 lg:px-20 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 mt-14 shadow-md">
 
                 <!-- Heading -->
-                <div class="text-secondary text-xl md:pr-10 lg:pr-10 sm:text-2xl md:text-3xl font-bold text-center md:text-left">
+                <div
+                    class="text-secondary text-xl md:pr-10 lg:pr-10 sm:text-2xl md:text-3xl font-bold text-center md:text-left">
                     Berikan feedbackmu agar kami lebih baik!
                 </div>
 
-                <!-- Button -->
-                <button type="button"
+                <Link href="/feedback"
                     class="relative flex items-center gap-1 bg-secondary text-primary text-lg md:text-xl font-bold px-6 py-3 rounded-lg">
-                    Feedback
-                    <ChevronRight class="w-5 h-5 text-white" />
-                </button>
+                Feedback
+                <ChevronRight class="w-5 h-5 text-white" />
+                </Link>
             </div>
         </div>
     </div>

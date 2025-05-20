@@ -209,11 +209,9 @@ class ProfilPerusahaanResource extends Resource
             ]);
     }
 
-    public static function getRelations(): array
+    public static function canCreate(): bool
     {
-        return [
-            //
-        ];
+        return false;
     }
 
     public static function getPages(): array

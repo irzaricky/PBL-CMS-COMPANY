@@ -39,14 +39,17 @@ function getImageUrl(image) {
 </script>
 
 <template>
-    <div class="w-full px-6 lg:px-16 py-28 bg-secondary text-white flex flex-col items-center overflow-hidden font-custom">
-        <div class="w-full flex flex-col lg:flex-row items-center lg:items-start gap-10">
+    <div
+        class="w-full px-6 lg:px-16 py-28 bg-secondary text-white flex flex-col items-center overflow-hidden font-custom">
+        <div class="w-full max-w-screen-xl mx-auto flex flex-col lg:flex-row items-center lg:items-start gap-10">
 
             <!-- Left Side: Header dan Panah -->
             <div class="w-full lg:w-1/4 flex flex-col items-center lg:items-start text-center lg:text-left gap-4">
-                <div class="text-Color-Scheme-1-Text text-base font-semibold">Kami percaya bahwa setiap pertemuan membawa peluang.</div>
+                <div class="text-Color-Scheme-1-Text text-base font-semibold">
+                    Coba lihat!
+                </div>
                 <h2 class="text-4xl lg:text-6xl font-custom font-thin lg:font-normal text-white">
-                    Event Terkini
+                    Event Akan Datang
                 </h2>
                 <div class="relative w-full h-10 overflow-hidden hidden lg:block">
                     <img src="image/arrow-right.png" alt="Panah"
@@ -80,7 +83,6 @@ function getImageUrl(image) {
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
