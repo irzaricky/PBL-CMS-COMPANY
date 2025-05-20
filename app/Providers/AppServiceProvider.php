@@ -49,22 +49,35 @@ class AppServiceProvider extends ServiceProvider
 
         Inertia::share([
             'theme' => function () {
-                $profil = ProfilPerusahaan::first();
-                return [
-                    'secondary' => $profil?->tema_perusahaan ?? '#31487A',
-                ];
+                try {
+                    $profil = ProfilPerusahaan::first();
+                    return [
+                        'secondary' => $profil?->tema_perusahaan ?? '#31487A',
+                    ];
+                } catch (\Exception $e) {
+                    return [
+                        'secondary' => '#31487A',
+                    ];
+                }
             },
         ]);
 
-        $profil = \App\Models\ProfilPerusahaan::first();
-        $logo = $profil?->logo_perusahaan ?? 'favicon.ico';
-        $titlePerusahaan = $profil?->nama_perusahaan ?? 'Sistem Informasi Manajemen';
+        try {
+            $profil = ProfilPerusahaan::first();
+            $logo = $profil?->logo_perusahaan ?? 'favicon.ico';
+            $titlePerusahaan = $profil?->nama_perusahaan ?? 'Sistem Informasi Manajemen';
 
-        // Share values to views
-        View::share('logoPerusahaan', $logo);
-        View::share('titlePerusahaan', $titlePerusahaan);
+            // Share values to views
+            View::share('logoPerusahaan', $logo);
+            View::share('titlePerusahaan', $titlePerusahaan);
 
-        // Set the application name (for title)
-        config(['app.name' => $titlePerusahaan]);
+            // Set the application name (for title)
+            config(['app.name' => $titlePerusahaan]);
+        } catch (\Exception $e) {
+            // Set default values if database is not available
+            View::share('logoPerusahaan', 'favicon.ico');
+            View::share('titlePerusahaan', 'Sistem Informasi Manajemen');
+            config(['app.name' => 'Sistem Informasi Manajemen']);
+        }
     }
 }
