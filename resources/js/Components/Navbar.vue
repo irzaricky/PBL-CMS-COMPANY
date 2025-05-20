@@ -112,8 +112,8 @@ function getImageUser(imagePath) {
                 </Link>
                 <Link href="/produk" class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold">Produk
                 </Link>
-                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold">Feedback
-                </Link>
+                <Link href="/feedback" class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold">Feedback
+                </Link>
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
                         class="text-typography-dark hover:text-typography-hover2 transition text-base font-semibold flex items-center">

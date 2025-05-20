@@ -77,4 +77,5 @@ function getImageUrl(image) {
             </div>
         </div>
     </div>
+    </div>
 </template>
