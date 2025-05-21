@@ -15,13 +15,18 @@ use App\Filament\Resources\LamaranResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\LamaranResource\RelationManagers;
 use App\Filament\Resources\LamaranResource\Widgets\LamaranStats;
+use App\Helpers\FilamentGroupingHelper;
 
 class LamaranResource extends Resource
 {
     protected static ?string $model = Lamaran::class;
-    protected static ?string $navigationGroup = 'Customer Service';
     protected static ?string $navigationIcon = 'heroicon-s-briefcase';
     protected static ?string $recordTitleAttribute = 'id_lamaran';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Customer Service');
+    }
 
     public static function form(Form $form): Form
     {

@@ -13,12 +13,17 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use App\Helpers\FilamentGroupingHelper;
 
 class KontenSliderResource extends Resource
 {
     protected static ?string $model = KontenSlider::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-presentation-chart-line';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Content Management');
+    }
 
     public static function form(Form $form): Form
     {

@@ -14,12 +14,17 @@ use App\Filament\Resources\FeedbackResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FeedbackResource\RelationManagers;
 use App\Filament\Resources\FeedbackResource\Widgets\FeedbackStats;
+use App\Helpers\FilamentGroupingHelper;
 
 class FeedbackResource extends Resource
 {
     protected static ?string $model = Feedback::class;
-    protected static ?string $navigationGroup = 'Customer Service';
     protected static ?string $navigationIcon = 'heroicon-s-chat-bubble-left-right';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Customer Service');
+    }
 
     public static function form(Form $form): Form
     {

@@ -12,14 +12,19 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Helpers\FilamentGroupingHelper;
 
 class ProfilPerusahaanResource extends Resource
 {
     protected static ?string $model = ProfilPerusahaan::class;
-    protected static ?string $navigationGroup = 'Company Owner';
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Company Owner');
+    }
 
     public static function form(Form $form): Form
     {
@@ -40,7 +45,7 @@ class ProfilPerusahaanResource extends Resource
                             ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
                             ->imageEditor()
                             ->optimize('webp'),
-                        
+
 
                         Forms\Components\FileUpload::make('thumbnail_perusahaan')
                             ->label('Gambar Perusahaan')

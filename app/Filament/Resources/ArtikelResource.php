@@ -27,7 +27,6 @@ class ArtikelResource extends Resource
 {
     protected static ?string $model = Artikel::class;
 
-
     protected static ?string $navigationIcon = 'heroicon-s-document-text';
     protected static ?string $cluster = ArtikelsCluster::class;
     protected static ?int $navigationSort = 1;
