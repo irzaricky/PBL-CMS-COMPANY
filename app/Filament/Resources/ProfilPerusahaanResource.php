@@ -39,7 +39,7 @@ class ProfilPerusahaanResource extends Resource
                             ->disk('public')
                             ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
                             ->imageEditor(),
-                        
+
 
                         Forms\Components\FileUpload::make('thumbnail_perusahaan')
                             ->label('Gambar Perusahaan')
@@ -94,12 +94,23 @@ class ProfilPerusahaanResource extends Resource
 
                 Forms\Components\Section::make('Sejarah, Visi dan Misi')
                     ->schema([
-                        Forms\Components\RichEditor::make('sejarah_perusahaan')
-                            ->label('Sejarah Perusahaan')
-                            ->disableToolbarButtons([
-                                'attachFiles'
+                        Forms\Components\Repeater::make('sejarah_perusahaan')
+                            ->label('Sejarah Perusahaan Per Tahun')
+                            ->schema([
+                                Forms\Components\TextInput::make('tahun')
+                                    ->label('Tahun')
+                                    ->numeric()
+                                    ->required(),
+                                Forms\Components\RichEditor::make('deskripsi')
+                                    ->label('Deskripsi')
+                                    ->disableToolbarButtons(['attachFiles'])
+                                    ->required(),
                             ])
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->orderColumn()
+                            ->collapsed(true)  // supaya lebih ringkas
+                            ->minItems(1)
+                            ->addActionLabel('Tambah Tahun Baru'),
 
                         Forms\Components\RichEditor::make('visi_perusahaan')
                             ->label('Visi Perusahaan')
@@ -150,13 +161,11 @@ class ProfilPerusahaanResource extends Resource
 
                 Tables\Columns\TextColumn::make('nama_perusahaan')
                     ->label('Nama Perusahaan')
-                    ->searchable()
-                ,
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('email_perusahaan')
                     ->label('Email')
-                    ->searchable()
-                ,
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('alamat_perusahaan')
                     ->label('Alamat')
@@ -175,7 +184,20 @@ class ProfilPerusahaanResource extends Resource
 
                 Tables\Columns\TextColumn::make('sejarah_perusahaan')
                     ->label('Sejarah')
-                    ->limit(20)
+                    ->getStateUsing(function ($record) {
+                        $sejarah = $record->sejarah_perusahaan;
+
+                        if (!is_array($sejarah) || empty($sejarah)) {
+                            return '-';
+                        }
+
+                        // Gabungkan semua tahun + deskripsi (batasi panjang)
+                        $texts = array_map(fn($item) => $item['tahun'] . ': ' . strip_tags($item['deskripsi']), $sejarah);
+                        $combined = implode(' | ', $texts);
+
+                        // Batasi teks panjang, misal 100 karakter
+                        return strlen($combined) > 100 ? substr($combined, 0, 100) . '...' : $combined;
+                    })
                     ->html()
                     ->toggleable(),
 

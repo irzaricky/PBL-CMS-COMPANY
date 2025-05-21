@@ -15,8 +15,9 @@ use Inertia\Inertia;
 // })->name('login');
 
 Route::get('/login', function () {
+    session()->put('url.intended', url()->previous()); 
     return redirect('/admin/login');
-})->name('login')->name('filament.auth.login');
+})->name('login');
 
 Route::get('/logout', function () {
     Auth::logout();
@@ -87,7 +88,7 @@ Route::prefix('feedback')->group(function () {
 });
 
 // Rute group Profil Perusahaan
-Route::prefix('profilperusahaan')->group(function () {
+Route::prefix('profil-perusahaan')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('ProfilPerusahaan/Main');
     });

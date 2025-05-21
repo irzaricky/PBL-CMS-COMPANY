@@ -14,7 +14,7 @@ const menuSections = [
     {
         title: "Tentang Kami",
         links: [
-            { href: "/profilperusahaan", icon: "Building2", label: "Profil Perusahaan" },
+            { href: "/profil-perusahaan", icon: "Building2", label: "Profil Perusahaan" },
             {
                 href: "/visi-misi",
                 icon: "Binoculars",

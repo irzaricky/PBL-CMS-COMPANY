@@ -173,7 +173,7 @@ class CaseStudyResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->label('arsipkan')
+                    ->label('Arsipkan')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Case study berhasil diarsipkan'),

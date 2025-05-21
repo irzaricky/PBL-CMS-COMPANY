@@ -123,7 +123,7 @@ function stripHtmlTags(html) {
                 <div v-for="article in articles" :key="article.id"
                     class="bg-Color-Scheme-1-Foreground rounded-2xl border border-Color-Scheme-1-Border/20 flex flex-col overflow-hidden">
                     <img class="w-full h-72 object-cover" :src="getImageUrl(article.thumbnail_artikel)" />
-                    <div class="p-6 flex flex-col gap-6 bg-white">
+                    <div class="p-6 flex flex-col gap-6 bg-white h-full">
                         <div class="flex flex-col gap-2">
                             <div
                                 class="inline-flex items-center rounded-full border border-Color-Scheme-1-Border/20 px-4 py-1 w-fit">
