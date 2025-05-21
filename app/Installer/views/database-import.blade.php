@@ -92,6 +92,14 @@
                                 <x-install-error for="app_timezone" />
                             </div>
 
+                            <div class="col-md-4 mb-3">
+                                <x-install-select label="App Locale" class="form-control" required="true" name="app_locale">
+                                    <option value="en" {{ old('app_locale', 'en') == 'en' ? 'selected' : '' }}>English
+                                    </option>
+                                    <option value="id" {{ old('app_locale') == 'id' ? 'selected' : '' }}>Indonesian</option>
+                                </x-install-select>
+                                <x-install-error for="app_locale" />
+                            </div>
 
                             <div class="col-md-4 mb-3">
                                 <x-install-select label="Database Connection" class="form-control" required="true"

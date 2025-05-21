@@ -29,12 +29,12 @@ class DatabaseController extends Controller
     public function saveWizard(Request $request, Redirector $redirect)
     {
         // Debug the request data
-        Log::info('Form submission data:', $request->all());
-        Log::info('Headers:', $request->headers->all());
+        // Log::info('Form submission data:', $request->all());
+        // Log::info('Headers:', $request->headers->all());
 
         // Check if database name is provided, always required
         if (empty($request->input('database_name'))) {
-            Log::error('Missing required database name');
+            // Log::error('Missing required database name');
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -56,7 +56,7 @@ class DatabaseController extends Controller
             $sanitizedName = preg_replace('/[^a-zA-Z0-9\-_\.]/', '', $dbName);
 
             if ($sanitizedName !== $dbName) {
-                Log::error('Invalid SQLite database name: ' . $dbName);
+                // Log::error('Invalid SQLite database name: ' . $dbName);
 
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
@@ -81,7 +81,7 @@ class DatabaseController extends Controller
         // For MySQL connection, we need additional checks
         if ($request->input('database_connection') === 'mysql') {
             if (empty($request->input('database_hostname')) || empty($request->input('database_username'))) {
-                Log::error('Missing required MySQL database credentials');
+                // Log::error('Missing required MySQL database credentials');
 
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
@@ -101,7 +101,7 @@ class DatabaseController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            Log::error('Validation errors:', $validator->errors()->toArray());
+            // Log::error('Validation errors:', $validator->errors()->toArray());
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -115,10 +115,10 @@ class DatabaseController extends Controller
 
         // Check database connection and make sure to stop the process if it fails
         $dbConnectionSuccess = $this->checkDatabaseConnection($request);
-        Log::info('Database connection check result: ' . ($dbConnectionSuccess ? 'success' : 'failed'));
+        // Log::info('Database connection check result: ' . ($dbConnectionSuccess ? 'success' : 'failed'));
 
         if (!$dbConnectionSuccess) {
-            Log::error('Database connection failed - stopping installation process');
+            // Log::error('Database connection failed - stopping installation process');
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -135,7 +135,7 @@ class DatabaseController extends Controller
         try {
             // Double-check database connection once more before proceeding
             if (!$this->checkDatabaseConnection($request)) {
-                Log::error('Final database connection check failed');
+                // Log::error('Final database connection check failed');
 
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
@@ -150,7 +150,7 @@ class DatabaseController extends Controller
             }
 
             $result = $this->EnvironmentManager->saveFileWizard($request);
-            Log::info('Environment saved: ' . $result);
+            // Log::info('Environment saved: ' . $result);
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -162,7 +162,7 @@ class DatabaseController extends Controller
             // Only proceed to next step if database connection is established
             return redirect(route('profil_perusahaan'));
         } catch (\Exception $e) {
-            Log::error('Error saving environment: ' . $e->getMessage());
+            // Log::error('Error saving environment: ' . $e->getMessage());
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -193,11 +193,12 @@ class DatabaseController extends Controller
         $database = $request->input('database_name');
 
         if (!$database) {
-            Log::error('No database name provided');
+            // Log::error('No database name provided');
             return false;
         }
 
-        $settings = config("database.connections.$connection");        // Handle SQLite differently
+        $settings = config("database.connections.$connection");        
+        // Handle SQLite differently
         if ($connection === 'sqlite') {
             // Set database file path directly in storage directory
             $databasePath = storage_path($database);
@@ -216,9 +217,9 @@ class DatabaseController extends Controller
                 try {
                     touch($databasePath);
                     chmod($databasePath, 0644);
-                    Log::info('Created SQLite database file at: ' . $databasePath);
+                    // Log::info('Created SQLite database file at: ' . $databasePath);
                 } catch (\Exception $e) {
-                    Log::error('Failed to create SQLite database file: ' . $e->getMessage());
+                    // Log::error('Failed to create SQLite database file: ' . $e->getMessage());
                     return false;
                 }
             }
@@ -263,7 +264,7 @@ class DatabaseController extends Controller
             $pdo = DB::connection()->getPdo();
 
             if (!$pdo) {
-                Log::error('Database connection failed: Could not get PDO instance');
+                // Log::error('Database connection failed: Could not get PDO instance');
                 return false;
             }
 
@@ -271,7 +272,7 @@ class DatabaseController extends Controller
             $result = DB::connection()->select('SELECT 1 as connection_test');
 
             if (!$result || !isset($result[0]->connection_test) || $result[0]->connection_test !== 1) {
-                Log::error('Database connection failed: Test query failed');
+                // Log::error('Database connection failed: Test query failed');
                 return false;
             }
 
@@ -280,17 +281,17 @@ class DatabaseController extends Controller
                 $permissionResults = $this->checkDatabasePermissions();
 
                 if (!$permissionResults['success']) {
-                    Log::error('Database permission check failed: ' . implode(', ', $permissionResults['messages']));
+                    // Log::error('Database permission check failed: ' . implode(', ', $permissionResults['messages']));
                     return false;
                 }
 
-                Log::info('Database permission check passed');
+                // Log::info('Database permission check passed');
             }
 
-            Log::info('Database connection verified successfully');
+            // Log::info('Database connection verified successfully');
             return true;
         } catch (Exception $e) {
-            Log::error('Database connection error: ' . $e->getMessage());
+            // Log::error('Database connection error: ' . $e->getMessage());
             return false;
         }
     }

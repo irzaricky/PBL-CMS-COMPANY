@@ -25,16 +25,35 @@ class EnvironmentManager
 
         $env = config('install.env');
 
+        // Store the company name in this format to match env.example
+        $companyName = $request->app_name;
+
         // Add APP_INSTALLED flag to indicate installation is complete
         $envFileData =
-            'APP_NAME=\'' . $request->app_name . "'\n" .
+            'APP_NAME="${COMPANY_NAME}"' . "\n" .
             'APP_ENV=' . $request->environment . "\n" .
             'APP_KEY=' . 'base64:' . base64_encode(Str::random(32)) . "\n" .
             'APP_DEBUG=' . $request->app_debug . "\n" .
-            'APP_LOG_LEVEL=' . $request->app_log_level . "\n" .
-            'APP_URL=' . $request->app_url . "\n" .
             'APP_TIMEZONE=' . ($request->app_timezone ?? 'UTC') . "\n" .
-            'APP_INSTALLED=false' . "\n\n" .
+            'APP_URL=' . $request->app_url . "\n" .
+            "\n" .
+            'APP_LOCALE=' . ($request->app_locale ?? 'en') . "\n" .
+            'APP_FALLBACK_LOCALE=en' . "\n" .
+            'APP_FAKER_LOCALE=en_US' . "\n" .
+            "\n" .
+            'APP_MAINTENANCE_DRIVER=file' . "\n" .
+            'PHP_CLI_SERVER_WORKERS=4' . "\n" .
+            "\n" .
+            'BCRYPT_ROUNDS=12' . "\n" .
+            "\n" .
+            'LOG_CHANNEL=stack' . "\n" .
+            'LOG_STACK=single' . "\n" .
+            'LOG_DEPRECATIONS_CHANNEL=null' . "\n" .
+            'LOG_LEVEL=' . $request->app_log_level . "\n" .
+            "\n" .
+            'APP_INSTALLED=false' . "\n" .
+            'COMPANY_NAME=' . $companyName . "\n" .
+            "\n" .
             'DB_CONNECTION=' . $request->database_connection . "\n";
 
         // Add database configuration based on connection type
@@ -51,6 +70,32 @@ class EnvironmentManager
                 'DB_PASSWORD=' . ($request->database_password ?? '') . "\n\n";
         }
 
+        // Add session configuration
+        $envFileData .= 'SESSION_DRIVER=database' . "\n" .
+            'SESSION_LIFETIME=120' . "\n" .
+            'SESSION_ENCRYPT=false' . "\n" .
+            'SESSION_PATH=/' . "\n" .
+            'SESSION_DOMAIN=null' . "\n\n" .
+            'BROADCAST_CONNECTION=log' . "\n" .
+            'FILESYSTEM_DISK=local' . "\n" .
+            'QUEUE_CONNECTION=database' . "\n\n" .
+            'CACHE_STORE=database' . "\n" .
+            'CACHE_PREFIX=' . "\n\n" .
+            'MEMCACHED_HOST=127.0.0.1' . "\n\n" .
+            'REDIS_CLIENT=phpredis' . "\n" .
+            'REDIS_HOST=127.0.0.1' . "\n" .
+            'REDIS_PASSWORD=null' . "\n" .
+            'REDIS_PORT=6379' . "\n\n" .
+            'MAIL_MAILER=log' . "\n" .
+            'MAIL_SCHEME=null' . "\n" .
+            'MAIL_HOST=127.0.0.1' . "\n" .
+            'MAIL_PORT=2525' . "\n" .
+            'MAIL_USERNAME=null' . "\n" .
+            'MAIL_PASSWORD=null' . "\n" .
+            'MAIL_FROM_ADDRESS="hello@example.com"' . "\n" .
+            'MAIL_FROM_NAME="${APP_NAME}"' . "\n\n";
+
+        // Add the rest of the environment configuration
         $envFileData .= $env;
 
         try {

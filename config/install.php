@@ -69,6 +69,7 @@ return [
                 'app_debug' => 'required|string',
                 'app_log_level' => 'required|string|max:50',
                 'app_url' => 'required|url',
+                'app_locale' => 'required|string|in:en,id',
                 'database_connection' => 'required|in:mysql,sqlite',
                 'database_hostname' => 'nullable|string|max:50',
                 'database_port' => 'nullable|numeric',
