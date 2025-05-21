@@ -60,26 +60,7 @@
                                 <x-install-error for="email_perusahaan" />
                             </div>
 
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Sejarah Perusahaan</label>
-                                <textarea name="sejarah_perusahaan" class="form-control"
-                                    rows="3">{{ old('sejarah_perusahaan') }}</textarea>
-                                <x-install-error for="sejarah_perusahaan" />
-                            </div>
 
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Visi Perusahaan</label>
-                                <textarea name="visi_perusahaan" class="form-control"
-                                    rows="2">{{ old('visi_perusahaan') }}</textarea>
-                                <x-install-error for="visi_perusahaan" />
-                            </div>
-
-                            <div class="col-md-12 mb-3">
-                                <label class="form-label">Misi Perusahaan</label>
-                                <textarea name="misi_perusahaan" class="form-control"
-                                    rows="3">{{ old('misi_perusahaan') }}</textarea>
-                                <x-install-error for="misi_perusahaan" />
-                            </div>
                         </div>
                     </div>
                     <div class="card-footer text-end">

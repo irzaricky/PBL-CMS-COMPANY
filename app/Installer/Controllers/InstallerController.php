@@ -2,15 +2,16 @@
 
 namespace App\Installer\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use App\Installer\Main\DatabaseManager;
 use App\Installer\Main\InstalledManager;
+use Illuminate\Support\Facades\Validator;
 use App\Installer\Main\PermissionsChecker;
 use App\Installer\Main\RequirementsChecker;
 
@@ -80,7 +81,7 @@ class InstallerController extends Controller
         $rules = config('install.profil_perusahaan');
 
         // Debug information
-        \Log::info('Form submission received', [
+        Log::info('Form submission received', [
             'has_file' => $request->hasFile('logo_perusahaan'),
             'all_inputs' => $request->all(),
         ]);
@@ -88,7 +89,7 @@ class InstallerController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            \Log::warning('Validation failed', ['errors' => $validator->errors()]);
+            Log::warning('Validation failed', ['errors' => $validator->errors()]);
             return $redirect->route('profil_perusahaan')->withInput()->withErrors($validator->errors());
         }
 
@@ -124,7 +125,7 @@ class InstallerController extends Controller
                 $data['logo_perusahaan'] = $path;
             } else {
                 // Log error for debugging
-                \Log::error('Logo upload failed: ' . $logo->getErrorMessage());
+                Log::error('Logo upload failed: ' . $logo->getErrorMessage());
                 return $redirect->route('profil_perusahaan')
                     ->withInput()
                     ->withErrors(['logo_perusahaan' => 'File upload failed. Please try again.']);

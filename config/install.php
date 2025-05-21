@@ -126,8 +126,5 @@ return [
         'alamat_perusahaan' => 'required|string|max:200',
         'link_alamat_perusahaan' => 'nullable|string|max:255',
         'email_perusahaan' => 'required|email|max:50',
-        'sejarah_perusahaan' => 'nullable|string',
-        'visi_perusahaan' => 'nullable|string',
-        'misi_perusahaan' => 'nullable|string',
     ],
 ];
