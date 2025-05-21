@@ -9,18 +9,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckStatusUser
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!Auth::check()) {
+            return $next($request); 
+        }
+
         $user = Auth::user();
 
-        // Cek status user (aktif/nonaktif)
         if ($user->status === 'nonaktif') {
             Auth::logout();
             $request->session()->invalidate();
@@ -30,11 +26,19 @@ class CheckStatusUser
                 ->with('error', 'Akun Anda sudah tidak aktif. Silakan hubungi administrator.');
         }
 
-        if (empty($user->status_kepegawaian) && $request->routeIs('filament.*')) {
-            return redirect('/dashboard')->with('message', 'Anda tidak memiliki akses ke panel admin.');
+        $allowedRoutes = [
+            'filament.admin.auth.login',
+            'filament.admin.auth.profile',
+        ];
+
+        if (
+            $request->routeIs('filament.admin.*') &&
+            !in_array($request->route()->getName(), $allowedRoutes) &&
+            $user->status_kepegawaian === !null
+        ) {
+            return redirect('/')->with('error', 'Anda tidak memiliki akses ke panel admin.');
         }
 
-        // Lanjutkan dengan request
         return $next($request);
     }
 }

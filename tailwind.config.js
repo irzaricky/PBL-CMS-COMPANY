@@ -28,7 +28,7 @@ export default {
                 // putih
                 primary: "#F1F1F1",
                 // agak biru
-                secondary: "#31487A",
+                secondary: "var(--color-secondary)",
                 typography: {
                     // agak biru
                     main: "#31487A",

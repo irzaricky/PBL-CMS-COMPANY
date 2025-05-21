@@ -22,12 +22,17 @@ use App\Services\FileHandlers\MultipleFileHandler;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
+use App\Helpers\FilamentGroupingHelper;
 
 class CaseStudyResource extends Resource
 {
     protected static ?string $model = CaseStudy::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-document';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Content Management');
+    }
 
     public static function getEloquentQuery(): Builder
     {
@@ -219,18 +224,5 @@ class CaseStudyResource extends Resource
             'create' => Pages\CreateCaseStudy::route('/create'),
             'edit' => Pages\EditCaseStudy::route('/{record}/edit'),
         ];
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        /** @var class-string<Model> $modelClass */
-        $modelClass = static::$model;
-
-        return (string) $modelClass::where('status_case_study', 'draft')->whereNull('deleted_at')->count();
-    }
-
-    public static function getNavigationBadgeTooltip(): ?string
-    {
-        return 'Case study yang masih seabagai draft';
     }
 }

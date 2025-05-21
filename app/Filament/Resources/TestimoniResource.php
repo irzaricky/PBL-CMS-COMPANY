@@ -17,12 +17,17 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\FileHandlers\MultipleFileHandler;
+use App\Helpers\FilamentGroupingHelper;
 
 class TestimoniResource extends Resource
 {
     protected static ?string $model = Testimoni::class;
-    protected static ?string $navigationGroup = 'Customer Service';
     protected static ?string $navigationIcon = 'heroicon-s-chat-bubble-bottom-center-text';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Customer Service');
+    }
 
     public static function form(Form $form): Form
     {
@@ -187,6 +192,11 @@ class TestimoniResource extends Resource
         return [
             TestimoniStats::class,
         ];
+    }
+
+    public static function canCreate(): bool
+    {
+        return false;
     }
 
     public static function getPages(): array

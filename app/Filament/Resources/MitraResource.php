@@ -15,14 +15,19 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\FileHandlers\SingleFileHandler;
+use App\Helpers\FilamentGroupingHelper;
 
 
 class MitraResource extends Resource
 {
     protected static ?string $model = Mitra::class;
-    protected static ?string $navigationGroup = 'Company Owner';
     protected static ?string $navigationIcon = 'heroicon-s-user-plus';
     protected static ?string $recordTitleAttribute = 'nama';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Company Owner');
+    }
 
     public static function form(Form $form): Form
     {

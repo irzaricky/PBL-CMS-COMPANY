@@ -28,7 +28,8 @@ class FeatureToggleResource extends Resource
 {
     protected static ?string $model = FeatureToggle::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-adjustments-horizontal';
+    protected static ?string $label = 'Fitur';
 
     public static function form(Form $form): Form
     {
@@ -40,22 +41,38 @@ class FeatureToggleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('key')
-                    ->label('Feature')
-                ,
+                // Tables\Columns\TextColumn::make('key')
+                //     ->label('Fitur yang ditampilkan')
+                // ,
                 Tables\Columns\TextColumn::make('label')
-                    ->label('Label'),
-                Tables\Columns\ToggleColumn::make('status_aktif')
+                    ->label('Daftar Fitur'),
+                Tables\Columns\TextColumn::make('status_aktif')
                     ->label('Status Aktif')
-                    ->onColor('success')
-                    ->offColor('danger'),
+                    ->badge()
+                    ->formatStateUsing(fn(bool $state): string => $state ? 'Aktif' : 'Nonaktif')
+                    ->color(fn(bool $state): string => $state ? 'success' : 'danger')
+                    ->icon(fn(bool $state): string => $state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle'),
             ])
             ->filters([
                 //
             ])
-            ->actions([])
+            ->actions([
+                Tables\Actions\Action::make('show')
+                    ->label('Perlihatkan')
+                    ->icon('heroicon-s-eye')
+                    ->color('success')
+                    ->action(fn(FeatureToggle $record) => $record->update(['status_aktif' => true]))
+                    ->visible(fn(FeatureToggle $record) => !$record->status_aktif),
+
+                Tables\Actions\Action::make('hide')
+                    ->label('Sembunyikan')
+                    ->icon('heroicon-s-eye-slash')
+                    ->color('danger')
+                    ->action(fn(FeatureToggle $record) => $record->update(['status_aktif' => false]))
+                    ->visible(fn(FeatureToggle $record) => $record->status_aktif),
+            ])
             ->bulkActions([
-                Tables\Actions\BulkAction::make('activate_all') 
+                Tables\Actions\BulkAction::make('activate_all')
                     ->label('Aktifkan semua')
                     ->action(function (Collection $records) {
                         $records->each(function ($record) {
@@ -88,9 +105,12 @@ class FeatureToggleResource extends Resource
     {
         return [
             'index' => Pages\ListFeatureToggles::route('/'),
-            'create' => Pages\CreateFeatureToggle::route('/create'),
+            // 'create' => Pages\CreateFeatureToggle::route('/create'),
             'edit' => Pages\EditFeatureToggle::route('/{record}/edit'),
         ];
     }
-
+    public static function canCreate(): bool
+    {
+        return false;
+    }
 }

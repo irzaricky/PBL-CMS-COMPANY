@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ContentStatus;
+use App\Filament\Clusters\GaleriCluster;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Galeri;
@@ -25,8 +26,9 @@ use App\Filament\Resources\GaleriResource\Widgets\GaleriStats;
 class GaleriResource extends Resource
 {
     protected static ?string $model = Galeri::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-photo';
+    protected static ?string $cluster = GaleriCluster::class;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -114,7 +116,7 @@ class GaleriResource extends Resource
                             ->image()
                             ->multiple()
                             ->reorderable()
-                            ->directory('galeri-images')
+                            ->directory('galeri-thumbnails')
                             ->maxFiles(10)
                             ->helperText('Upload hingga 10 gambar (format: jpg, png, webp)')
                             ->disk('public')

@@ -1,5 +1,5 @@
 <script setup>
-import AuthenticatedLayout from '@/Deprecated Layouts/AuthenticatedLayout.vue';
+import AuthenticatedLayout from '@/Z Deprecated Layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 </script>
 

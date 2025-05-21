@@ -18,7 +18,7 @@ class ProdukSeeder extends Seeder
 
         // bagian proses image
         $sourcePath = database_path('seeders/seeder_image/');
-        $targetPath = 'produk-images';
+        $targetPath = 'produk-thumbnails';
 
         // Pastikan folder target ada
         Storage::disk('public')->makeDirectory($targetPath);
@@ -41,7 +41,7 @@ class ProdukSeeder extends Seeder
         ];
 
         // Generate 20 products
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 80; $i++) {
             $randomProduct = $faker->randomElement($products);
             $createdAt = Carbon::now()->subYear()->addDays(rand(0, 365));
 
@@ -59,8 +59,10 @@ class ProdukSeeder extends Seeder
                 // Buat nama baru biar unik
                 $newFileName = Str::random(10) . '-' . $originalFile;
 
-                // Copy ke storage
+                // Copy ke storage dan set modification time
                 Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+                $fullPath = Storage::disk('public')->path($targetPath . '/' . $newFileName);
+                touch($fullPath, $createdAt->getTimestamp());
 
                 // Tambahkan path gambar ke array images
                 $images[] = $targetPath . '/' . $newFileName;
@@ -74,7 +76,7 @@ class ProdukSeeder extends Seeder
                 'harga_produk' => 'Rp ' . number_format($randomProduct['harga'] * $faker->randomFloat(1, 0.8, 1.2), 0, ',', '.'),
                 'slug' => Str::slug($randomProduct['nama'] . ' ' . $faker->words(2, true)),
                 'status_produk' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
-                'deskripsi_produk' => $faker->paragraph(2),
+                'deskripsi_produk' => $faker->paragraph(10),
                 'created_at' => $createdAt,
                 'updated_at' => $createdAt->addDays(rand(0, 30)),
             ]);

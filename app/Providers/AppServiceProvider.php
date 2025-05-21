@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Models\User;
 use Inertia\Inertia;
 use Filament\Facades\Filament;
+use App\Models\ProfilPerusahaan;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Schema;
@@ -49,5 +51,38 @@ class AppServiceProvider extends ServiceProvider
                 ];
             },
         ]);
+
+        Inertia::share([
+            'theme' => function () {
+                try {
+                    $profil = ProfilPerusahaan::first();
+                    return [
+                        'secondary' => $profil?->tema_perusahaan ?? '#31487A',
+                    ];
+                } catch (\Exception $e) {
+                    return [
+                        'secondary' => '#31487A',
+                    ];
+                }
+            },
+        ]);
+
+        try {
+            $profil = ProfilPerusahaan::first();
+            $logo = $profil?->logo_perusahaan ?? 'favicon.ico';
+            $titlePerusahaan = $profil?->nama_perusahaan ?? 'Sistem Informasi Manajemen';
+
+            // Share values to views
+            View::share('logoPerusahaan', $logo);
+            View::share('titlePerusahaan', $titlePerusahaan);
+
+            // Set the application name (for title)
+            config(['app.name' => $titlePerusahaan]);
+        } catch (\Exception $e) {
+            // Set default values if database is not available
+            View::share('logoPerusahaan', 'favicon.ico');
+            View::share('titlePerusahaan', 'Sistem Informasi Manajemen');
+            config(['app.name' => 'Sistem Informasi Manajemen']);
+        }
     }
 }

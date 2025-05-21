@@ -3,22 +3,23 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\EventController;
-use App\Http\Controllers\Api\ArtikelController;
-use App\Http\Controllers\Api\GaleriController;
-use App\Http\Controllers\Api\LowonganController;
-use App\Http\Controllers\Api\ProdukController;
-use App\Http\Controllers\Api\ProfilPerusahaanController;
-use App\Http\Controllers\Api\FeatureToggleController;
-use App\Http\Controllers\Api\CaseStudyController;
-use App\Http\Controllers\Api\UnduhanController;
-use App\Http\Controllers\Api\MediaSosialController;
-use App\Http\Controllers\Api\TestimoniController;
 use App\Http\Controllers\Api\MitraController;
-use App\Http\Controllers\Api\StrukturOrganisasiController;
-use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\GaleriController;
+use App\Http\Controllers\Api\ProdukController;
+use App\Http\Controllers\Api\ArtikelController;
 use App\Http\Controllers\Api\LamaranController;
+use App\Http\Controllers\Api\UnduhanController;
+use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\Api\LowonganController;
+use App\Http\Controllers\Api\CaseStudyController;
+use App\Http\Controllers\Api\TestimoniController;
+use App\Http\Controllers\Api\MediaSosialController;
+use App\Http\Controllers\Api\FeatureToggleController;
+use App\Http\Controllers\Api\TestimoniProdukController;
+use App\Http\Controllers\Api\ProfilPerusahaanController;
+use App\Http\Controllers\Api\StrukturOrganisasiController;
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
@@ -52,8 +53,6 @@ Route::prefix('artikel')->group(function () {
 
     // untuk mengambil artikel berdasarkan slug
     Route::get('/{slug}', [ArtikelController::class, 'getArticleBySlug']);
-
-
 });
 
 // Event
@@ -103,7 +102,11 @@ Route::get('/feature-toggles', [FeatureToggleController::class, 'index']);
 Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 
 // Testimoni
-Route::get('/testimoni', [TestimoniController::class, 'index']);
+// Route::get('/testimoni', [TestimoniController::class, 'index']);
+
+Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
+Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
+
 
 // Mitra
 Route::prefix('mitra')->group(function () {
@@ -142,9 +145,14 @@ Route::prefix('produk')->group(function () {
     // untuk mengambil produk berdasarkan id
     Route::get('/id/{id}', [ProdukController::class, 'getProdukById']);
 
+    // untuk mengambil kategori produk
+    Route::get('/categories', [ProdukController::class, 'getCategories']);
+
+    // untuk mengambil produk terbaru
+    Route::get('/latest', [ProdukController::class, 'latest']);
+
     // untuk mengambil produk berdasarkan slug
     Route::get('/{slug}', [ProdukController::class, 'getProdukBySlug']);
-
 });
 
 

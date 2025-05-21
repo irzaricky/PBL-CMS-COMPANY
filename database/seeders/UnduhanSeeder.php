@@ -69,7 +69,11 @@ class UnduhanSeeder extends Seeder
             $newFileName = Str::slug($type) . "-" . $year . "-" . Str::random(5) . "." . pathinfo($sourceFile, PATHINFO_EXTENSION);
 
 
+            // Store file and set modification time
             Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$sourceFile"), $newFileName);
+            $fullPath = Storage::disk('public')->path($targetPath . '/' . $newFileName);
+            $createdAt = $faker->dateTimeBetween('-2 years', 'now');
+            touch($fullPath, $createdAt->getTimestamp());
 
             $categoryId = $faker->numberBetween(1, 3); // Categories: 1=Dokumen, 2=Formulir, 3=Panduan
             $isPublished = $faker->boolean(70);

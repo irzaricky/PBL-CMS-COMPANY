@@ -16,12 +16,17 @@ use App\Services\FileHandlers\SingleFileHandler;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MediaSosialResource\Pages;
 use App\Filament\Resources\MediaSosialResource\RelationManagers;
+use App\Helpers\FilamentGroupingHelper;
 
 class MediaSosialResource extends Resource
 {
     protected static ?string $model = MediaSosial::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-share';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Content Management');
+    }
 
     public static function form(Form $form): Form
     {

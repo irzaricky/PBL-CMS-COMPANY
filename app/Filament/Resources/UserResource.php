@@ -13,13 +13,18 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use App\Helpers\FilamentGroupingHelper;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
     protected static ?int $navigationSort = 1;
-    protected static ?string $navigationGroup = 'User Management';
     protected static ?string $navigationIcon = 'heroicon-s-user';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('User Management');
+    }
 
     public static function form(Form $form): Form
     {
@@ -60,8 +65,8 @@ class UserResource extends Resource
                             ->imageResizeMode('cover')
                             ->imageResizeTargetWidth(100)
                             ->imageResizeTargetHeight(100)
-                            ->optimize('webp')
-                        ,
+                            ->optimize('webp'),
+
                         Forms\Components\Textarea::make('alamat')
                             ->label('Alamat')
                             ->rows(3)
@@ -97,6 +102,7 @@ class UserResource extends Resource
                                 'Kontrak' => 'Pegawai Kontrak',
                                 'Magang' => 'Pegawai Magang',
                                 'Percobaan' => 'Masa Percobaan',
+                                'Non Pegawai' => 'Non Pegawai',
                             ])
                             ->nullable(),
 
@@ -131,18 +137,18 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('tanggal_lahir')
                     ->label('Tanggal Lahir')
                     ->date('d F Y')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                ,
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Registrasi')
                     ->date('d F Y')
-                ,
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('status_kepegawaian')
                     ->label('Status Kepegawaian')
                     ->badge()
                     ->alignment('center')
                     ->colors([
                         'primary' => 'Tetap',
+                        'secondary' => 'Non Pegawai',
                         'success' => 'Kontrak',
                         'warning' => 'Magang',
                         'danger' => 'Percobaan',
@@ -217,7 +223,7 @@ class UserResource extends Resource
                 ]),
             ]);
     }
-    
+
 
     public static function getRelations(): array
     {

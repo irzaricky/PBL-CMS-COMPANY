@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -15,11 +14,14 @@ Route::get('/login', function () {
     return redirect('/admin/login');
 })->name('login')->name('filament.auth.login');
 
-
 Route::get('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+// Route::get('/login', function () {
+//     return Inertia::render('Login');
+// })->name('login');
 
 Route::get('/', function () {
     return Inertia::render('Home');
@@ -74,6 +76,13 @@ Route::prefix('portofolio')->group(function () {
 
     Route::get('/{slug}', action: function ($slug) {
         return Inertia::render('Event/Show', ['slug' => $slug]);
+    });
+});
+
+// Rute group feedback
+Route::prefix('feedback')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Feedback/Main');
     });
 });
 

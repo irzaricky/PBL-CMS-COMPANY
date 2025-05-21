@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Http\File;
 use Faker\Factory as Faker;
 use Illuminate\Support\Str;
@@ -18,7 +19,7 @@ class GaleriSeeder extends Seeder
 
         // bagian proses image
         $sourcePath = database_path('seeders/seeder_image/');
-        $targetPath = 'galeri-images';
+        $targetPath = 'galeri-thumbnails';
 
         // Pastikan folder target ada
         Storage::disk('public')->makeDirectory($targetPath);
@@ -47,14 +48,45 @@ class GaleriSeeder extends Seeder
             'Kegiatan Sosial',
             'Perayaan Ulang Tahun',
             'Kegiatan Lingkungan',
+            'Peluncuran Website',
+            'Kunjungan Pelanggan',
+            'Pelatihan Keamanan',
+            'Pameran Produk',
+            'Kegiatan Olahraga',
+            'Pelatihan Manajemen',
+            'Kegiatan CSR',
+            'Pelatihan Soft Skill',
+            'Pelatihan Hard Skill',
+            'Pelatihan Kepemimpinan',
+            'Pelatihan Komunikasi',
+            'Pelatihan Tim Kerja',
+            'Pelatihan Kreativitas',
+            'Pelatihan Inovasi',
+            'Pelatihan Digital Marketing',
+            'Pelatihan SEO',
+            'Pelatihan Media Sosial',
+            'Pelatihan Desain Grafis',
+            'Pelatihan Video Editing',
+            'Pelatihan Fotografi',
+            'Pelatihan Public Speaking',
+            'Pelatihan Manajemen Waktu',
+            'Pelatihan Negosiasi',
+            'Pelatihan Analisis Data',
+            'Pelatihan Manajemen Proyek',
+            'Pelatihan Pengembangan Diri',
+            'Pelatihan Keterampilan Teknis',
+            'Pelatihan Keterampilan Interpersonal',
         ];
 
-        for ($i = 1; $i <= 20; $i++) {
+        for ($i = 1; $i <= 40; $i++) {
             $title = $faker->unique()->randomElement($titles);
             $slug = Str::slug($title);
 
             // Generate array untuk menyimpan multiple images
             $images = [];
+
+            // Generate random date between 1 year ago and now
+            $randomDate = Carbon::now()->subYear()->addDays(rand(0, 365));
 
             // Pilih dan proses beberapa gambar
             for ($j = 0; $j < 3; $j++) {
@@ -64,8 +96,10 @@ class GaleriSeeder extends Seeder
                 // Buat nama baru biar unik
                 $newFileName = Str::random(10) . '-' . $originalFile;
 
-                // Copy ke storage
+                // Copy ke storage dan set modified time
+                $fullPath = Storage::disk('public')->path($targetPath . '/' . $newFileName);
                 Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
+                touch($fullPath, $randomDate->timestamp);
 
                 // Tambahkan path gambar ke array images
                 $images[] = $targetPath . '/' . $newFileName;

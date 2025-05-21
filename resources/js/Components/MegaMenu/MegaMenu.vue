@@ -52,11 +52,11 @@ const menuSections = [
             <!-- Menu Sections -->
             <div class="flex-3 w-full lg:w-3/4 flex flex-col lg:flex-row gap-12 lg:gap-32">
                 <div v-for="section in menuSections" :key="section.title">
-                    <div class="font-bold text-h6-bold mb-6 text-typography-main">{{ section.title }}</div>
+                    <div class="font-bold text-h6-bold mb-6 text-secondary">{{ section.title }}</div>
                     <div class="flex flex-col gap-6 text-h5 font-medium">
                         <a v-for="link in section.links" :key="link.href" :href="link.href"
                             class="flex items-center gap-4 text-typography-dark hover:text-typography-hover2 transition">
-                            <component :is="link.icon" class="w-7 h-7" />
+                            <component :is="link.icon" class="w-7" />
                             <span>{{ link.label }}</span>
                         </a>
                     </div>

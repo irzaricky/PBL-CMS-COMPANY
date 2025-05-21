@@ -2,37 +2,70 @@
 
 namespace App\Providers\Filament;
 
-use Directory;
+
 use Filament\Pages;
 use Filament\Panel;
-use Filament\Widgets;
+use App\Models\User;
 use Filament\PanelProvider;
-use Filament\Pages\Dashboard;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
+use App\Filament\Pages\Auth\Register;
 use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
-use App\Filament\Resources\UserResource;
-use Filament\Navigation\NavigationGroup;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Navigation\NavigationBuilder;
 use App\Filament\Resources\UnduhanResource;
-use App\Models\User;
 use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
+use App\Filament\Widgets\Admin\TotalUsersWidget;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use App\Filament\Widgets\Admin\StorageUsageChart;
+use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use Filament\Http\Middleware\AuthenticateSession;
+use App\Filament\Widgets\Director\ContentGrowthTrend;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use App\Filament\Widgets\Admin\RemainingStorageWidget;
+use App\Filament\Widgets\Director\ContentManagerStats;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Swis\Filament\Backgrounds\ImageProviders\MyImages;
+use App\Filament\Widgets\Director\CustomerServiceStats;
+use App\Filament\Widgets\Director\CustomerServiceGrowth;
 use Filament\Http\Middleware\DisableBladeIconComponents;
-use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
+use App\Filament\Widgets\Admin\StorageUsageByFeatureChart;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
+use App\Filament\Widgets\ContentManager\Produk\TopProducts;
+use Leandrocfe\FilamentApexCharts\FilamentApexChartsPlugin;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
-
+use App\Filament\Widgets\ContentManager\Unduhan\TopDownloads;
+use App\Filament\Widgets\Director\ContentGrowthPerFiturTrend;
+use App\Filament\Widgets\ContentManager\Event\EventStatusChart;
+use App\Filament\Widgets\ContentManager\Event\EventTrendsChart;
+use App\Filament\Widgets\Director\CustomerServiceActivityTrend;
+use App\Filament\Widgets\ContentManager\Galeri\GaleriStatusChart;
+use App\Filament\Widgets\ContentManager\Galeri\GaleriTrendsChart;
+use App\Filament\Widgets\ContentManager\Event\UpcomingEventsChart;
+use App\Filament\Widgets\ContentManager\Artikel\TopArticlesByViews;
+use App\Filament\Widgets\ContentManager\Artikel\TrendArticlesChart;
+use App\Filament\Widgets\ContentManager\Event\TopEventsStatsWidget;
+use App\Filament\Widgets\ContentManager\General\ContentCountsChart;
+use App\Filament\Widgets\ContentManager\General\ContentTrendsChart;
+use App\Filament\Widgets\ContentManager\Unduhan\UnduhanStatusChart;
+use App\Filament\Widgets\CustomerServices\Lamaran\LamaranStatsCard;
+use App\Filament\Widgets\ContentManager\Galeri\GaleriDownloadsChart;
+use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
+use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
+use App\Filament\Widgets\CustomerServices\Feedback\FeedbackStatsCard;
+use App\Filament\Widgets\CustomerServices\Lowongan\LowonganStatsCard;
+use App\Filament\Widgets\ContentManager\Galeri\TopGaleriesStatsWidget;
+use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
+use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
+use App\Filament\Widgets\ContentManager\CaseStudy\CaseStudyStatusChart;
+use App\Filament\Widgets\ContentManager\Unduhan\DocumentDownloadsChart;
+use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniStatsCard;
+use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniTrendChart;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -60,19 +93,70 @@ class AdminPanelProvider extends PanelProvider
             ->unsavedChangesAlerts()
             ->globalSearch(false)
             ->font('Plus jakarta Sans')
-            ->registration()
+            ->registration(Register::class)
             ->colors([
                 'primary' => '#3b82f6',
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
+                    // Admin widgets
+                TotalUsersWidget::class,
+                UsersByRoleWidget::class,
+                StorageUsageChart::class,
+                RemainingStorageWidget::class,
+                StorageUsageByFeatureChart::class,
 
+                    // Content Manager widgets
+                ContentCountsChart::class,
+                ContentTrendsChart::class,
+
+                TopArticlesByViews::class,
+                TrendArticlesChart::class,
+
+                CaseStudyStatusChart::class,
+
+                TopEventsStatsWidget::class,
+                EventTrendsChart::class,
+                UpcomingEventsChart::class,
+                EventStatusChart::class,
+
+
+                TopGaleriesStatsWidget::class,
+                GaleriTrendsChart::class,
+                GaleriDownloadsChart::class,
+                GaleriStatusChart::class,
+
+                TopProducts::class,
+                ProductsByStatusChart::class,
+
+
+                TopDownloads::class,
+                DocumentDownloadsChart::class,
+                UnduhanStatusChart::class,
+
+                    // Customer manager widgets
+                FeedbackStatsCard::class,
+                FeedbackTrendChart::class,
+                LamaranStatsCard::class,
+                LamaranTrendChart::class,
+                LowonganStatsCard::class,
+                LowonganTrendChart::class,
+                TestimoniStatsCard::class,
+                TestimoniTrendChart::class,
+
+
+                    // Director widgets
+                ContentManagerStats::class,
+                ContentGrowthTrend::class,
+                ContentGrowthPerFiturTrend::class,
+                CustomerServiceStats::class,
+                CustomerServiceActivityTrend::class,
+                CustomerServiceGrowth::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -91,6 +175,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                AuthUIEnhancerPlugin::make()
+                    ->formPanelPosition('right')
+                    ->mobileFormPanelPosition('bottom')
+                    ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+                    ->formPanelWidth('40%'),
+                FilamentApexChartsPlugin::make()
             ])
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()
@@ -98,13 +188,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Keluar dashboard')
                     ->url('/'),
             ])
-            ->plugins([
-                FilamentBackgroundsPlugin::make()
-                    ->remember(900)
-                    ->imageProvider(MyImages::make()
-                        ->directory(
-                            'images\swisnl\filament-backgrounds\triangles'
-                        )),
-            ]);
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }
