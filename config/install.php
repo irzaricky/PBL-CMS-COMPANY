@@ -126,4 +126,10 @@ return [
         'link_alamat_perusahaan' => 'nullable|string|max:255',
         'email_perusahaan' => 'required|email|max:50',
     ],
+
+    // feature toggles 
+    'feature_toggles' => [
+        'features' => 'nullable|array',
+        'features.*' => 'boolean',
+    ],
 ];

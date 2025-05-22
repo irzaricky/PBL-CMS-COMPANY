@@ -15,10 +15,15 @@
                             <i class="fas fa-database"></i>
                             <strong>Database Import</strong>
                         </li>
-                        <li class="{{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
+                        <li class="{{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
                             id="profilPerusahaan">
                             <i class="fas fa-building"></i>
                             <strong>Profil Perusahaan</strong>
+                        </li>
+                        <li class="{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}"
+                            id="featureToggles">
+                            <i class="fas fa-toggle-on"></i>
+                            <strong>Feature Toggles</strong>
                         </li>
                         <li class="{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" id="confirm">
                             <i class="fas fa-flag-checkered"></i>
@@ -26,8 +31,8 @@
                         </li>
                     </ul>
                     @php
-                        $totalSteps = 4;
-                        $currentStep = array_search(Route::currentRouteName(), ['installs', 'database_import', 'profil_perusahaan', 'finish']) + 1;
+                        $totalSteps = 5;
+                        $currentStep = array_search(Route::currentRouteName(), ['installs', 'database_import', 'profil_perusahaan', 'feature_toggles', 'finish']) + 1;
                         $progressPercentage = ($currentStep / $totalSteps) * 100;
                     @endphp
                     <div class="progress" role="progressbar" aria-label="Default striped example"

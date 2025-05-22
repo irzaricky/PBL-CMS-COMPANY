@@ -142,6 +142,63 @@ class InstallerController extends Controller
             \App\Models\ProfilPerusahaan::create($data);
         }
 
+        return redirect(route('feature_toggles'));
+    }
+
+    public function featureToggles()
+    {
+        // Get all feature toggles or create default ones if none exist
+        $features = \App\Models\FeatureToggle::all();
+
+        // If no features exist yet, create default ones
+        if ($features->isEmpty()) {
+            $defaultFeatures = [
+                ['key' => 'artikel_module', 'label' => 'Modul Artikel', 'status_aktif' => true],
+                ['key' => 'produk_module', 'label' => 'Modul Produk', 'status_aktif' => true],
+                ['key' => 'galeri_module', 'label' => 'Modul Galeri', 'status_aktif' => true],
+                ['key' => 'event_module', 'label' => 'Modul Event', 'status_aktif' => true],
+                ['key' => 'download_module', 'label' => 'Modul Download', 'status_aktif' => true],
+                ['key' => 'struktur_organisasi_module', 'label' => 'Modul Struktur Organisasi', 'status_aktif' => true],
+                ['key' => 'testimoni_module', 'label' => 'Modul Testimoni', 'status_aktif' => true],
+                ['key' => 'mitra_module', 'label' => 'Modul Mitra', 'status_aktif' => true],
+                ['key' => 'magang_module', 'label' => 'Modul Magang', 'status_aktif' => true],
+                ['key' => 'feedback_module', 'label' => 'Modul Feedback & Saran', 'status_aktif' => true],
+            ];
+
+            foreach ($defaultFeatures as $feature) {
+                \App\Models\FeatureToggle::create($feature);
+            }
+
+            $features = \App\Models\FeatureToggle::all();
+        }
+
+        return view('InstallerEragViews::feature-toggles', compact('features'));
+    }
+
+    public function saveFeatureToggles(Request $request, Redirector $redirect)
+    {
+        // Validate using rules from config
+        $rules = config('install.feature_toggles');
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            Log::warning('Feature toggle validation failed', ['errors' => $validator->errors()]);
+            return $redirect->route('feature_toggles')->withInput()->withErrors($validator->errors());
+        }
+
+        // Get all feature toggles
+        $allFeatures = \App\Models\FeatureToggle::all();
+
+        // Extract submitted features from form
+        $submittedFeatures = $request->input('features', []);
+
+        // Update each feature's status
+        foreach ($allFeatures as $feature) {
+            $feature->status_aktif = isset($submittedFeatures[$feature->key]) ? true : false;
+            $feature->save();
+        }
+
         return redirect(route('finish'));
     }
 
