@@ -39,7 +39,7 @@
                     </div>
                     <div class="card-footer text-end">
                         <div class="d-flex">
-                            <a href="{{ route('profil_perusahaan') }}" class="btn btn-link">Sebelumnya</a>
+                            <a href="{{ route('profil_perusahaan') }}" class="btn btn-primary">Sebelumnya</a>
                             <button type="submit" id="next_button" class="btn btn-primary ms-auto">Next</button>
                         </div>
                     </div>

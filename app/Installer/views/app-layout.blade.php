@@ -25,6 +25,7 @@
     <link href="{{ asset('install/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('install/style.css') }}" rel="stylesheet">
     <link href="{{ asset('install/bootstrap-icons.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('install/progress-steps.css') }}" rel="stylesheet">
 </head>
 
 <body>
