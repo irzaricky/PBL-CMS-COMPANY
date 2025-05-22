@@ -62,7 +62,49 @@ class SetupTestInstaller extends Command
         $this->info('Step 7: Running users table migration...');
         $this->executeArtisanCommand('migrate --path=database/migrations/0001_01_01_000000_create_users_table.php');
 
+        // 8. Set proper permissions for Ubuntu environments
+        $this->info('Step 8: Setting proper permissions for Ubuntu...');
+        $this->setUbuntuPermissions();
+
         $this->info('Installation setup completed successfully!');
+    }
+
+    /**
+     * Set proper directory and file permissions for Ubuntu environments
+     *
+     * @return void
+     */
+    protected function setUbuntuPermissions()
+    {
+        // Check if running on Linux/Ubuntu
+        if (PHP_OS_FAMILY !== 'Linux') {
+            $this->warn('Not running on Linux/Ubuntu. Skipping permission settings.');
+            return;
+        }
+
+        $this->info('Setting storage directory permissions...');
+        $this->executeCommand('chmod -R 775 storage');
+        $this->executeCommand('chmod -R 775 bootstrap/cache');
+
+        // Get webserver user (usually www-data)
+        $webServerUser = 'www-data';
+        $this->info("Setting ownership to user and {$webServerUser}...");
+
+        // Get the current user
+        $currentUser = trim(shell_exec('whoami'));
+        if (!$currentUser) {
+            $this->warn('Could not determine current user. Using default permissions only.');
+        } else {
+            $this->executeCommand("chown -R {$currentUser}:{$webServerUser} storage");
+            $this->executeCommand("chown -R {$currentUser}:{$webServerUser} bootstrap/cache");
+
+            // Set ownership for .env file if it exists
+            if (File::exists('.env')) {
+                $this->info('Setting permissions for .env file...');
+                $this->executeCommand("chown {$currentUser}:{$webServerUser} .env");
+                $this->executeCommand("chmod 660 .env");
+            }
+        }
     }
 
     /**

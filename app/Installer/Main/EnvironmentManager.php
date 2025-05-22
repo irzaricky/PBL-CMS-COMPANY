@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Process;
 
 class EnvironmentManager
 {
@@ -17,6 +18,23 @@ class EnvironmentManager
     public function __construct()
     {
         $this->envPath = base_path('.env');
+    }
+
+    /**
+     * Execute a shell command and display output
+     *
+     * @param string $command
+     * @return void
+     */
+    protected function executeCommand($command)
+    {
+        $process = Process::run($command);
+
+        if (!$process->successful()) {
+            Log::error("Command failed: {$command}");
+            Log::error($process->errorOutput());
+            throw new Exception("Command failed: {$command}");
+        }
     }
 
     public function saveFileWizard(Request $request): string
@@ -101,19 +119,9 @@ class EnvironmentManager
                 mkdir($envDir, 0755, true);
             }
 
-            // Check if .env file exists and is writable
-            if (file_exists($this->envPath) && !is_writable($this->envPath)) {
-                chmod($this->envPath, 0644);
-            }
-
             // Write the file
             if (file_put_contents($this->envPath, $envFileData) === false) {
                 throw new Exception('Could not write to .env file. Check permissions.');
-            }
-
-            // Make sure Laravel can read it
-            if (file_exists($this->envPath)) {
-                chmod($this->envPath, 0644);
             }
 
         } catch (Exception $e) {
