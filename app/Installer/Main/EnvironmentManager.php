@@ -25,9 +25,6 @@ class EnvironmentManager
 
         $env = config('install.env');
 
-        // Store the company name in this format to match env.example
-        $companyName = $request->app_name;
-
         // Add APP_INSTALLED flag to indicate installation is complete
         $envFileData =
             'APP_NAME="${COMPANY_NAME}"' . "\n" .
@@ -52,7 +49,6 @@ class EnvironmentManager
             'LOG_LEVEL=' . $request->app_log_level . "\n" .
             "\n" .
             'APP_INSTALLED=false' . "\n" .
-            'COMPANY_NAME=' . $companyName . "\n" .
             "\n" .
             'DB_CONNECTION=' . $request->database_connection . "\n";
 

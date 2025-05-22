@@ -22,12 +22,6 @@
                         <div class="row">
 
                             <div class="col-md-4 mb-3">
-                                <x-install-input label="App Name" required="true" name="app_name" type="text"
-                                    value="{{ old('app_name') }}" />
-                                <x-install-error for="app_name" />
-                            </div>
-
-                            <div class="col-md-4 mb-3">
                                 <x-install-select label="App Environment" class="form-control" required="true"
                                     name="environment">
                                     <option value="">--Select--</option>

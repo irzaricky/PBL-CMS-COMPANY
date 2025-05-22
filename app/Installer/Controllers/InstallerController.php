@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\URL;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Installer\Main\DatabaseManager;
+use Illuminate\Support\Facades\Artisan;
 use App\Installer\Main\InstalledManager;
 use Illuminate\Support\Facades\Validator;
 use App\Installer\Main\PermissionsChecker;
@@ -139,6 +140,23 @@ class InstallerController extends Controller
             // Create new record with ID 1
             $data['id_profil_perusahaan'] = 1;
             \App\Models\ProfilPerusahaan::create($data);
+        }
+
+        // Jalankan npm run build menggunakan exec (pastikan exec tidak dinonaktifkan di php.ini)
+        try {
+            $npmPath = base_path();
+            Log::info('Menjalankan npm run build di ' . $npmPath);
+            chdir($npmPath);
+
+            if (PHP_OS_FAMILY === 'Windows') {
+                exec('npm.cmd run build 2>&1', $output, $returnCode);
+            } else {
+                exec('npm run build 2>&1', $output, $returnCode);
+            }
+
+            Log::info('npm run build selesai dengan kode: ' . $returnCode, ['output' => $output]);
+        } catch (\Exception $e) {
+            Log::error('Gagal menjalankan npm run build: ' . $e->getMessage());
         }
 
         return redirect(route('finish'));
