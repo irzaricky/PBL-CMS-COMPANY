@@ -12,7 +12,7 @@ class CheckStatusUser
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return $next($request); 
+            return $next($request);
         }
 
         $user = Auth::user();
@@ -34,7 +34,8 @@ class CheckStatusUser
         if (
             $request->routeIs('filament.admin.*') &&
             !in_array($request->route()->getName(), $allowedRoutes) &&
-            $user->status_kepegawaian === !null
+            $user->status_kepegawaian === 'Non Pegawai' &&
+            $user->status_kepegawaian !== null
         ) {
             return redirect('/')->with('error', 'Anda tidak memiliki akses ke panel admin.');
         }

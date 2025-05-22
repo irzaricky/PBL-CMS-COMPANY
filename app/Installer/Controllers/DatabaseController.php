@@ -197,7 +197,7 @@ class DatabaseController extends Controller
             return false;
         }
 
-        $settings = config("database.connections.$connection");        
+        $settings = config("database.connections.$connection");
         // Handle SQLite differently
         if ($connection === 'sqlite') {
             // Set database file path directly in storage directory
@@ -210,6 +210,13 @@ class DatabaseController extends Controller
             $dirPath = dirname($databasePath);
             if (!file_exists($dirPath)) {
                 mkdir($dirPath, 0755, true);
+            }
+
+            // Remove temporary database.sqlite if it exists
+            $tempDbPath = storage_path('database.sqlite');
+            if (file_exists($tempDbPath)) {
+                unlink($tempDbPath);
+                // Log::info('Removed temporary database file: ' . $tempDbPath);
             }
 
             // Create empty database file if it doesn't exist
