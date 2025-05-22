@@ -31,7 +31,7 @@ class ProdukController extends Controller
                 $query->where('id_kategori_produk', $request->category_id);
             }
 
-            $produk = $query->paginate(20);
+            $produk = $query->paginate(9);
             return ProdukListResource::collection($produk);
         } catch (\Exception $e) {
             return response()->json([
@@ -121,7 +121,7 @@ class ProdukController extends Controller
                 $produkQuery->where('id_kategori_produk', $categoryId);
             }
 
-            $produk = $produkQuery->orderBy('created_at', 'desc')->paginate(20);
+            $produk = $produkQuery->orderBy('created_at', 'desc')->paginate(9);
 
             // Check if no products were found
             if ($produk->isEmpty()) {

@@ -38,7 +38,7 @@ function submitForm() {
                     <div class="flex flex-col gap-4">
                         <div class="text-custom text-base font-semibold">Hubungi kami lewat</div>
                         <div class="flex flex-col gap-4">
-                            <h2 class="text-custom text-3xl lg:text-5xl font-bold leading-tight">Feedback Anda!</h2>
+                            <h2 class="text-custom text-3xl lg:text-6xl font-semibold leading-tight">Feedback Anda!</h2>
                             <p class="text-custom text-base lg:text-lg">
                                 Kami tumbuh lewat feedback Anda. Beri kami masukan untuk meningkatkan layanan kami.
                             </p>

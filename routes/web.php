@@ -118,11 +118,7 @@ Route::prefix('struktur-organisasi')->group(function () {
 // Rute group untuk unduhan
 Route::prefix('unduhan')->group(function () {
     Route::get('/', action: function () {
-        return Inertia::render('Event/ListView');
-    });
-
-    Route::get('/{slug}', action: function ($slug) {
-        return Inertia::render('Event/Show', ['slug' => $slug]);
+        return Inertia::render('Unduhan/Main');
     });
 });
 

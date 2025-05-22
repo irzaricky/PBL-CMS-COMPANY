@@ -7,6 +7,8 @@ import { usePage } from '@inertiajs/vue3';
 const produk = ref([]);
 const searchQuery = ref('');
 const searching = ref(false);
+const currentPage = ref(1);
+const lastPage = ref(1);
 let debounceTimer = null;
 const { props } = usePage();
 
@@ -20,19 +22,23 @@ const selectedCategory = ref(null);
 
 const filterByCategory = (categoryId) => {
     selectedCategory.value = categoryId;
-    fetchProduk(searchQuery.value, categoryId);
+    currentPage.value = 1;
+    fetchProduk(searchQuery.value, categoryId, 1);
 };
 
-const fetchProduk = async (query = '', categoryId = null) => {
+const fetchProduk = async (query = '', categoryId = null, page = 1) => {
     try {
         searching.value = true;
         let url = query.length > 0 || categoryId !== null ? '/api/produk/search' : '/api/produk';
-        const params = {};
+        const params = { page };
         if (query.length > 0) params.query = query;
         if (categoryId !== null) params.category_id = categoryId;
 
         const response = await axios.get(url, { params });
+
         produk.value = response.data.data;
+        currentPage.value = response.data.meta?.current_page || 1;
+        lastPage.value = response.data.meta?.last_page || 1;
     } catch (error) {
         console.error('Error fetching produk:', error);
         produk.value = [];
@@ -41,11 +47,17 @@ const fetchProduk = async (query = '', categoryId = null) => {
     }
 };
 
+const goToPage = (page) => {
+    if (page < 1 || page > lastPage.value) return;
+    fetchProduk(searchQuery.value, selectedCategory.value, page);
+};
+
 const handleSearch = () => {
     if (debounceTimer) clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(() => {
-        fetchProduk(searchQuery.value, selectedCategory.value);
+        currentPage.value = 1;
+        fetchProduk(searchQuery.value, selectedCategory.value, 1);
     }, 500);
 };
 
@@ -200,6 +212,20 @@ onMounted(() => {
                     </div>
                 </div>
             </div>
+            <!-- Pagination -->
+            <div v-if="lastPage > 1" class="flex justify-center items-center gap-2 mt-10">
+                <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
+                    class="px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 disabled:opacity-50">
+                    Sebelumnya
+                </button>
+
+                <span class="text-gray-700">{{ currentPage }} / {{ lastPage }}</span>
+
+                <button @click="goToPage(currentPage + 1)" :disabled="currentPage === lastPage"
+                    class="px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 disabled:opacity-50">
+                    Selanjutnya
+                </button>
+            </div>
             <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end">
                 <div class="w-full lg:w-3/4 flex flex-col gap-4">
                     <div class="text-Color-Scheme-1-Text text-base font-semibold font-custom">Belum puas?</div>
@@ -220,10 +246,10 @@ onMounted(() => {
                             new Date(item.created_at).toLocaleDateString('id-ID', {
                                 day: 'numeric',
                                 month: 'long',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        })
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            })
                         }}
                     </p>
                 </div>

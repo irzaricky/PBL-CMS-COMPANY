@@ -48,6 +48,9 @@ Route::prefix('artikel')->group(function () {
     // untuk mengambil artikel dengan view terbanyak
     Route::get('/most-viewed', [ArtikelController::class, 'getArticleByMostView']);
 
+    // untuk mengambil artikel terbaru
+    Route::get('/featured', [ArtikelController::class, 'getFeaturedArticles']);
+
     // untuk mengambil artikel berdasarkan id
     Route::get('/id/{id}', [ArtikelController::class, 'getArticleById']);
 
@@ -103,7 +106,6 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 
 // Testimoni
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
-
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
 

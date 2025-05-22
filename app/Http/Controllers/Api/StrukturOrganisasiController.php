@@ -17,7 +17,7 @@ class StrukturOrganisasiController extends Controller
     public function index()
     {
         try {
-            $struktur = StrukturOrganisasi::with(['user:id_user,name'])
+            $struktur = StrukturOrganisasi::with(['user:id_user,name,foto_profil'])
                 ->whereNull('tanggal_selesai')
                 ->orWhere('tanggal_selesai', '>=', now())
                 ->orderBy('jabatan', 'asc')

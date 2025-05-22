@@ -101,6 +101,9 @@ class ProfilPerusahaanResource extends Resource
                                     ->label('Tahun')
                                     ->numeric()
                                     ->required(),
+                                Forms\Components\TextInput::make('judul')
+                                    ->label('Judul')
+                                    ->required(),
                                 Forms\Components\RichEditor::make('deskripsi')
                                     ->label('Deskripsi')
                                     ->disableToolbarButtons(['attachFiles'])
