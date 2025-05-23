@@ -46,6 +46,8 @@
                                         <i class="bi bi-eye"></i>
                                     </button>
                                 </div>
+                                <small class="form-text text-muted">The password field must be at least 8
+                                    characters.</small>
                                 <x-install-error for="password" />
                             </div>
 

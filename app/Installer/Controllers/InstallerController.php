@@ -244,10 +244,13 @@ class InstallerController extends Controller
             } else {
                 // User exists but doesn't have super_admin role
                 try {
-                    // Assign super_admin role to existing user
+                    // Assign super_admin role to existing user and update status_kepegawaian
                     if (class_exists('Spatie\Permission\Models\Role')) {
                         $superAdminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_admin']);
                         $existingUser->assignRole($superAdminRole);
+                        // Update status_kepegawaian to Tetap
+                        $existingUser->status_kepegawaian = 'Tetap';
+                        $existingUser->save();
                     }
 
                     return $redirect->route('user_roles_list')
@@ -277,6 +280,7 @@ class InstallerController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'status_kepegawaian' => 'Tetap', // Set status kepegawaian to Tetap
             ]);
 
             // Assign super admin role (menggunakan shield package)
