@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ContentStatus;
+use App\Filament\Clusters\UnduhanCluster;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Unduhan;
@@ -24,8 +25,9 @@ use App\Filament\Resources\UnduhanResource\Widgets\UnduhanStats;
 class UnduhanResource extends Resource
 {
     protected static ?string $model = Unduhan::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-document-arrow-down';
+    protected static ?string $cluster = UnduhanCluster::class;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

@@ -19,13 +19,18 @@ use App\Filament\Resources\LowonganResource\RelationManagers;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Filament\Tables\Filters\TrashedFilter;
+use App\Helpers\FilamentGroupingHelper;
 
 class LowonganResource extends Resource
 {
     protected static ?string $model = Lowongan::class;
-    protected static ?string $navigationGroup = 'Customer Service';
     protected static ?string $navigationIcon = 'heroicon-s-briefcase';
     protected static ?string $recordTitleAttribute = 'judul_lowongan';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Customer Service');
+    }
 
     public static function form(Form $form): Form
     {

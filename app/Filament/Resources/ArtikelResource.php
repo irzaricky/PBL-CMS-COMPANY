@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ContentStatus;
+use App\Filament\Clusters\ArtikelsCluster;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Artikel;
@@ -25,9 +26,10 @@ use App\Filament\Resources\ArtikelResource\Widgets\ArtikelStats;
 class ArtikelResource extends Resource
 {
     protected static ?string $model = Artikel::class;
-    protected static ?string $navigationGroup = 'Content Management';
 
     protected static ?string $navigationIcon = 'heroicon-s-document-text';
+    protected static ?string $cluster = ArtikelsCluster::class;
+    protected static ?int $navigationSort = 1;
 
     public static function getEloquentQuery(): Builder
     {

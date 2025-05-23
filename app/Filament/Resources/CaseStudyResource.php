@@ -22,12 +22,17 @@ use App\Services\FileHandlers\MultipleFileHandler;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
+use App\Helpers\FilamentGroupingHelper;
 
 class CaseStudyResource extends Resource
 {
     protected static ?string $model = CaseStudy::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-document';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Content Management');
+    }
 
     public static function getEloquentQuery(): Builder
     {

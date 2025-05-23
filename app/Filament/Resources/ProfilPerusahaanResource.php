@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Helpers\FilamentGroupingHelper;
 
 class ProfilPerusahaanResource extends Resource
 {
@@ -20,6 +21,11 @@ class ProfilPerusahaanResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-s-building-office';
     protected static ?string $recordTitleAttribute = 'nama_perusahaan';
     protected static ?int $navigationSort = 1;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Company Owner');
+    }
 
     public static function form(Form $form): Form
     {
@@ -238,6 +244,8 @@ class ProfilPerusahaanResource extends Resource
     {
         return false;
     }
+
+
 
     public static function getPages(): array
     {

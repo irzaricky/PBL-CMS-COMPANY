@@ -13,13 +13,18 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use App\Helpers\FilamentGroupingHelper;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
     protected static ?int $navigationSort = 1;
-    protected static ?string $navigationGroup = 'User Management';
     protected static ?string $navigationIcon = 'heroicon-s-user';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('User Management');
+    }
 
     public static function form(Form $form): Form
     {
