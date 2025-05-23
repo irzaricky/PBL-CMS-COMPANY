@@ -155,12 +155,12 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'redirect' => route('profil_perusahaan')
+                    'redirect' => route('select_seeders')
                 ]);
             }
 
             // Only proceed to next step if database connection is established
-            return redirect(route('profil_perusahaan'));
+            return redirect(route('select_seeders'));
         } catch (\Exception $e) {
             // Log::error('Error saving environment: ' . $e->getMessage());
 

@@ -6,11 +6,18 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h4 class="mb-4">Daftar User dengan Role</h4>
-                    <div class="alert alert-success mb-4">
-                        <i class="bi bi-check-circle-fill me-2"></i>
-                        Akun Super Admin berhasil dibuat! Anda bisa login menggunakan email:
-                        <strong>{{ $superAdmin->email }}</strong>
-                    </div>
+                    @if(session('account_exists'))
+                        <div class="alert alert-warning mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            {!! session('account_exists') !!}
+                        </div>
+                    @else
+                        <div class="alert alert-success mb-4">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            Akun Super Admin berhasil dibuat! Anda bisa login menggunakan email:
+                            <strong>{{ $superAdmin->email }}</strong>
+                        </div>
+                    @endif
 
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
@@ -49,7 +56,7 @@
                 </div>
                 <div class="card-footer text-end">
                     <div class="d-flex justify-content-between">
-                        <a href="{{ route('super_admin_config') }}" class="btn btn-outline-secondary">Kembali</a>
+                        <a href="{{ route('super_admin_config') }}" class="btn btn-primary">Kembali</a>
                         <a href="{{ route('feature_toggles') }}" class="btn btn-primary">Lanjut ke Konfigurasi Fitur</a>
                     </div>
                 </div>

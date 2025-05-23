@@ -16,10 +16,19 @@
                             class="connector-line {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
                         <div class="col text-center position-relative">
                             <div
-                                class="circle-icon {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
+                                class="circle-icon {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'select_seeders' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
                                 <i class="bi bi-database"></i>
                             </div>
                             <div class="step-label">Database Import</div>
+                        </div>
+                        <hr
+                            class="connector-line {{ Route::currentRouteName() == 'select_seeders' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
+                        <div class="col text-center position-relative">
+                            <div
+                                class="circle-icon {{ Route::currentRouteName() == 'select_seeders' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
+                                <i class="bi bi-file-earmark-code"></i>
+                            </div>
+                            <div class="step-label">Data Dummy</div>
                         </div>
                         <hr
                             class="connector-line {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
@@ -66,10 +75,11 @@
                         </div>
                     </div>
                     @php
-                        $totalSteps = 7;
+                        $totalSteps = 8;
                         $currentStep = array_search(Route::currentRouteName(), [
                             'installs',
                             'database_import',
+                            'select_seeders',
                             'profil_perusahaan',
                             'super_admin_config',
                             'user_roles_list',

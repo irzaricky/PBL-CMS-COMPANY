@@ -50,9 +50,11 @@ class InstallerController extends Controller
         return redirect(route('database_import'));
     }
 
-    public function profilPerusahaan()
+    /**
+     * Display the seeder selection screen
+     */
+    public function selectSeeders()
     {
-        // Double-check database connection
         try {
             $dbConnection = DB::connection()->getPdo();
             if (!$dbConnection) {
@@ -60,21 +62,95 @@ class InstallerController extends Controller
                     ->with('database_error', 'Database connection failed. Please check your configuration.');
             }
 
-            // If DB connection works, run migrations and seed
-            $migrationResult = DatabaseManager::MigrateAndSeed();
+            // Get available seeders
+            $seeders = $this->getAvailableSeeders();
 
-            if ($migrationResult[0] === 'error') {
-                return redirect()->route('database_import')
-                    ->with('database_error', 'Database migration failed: ' . ($migrationResult[1] ?? 'Unknown error'))
-                    ->withErrors(['database_connection' => 'Database migration failed. Please check your database configuration.']);
-            }
-
-            return view('InstallerEragViews::profil-perusahaan');
+            return view('InstallerEragViews::select-seeders', compact('seeders'));
         } catch (\Exception $e) {
             return redirect()->route('database_import')
                 ->with('database_error', 'Database error: ' . $e->getMessage())
                 ->withErrors(['database_connection' => 'Database connection failed: ' . $e->getMessage()]);
         }
+    }
+
+    /**
+     * Save selected seeders and run migrations
+     */
+    public function saveSeeders(Request $request, Redirector $redirect)
+    {
+        try {
+            // Run migrations
+            $outputLog = new \Symfony\Component\Console\Output\BufferedOutput;
+            \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true], $outputLog);
+
+            $logContents = $outputLog->fetch();
+            \Illuminate\Support\Facades\Log::info('Migration result: ' . $logContents);
+
+            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
+                throw new \Exception('Database migration failed: ' . $logContents);
+            }
+
+            // Run selected seeders
+            $seeders = $request->input('seeders', []);
+            $migrationResult = DatabaseManager::MigrateAndSeed($seeders);
+
+            if ($migrationResult[0] === 'error') {
+                return $redirect->route('select_seeders')
+                    ->with('database_error', 'Database seeding failed: ' . ($migrationResult[1] ?? 'Unknown error'))
+                    ->withErrors(['database_connection' => 'Database seeding failed. Please check your database configuration.']);
+            }
+
+            return redirect()->route('profil_perusahaan');
+        } catch (\Exception $e) {
+            return $redirect->route('select_seeders')
+                ->with('database_error', 'Database error: ' . $e->getMessage())
+                ->withErrors(['database_connection' => 'Database operation failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get available seeders from the database/seeders directory
+     */
+    private function getAvailableSeeders(): array
+    {
+        $seeders = [];
+        $path = database_path('seeders');
+        $seederFiles = array_diff(scandir($path), ['.', '..', 'DatabaseSeeder.php', 'ProfilPerusahaanSeeder.php']);
+
+        foreach ($seederFiles as $file) {
+            // Extract class name without .php extension
+            $className = pathinfo($file, PATHINFO_FILENAME);
+
+            // Create a human-readable label
+            $label = $this->createHumanReadableLabel($className);
+
+            $seeders[$className] = $label;
+        }
+
+        // Sort seeders alphabetically by label
+        asort($seeders);
+
+        return $seeders;
+    }
+
+    /**
+     * Create a human-readable label from seeder class name
+     */
+    private function createHumanReadableLabel(string $className): string
+    {
+        // Remove "Seeder" suffix
+        $name = str_replace('Seeder', '', $className);
+
+        // Add spaces before capital letters and trim
+        $name = trim(preg_replace('/(?<!^)[A-Z]/', ' $0', $name));
+
+        return "Data {$name}";
+    }
+
+    public function profilPerusahaan()
+    {
+        // Just load the view - migrations and seeding are already done
+        return view('InstallerEragViews::profil-perusahaan');
     }
 
     public function saveProfilPerusahaan(Request $request, Redirector $redirect)
@@ -153,6 +229,35 @@ class InstallerController extends Controller
 
     public function saveSuperAdmin(Request $request, Redirector $redirect)
     {
+        // Check if account already exists
+        $existingUser = \App\Models\User::where('email', $request->email)->first();
+
+        if ($existingUser) {
+            // If user already exists, check if they have super_admin role
+            if ($existingUser->hasRole('super_admin')) {
+                return $redirect->route('user_roles_list')
+                    ->with('account_exists', 'Super Admin dengan email ' . $request->email . ' sudah ada dan memiliki akses super admin. Anda dapat melanjutkan.');
+            } else {
+                // User exists but doesn't have super_admin role
+                try {
+                    // Assign super_admin role to existing user
+                    if (class_exists('Spatie\Permission\Models\Role')) {
+                        $superAdminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_admin']);
+                        $existingUser->assignRole($superAdminRole);
+                    }
+
+                    return $redirect->route('user_roles_list')
+                        ->with('account_exists', 'User dengan email ' . $request->email . ' sudah ada. Role Super Admin telah diberikan pada akun tersebut.');
+                } catch (\Exception $e) {
+                    Log::error('Error assigning super admin role: ' . $e->getMessage());
+                    return $redirect->route('super_admin_config')
+                        ->withInput()
+                        ->withErrors(['general_error' => 'Gagal memberikan role Super Admin: ' . $e->getMessage()]);
+                }
+            }
+        }
+
+        // Regular validation and creation for new user
         $rules = config('install.super_admin');
 
         $validator = Validator::make($request->all(), $rules);
