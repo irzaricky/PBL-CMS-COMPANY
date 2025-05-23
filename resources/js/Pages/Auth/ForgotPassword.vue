@@ -1,14 +1,16 @@
-<script setup lang="ts">
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+<script setup>
+import GuestLayout from '@/Z Deprecated Layouts/GuestLayout.vue';
+import InputError from '@/Z Deprecated Components/InputError.vue';
+import InputLabel from '@/Z Deprecated Components/InputLabel.vue';
+import PrimaryButton from '@/Z Deprecated Components/PrimaryButton.vue';
+import TextInput from '@/Z Deprecated Components/TextInput.vue';
 import { Head, useForm } from '@inertiajs/vue3';
 
-defineProps<{
-    status?: string;
-}>();
+defineProps({
+    status: {
+        type: String,
+    },
+});
 
 const form = useForm({
     email: '',

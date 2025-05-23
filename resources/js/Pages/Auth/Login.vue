@@ -1,28 +1,30 @@
-<script setup lang="ts">
-import Checkbox from '@/Components/Checkbox.vue';
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
+<script setup>
+import Checkbox from "@/Z Deprecated Components/Checkbox.vue";
+import GuestLayout from "@/Z Deprecated Layouts/GuestLayout.vue";
+import InputError from "@/Z Deprecated Components/InputError.vue";
+import InputLabel from "@/Z Deprecated Components/InputLabel.vue";
+import PrimaryButton from "@/Z Deprecated Components/PrimaryButton.vue";
+import TextInput from "@/Z Deprecated Components/TextInput.vue";
+import { Head, Link, useForm } from "@inertiajs/vue3";
 
-defineProps<{
-    canResetPassword?: boolean;
-    status?: string;
-}>();
+defineProps({
+    canResetPassword: {
+        type: Boolean,
+    },
+    status: {
+        type: String,
+    },
+});
 
 const form = useForm({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
     remember: false,
 });
 
 const submit = () => {
-    form.post(route('login'), {
-        onFinish: () => {
-            form.reset('password');
-        },
+    form.post(route("login"), {
+        onFinish: () => form.reset("password"),
     });
 };
 </script>
@@ -70,9 +72,7 @@ const submit = () => {
             <div class="mt-4 block">
                 <label class="flex items-center">
                     <Checkbox name="remember" v-model:checked="form.remember" />
-                    <span class="ms-2 text-sm text-gray-600"
-                        >Remember me</span
-                    >
+                    <span class="ms-2 text-sm text-gray-600">Remember me</span>
                 </label>
             </div>
 
