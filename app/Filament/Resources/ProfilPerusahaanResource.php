@@ -43,8 +43,9 @@ class ProfilPerusahaanResource extends Resource
                             ->directory('logo-perusahaan')
                             ->disk('public')
                             ->helperText('Unggah logo perusahaan (format: jpg, png, svg)')
-                            ->imageEditor(),
-                        
+                            ->imageEditor()
+                            ->optimize('webp'),
+
 
                         Forms\Components\FileUpload::make('thumbnail_perusahaan')
                             ->label('Gambar Perusahaan')
@@ -243,7 +244,7 @@ class ProfilPerusahaanResource extends Resource
     {
         return false;
     }
-    
+
     public static function getPages(): array
     {
         return [

@@ -5,7 +5,6 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createApp, h } from "vue";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy";
-import * as lucide from "lucide-vue-next";
 
 // Get company name from server-side config (set in AppServiceProvider)
 const appName =
@@ -23,10 +22,46 @@ createInertiaApp({
     setup({ el, App, props, plugin }) {
         const vueApp = createApp({ render: () => h(App, props) });
 
-        // 🔥 Register semua icon dari Lucide secara global
-        for (const [key, component] of Object.entries(lucide)) {
-            vueApp.component(key, component);
-        }
+        // 🔥 Register commonly used Lucide icons with dynamic imports
+        const registerLucideIcons = async () => {
+            // Define commonly used icons - add more as needed based on your application
+            const commonIcons = [
+                "User",
+                "LayoutDashboard",
+                "LogOut",
+                "AlarmClock",
+                "Wallet",
+                "ChevronRight",
+            ];
+
+            // Dynamically import only the icons that are commonly used
+            for (const iconName of commonIcons) {
+                const icon = await import(
+                    `lucide-vue-next/dist/esm/icons/${iconName}.js`
+                );
+                vueApp.component(iconName, icon.default);
+            }
+
+            // Setup a function to lazy load additional icons when needed
+            // This function can be exposed globally if you need to load icons on demand
+            vueApp.config.globalProperties.$loadIcon = async (iconName) => {
+                try {
+                    const icon = await import(
+                        `lucide-vue-next/dist/esm/icons/${iconName}.js`
+                    );
+                    if (!vueApp.component(iconName)) {
+                        vueApp.component(iconName, icon.default);
+                    }
+                    return true;
+                } catch (error) {
+                    console.error(`Failed to load icon: ${iconName}`, error);
+                    return false;
+                }
+            };
+        };
+
+        // Initialize icon registration
+        registerLucideIcons();
 
         vueApp.use(plugin).use(ZiggyVue).mount(el);
     },
