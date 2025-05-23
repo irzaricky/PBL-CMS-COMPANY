@@ -189,6 +189,9 @@ class DatabaseController extends Controller
 
     private function checkDatabaseConnection(Request $request): bool
     {
+        // Close any existing database connections first
+        DB::disconnect();
+
         $connection = $request->input('database_connection');
         $database = $request->input('database_name');
 
@@ -215,8 +218,18 @@ class DatabaseController extends Controller
             // Remove temporary database.sqlite if it exists
             $tempDbPath = storage_path('database.sqlite');
             if (file_exists($tempDbPath)) {
-                unlink($tempDbPath);
-                // Log::info('Removed temporary database file: ' . $tempDbPath);
+                try {
+                    // Close any existing connections before attempting to delete
+                    DB::disconnect('sqlite');
+
+                    // Try to delete the file, but don't fail if it's not possible
+                    @unlink($tempDbPath);
+                    Log::info('Removed temporary database file: ' . $tempDbPath);
+                } catch (\Exception $e) {
+                    // Log file deletion failure but continue with the process
+                    Log::warning('Could not remove temporary database file: ' . $e->getMessage());
+                    // Continue execution even if we can't delete the file
+                }
             }
 
             // Create empty database file if it doesn't exist
@@ -280,6 +293,7 @@ class DatabaseController extends Controller
 
             if (!$result || !isset($result[0]->connection_test) || $result[0]->connection_test !== 1) {
                 // Log::error('Database connection failed: Test query failed');
+                DB::disconnect(); // Ensure we close the connection
                 return false;
             }
 
@@ -296,10 +310,15 @@ class DatabaseController extends Controller
             }
 
             // Log::info('Database connection verified successfully');
-            return true;
+            $connectionSuccess = true;
         } catch (Exception $e) {
             // Log::error('Database connection error: ' . $e->getMessage());
-            return false;
+            $connectionSuccess = false;
         }
+
+        // Always disconnect to release file locks and resources
+        DB::disconnect();
+
+        return $connectionSuccess;
     }
 }
