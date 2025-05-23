@@ -142,7 +142,73 @@ class InstallerController extends Controller
             \App\Models\ProfilPerusahaan::create($data);
         }
 
-        return redirect(route('feature_toggles'));
+        // Redirect to super admin configuration instead of feature toggles
+        return redirect(route('super_admin_config'));
+    }
+
+    public function superAdminConfig()
+    {
+        return view('InstallerEragViews::super-admin-config');
+    }
+
+    public function saveSuperAdmin(Request $request, Redirector $redirect)
+    {
+        $rules = config('install.super_admin');
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            Log::warning('Validation failed', ['errors' => $validator->errors()]);
+            return $redirect->route('super_admin_config')->withInput()->withErrors($validator->errors());
+        }
+
+        try {
+            // Create super admin user
+            $user = \App\Models\User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+            ]);
+
+            // Assign super admin role (menggunakan shield package)
+            if (class_exists('Spatie\Permission\Models\Role')) {
+                $superAdminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_admin']);
+                $user->assignRole($superAdminRole);
+            }
+
+            // Arahkan ke halaman daftar user dengan role
+            return redirect(route('user_roles_list'));
+        } catch (\Exception $e) {
+            Log::error('Error creating super admin: ' . $e->getMessage());
+            return $redirect->route('super_admin_config')
+                ->withInput()
+                ->withErrors(['general_error' => 'Failed to create super admin: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Tampilkan daftar user dengan role mereka
+     */
+    public function userRolesList()
+    {
+        // Ambil super admin yang baru saja dibuat
+        $superAdmin = \App\Models\User::whereHas('roles', function ($query) {
+            $query->where('name', 'super_admin');
+        })->latest()->first();
+
+        // Jika tidak ada super admin, kemungkinan user langsung mengakses URL ini
+        // Kita redirect ke halaman sebelumnya
+        if (!$superAdmin) {
+            return redirect(route('super_admin_config'));
+        }
+
+        // Ambil semua user dengan role mereka
+        $users = \App\Models\User::with('roles')->get();
+
+        return view('InstallerEragViews::user-roles-list', [
+            'superAdmin' => $superAdmin,
+            'users' => $users
+        ]);
     }
 
     public function featureToggles()

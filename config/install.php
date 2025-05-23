@@ -132,4 +132,11 @@ return [
         'features' => 'nullable|array',
         'features.*' => 'boolean',
     ],
+
+    // super admin
+    'super_admin' => [
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255|unique:users,email',
+        'password' => 'required|string|min:8|confirmed',
+    ],
 ];

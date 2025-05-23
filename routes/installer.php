@@ -25,6 +25,11 @@ Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], func
         Route::get('profil-perusahaan', [InstallerController::class, 'profilPerusahaan'])->name('profil_perusahaan');
         Route::post('profil-perusahaan-save', [InstallerController::class, 'saveProfilPerusahaan'])->name('saveProfilPerusahaan');
 
+        Route::get('super-admin-config', [InstallerController::class, 'superAdminConfig'])->name('super_admin_config');
+        Route::post('super-admin-save', [InstallerController::class, 'saveSuperAdmin'])->name('saveSuperAdmin');
+
+        Route::get('user-roles-list', [InstallerController::class, 'userRolesList'])->name('user_roles_list');
+
         Route::get('feature-toggles', [InstallerController::class, 'featureToggles'])->name('feature_toggles');
         Route::post('feature-toggles-save', [InstallerController::class, 'saveFeatureToggles'])->name('saveFeatureToggles');
 
