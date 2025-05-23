@@ -62,186 +62,73 @@ const upcomingEvents = computed(() => {
 </script>
 
 <template>
-    <Navbar />
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-custom">
-        <h1 class="text-3xl font-bold text-blue-900 mb-8">Events</h1>
-
-        <!-- Loading state -->
-        <div v-if="loading" class="flex justify-center items-center py-12">
-            <div
-                class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
-            ></div>
-        </div>
-
-        <div v-else>
-            <!-- Upcoming Events Section -->
-            <div>
-                <h2
-                    class="text-2xl font-semibold text-gray-800 mb-6 flex items-center"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 mr-2 text-blue-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                    </svg>
-                    Upcoming Events
-                </h2>
-
-                <div
-                    v-if="upcomingEvents.length === 0"
-                    class="text-gray-500 text-center py-10 bg-gray-50 rounded-lg"
-                >
-                    No upcoming events scheduled
-                </div>
-
-                <div
-                    v-else
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                    <div
-                        v-for="event in upcomingEvents"
-                        :key="event.id_event"
-                        class="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
-                    >
-                        <!-- Event image -->
-                        <div class="h-48 overflow-hidden">
-                            <img
-                                :src="getImageUrl(event.thumbnail_event)"
-                                :alt="event.nama_event"
-                                class="w-full h-full object-cover"
-                            />
-                        </div>
-
-                        <!-- Event tag -->
-                        <div class="px-6 pt-4">
-                            <span
-                                class="inline-block bg-blue-500 text-white text-xs px-3 py-1 rounded-full uppercase font-semibold tracking-wide"
-                            >
-                                Upcoming Event
-                            </span>
-                        </div>
-
-                        <!-- Event content -->
-                        <div class="p-6">
-                            <h3
-                                class="text-xl font-semibold text-gray-800 mb-3 line-clamp-2"
-                            >
-                                {{ event.nama_event }}
-                            </h3>
-
-                            <div
-                                class="flex items-center mb-4 text-sm text-gray-600"
-                            >
-                                <span class="flex items-center">
-                                    <svg
-                                        class="h-4 w-4 mr-1"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                        />
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                        />
-                                    </svg>
-                                    {{ event.lokasi_event }}
-                                </span>
-                            </div>
-
-                            <div
-                                class="mb-4 text-sm text-gray-500 line-clamp-3"
-                            >
-                                {{ event.deskripsi_event }}
-                            </div>
-
-                            <div class="flex flex-col space-y-2 mb-5">
-                                <div class="flex items-center text-sm">
-                                    <svg
-                                        class="w-4 h-4 mr-1 text-blue-500"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                        />
-                                    </svg>
-                                    <span class="text-gray-700">{{
-                                        formatDate(event.waktu_start_event)
-                                    }}</span>
-                                </div>
-                                <div class="flex items-center text-sm">
-                                    <svg
-                                        class="w-4 h-4 mr-1 text-blue-500"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
-                                    <span class="text-gray-700"
-                                        >{{
-                                            formatTime(event.waktu_start_event)
-                                        }}
-                                        -
-                                        {{
-                                            formatTime(event.waktu_end_event)
-                                        }}</span
-                                    >
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <a
-                                    :href="`/event/${event.slug}`"
-                                    class="inline-block px-4 py-2 bg-blue-500 text-white font-medium text-sm rounded hover:bg-blue-600 transition-colors duration-300"
-                                >
-                                    View Details
-                                </a>
-                                <a
-                                    href="#"
-                                    target="_blank"
-                                    class="inline-block px-4 py-2 bg-green-500 text-white font-medium text-sm rounded hover:bg-green-600 transition-colors duration-300"
-                                >
-                                    Register
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-28 bg-background text-black font-custom">
+        <div class="flex flex-col gap-20 overflow-hidden">
+            <!-- Header -->
+            <div class="flex flex-col gap-4">
+                <div class="text-base font-semibold">Tagline</div>
+                <div class="flex flex-col items-center gap-6 text-center">
+                    <h1 class="text-5xl leading-[1.2] font-normal">Events</h1>
+                    <p class="text-lg leading-relaxed">Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                        Suspendisse varius enim in eros elementum tristique.</p>
                 </div>
             </div>
 
-            <!-- No events message -->
-            <div
-                v-if="!loading && events.length === 0"
-                class="text-center py-12"
-            >
-                <p class="text-gray-500 text-lg">No events found</p>
+            <!-- Featured Event -->
+            <div class="flex flex-col lg:flex-row gap-16">
+                <div class="relative flex-1">
+                    <img class="w-full h-96 object-cover rounded-2xl" src="https://placehold.co/632x420"
+                        alt="Event Image" />
+                    <div class="absolute left-4 top-4 bg-background rounded-2xl px-2 py-3 text-center">
+                        <div class="text-sm">Sat</div>
+                        <div class="text-3xl">10</div>
+                        <div class="text-sm">Feb 2024</div>
+                    </div>
+                </div>
+                <div class="flex-1 flex flex-col gap-6">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-wrap gap-4">
+                            <span class="bg-secondary text-sm font-semibold px-3 py-1 rounded-full">Category</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h2 class="text-2xl leading-loose">Event title heading</h2>
+                            <p class="text-base">Location</p>
+                            <p class="text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                                varius enim in eros.</p>
+                        </div>
+                    </div>
+                    <button class="bg-secondary px-6 py-2.5 rounded-full font-medium">Save my spot</button>
+                </div>
+            </div>
+
+            <!-- Category Tabs -->
+            <div class="flex flex-wrap items-center gap-4">
+                <button class="bg-secondary px-4 py-2.5 rounded-full font-medium">View all</button>
+                <button class="px-4 py-2.5 rounded-full">Category one</button>
+                <button class="px-4 py-2.5 rounded-full">Category two</button>
+                <button class="px-4 py-2.5 rounded-full">Category three</button>
+                <button class="px-4 py-2.5 rounded-full">Category four</button>
+            </div>
+
+            <!-- Other Events List -->
+            <div class="flex flex-col divide-y divide-white/20">
+                <div v-for="(event, index) in 3" :key="index" class="flex flex-col lg:flex-row gap-8 py-8">
+                    <div class="w-28 bg-secondary text-center px-1 py-3 rounded-2xl">
+                        <div class="text-base">Fri</div>
+                        <div class="text-3xl">09</div>
+                        <div class="text-base">Feb 2024</div>
+                    </div>
+                    <div class="flex-1 flex flex-col gap-4">
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <h3 class="text-2xl">Event title heading</h3>
+                            <span class="bg-secondary px-2.5 py-1 rounded-full text-sm font-semibold">Sold out</span>
+                        </div>
+                        <p class="text-sm">Location</p>
+                        <p class="text-base">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius
+                            enim in eros elementum tristique.</p>
+                    </div>
+                    <button class="bg-secondary px-5 py-2 rounded-full text-base font-medium">Save my spot</button>
+                </div>
             </div>
         </div>
     </div>

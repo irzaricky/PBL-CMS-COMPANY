@@ -26,7 +26,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // Post feedback (AUTENTIKASI BELUM DITAMBAHKAN)
-Route::post('/feedback', [FeedbackController::class, 'store']);
+
+Route::prefix('feedback')->group(function () {
+
+    Route::get('/', [FeedbackController::class, 'index']);
+
+    Route::post('/', [FeedbackController::class, 'store']);
+
+});
 
 // Lamaran routes (AUTENTIKASI BELUM DITAMBAHKAN)
 Route::post('/lamaran', [LamaranController::class, 'store']);
