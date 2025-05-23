@@ -29,7 +29,7 @@ class DummyUser extends Seeder
                 'name' => $faker->name(),
                 'email' => $faker->unique()->safeEmail(),
                 'password' => Hash::make('password123'),
-                'status_kepegawaian' => $faker->randomElement(['Kontrak', 'Magang', 'Non Pegawai']),
+                'status_kepegawaian' => $faker->randomElement(['Kontrak', 'Magang']),
                 'email_verified_at' => now(),
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ]);

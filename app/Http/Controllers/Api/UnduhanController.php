@@ -22,7 +22,7 @@ class UnduhanController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Unduhan::with(['kategoriUnduhan', 'user:id_user,name'])
+            $query = Unduhan::with(['kategoriUnduhan', 'user:id_user,name,foto_profil'])
                 ->where('status_unduhan', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
@@ -52,7 +52,7 @@ class UnduhanController extends Controller
     public function getUnduhanBySlug($slug)
     {
         try {
-            $unduhan = Unduhan::with(['kategoriUnduhan', 'user:id_user,name'])
+            $unduhan = Unduhan::with(['kategoriUnduhan', 'user:id_user,name,foto_profil'])
                 ->where('status_unduhan', ContentStatus::TERPUBLIKASI)
                 ->where('slug', $slug)
                 ->firstOrFail();
@@ -76,7 +76,7 @@ class UnduhanController extends Controller
     public function getUnduhanById($id)
     {
         try {
-            $unduhan = Unduhan::with(['kategoriUnduhan', 'user:id_user,name'])
+            $unduhan = Unduhan::with(['kategoriUnduhan', 'user:id_user,name,foto_profil'])
                 ->where('status_unduhan', ContentStatus::TERPUBLIKASI)
                 ->findOrFail($id);
 
@@ -129,7 +129,7 @@ class UnduhanController extends Controller
                 return $this->index($request);
             }
 
-            $unduhanQuery = Unduhan::with(['kategoriUnduhan', 'user:id_user,name'])
+            $unduhanQuery = Unduhan::with(['kategoriUnduhan', 'user:id_user,name,foto_profil'])
                 ->where('status_unduhan', ContentStatus::TERPUBLIKASI);
 
             // Jika ada query pencarian, unduhan akan dicari berdasarkan nama
@@ -173,7 +173,7 @@ class UnduhanController extends Controller
     public function getMostDownloaded()
     {
         try {
-            $unduhan = Unduhan::with(['kategoriUnduhan', 'user:id_user,name'])
+            $unduhan = Unduhan::with(['kategoriUnduhan', 'user:id_user,name,foto_profil'])
                 ->where('status_unduhan', ContentStatus::TERPUBLIKASI)
                 ->orderBy('jumlah_unduhan', 'desc')
                 ->take(5)

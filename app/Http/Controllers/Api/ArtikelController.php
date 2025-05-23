@@ -188,4 +188,22 @@ class ArtikelController extends Controller
             ], 500);
         }
     }
+    public function getFeaturedArticles()
+    {
+        try {
+            $articles = Artikel::with(['kategoriArtikel', 'user'])
+                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
+                ->orderBy('jumlah_view', 'desc')
+                ->take(4)
+                ->get();
+
+            return ArticleListResource::collection($articles);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Artikel',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

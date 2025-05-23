@@ -4,6 +4,7 @@ import axios from "axios";
 import MiniArtikel from "./MiniArtikel.vue";
 import MiniEvent from "./MiniEvent.vue";
 import MiniLowongan from "./MiniLowongan.vue";
+import { Link } from "@inertiajs/vue3";
 
 
 
@@ -13,18 +14,22 @@ const menuSections = [
     {
         title: "Tentang Kami",
         links: [
-            { href: "/profil", icon: "Building2", label: "Profil Perusahaan" },
+            { href: "/profil-perusahaan", icon: "Building2", label: "Profil Perusahaan" },
             {
                 href: "/visi-misi",
                 icon: "Binoculars",
                 label: "Visi Misi Perusahaan",
             },
             {
-                href: "/sejarah",
+                href: "/sejarah-perusahaan",
                 icon: "ScrollText",
                 label: "Sejarah Perusahaan",
             },
-            { href: "/struktur", icon: "Users", label: "Struktur Organisasi" },
+            { 
+                href: "/struktur-organisasi", 
+                icon: "Users", 
+                label: "Struktur Organisasi",
+            },
         ],
     },
     {
@@ -54,11 +59,11 @@ const menuSections = [
                 <div v-for="section in menuSections" :key="section.title">
                     <div class="font-bold text-h6-bold mb-6 text-secondary">{{ section.title }}</div>
                     <div class="flex flex-col gap-6 text-h5 font-medium">
-                        <a v-for="link in section.links" :key="link.href" :href="link.href"
+                        <Link v-for="link in section.links" :key="link.href" :href="link.href"
                             class="flex items-center gap-4 text-typography-dark hover:text-typography-hover2 transition">
-                            <component :is="link.icon" class="w-7" />
-                            <span>{{ link.label }}</span>
-                        </a>
+                        <component :is="link.icon" class="w-7" />
+                        <span>{{ link.label }}</span>
+                        </Link>
                     </div>
                 </div>
             </div>

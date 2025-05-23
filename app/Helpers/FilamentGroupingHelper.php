@@ -29,10 +29,31 @@ class FilamentGroupingHelper
             return $defaultGroup;
         }
 
-        // For Content Management and Customer Service roles, disable grouping
+        $roles = [
+            'super_admin',
+            'Content Management',
+            'Customer Service',
+            'director'
+        ];
+
+        // Check if user has multiple roles
+        $userRoleCount = 0;
+        foreach ($roles as $role) {
+            if ($user->hasRole($role)) {
+                $userRoleCount++;
+            }
+        }
+
+        // For any user with multiple roles, keep navigation group
+        if ($userRoleCount > 1) {
+            return $defaultGroup;
+        }
+
+        // For Content Management and Customer Service roles with single role, disable grouping
         if ($user->hasRole('Content Management') || $user->hasRole('Customer Service')) {
             return null;
         }
+        ;
 
         // For other roles, return the default group
         return $defaultGroup;
