@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\User;
 use Inertia\Inertia;
 use Filament\Facades\Filament;
+use App\Models\ProfilPerusahaan;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -25,7 +26,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginResponseContract::class, \App\Http\Responses\LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, \App\Http\Responses\LogoutResponse::class);
         $this->app->bind(RegistrationResponseContract::class, \App\Http\Responses\RegistrationResponse::class);
-
     }
 
     /**
@@ -43,6 +43,15 @@ class AppServiceProvider extends ServiceProvider
             'auth' => function () {
                 return [
                     'user' => Auth::user(),
+                ];
+            },
+        ]);
+
+        Inertia::share([
+            'theme' => function () {
+                $profil = ProfilPerusahaan::first();
+                return [
+                    'secondary' => $profil?->tema_perusahaan ?? '#31487A',
                 ];
             },
         ]);

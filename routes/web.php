@@ -10,10 +10,14 @@ use Inertia\Inertia;
 //     return Inertia::render('Dashboard');
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/login', function () {
-    return redirect('/admin/login');
-})->name('login')->name('filament.auth.login');
+// Route::get('/login', function () {
+//     return Inertia::render('Login');
+// })->name('login');
 
+Route::get('/login', function () {
+    session()->put('url.intended', url()->previous()); 
+    return redirect('/admin/login');
+})->name('login');
 
 Route::get('/logout', function () {
     Auth::logout();
@@ -76,15 +80,45 @@ Route::prefix('portofolio')->group(function () {
     });
 });
 
+// Rute group feedback
+Route::prefix('feedback')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('Feedback/Main');
+    });
+});
+
+// Rute group Profil Perusahaan
+Route::prefix('profil-perusahaan')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('ProfilPerusahaan/Main');
+    });
+});
+
+// Rute group untuk Visi Misi
+Route::prefix('visi-misi')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('VisiMisiPerusahaan/Main');
+    });
+});
+
+// Rute group untuk Sejarah Perusahaan
+Route::prefix('sejarah-perusahaan')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('SejarahPerusahaan/Main');
+    });
+});
+
+// Rute group untuk Struktur Organisasi
+Route::prefix('struktur-organisasi')->group(function () {
+    Route::get('/', action: function () {
+        return Inertia::render('StrukturOrganisasi/Main');
+    });
+});
 
 // Rute group untuk unduhan
 Route::prefix('unduhan')->group(function () {
     Route::get('/', action: function () {
-        return Inertia::render('Event/ListView');
-    });
-
-    Route::get('/{slug}', action: function ($slug) {
-        return Inertia::render('Event/Show', ['slug' => $slug]);
+        return Inertia::render('Unduhan/Main');
     });
 });
 

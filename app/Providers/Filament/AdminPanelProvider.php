@@ -5,13 +5,19 @@ namespace App\Providers\Filament;
 
 use Filament\Pages;
 use Filament\Panel;
+use App\Models\User;
 use Filament\PanelProvider;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
+use Filament\Support\Colors\Color;
 use App\Filament\Pages\Auth\Register;
+use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Navigation\NavigationBuilder;
+use App\Filament\Resources\UnduhanResource;
+use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Widgets\Admin\TotalUsersWidget;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -19,6 +25,7 @@ use App\Filament\Widgets\Admin\StorageUsageChart;
 use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use Filament\Http\Middleware\AuthenticateSession;
 use App\Filament\Widgets\Director\ContentGrowthTrend;
+use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use App\Filament\Widgets\Admin\RemainingStorageWidget;
 use App\Filament\Widgets\Director\ContentManagerStats;
@@ -27,7 +34,6 @@ use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 use App\Filament\Widgets\Director\CustomerServiceStats;
 use App\Filament\Widgets\Director\CustomerServiceGrowth;
 use Filament\Http\Middleware\DisableBladeIconComponents;
-use Swis\Filament\Backgrounds\FilamentBackgroundsPlugin;
 use App\Filament\Widgets\Admin\StorageUsageByFeatureChart;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -170,6 +176,11 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
+                AuthUIEnhancerPlugin::make()
+                    ->formPanelPosition('right')
+                    ->mobileFormPanelPosition('bottom')
+                    ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
+                    ->formPanelWidth('40%'),
                 FilamentApexChartsPlugin::make()
             ])
             ->userMenuItems([
@@ -178,13 +189,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Keluar dashboard')
                     ->url('/'),
             ])
-            ->plugins([
-                FilamentBackgroundsPlugin::make()
-                    ->remember(900)
-                    ->imageProvider(MyImages::make()
-                        ->directory(
-                            'images\swisnl\filament-backgrounds\triangles'
-                        )),
-            ]);
+            ->viteTheme('resources/css/filament/admin/theme.css');
     }
 }

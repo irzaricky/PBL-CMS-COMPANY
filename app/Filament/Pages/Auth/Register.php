@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Auth;
 
 use Filament\Pages\Auth\Register as BaseRegister;
 use Illuminate\Database\Eloquent\Model;
+use DiogoGPinto\AuthUIEnhancer\Pages\Auth\Concerns\HasCustomLayout;
 
 class Register extends BaseRegister
 {
@@ -13,4 +14,5 @@ class Register extends BaseRegister
 
         return $this->getUserModel()::create($data);
     }
+    use HasCustomLayout;
 }

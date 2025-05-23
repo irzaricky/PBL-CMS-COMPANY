@@ -1,10 +1,10 @@
 <script setup>
-import Checkbox from "@/Deprecated Components/Checkbox.vue";
-import GuestLayout from "@/Deprecated Layouts/GuestLayout.vue";
-import InputError from "@/Deprecated Components/InputError.vue";
-import InputLabel from "@/Deprecated Components/InputLabel.vue";
-import PrimaryButton from "@/Deprecated Components/PrimaryButton.vue";
-import TextInput from "@/Deprecated Components/TextInput.vue";
+import Checkbox from "@/Z Deprecated Components/Checkbox.vue";
+import GuestLayout from "@/Z Deprecated Layouts/GuestLayout.vue";
+import InputError from "@/Z Deprecated Components/InputError.vue";
+import InputLabel from "@/Z Deprecated Components/InputLabel.vue";
+import PrimaryButton from "@/Z Deprecated Components/PrimaryButton.vue";
+import TextInput from "@/Z Deprecated Components/TextInput.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 
 defineProps({

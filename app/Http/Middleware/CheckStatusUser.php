@@ -32,13 +32,18 @@ class CheckStatusUser
         ];
 
         if (
-            $request->routeIs('filament.*') &&
-            !in_array($request->route()->getName(), $allowedRoutes) &&
-            $user->status_kepegawaian === 'Non Pegawai'
+            $request->routeIs('filament.admin.*') &&
+            !in_array($request->route()->getName(), $allowedRoutes)
         ) {
-            return redirect('/')->with('error', 'Anda tidak memiliki akses ke panel admin.');
+            if (in_array($user->status_kepegawaian, ['Tetap', 'Magang', 'Kontrak'])) {
+                return $next($request); // izinkan lanjut
+            } else {
+                return redirect('/')
+                    ->with('error', 'Anda tidak memiliki akses ke panel admin.');
+            }
         }
 
-        return $next($request);
+        return $next($request); // jika bukan route admin, izinkan lanjut
     }
 }
+

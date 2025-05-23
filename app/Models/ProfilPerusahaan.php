@@ -39,6 +39,7 @@ class ProfilPerusahaan extends Model
         'sejarah_perusahaan',
         'visi_perusahaan',
         'misi_perusahaan',
+        'tema_perusahaan',
     ];
 
     /**
@@ -48,5 +49,6 @@ class ProfilPerusahaan extends Model
      */
     protected $casts = [
         'thumbnail_perusahaan' => 'array',
+        'sejarah_perusahaan' => 'array',
     ];
 }

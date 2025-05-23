@@ -1,7 +1,8 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted } from "vue";
-import Navbar from "@/Components/Navbar.vue";
+import AppLayout from "@/Layouts/AppLayout.vue";
+import { Link } from "@inertiajs/vue3";
 
 const gallery = ref(null);
 const loading = ref(true);
@@ -80,290 +81,107 @@ function setActiveImage(index) {
 </script>
 
 <template>
-    <Navbar />
-    <div class="bg-gray-50 min-h-screen py-10 font-custom">
-        <!-- Breadcrumb navigation -->
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-            <nav class="flex" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                    <li class="inline-flex items-center">
-                        <a
-                            href="/"
-                            class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600"
-                        >
-                            <svg
-                                class="w-4 h-4 mr-2"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"
-                                ></path>
-                            </svg>
+    <AppLayout>
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-20 font-custom text-black">
+            <div class="flex flex-col gap-20">
+
+                <!-- Breadcrumb -->
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
+                        <li>
+                            <Link href="/" class="inline-flex items-center text-gray-500 hover:text-secondary">
+                            <Home class="w-4 h-4 mr-2" />
                             Home
-                        </a>
-                    </li>
-                    <li>
-                        <div class="flex items-center">
-                            <svg
-                                class="w-6 h-6 text-gray-400"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                    clip-rule="evenodd"
-                                ></path>
-                            </svg>
-                            <a
-                                href="/galeri"
-                                class="ml-1 text-sm text-gray-500 hover:text-blue-600 md:ml-2"
-                                >Gallery</a
-                            >
-                        </div>
-                    </li>
-                    <li aria-current="page">
-                        <div class="flex items-center">
-                            <svg
-                                class="w-6 h-6 text-gray-400"
-                                fill="currentColor"
-                                viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                    clip-rule="evenodd"
-                                ></path>
-                            </svg>
-                            <span
-                                class="ml-1 text-sm font-medium text-gray-500 md:ml-2 truncate max-w-[200px]"
-                            >
+                            </Link>
+                        </li>
+                        <li class="inline-flex items-center">
+                            <ChevronRight class="w-4 h-4 text-gray-400" />
+                            <Link href="/galeri"
+                                class="ml-1 inline-flex items-center text-gray-500 hover:text-secondary">
+                            <Image class="w-4 h-4 mr-2" />
+                            Galeri
+                            </Link>
+                        </li>
+                        <li class="flex items-center max-w-[200px] truncate">
+                            <ChevronRight class="w-4 h-4 text-gray-400" />
+                            <span class="ml-1 text-gray-500 font-medium" :title="gallery?.judul_galeri">
                                 {{ gallery?.judul_galeri || "Loading..." }}
                             </span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
-        </div>
+                        </li>
+                    </ol>
+                </nav>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <!-- Loading state with shimmer effect -->
-            <div
-                v-if="loading"
-                class="bg-white rounded-lg shadow-lg overflow-hidden"
-            >
-                <div class="animate-pulse">
-                    <div class="h-64 bg-gray-300"></div>
-                    <div class="p-6">
-                        <div class="h-8 bg-gray-300 rounded w-2/3 mb-4"></div>
-                        <div class="flex gap-2 mb-6">
-                            <div class="h-4 bg-gray-300 rounded w-20"></div>
-                            <div class="h-4 bg-gray-300 rounded w-24"></div>
-                            <div class="h-4 bg-gray-300 rounded w-32"></div>
+                <!-- Judul & Kategori -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="px-3 py-1 rounded-full border text-sm font-semibold bg-black/5 text-black">
+                            {{ gallery?.kategoriGaleri?.nama_kategori_galeri || 'Tanpa Kategori' }}
                         </div>
-                        <div class="space-y-3">
-                            <div class="h-4 bg-gray-300 rounded"></div>
-                            <div class="h-4 bg-gray-300 rounded"></div>
-                            <div class="h-4 bg-gray-300 rounded w-5/6"></div>
+                        <div class="text-sm font-semibold text-black">
+                            {{ gallery?.thumbnail_galeri.length }} gambar
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Error state -->
-            <div
-                v-else-if="error"
-                class="bg-white rounded-lg shadow-lg p-8 text-center"
-            >
-                <svg
-                    class="w-16 h-16 text-red-500 mx-auto mb-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    ></path>
-                </svg>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">
-                    Gallery Not Found
-                </h2>
-                <p class="text-gray-600 mb-6">{{ error }}</p>
-                <a
-                    href="/galeri"
-                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                    <svg
-                        class="w-5 h-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                        ></path>
-                    </svg>
-                    Back to Gallery
-                </a>
-            </div>
-
-            <!-- Gallery content -->
-            <div
-                v-else-if="gallery"
-                class="bg-white rounded-lg shadow-lg overflow-hidden"
-            >
-                <!-- Gallery main image -->
-                <div
-                    class="relative"
-                    v-if="
-                        gallery.thumbnail_galeri &&
-                        gallery.thumbnail_galeri.length > 0
-                    "
-                >
-                    <img
-                        :src="`/storage/${gallery.thumbnail_galeri[activeImageIndex]}`"
-                        :alt="gallery.judul_galeri"
-                        class="w-full h-[400px] object-contain bg-gray-100"
-                    />
+                    <h1 class="text-4xl sm:text-5xl font-normal leading-tight">
+                        {{ gallery?.judul_galeri || 'Judul tidak tersedia' }}
+                    </h1>
                 </div>
 
-                <!-- Thumbnail navigation -->
-                <div
-                    class="p-4 bg-gray-100"
-                    v-if="
-                        gallery.thumbnail_galeri &&
-                        gallery.thumbnail_galeri.length > 1
-                    "
-                >
-                    <div class="flex overflow-x-auto gap-2 pb-2">
-                        <div
-                            v-for="(image, index) in gallery.thumbnail_galeri"
-                            :key="index"
-                            class="flex-shrink-0 w-20 h-20 cursor-pointer border-2"
-                            :class="
-                                activeImageIndex === index
-                                    ? 'border-blue-500'
-                                    : 'border-transparent'
-                            "
-                            @click="setActiveImage(index)"
-                        >
-                            <img
-                                :src="`/storage/${image}`"
-                                class="w-full h-full object-cover"
-                            />
-                        </div>
+                <!-- Gambar Utama -->
+                <div class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white">
+                    <img :src="getImageUrl(gallery?.thumbnail_galeri[activeImageIndex])" :alt="gallery?.judul_galeri"
+                        class="w-full h-full object-cover" />
+                </div>
+
+                <!-- Thumbnails -->
+                <div v-if="gallery?.thumbnail_galeri.length > 1" class="flex overflow-x-auto gap-4 py-4">
+                    <div v-for="(img, i) in gallery.thumbnail_galeri" :key="i"
+                        class="w-20 aspect-square rounded-lg cursor-pointer border-2 overflow-hidden flex-shrink-0"
+                        :class="{
+                            'border-secondary': activeImageIndex === i,
+                            'border-transparent': activeImageIndex !== i
+                        }" @click="setActiveImage(i)" :title="`Gambar ${i + 1}`">
+                        <img :src="getImageUrl(img)" alt="Thumbnail" class="w-full h-full object-cover" />
                     </div>
                 </div>
 
-                <!-- Gallery info -->
-                <div class="p-6 sm:p-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <div>
-                            <p
-                                class="inline-block px-3 py-1 bg-blue-600 text-white text-xs font-semibold rounded-full mb-3"
-                                v-if="gallery.kategoriGaleri"
-                            >
-                                {{
-                                    gallery.kategoriGaleri.nama_kategori_galeri
-                                }}
-                            </p>
-                            <h1
-                                class="text-3xl sm:text-4xl font-bold text-gray-800"
-                            >
-                                {{ gallery.judul_galeri }}
-                            </h1>
+                <!-- Info Penulis dan Action (compact, sejajar) -->
+                <div class="flex justify-between items-center flex-wrap">
+                    <div class="flex gap-8 items-center">
+                        <img class="w-12 h-12 rounded-full object-cover border"
+                            :src="getImageUrl(gallery?.user?.foto_profil)" alt="Foto Penulis" />
+                        <div class="flex flex-col gap-1">
+                            <span class="text-base font-normal">Dibuat oleh</span>
+                            <span class="text-base font-medium">{{ gallery?.user?.name || 'Anonim' }}</span>
                         </div>
-                        <button
-                            @click="downloadGallery(gallery.id_galeri)"
-                            class="flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                        >
-                            <svg
-                                class="w-5 h-5 mr-2"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="2"
-                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                                />
-                            </svg>
-                            Download ({{ gallery.jumlah_unduhan }})
+                        <div class="flex flex-col gap-1">
+                            <span class="text-base font-normal">Dirilis pada</span>
+                            <span class="text-base font-medium">{{ formatDate(gallery?.created_at) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-center">
+                        <div class="flex items-center gap-2 text-sm text-black">
+                            <Download class="w-5 h-5" />
+                            {{ gallery?.jumlah_unduhan || 0 }}
+                        </div>
+                        <button class="p-2 rounded-full bg-white border" @click="copyLink" title="Salin Link">
+                            <Copy class="w-5 h-5" />
+                        </button>
+                        <button @click="downloadGallery(gallery.id_galeri)"
+                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-white hover:bg-black transition">
+                            <Download class="w-5 h-5" />
+                            Unduh gambar terpilih
                         </button>
                     </div>
-
-                    <!-- Author and metadata bar -->
-                    <div
-                        class="flex items-center justify-between flex-wrap border-b border-gray-200 pb-4 mb-6"
-                    >
-                        <div
-                            class="flex items-center mb-2 sm:mb-0"
-                            v-if="gallery.user"
-                        >
-                            <div
-                                class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 mr-3"
-                            >
-                                {{ gallery.user.name.charAt(0) }}
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-900">
-                                    {{ gallery.user.name }}
-                                </p>
-                                <p class="text-sm text-gray-500">
-                                    {{ formatDate(gallery.created_at) }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Gallery description -->
-                    <div
-                        class="prose prose-lg prose-blue max-w-none mb-8"
-                        v-html="gallery.deskripsi_galeri"
-                    ></div>
                 </div>
-            </div>
 
-            <!-- Back button and navigation -->
-            <div
-                class="mt-10 flex justify-between items-center"
-                v-if="!loading && !error"
-            >
-                <a
-                    href="/galeri"
-                    class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                    <svg
-                        class="w-5 h-5 mr-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                        ></path>
-                    </svg>
-                    Back to Gallery
-                </a>
+                <!-- Deskripsi dengan heading kecil -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-2">Deskripsi</h3>
+                    <div class="prose max-w-none" v-html="gallery?.deskripsi_galeri"></div>
+                </div>
+
             </div>
         </div>
-    </div>
+    </AppLayout>
 </template>

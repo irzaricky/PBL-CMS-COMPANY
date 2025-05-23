@@ -153,7 +153,7 @@ class LamaranResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->label('arsipkan')
+                    ->label('Arsipkan')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Artikel berhasil diarsipkan'),
@@ -219,5 +219,9 @@ class LamaranResource extends Resource
         $modelClass = static::$model;
 
         return (string) 'Sedang Diproses';
+    }
+    public static function canCreate(): bool
+    {
+        return false;
     }
 }

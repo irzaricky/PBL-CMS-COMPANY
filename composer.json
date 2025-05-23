@@ -9,7 +9,9 @@
         "php": "^8.2",
         "bezhansalleh/filament-shield": "^3.3",
         "dedoc/scramble": "^0.12.19",
+        "diogogpinto/filament-auth-ui-enhancer": "^1.0",
         "filament/filament": "^3.3",
+        "filament/infolists": "3.3",
         "filament/notifications": "3.3",
         "flowframe/laravel-trend": "^0.4.0",
         "inertiajs/inertia-laravel": "^2.0",
@@ -18,7 +20,6 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "leandrocfe/filament-apex-charts": "^3.2",
-        "swisnl/filament-backgrounds": "^1.1",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
