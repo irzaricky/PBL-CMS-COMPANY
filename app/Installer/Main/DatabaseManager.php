@@ -53,31 +53,32 @@ class DatabaseManager
             return ['error', $e->getMessage()];
         }
 
-        return $this->seed($outputLog);
+        // Just return success without running all seeders
+        return ['success', 'Migration completed successfully'];
     }
 
     /**
      * Seed the database with all seeders.
      */
-    private function seed(BufferedOutput $outputLog): array
-    {
-        try {
-            Artisan::call('db:seed', ['--force' => true], $outputLog);
+    // private function seed(BufferedOutput $outputLog): array
+    // {
+    //     try {
+    //         Artisan::call('db:seed', ['--force' => true], $outputLog);
 
-            $logContents = $outputLog->fetch();
-            \Illuminate\Support\Facades\Log::info('Seeding result: ' . $logContents);
+    //         $logContents = $outputLog->fetch();
+    //         \Illuminate\Support\Facades\Log::info('Seeding result: ' . $logContents);
 
-            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
-                \Illuminate\Support\Facades\Log::error('Seeding failed: ' . $logContents);
-                return ['error', 'Database seeding failed: ' . $logContents];
-            }
+    //         if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
+    //             \Illuminate\Support\Facades\Log::error('Seeding failed: ' . $logContents);
+    //             return ['error', 'Database seeding failed: ' . $logContents];
+    //         }
 
-            return ['success', $logContents];
-        } catch (Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Seeding exception: ' . $e->getMessage());
-            return ['error', $e->getMessage()];
-        }
-    }
+    //         return ['success', $logContents];
+    //     } catch (Exception $e) {
+    //         \Illuminate\Support\Facades\Log::error('Seeding exception: ' . $e->getMessage());
+    //         return ['error', $e->getMessage()];
+    //     }
+    // }
 
     /**
      * Seed the database with selected seeders.

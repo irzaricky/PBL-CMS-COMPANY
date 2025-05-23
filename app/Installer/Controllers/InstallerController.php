@@ -79,19 +79,10 @@ class InstallerController extends Controller
     public function saveSeeders(Request $request, Redirector $redirect)
     {
         try {
-            // Run migrations
-            $outputLog = new \Symfony\Component\Console\Output\BufferedOutput;
-            \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--force' => true], $outputLog);
-
-            $logContents = $outputLog->fetch();
-            \Illuminate\Support\Facades\Log::info('Migration result: ' . $logContents);
-
-            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
-                throw new \Exception('Database migration failed: ' . $logContents);
-            }
-
-            // Run selected seeders
+            // Get selected seeders from the form
             $seeders = $request->input('seeders', []);
+
+            // Let DatabaseManager handle migrations and seeding
             $migrationResult = DatabaseManager::MigrateAndSeed($seeders);
 
             if ($migrationResult[0] === 'error') {
@@ -115,9 +106,22 @@ class InstallerController extends Controller
     {
         $seeders = [];
         $path = database_path('seeders');
-        $seederFiles = array_diff(scandir($path), ['.', '..', 'DatabaseSeeder.php', 'ProfilPerusahaanSeeder.php']);
+        // Exclude specific seeders that should always run and not be optional
+        $excludedSeeders = [
+            'ShieldSeeder.php',
+            'FilamentUserSeeder.php',
+            'FeatureToggleSeeder.php',
+            'DatabaseSeeder.php',
+        ];
+        $seederFiles = array_diff(scandir($path), $excludedSeeders);
 
         foreach ($seederFiles as $file) {
+            // Check if it's a PHP file and not a directory
+            $filePath = $path . '/' . $file;
+            if (!is_file($filePath) || pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
+                continue;
+            }
+
             // Extract class name without .php extension
             $className = pathinfo($file, PATHINFO_FILENAME);
 
