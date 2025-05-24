@@ -11,23 +11,12 @@ class DatabaseManager
     /**
      * Migrate and seed the database.
      */
-    public static function MigrateAndSeed(array $selectedSeeders = []): array
+    public static function MigrateAndSeed(): array
     {
         $dm = new DatabaseManager;
         $outputLog = new BufferedOutput;
 
-        $migrateResult = $dm->migrate($outputLog);
-
-        if ($migrateResult[0] === 'error') {
-            return $migrateResult;
-        }
-
-        // If seeders are provided, run specific seeders
-        if (!empty($selectedSeeders)) {
-            return $dm->seedSelected($outputLog, $selectedSeeders);
-        }
-
-        return $migrateResult;
+        return $dm->migrate($outputLog);
     }
 
     /**
@@ -53,74 +42,28 @@ class DatabaseManager
             return ['error', $e->getMessage()];
         }
 
-        // Just return success without running all seeders
-        return ['success', 'Migration completed successfully'];
+        return $this->seed($outputLog);
     }
 
     /**
-     * Seed the database with all seeders.
+     * Seed the database.
      */
-    // private function seed(BufferedOutput $outputLog): array
-    // {
-    //     try {
-    //         Artisan::call('db:seed', ['--force' => true], $outputLog);
-
-    //         $logContents = $outputLog->fetch();
-    //         \Illuminate\Support\Facades\Log::info('Seeding result: ' . $logContents);
-
-    //         if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
-    //             \Illuminate\Support\Facades\Log::error('Seeding failed: ' . $logContents);
-    //             return ['error', 'Database seeding failed: ' . $logContents];
-    //         }
-
-    //         return ['success', $logContents];
-    //     } catch (Exception $e) {
-    //         \Illuminate\Support\Facades\Log::error('Seeding exception: ' . $e->getMessage());
-    //         return ['error', $e->getMessage()];
-    //     }
-    // }
-
-    /**
-     * Seed the database with selected seeders.
-     */
-    private function seedSelected(BufferedOutput $outputLog, array $selectedSeeders): array
+    private function seed(BufferedOutput $outputLog): array
     {
         try {
-            $logResult = '';
+            Artisan::call('db:seed', ['--force' => true], $outputLog);
 
-            // Run base seeders that should always run
-            // (These are crucial for the application to function properly)
-            $requiredSeeders = [
-                'ShieldSeeder',
-                'FilamentUserSeeder',
-                'FeatureToggleSeeder'
-            ];
+            $logContents = $outputLog->fetch();
+            \Illuminate\Support\Facades\Log::info('Seeding result: ' . $logContents);
 
-            foreach ($requiredSeeders as $seeder) {
-                $seederClass = "\\Database\\Seeders\\{$seeder}";
-                Artisan::call('db:seed', ['--class' => $seederClass, '--force' => true], $outputLog);
-                $logResult .= $outputLog->fetch() . "\n";
+            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
+                \Illuminate\Support\Facades\Log::error('Seeding failed: ' . $logContents);
+                return ['error', 'Database seeding failed: ' . $logContents];
             }
 
-            // Run selected seeders
-            foreach ($selectedSeeders as $seeder => $enabled) {
-                if ($enabled && $seeder !== 'ProfilPerusahaanSeeder') {
-                    $seederClass = "\\Database\\Seeders\\{$seeder}";
-                    Artisan::call('db:seed', ['--class' => $seederClass, '--force' => true], $outputLog);
-                    $logResult .= $outputLog->fetch() . "\n";
-                }
-            }
-
-            \Illuminate\Support\Facades\Log::info('Selected seeding result: ' . $logResult);
-
-            if (stripos($logResult, 'error') !== false || stripos($logResult, 'exception') !== false) {
-                \Illuminate\Support\Facades\Log::error('Selected seeding failed: ' . $logResult);
-                return ['error', 'Database seeding failed: ' . $logResult];
-            }
-
-            return ['success', $logResult];
+            return ['success', $logContents];
         } catch (Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Selected seeding exception: ' . $e->getMessage());
+            \Illuminate\Support\Facades\Log::error('Seeding exception: ' . $e->getMessage());
             return ['error', $e->getMessage()];
         }
     }
