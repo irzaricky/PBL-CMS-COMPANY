@@ -152,33 +152,15 @@ class DatabaseController extends Controller
             $result = $this->EnvironmentManager->saveFileWizard($request);
             // Log::info('Environment saved: ' . $result);
 
-            // Check if seeders option is selected
-            $runFullSeeders = $request->has('run_seeders') && $request->input('run_seeders') == 1;
-
-            // Run database migration and seeding
-            $migrationResult = \App\Installer\Main\DatabaseManager::MigrateAndSeed($runFullSeeders);
-
-            if ($migrationResult[0] === 'error') {
-                if ($request->ajax() || $request->wantsJson()) {
-                    return response()->json([
-                        'success' => false,
-                        'errors' => ['database_migration' => [$migrationResult[1]]]
-                    ], 422);
-                }
-
-                return $redirect->route('database_import')->withInput()->withErrors([
-                    'database_migration' => $migrationResult[1],
-                ]);
-            }
-
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => true,
-                    'redirect' => route('profil_perusahaan')
+                    'redirect' => route('select_seeders')
                 ]);
             }
 
-            return redirect(route('profil_perusahaan'));
+            // Only proceed to next step if database connection is established
+            return redirect(route('select_seeders'));
         } catch (\Exception $e) {
             // Log::error('Error saving environment: ' . $e->getMessage());
 

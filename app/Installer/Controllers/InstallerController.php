@@ -50,6 +50,107 @@ class InstallerController extends Controller
         return redirect(route('database_import'));
     }
 
+    /**
+     * Display the seeder selection screen
+     */
+    public function selectSeeders()
+    {
+        try {
+            $dbConnection = DB::connection()->getPdo();
+            if (!$dbConnection) {
+                return redirect()->route('database_import')
+                    ->with('database_error', 'Database connection failed. Please check your configuration.');
+            }
+
+            // Get available seeders
+            $seeders = $this->getAvailableSeeders();
+
+            return view('InstallerEragViews::select-seeders', compact('seeders'));
+        } catch (\Exception $e) {
+            return redirect()->route('database_import')
+                ->with('database_error', 'Database error: ' . $e->getMessage())
+                ->withErrors(['database_connection' => 'Database connection failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Save selected seeders and run migrations
+     */
+    public function saveSeeders(Request $request, Redirector $redirect)
+    {
+        try {
+            // Get selected seeders from the form
+            $seeders = $request->input('seeders', []);
+
+            // Let DatabaseManager handle migrations and seeding
+            $migrationResult = DatabaseManager::MigrateAndSeed($seeders);
+
+            if ($migrationResult[0] === 'error') {
+                return $redirect->route('select_seeders')
+                    ->with('database_error', 'Database seeding failed: ' . ($migrationResult[1] ?? 'Unknown error'))
+                    ->withErrors(['database_connection' => 'Database seeding failed. Please check your database configuration.']);
+            }
+
+            return redirect()->route('profil_perusahaan');
+        } catch (\Exception $e) {
+            return $redirect->route('select_seeders')
+                ->with('database_error', 'Database error: ' . $e->getMessage())
+                ->withErrors(['database_connection' => 'Database operation failed: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get available seeders from the database/seeders directory
+     */
+    private function getAvailableSeeders(): array
+    {
+        $seeders = [];
+        $path = database_path('seeders');
+        // Exclude specific seeders that should always run and not be optional
+        $excludedSeeders = [
+            'ShieldSeeder.php',
+            'FilamentUserSeeder.php',
+            'FeatureToggleSeeder.php',
+            'DatabaseSeeder.php',
+        ];
+        $seederFiles = array_diff(scandir($path), $excludedSeeders);
+
+        foreach ($seederFiles as $file) {
+            // Check if it's a PHP file and not a directory
+            $filePath = $path . '/' . $file;
+            if (!is_file($filePath) || pathinfo($file, PATHINFO_EXTENSION) !== 'php') {
+                continue;
+            }
+
+            // Extract class name without .php extension
+            $className = pathinfo($file, PATHINFO_FILENAME);
+
+            // Create a human-readable label
+            $label = $this->createHumanReadableLabel($className);
+
+            $seeders[$className] = $label;
+        }
+
+        // Sort seeders alphabetically by label
+        asort($seeders);
+
+        return $seeders;
+    }
+
+    /**
+     * Create a human-readable label from seeder class name
+     */
+    private function createHumanReadableLabel(string $className): string
+    {
+        // Remove "Seeder" suffix
+        $name = str_replace('Seeder', '', $className);
+
+        // Add spaces before capital letters and trim
+        $name = trim(preg_replace('/(?<!^)[A-Z]/', ' $0', $name));
+
+        return "Data {$name}";
+    }
+
     public function profilPerusahaan()
     {
         // Just load the view - migrations and seeding are already done

@@ -22,6 +22,9 @@ Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], func
     Route::post('test-database-connection', [DatabaseTestController::class, 'testConnection'])->name('test_database_connection');
 
     Route::middleware([CheckDatabaseConnectionMiddleware::class])->group(function () {
+        Route::get('select-seeders', [InstallerController::class, 'selectSeeders'])->name('select_seeders');
+        Route::post('save-seeders', [InstallerController::class, 'saveSeeders'])->name('saveSeeders');
+
         Route::get('profil-perusahaan', [InstallerController::class, 'profilPerusahaan'])->name('profil_perusahaan');
         Route::post('profil-perusahaan-save', [InstallerController::class, 'saveProfilPerusahaan'])->name('saveProfilPerusahaan');
 
