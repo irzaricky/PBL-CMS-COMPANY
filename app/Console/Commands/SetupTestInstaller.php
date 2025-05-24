@@ -20,7 +20,7 @@ class SetupTestInstaller extends Command
      *
      * @var string
      */
-    protected $description = 'Setup test installation by running series of commands';
+    protected $description = 'Setup test environment with temporary database before running installer';
 
     /**
      * Execute the console command.
@@ -30,8 +30,8 @@ class SetupTestInstaller extends Command
         $this->info('Starting test installation setup...');
 
         // 1. Composer install
-        $this->info('Step 1: Running composer install...');
-        $this->executeCommand('composer install');
+        // $this->info('Step 1: Running composer install...');
+        // $this->executeCommand('composer install');
 
         // 2. NPM install
         $this->info('Step 2: Running npm install...');
@@ -61,12 +61,19 @@ class SetupTestInstaller extends Command
         // 7. Run specific migration
         $this->info('Step 7: Running users table migration...');
         $this->executeArtisanCommand('migrate --path=database/migrations/0001_01_01_000000_create_users_table.php');
+        $this->executeArtisanCommand('migrate --path=database/migrations/0001_01_01_000001_create_cache_table.php');
+        $this->executeArtisanCommand('migrate --path=database/migrations/0001_01_01_000002_create_jobs_table.php');
+        $this->executeArtisanCommand('migrate --path=database/migrations/2025_03_03_034012_create_permission_tables.php');
+        
 
-        // 8. Set proper permissions for Ubuntu environments
+        // Set proper permissions for Ubuntu environments
         $this->info('Step 8: Setting proper permissions for Ubuntu...');
         $this->setUbuntuPermissions();
 
         $this->info('Installation setup completed successfully!');
+        $this->info('You can now access the web installer to complete the installation process.');
+        $this->warn('Note: This command only prepares a minimal environment for testing.');
+        $this->warn('The actual installation will be performed through the web interface.');
     }
 
     /**

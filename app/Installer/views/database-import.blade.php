@@ -6,7 +6,7 @@
         <div class="container">
             @include('InstallerEragViews::includes.database-connection-error')
 
-            @if ($errors->any() && !$errors->has('database_connection') && !$errors->has('database_fields') && !$errors->has('save_error'))
+            @if ($errors->any() && !$errors->has('database_connection') && !$errors->has('database_fields') && !$errors->has('save_error') && !$errors->has('database_migration'))
                 <div class="alert alert-danger">
                     <ul>
                         @foreach ($errors->all() as $error)
@@ -15,12 +15,22 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('saveWizard') }}" method="post" class="card" id="database-form">
-                @csrf
-                <div class="card-body">
-                    <div class="tab">
-                        <div class="row">
 
+            @if ($errors->has('database_migration'))
+                <div class="alert alert-danger">
+                    <strong>Migration Error!</strong>
+                    <p>{{ $errors->first('database_migration') }}</p>
+                </div>
+            @endif
+            <form action="{{ route('saveWizard') }}" method="post" id="database-form">
+                @csrf
+                <!-- App Environment Settings -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Application Environment Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
                             <div class="col-md-4 mb-3">
                                 <x-install-select label="App Environment" class="form-control" required="true"
                                     name="environment">
@@ -33,20 +43,12 @@
                                 </x-install-select>
                             </div>
 
-                            <div class="col-md-4 mt-4">
-                                <div class="form-group">
-                                    <label for="app_debug" class="mr-8">
-                                        App Debug
-                                    </label>
-                                    <label for="app_debug_true">
-                                        <input type="radio" name="app_debug" id="app_debug_true" value="true" {{ old('app_debug', 'true') == 'true' ? 'checked' : '' }}>
-                                        True
-                                    </label>
-                                    <label for="app_debug_false">
-                                        <input type="radio" name="app_debug" id="app_debug_false" value="false" {{ old('app_debug') == 'false' ? 'checked' : '' }}>
-                                        False
-                                    </label>
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <x-install-select label="App Debug" class="form-control" required="true" name="app_debug">
+                                    <option value="true" {{ old('app_debug', 'true') == 'true' ? 'selected' : '' }}>True
+                                    </option>
+                                    <option value="false" {{ old('app_debug') == 'false' ? 'selected' : '' }}>False</option>
+                                </x-install-select>
                             </div>
 
                             <div class="col-md-4 mb-3">
@@ -94,7 +96,17 @@
                                 </x-install-select>
                                 <x-install-error for="app_locale" />
                             </div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Database Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Database Settings</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
                             <div class="col-md-4 mb-3">
                                 <x-install-select label="Database Connection" class="form-control" required="true"
                                     name="database_connection" id="database_connection">
@@ -140,16 +152,24 @@
                                 <x-install-error for="database_password" />
                             </div>
 
+                            <div class="col-md-12 mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="run_seeders" name="run_seeders"
+                                        value="1" checked>
+                                    <label class="form-check-label" for="run_seeders">Tambahkan Data Dummy (Seeder)</label>
+                                    <div class="text-muted small mt-1">
+                                        Pilih opsi ini untuk menambahkan data dummy ke dalam database. Jika tidak dipilih,
+                                        hanya ShieldSeeder yang akan dijalankan (diperlukan untuk fungsi dasar aplikasi).
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                    </div>
-                </div>
-
-                <div class="card-footer text-end">
-                    <div class="d-flex">
-                        <button type="button" id="test_connection_button" class="btn btn-secondary me-2">Test
-                            Connection</button>
-                        <button type="submit" id="next_button" class="btn btn-primary ms-auto">Next</button>
+                        <div class="d-flex mt-3">
+                            <button type="button" id="test_connection_button" class="btn btn-secondary me-2">Test
+                                Connection</button>
+                            <button type="submit" id="next_button" class="btn btn-primary ms-auto">Next</button>
+                        </div>
                     </div>
                 </div>
             </form>
@@ -277,19 +297,26 @@
                             messageDiv.className = data.success ? 'alert alert-success' : 'alert alert-danger';
                             messageDiv.innerHTML = '<strong>' + (data.success ? 'Success!' : 'Error!') + '</strong> ' + data.message;
 
-                            // Add message at the top of the form inside the container
-                            const container = document.querySelector('.container');
-                            if (container) {
-                                const firstChild = container.querySelector(':first-child');
-                                if (firstChild) {
-                                    container.insertBefore(messageDiv, firstChild);
-                                } else {
-                                    container.appendChild(messageDiv);
+                            // Find Database Settings card - it's the second card in the form
+                            const databaseCard = document.querySelectorAll('#database-form .card')[1];
+                            if (databaseCard) {
+                                databaseCard.insertAdjacentElement('beforebegin', messageDiv);
+                                // Scroll to make the message visible
+                                messageDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            } else {
+                                // Fallback to container if database card not found
+                                const container = document.querySelector('.container');
+                                if (container) {
+                                    const firstChild = container.querySelector(':first-child');
+                                    if (firstChild) {
+                                        container.insertBefore(messageDiv, firstChild);
+                                    } else {
+                                        container.appendChild(messageDiv);
+                                    }
                                 }
+                                // Scroll to top to show message
+                                window.scrollTo(0, 0);
                             }
-
-                            // Scroll to top to show message
-                            window.scrollTo(0, 0);
                         })
                         .catch(error => {
                             // Enable the button again
@@ -301,19 +328,26 @@
                             errorDiv.className = 'alert alert-danger';
                             errorDiv.innerHTML = '<strong>Connection Error!</strong> Could not test database connection.';
 
-                            // Add error at the top of the form inside the container
-                            const container = document.querySelector('.container');
-                            if (container) {
-                                const firstChild = container.querySelector(':first-child');
-                                if (firstChild) {
-                                    container.insertBefore(errorDiv, firstChild);
-                                } else {
-                                    container.appendChild(errorDiv);
+                            // Find Database Settings card - it's the second card in the form
+                            const databaseCard = document.querySelectorAll('#database-form .card')[1];
+                            if (databaseCard) {
+                                databaseCard.insertAdjacentElement('beforebegin', errorDiv);
+                                // Scroll to make the message visible
+                                errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            } else {
+                                // Fallback to container if database card not found
+                                const container = document.querySelector('.container');
+                                if (container) {
+                                    const firstChild = container.querySelector(':first-child');
+                                    if (firstChild) {
+                                        container.insertBefore(errorDiv, firstChild);
+                                    } else {
+                                        container.appendChild(errorDiv);
+                                    }
                                 }
+                                // Scroll to top to show error
+                                window.scrollTo(0, 0);
                             }
-
-                            // Scroll to top to show error
-                            window.scrollTo(0, 0);
 
                             console.error('Error testing connection:', error);
                         });
@@ -436,16 +470,23 @@
                                         '<li>Your username and password are correct</li>' +
                                         '<li>The user has proper permissions on the database</li></ul>';
 
-                                    // Add error div at the top of the form content
-                                    const formCard = form.querySelector('.card-body');
-                                    if (formCard) {
-                                        formCard.insertAdjacentElement('afterbegin', errorDiv);
+                                    // Find the database card to insert the error before it
+                                    const databaseCard = document.querySelectorAll('#database-form .card')[1];
+                                    if (databaseCard) {
+                                        databaseCard.insertAdjacentElement('beforebegin', errorDiv);
+                                        // Scroll to make the error visible
+                                        errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
                                     } else {
-                                        form.insertAdjacentElement('afterbegin', errorDiv);
+                                        // Fallback to inserting at top of form
+                                        const formCard = form.querySelector('.card-body');
+                                        if (formCard) {
+                                            formCard.insertAdjacentElement('afterbegin', errorDiv);
+                                        } else {
+                                            form.insertAdjacentElement('afterbegin', errorDiv);
+                                        }
+                                        // Scroll to top to show error
+                                        window.scrollTo(0, 0);
                                     }
-
-                                    // Scroll to top to show error
-                                    window.scrollTo(0, 0);
                                     return;
                                 }
                             }
@@ -491,15 +532,23 @@
                         errorDiv.className = 'alert alert-danger';
                         errorDiv.innerHTML = '<strong>Connection Error!</strong><p>An error occurred while communicating with the server. Please check your connection and try again.</p>';
 
-                        // Add error message at top of form content
-                        const formCard = form.querySelector('.card-body');
-                        if (formCard) {
-                            formCard.insertAdjacentElement('afterbegin', errorDiv);
+                        // Find the database card to insert the error before it
+                        const databaseCard = document.querySelectorAll('#database-form .card')[1];
+                        if (databaseCard) {
+                            databaseCard.insertAdjacentElement('beforebegin', errorDiv);
+                            // Scroll to make the error visible
+                            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         } else {
-                            form.insertAdjacentElement('afterbegin', errorDiv);
+                            // Fallback to inserting at top of form
+                            const formCard = form.querySelector('.card-body');
+                            if (formCard) {
+                                formCard.insertAdjacentElement('afterbegin', errorDiv);
+                            } else {
+                                form.insertAdjacentElement('afterbegin', errorDiv);
+                            }
+                            // Scroll to top to show error
+                            window.scrollTo(0, 0);
                         }
-
-                        window.scrollTo(0, 0);
                     });
             });
         });

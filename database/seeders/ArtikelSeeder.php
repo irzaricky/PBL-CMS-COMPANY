@@ -23,7 +23,7 @@ class ArtikelSeeder extends Seeder
         Storage::disk('public')->makeDirectory($targetPath);
         $files = array_values(array_filter(scandir($sourcePath), fn($f) => !in_array($f, ['.', '..'])));
 
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             // Generate array untuk menyimpan multiple images
             $images = [];
 

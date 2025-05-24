@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             ShieldSeeder::class,
             FilamentUserSeeder::class,
             DummyUser::class,
+            
             KategoriUnduhanSeeder::class,
             KategoriProdukSeeder::class,
             KategoriGaleriSeeder::class,
