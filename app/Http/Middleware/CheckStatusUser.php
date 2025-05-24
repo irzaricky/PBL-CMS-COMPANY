@@ -12,7 +12,7 @@ class CheckStatusUser
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return $next($request); 
+            return $next($request);
         }
 
         $user = Auth::user();

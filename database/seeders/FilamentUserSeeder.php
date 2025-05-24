@@ -30,84 +30,116 @@ class FilamentUserSeeder extends Seeder
             return $targetPath . '/' . $newFileName;
         };
 
-        // Admin user
-        $adminUser = User::create([
-            'name' => 'John Admin',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
+        // Check if admin user already exists
+        $adminEmail = 'admin@example.com';
+        $adminUser = User::where('email', $adminEmail)->first();
+
+        if (!$adminUser) {
+            // Admin user - only create if doesn't exist
+            $adminUser = User::create([
+                'name' => 'John Admin',
+                'email' => $adminEmail,
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
         $adminUser->assignRole('super_admin');
 
-        // Director user
-        $directorUser = User::create([
-            'name' => 'John Director',
-            'email' => 'director@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
+        // Director user - check if exists first
+        $directorEmail = 'director@example.com';
+        $directorUser = User::where('email', $directorEmail)->first();
+
+        if (!$directorUser) {
+            $directorUser = User::create([
+                'name' => 'John Director',
+                'email' => $directorEmail,
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
         $directorUser->assignRole('Director');
 
-        // Content Management users
-        $editor1 = User::create([
-            'name' => 'John Editor',
-            'email' => 'editor1@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
-        $editor2 = User::create([
-            'name' => 'Johny Editor',
-            'email' => 'editor2@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
-        $editor3 = User::create([
-            'name' => 'Johnes Editor',
-            'email' => 'editor3@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'status' => 'nonaktif',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
+        // Content Management users - create if they don't exist
+        $editor1 = User::where('email', 'editor1@example.com')->first();
+        if (!$editor1) {
+            $editor1 = User::create([
+                'name' => 'John Editor',
+                'email' => 'editor1@example.com',
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
+
+        $editor2 = User::where('email', 'editor2@example.com')->first();
+        if (!$editor2) {
+            $editor2 = User::create([
+                'name' => 'Johny Editor',
+                'email' => 'editor2@example.com',
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
+
+        $editor3 = User::where('email', 'editor3@example.com')->first();
+        if (!$editor3) {
+            $editor3 = User::create([
+                'name' => 'Johnes Editor',
+                'email' => 'editor3@example.com',
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'status' => 'nonaktif',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
+
         $editor1->assignRole('Content Management');
         $editor2->assignRole('Content Management');
         $editor3->assignRole('Content Management');
 
-        // Customer Service users
-        $cs1 = User::create([
-            'name' => 'John Customer Service',
-            'email' => 'cs1@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
-        $cs2 = User::create([
-            'name' => 'Johny Customer Service',
-            'email' => 'cs2@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'status' => 'nonaktif',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
-        $cs3 = User::create([
-            'name' => 'Johnes Customer Service',
-            'email' => 'cs3@example.com',
-            'password' => bcrypt('password123'),
-            'status_kepegawaian' => 'Tetap',
-            'email_verified_at' => now(),
-            'foto_profil' => $getRandomProfilePicture(),
-        ]);
+        // Customer Service users - create if they don't exist
+        $cs1 = User::where('email', 'cs1@example.com')->first();
+        if (!$cs1) {
+            $cs1 = User::create([
+                'name' => 'John Customer Service',
+                'email' => 'cs1@example.com',
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
+        $cs2 = User::where('email', 'cs2@example.com')->first();
+        if (!$cs2) {
+            $cs2 = User::create([
+                'name' => 'Johny Customer Service',
+                'email' => 'cs2@example.com',
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'status' => 'nonaktif',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
+        $cs3 = User::where('email', 'cs3@example.com')->first();
+        if (!$cs3) {
+            $cs3 = User::create([
+                'name' => 'Johnes Customer Service',
+                'email' => 'cs3@example.com',
+                'password' => bcrypt('password123'),
+                'status_kepegawaian' => 'Tetap',
+                'email_verified_at' => now(),
+                'foto_profil' => $getRandomProfilePicture(),
+            ]);
+        }
         $cs1->assignRole('Customer Service');
         $cs2->assignRole('Customer Service');
         $cs3->assignRole('Customer Service');

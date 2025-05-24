@@ -27,8 +27,10 @@ class DatabaseSeeder extends Seeder
             Storage::disk('public')->deleteDirectory($directory);
         }
 
+        // Essential seeders - check if data already exists
+        $this->runEssentialSeeders();
+
         $this->call([
-            ShieldSeeder::class,
             FilamentUserSeeder::class,
             DummyUser::class,
             KategoriUnduhanSeeder::class,
@@ -42,7 +44,6 @@ class DatabaseSeeder extends Seeder
             GaleriSeeder::class,
 
 
-            ProfilPerusahaanSeeder::class,
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
             TestimoniSeeder::class,
@@ -52,12 +53,39 @@ class DatabaseSeeder extends Seeder
 
 
             LamaranSeeder::class,
-            KontenSliderSeeder::class,
             MitraSeeder::class,
             StrukturOrganisasiSeeder::class,
-            FeatureToggleSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
         ]);
+    }
+
+    /**
+     * Run essential seeders with existence checks
+     */
+    private function runEssentialSeeders(): void
+    {
+        // Check and run ShieldSeeder if no roles exist
+        if (
+            class_exists('Spatie\Permission\Models\Role') &&
+            \Spatie\Permission\Models\Role::count() === 0
+        ) {
+            $this->call(ShieldSeeder::class);
+        }
+
+        // Check and run ProfilPerusahaanSeeder if no company profile exists
+        if (\App\Models\ProfilPerusahaan::count() === 0) {
+            $this->call(ProfilPerusahaanSeeder::class);
+        }
+
+        // Check and run KontenSliderSeeder if no slider content exists
+        if (\App\Models\KontenSlider::count() === 0) {
+            $this->call(KontenSliderSeeder::class);
+        }
+
+        // Check and run FeatureToggleSeeder if no feature toggles exist
+        if (\App\Models\FeatureToggle::count() === 0) {
+            $this->call(FeatureToggleSeeder::class);
+        }
     }
 }

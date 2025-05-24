@@ -26,7 +26,7 @@ Route::get('/logout', function () {
 
 Route::get('/', function () {
     return Inertia::render('Home');
-})->name('home');
+})->middleware('checkInstallation')->name('home');
 
 Route::get('/example', function () {
     return Inertia::render('Example');
