@@ -7,13 +7,33 @@ class InstalledManager
     /**
      * Create installed file.
      */
-    public static function create(): string
+    public static function create(): bool
     {
-        $installedLogFile = storage_path('installed');
-        $dateStamp = date('Y/m/d h:i:sa');
-        $message = 'successfully installed';
-        file_put_contents($installedLogFile, $message.' '.$dateStamp.PHP_EOL, FILE_APPEND | LOCK_EX);
+        try {
+            $installedLogFile = storage_path('installed');
+            $dateStamp = date('Y/m/d h:i:sa');
+            $message = 'successfully installed';
 
-        return $message;
+            // Ensure storage directory exists
+            $storageDir = dirname($installedLogFile);
+            if (!file_exists($storageDir)) {
+                mkdir($storageDir, 0755, true);
+            }
+
+            // Write installation marker with proper error checking
+            $result = file_put_contents($installedLogFile, $message . ' ' . $dateStamp . PHP_EOL, FILE_APPEND | LOCK_EX);
+
+            if ($result === false) {
+                \Illuminate\Support\Facades\Log::error('Failed to create installation marker file');
+                return false;
+            }
+
+            \Illuminate\Support\Facades\Log::info('Installation marker created successfully');
+            return true;
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Exception creating installation marker: ' . $e->getMessage());
+            return false;
+        }
     }
 }

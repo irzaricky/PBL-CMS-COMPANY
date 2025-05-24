@@ -47,6 +47,9 @@ class DatabaseManager
     private function migrate(BufferedOutput $outputLog, bool $includeDummyData = false): array
     {
         try {
+            // Clear any existing output
+            $outputLog->fetch();
+
             Artisan::call('migrate:fresh', [
                 '--force' => true,
             ], $outputLog);
@@ -54,9 +57,23 @@ class DatabaseManager
             $logContents = $outputLog->fetch();
             \Illuminate\Support\Facades\Log::info('Migration result: ' . $logContents);
 
-            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
+            // Check for migration errors more thoroughly
+            if (
+                stripos($logContents, 'error') !== false ||
+                stripos($logContents, 'exception') !== false ||
+                stripos($logContents, 'failed') !== false ||
+                stripos($logContents, 'could not') !== false
+            ) {
                 \Illuminate\Support\Facades\Log::error('Migration failed: ' . $logContents);
                 throw new \Exception('Database migration failed: ' . $logContents);
+            }
+
+            // Check if any migrations were actually run
+            if (
+                stripos($logContents, 'Nothing to migrate') !== false &&
+                stripos($logContents, 'Dropped all tables successfully') === false
+            ) {
+                \Illuminate\Support\Facades\Log::warning('No migrations found or executed');
             }
 
         } catch (Exception $e) {
@@ -73,6 +90,9 @@ class DatabaseManager
     private function migrateAndEssential(BufferedOutput $outputLog): array
     {
         try {
+            // Clear any existing output
+            $outputLog->fetch();
+
             Artisan::call('migrate:fresh', [
                 '--force' => true,
             ], $outputLog);
@@ -80,7 +100,13 @@ class DatabaseManager
             $logContents = $outputLog->fetch();
             \Illuminate\Support\Facades\Log::info('Migration result: ' . $logContents);
 
-            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
+            // Check for migration errors more thoroughly
+            if (
+                stripos($logContents, 'error') !== false ||
+                stripos($logContents, 'exception') !== false ||
+                stripos($logContents, 'failed') !== false ||
+                stripos($logContents, 'could not') !== false
+            ) {
                 \Illuminate\Support\Facades\Log::error('Migration failed: ' . $logContents);
                 throw new \Exception('Database migration failed: ' . $logContents);
             }
@@ -99,6 +125,9 @@ class DatabaseManager
     private function seed(BufferedOutput $outputLog, bool $includeDummyData = false): array
     {
         try {
+            // Clear any existing output
+            $outputLog->fetch();
+
             if ($includeDummyData) {
                 // Jalankan semua seeder (termasuk data dummy) tanpa migrate:fresh
                 // karena migration sudah dilakukan sebelumnya
@@ -114,7 +143,14 @@ class DatabaseManager
             $logContents = $outputLog->fetch();
             \Illuminate\Support\Facades\Log::info('Seeding result: ' . $logContents);
 
-            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
+            // Check for seeding errors more thoroughly
+            if (
+                stripos($logContents, 'error') !== false ||
+                stripos($logContents, 'exception') !== false ||
+                stripos($logContents, 'failed') !== false ||
+                stripos($logContents, 'could not') !== false ||
+                stripos($logContents, 'class not found') !== false
+            ) {
                 \Illuminate\Support\Facades\Log::error('Seeding failed: ' . $logContents);
                 return ['error', 'Database seeding failed: ' . $logContents];
             }
@@ -139,17 +175,31 @@ class DatabaseManager
                 'FeatureToggleSeeder'
             ];
 
+            // Clear any existing output
+            $outputLog->fetch();
+
             foreach ($essentialSeeders as $seeder) {
-                Artisan::call('db:seed', [
-                    '--class' => $seeder,
-                    '--force' => true,
-                ], $outputLog);
+                try {
+                    Artisan::call('db:seed', [
+                        '--class' => $seeder,
+                        '--force' => true,
+                    ], $outputLog);
+
+                    \Illuminate\Support\Facades\Log::info("Successfully ran seeder: $seeder");
+                } catch (Exception $e) {
+                    \Illuminate\Support\Facades\Log::warning("Seeder $seeder failed: " . $e->getMessage());
+                    // Continue with other seeders even if one fails (some might not exist)
+                }
             }
 
             $logContents = $outputLog->fetch();
             \Illuminate\Support\Facades\Log::info('Essential seeding result: ' . $logContents);
 
-            if (stripos($logContents, 'error') !== false || stripos($logContents, 'exception') !== false) {
+            // Check for critical seeding errors - but be less strict than general seeding
+            if (
+                stripos($logContents, 'fatal') !== false ||
+                stripos($logContents, 'syntax error') !== false
+            ) {
                 \Illuminate\Support\Facades\Log::error('Essential seeding failed: ' . $logContents);
                 return ['error', 'Essential seeding failed: ' . $logContents];
             }

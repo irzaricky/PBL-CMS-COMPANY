@@ -24,8 +24,8 @@ class DatabaseTestController extends Controller
 
         // SQLite configuration
         if ($connection == 'sqlite') {
-            // Set SQLite database path
-            $database = storage_path('app/' . ($database ?: 'database.sqlite'));
+            // Set SQLite database path to storage root directory
+            $database = storage_path($database ?: 'database.sqlite');
 
             // Create empty SQLite file if it doesn't exist
             if (!file_exists(dirname($database))) {

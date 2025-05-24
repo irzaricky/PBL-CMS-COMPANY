@@ -113,7 +113,7 @@ class DatabaseController extends Controller
             return $redirect->route('database_import')->withInput()->withErrors($validator->errors());
         }
 
-        // Check database connection and make sure to stop the process if it fails
+        // Check database connection
         $dbConnectionSuccess = $this->checkDatabaseConnection($request);
         // Log::info('Database connection check result: ' . ($dbConnectionSuccess ? 'success' : 'failed'));
 
@@ -133,22 +133,7 @@ class DatabaseController extends Controller
         }
 
         try {
-            // Double-check database connection once more before proceeding
-            if (!$this->checkDatabaseConnection($request)) {
-                // Log::error('Final database connection check failed');
-
-                if ($request->ajax() || $request->wantsJson()) {
-                    return response()->json([
-                        'success' => false,
-                        'errors' => ['database_connection' => ['Database connection failed on final verification. Please check your credentials.']]
-                    ], 422);
-                }
-
-                return $redirect->route('database_import')->withInput()->withErrors([
-                    'database_connection' => 'Database connection failed on final verification. Please check your credentials.',
-                ]);
-            }
-
+            // Save environment configuration - database connection already verified
             $result = $this->EnvironmentManager->saveFileWizard($request);
             // Log::info('Environment saved: ' . $result);
 
@@ -189,8 +174,9 @@ class DatabaseController extends Controller
 
     private function checkDatabaseConnection(Request $request): bool
     {
-        // Close any existing database connections first
-        DB::disconnect();
+        // Store current connection state to restore later
+        $currentConnection = config('database.default');
+        $connectionSuccess = false;
 
         $connection = $request->input('database_connection');
         $database = $request->input('database_name');
@@ -200,106 +186,111 @@ class DatabaseController extends Controller
             return false;
         }
 
-        $settings = config("database.connections.$connection");
-        // Handle SQLite differently
-        if ($connection === 'sqlite') {
-            // Set database file path directly in storage directory
-            $databasePath = storage_path($database);
-
-            // Ensure path uses forward slashes for consistency
-            $databasePath = str_replace('\\', '/', $databasePath);
-
-            // Create directory if it doesn't exist
-            $dirPath = dirname($databasePath);
-            if (!file_exists($dirPath)) {
-                mkdir($dirPath, 0755, true);
-            }
-
-            // Remove temporary database.sqlite if it exists
-            $tempDbPath = storage_path('database.sqlite');
-            if (file_exists($tempDbPath)) {
-                try {
-                    // Close any existing connections before attempting to delete
-                    DB::disconnect('sqlite');
-
-                    // Try to delete the file, but don't fail if it's not possible
-                    @unlink($tempDbPath);
-                    Log::info('Removed temporary database file: ' . $tempDbPath);
-                } catch (\Exception $e) {
-                    // Log file deletion failure but continue with the process
-                    Log::warning('Could not remove temporary database file: ' . $e->getMessage());
-                    // Continue execution even if we can't delete the file
-                }
-            }
-
-            // Create empty database file if it doesn't exist
-            if (!file_exists($databasePath)) {
-                try {
-                    touch($databasePath);
-                    chmod($databasePath, 0644);
-                    // Log::info('Created SQLite database file at: ' . $databasePath);
-                } catch (\Exception $e) {
-                    // Log::error('Failed to create SQLite database file: ' . $e->getMessage());
-                    return false;
-                }
-            }
-
-            // Configure SQLite connection
-            config([
-                'database' => [
-                    'default' => $connection,
-                    'connections' => [
-                        $connection => [
-                            'driver' => 'sqlite',
-                            'database' => $databasePath,
-                            'prefix' => '',
-                            'foreign_key_constraints' => true,
-                        ],
-                    ],
-                ],
-            ]);
-        } else {
-            // MySQL connection
-            config([
-                'database' => [
-                    'default' => $connection,
-                    'connections' => [
-                        $connection => array_merge($settings, [
-                            'driver' => $connection,
-                            'host' => $request->input('database_hostname'),
-                            'port' => $request->input('database_port'),
-                            'database' => $database,
-                            'username' => $request->input('database_username'),
-                            'password' => $request->input('database_password') ?? '',
-                        ]),
-                    ],
-                ],
-            ]);
-        }
-
-        DB::purge();
+        // Use a temporary connection name to avoid conflicts
+        $tempConnectionName = 'installer_test_' . time();
 
         try {
-            // Get PDO connection
-            $pdo = DB::connection()->getPdo();
+            $settings = config("database.connections.$connection");
 
-            if (!$pdo) {
-                // Log::error('Database connection failed: Could not get PDO instance');
-                return false;
+            // Handle SQLite differently
+            if ($connection === 'sqlite') {
+                // Use storage root directory directly for SQLite database
+                $databasePath = storage_path($database);
+
+                // Ensure path uses forward slashes for consistency
+                $databasePath = str_replace('\\', '/', $databasePath);
+
+                // Create directory if it doesn't exist
+                $dirPath = dirname($databasePath);
+                if (!file_exists($dirPath)) {
+                    mkdir($dirPath, 0755, true);
+                }
+
+                // Remove temporary database.sqlite if it exists
+                $tempDbPath = storage_path('database.sqlite');
+                if (file_exists($tempDbPath)) {
+                    try {
+                        // Close any existing connections before attempting to delete
+                        DB::disconnect('sqlite');
+
+                        // Try to delete the file with proper error handling
+                        if (!unlink($tempDbPath)) {
+                            Log::warning('Could not remove temporary database file: ' . $tempDbPath);
+                        } else {
+                            Log::info('Removed temporary database file: ' . $tempDbPath);
+                        }
+                    } catch (\Exception $e) {
+                        // Log file deletion failure but continue with the process
+                        Log::warning('Could not remove temporary database file: ' . $e->getMessage());
+                        // Continue execution even if we can't delete the file
+                    }
+                }
+
+                // Create empty database file if it doesn't exist
+                if (!file_exists($databasePath)) {
+                    try {
+                        if (!touch($databasePath)) {
+                            throw new \Exception('Unable to create database file');
+                        }
+                        chmod($databasePath, 0644);
+                        // Log::info('Created SQLite database file at: ' . $databasePath);
+                    } catch (\Exception $e) {
+                        // Log::error('Failed to create SQLite database file: ' . $e->getMessage());
+                        return false;
+                    }
+                }
+
+                // Configure temporary SQLite connection
+                config([
+                    "database.connections.$tempConnectionName" => [
+                        'driver' => 'sqlite',
+                        'database' => $databasePath,
+                        'prefix' => '',
+                        'foreign_key_constraints' => true,
+                    ],
+                ]);
+            } else {
+                // MySQL configuration
+                $host = $request->input('database_hostname', '127.0.0.1');
+                $port = $request->input('database_port', '3306');
+                $username = $request->input('database_username', '');
+                $password = $request->input('database_password', '');
+
+                // Configure temporary MySQL connection
+                config([
+                    "database.connections.$tempConnectionName" => [
+                        'driver' => $connection,
+                        'host' => $host,
+                        'port' => $port,
+                        'database' => $database,
+                        'username' => $username,
+                        'password' => $password,
+                        'charset' => 'utf8mb4',
+                        'collation' => 'utf8mb4_unicode_ci',
+                        'prefix' => '',
+                        'strict' => true,
+                    ],
+                ]);
             }
 
-            // Test the connection with a simple query
-            $result = DB::connection()->select('SELECT 1 as connection_test');
+            // Test the connection with a simple query using temporary connection
+            $result = DB::connection($tempConnectionName)->select('SELECT 1 as connection_test');
 
             if (!$result || !isset($result[0]->connection_test) || $result[0]->connection_test !== 1) {
                 // Log::error('Database connection failed: Test query failed');
-                DB::disconnect(); // Ensure we close the connection
                 return false;
             }
 
             // Check database permissions for MySQL/MariaDB
             if ($connection === 'mysql') {
+                // Use the temporary connection for permission check
+                $originalDefault = config('database.default');
+                config(['database.default' => $tempConnectionName]);
+
                 $permissionResults = $this->checkDatabasePermissions();
+
+                // Restore original default connection
+                config(['database.default' => $originalDefault]);
 
                 if (!$permissionResults['success']) {
                     // Log::error('Database permission check failed: ' . implode(', ', $permissionResults['messages']));
@@ -314,10 +305,16 @@ class DatabaseController extends Controller
         } catch (Exception $e) {
             // Log::error('Database connection error: ' . $e->getMessage());
             $connectionSuccess = false;
+        } finally {
+            // Always disconnect the temporary connection and restore original state
+            try {
+                DB::disconnect($tempConnectionName);
+                config(['database.default' => $currentConnection]);
+            } catch (Exception $e) {
+                // Log cleanup errors but don't fail the process
+                Log::warning('Error cleaning up temporary database connection: ' . $e->getMessage());
+            }
         }
-
-        // Always disconnect to release file locks and resources
-        DB::disconnect();
 
         return $connectionSuccess;
     }

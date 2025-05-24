@@ -100,54 +100,78 @@ class InstallerController extends Controller
 
         $data = $request->except(['_token', 'logo_perusahaan']);
 
-        // Check if ProfilPerusahaan with ID 1 exists
-        $profilPerusahaan = \App\Models\ProfilPerusahaan::find(1);
+        try {
+            DB::beginTransaction();
 
-        // Handle logo upload if provided
-        if ($request->hasFile('logo_perusahaan')) {
-            $logo = $request->file('logo_perusahaan');
+            // Check if ProfilPerusahaan with ID 1 exists
+            $profilPerusahaan = \App\Models\ProfilPerusahaan::find(1);
 
-            // Validate the file
-            if ($logo->isValid()) {
-                $logoName = time() . '.' . $logo->getClientOriginalExtension();
+            // Handle logo upload if provided
+            if ($request->hasFile('logo_perusahaan')) {
+                $logo = $request->file('logo_perusahaan');
 
-                // Delete old logo file if exists
-                if ($profilPerusahaan && $profilPerusahaan->logo_perusahaan) {
-                    $oldPath = storage_path('app/public/' . $profilPerusahaan->logo_perusahaan);
-                    if (file_exists($oldPath)) {
-                        unlink($oldPath);
+                // Validate the file
+                if ($logo->isValid()) {
+                    $logoName = time() . '.' . $logo->getClientOriginalExtension();
+
+                    // Delete old logo file if exists
+                    if ($profilPerusahaan && $profilPerusahaan->logo_perusahaan) {
+                        $oldPath = storage_path('app/public/' . $profilPerusahaan->logo_perusahaan);
+                        if (file_exists($oldPath)) {
+                            if (!unlink($oldPath)) {
+                                Log::warning('Could not delete old logo file: ' . $oldPath);
+                            }
+                        }
                     }
-                }
 
-                // Make sure directory exists
-                $directory = storage_path('app/public/perusahaan-logo');
-                if (!file_exists($directory)) {
-                    mkdir($directory, 0755, true);
-                }
+                    // Make sure directory exists
+                    $directory = storage_path('app/public/perusahaan-logo');
+                    if (!file_exists($directory)) {
+                        if (!mkdir($directory, 0755, true)) {
+                            throw new \Exception('Could not create logo directory');
+                        }
+                    }
 
-                // Store the file in the same directory that Filament uses (perusahaan-logo)
-                $path = $logo->storeAs('perusahaan-logo', $logoName, 'public');
-                $data['logo_perusahaan'] = $path;
-            } else {
-                // Log error for debugging
-                Log::error('Logo upload failed: ' . $logo->getErrorMessage());
-                return $redirect->route('profil_perusahaan')
-                    ->withInput()
-                    ->withErrors(['logo_perusahaan' => 'File upload failed. Please try again.']);
+                    // Store the file in the same directory that Filament uses (perusahaan-logo)
+                    $path = $logo->storeAs('perusahaan-logo', $logoName, 'public');
+
+                    if (!$path) {
+                        throw new \Exception('Failed to store logo file');
+                    }
+
+                    $data['logo_perusahaan'] = $path;
+                } else {
+                    // Log error for debugging
+                    Log::error('Logo upload failed: ' . $logo->getErrorMessage());
+                    return $redirect->route('profil_perusahaan')
+                        ->withInput()
+                        ->withErrors(['logo_perusahaan' => 'File upload failed. Please try again.']);
+                }
             }
-        }
 
-        if ($profilPerusahaan) {
-            // Update existing record
-            $profilPerusahaan->update($data);
-        } else {
-            // Create new record with ID 1
-            $data['id_profil_perusahaan'] = 1;
-            \App\Models\ProfilPerusahaan::create($data);
-        }
+            if ($profilPerusahaan) {
+                // Update existing record
+                $profilPerusahaan->update($data);
+            } else {
+                // Create new record with ID 1
+                $data['id_profil_perusahaan'] = 1;
+                \App\Models\ProfilPerusahaan::create($data);
+            }
 
-        // Redirect to super admin configuration instead of feature toggles
-        return redirect(route('super_admin_config'));
+            DB::commit();
+            Log::info('Company profile saved successfully');
+
+            // Redirect to super admin configuration instead of feature toggles
+            return redirect(route('super_admin_config'))
+                ->with('success', 'Profil perusahaan berhasil disimpan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error saving company profile: ' . $e->getMessage());
+            return $redirect->route('profil_perusahaan')
+                ->withInput()
+                ->withErrors(['general_error' => 'Gagal menyimpan profil perusahaan: ' . $e->getMessage()]);
+        }
     }
 
     public function superAdminConfig()
@@ -204,18 +228,33 @@ class InstallerController extends Controller
             } else {
                 // User exists but doesn't have super_admin role
                 try {
+                    DB::beginTransaction();
+
                     // Assign super_admin role to existing user and update status_kepegawaian
                     if (class_exists('Spatie\Permission\Models\Role')) {
                         $superAdminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_admin']);
                         $existingUser->assignRole($superAdminRole);
+
                         // Update status_kepegawaian to Tetap
                         $existingUser->status_kepegawaian = 'Tetap';
                         $existingUser->save();
+
+                        // Verify role assignment
+                        if (!$existingUser->hasRole('super_admin')) {
+                            throw new \Exception('Failed to assign super admin role to existing user');
+                        }
+                    } else {
+                        throw new \Exception('Spatie Permission package not found');
                     }
+
+                    DB::commit();
+                    Log::info('Super admin role assigned to existing user: ' . $existingUser->email);
 
                     return $redirect->route('user_roles_list')
                         ->with('account_exists', 'User dengan email ' . $request->email . ' sudah ada. Role Super Admin telah diberikan pada akun tersebut.');
+
                 } catch (\Exception $e) {
+                    DB::rollBack();
                     Log::error('Error assigning super admin role: ' . $e->getMessage());
                     return $redirect->route('super_admin_config')
                         ->withInput()
@@ -225,6 +264,9 @@ class InstallerController extends Controller
         }
 
         try {
+            // Use database transaction for super admin creation
+            DB::beginTransaction();
+
             // Create super admin user
             $user = \App\Models\User::create([
                 'name' => $request->name,
@@ -237,11 +279,24 @@ class InstallerController extends Controller
             if (class_exists('Spatie\Permission\Models\Role')) {
                 $superAdminRole = \Spatie\Permission\Models\Role::firstOrCreate(['name' => 'super_admin']);
                 $user->assignRole($superAdminRole);
+
+                // Verify role assignment
+                if (!$user->hasRole('super_admin')) {
+                    throw new \Exception('Failed to assign super admin role');
+                }
+            } else {
+                Log::warning('Spatie Permission package not found, role assignment skipped');
             }
 
+            DB::commit();
+            Log::info('Super admin created successfully: ' . $user->email);
+
             // Arahkan ke halaman daftar user dengan role
-            return redirect(route('user_roles_list'));
+            return redirect(route('user_roles_list'))
+                ->with('success', 'Super Admin berhasil dibuat.');
+
         } catch (\Exception $e) {
+            DB::rollBack();
             Log::error('Error creating super admin: ' . $e->getMessage());
             return $redirect->route('super_admin_config')
                 ->withInput()
@@ -281,24 +336,40 @@ class InstallerController extends Controller
 
         // If no features exist yet, create default ones
         if ($features->isEmpty()) {
-            $defaultFeatures = [
-                ['key' => 'artikel_module', 'label' => 'Modul Artikel', 'status_aktif' => true],
-                ['key' => 'produk_module', 'label' => 'Modul Produk', 'status_aktif' => true],
-                ['key' => 'galeri_module', 'label' => 'Modul Galeri', 'status_aktif' => true],
-                ['key' => 'event_module', 'label' => 'Modul Event', 'status_aktif' => true],
-                ['key' => 'download_module', 'label' => 'Modul Download', 'status_aktif' => true],
-                ['key' => 'struktur_organisasi_module', 'label' => 'Modul Struktur Organisasi', 'status_aktif' => true],
-                ['key' => 'testimoni_module', 'label' => 'Modul Testimoni', 'status_aktif' => true],
-                ['key' => 'mitra_module', 'label' => 'Modul Mitra', 'status_aktif' => true],
-                ['key' => 'magang_module', 'label' => 'Modul Magang', 'status_aktif' => true],
-                ['key' => 'feedback_module', 'label' => 'Modul Feedback & Saran', 'status_aktif' => true],
-            ];
+            try {
+                $defaultFeatures = [
+                    ['key' => 'artikel_module', 'label' => 'Modul Artikel', 'status_aktif' => true],
+                    ['key' => 'produk_module', 'label' => 'Modul Produk', 'status_aktif' => true],
+                    ['key' => 'galeri_module', 'label' => 'Modul Galeri', 'status_aktif' => true],
+                    ['key' => 'event_module', 'label' => 'Modul Event', 'status_aktif' => true],
+                    ['key' => 'download_module', 'label' => 'Modul Download', 'status_aktif' => true],
+                    ['key' => 'struktur_organisasi_module', 'label' => 'Modul Struktur Organisasi', 'status_aktif' => true],
+                    ['key' => 'testimoni_module', 'label' => 'Modul Testimoni', 'status_aktif' => true],
+                    ['key' => 'mitra_module', 'label' => 'Modul Mitra', 'status_aktif' => true],
+                    ['key' => 'magang_module', 'label' => 'Modul Magang', 'status_aktif' => true],
+                    ['key' => 'feedback_module', 'label' => 'Modul Feedback & Saran', 'status_aktif' => true],
+                ];
 
-            foreach ($defaultFeatures as $feature) {
-                \App\Models\FeatureToggle::create($feature);
+                // Use batch insert for better performance and atomicity
+                DB::beginTransaction();
+
+                foreach ($defaultFeatures as $feature) {
+                    \App\Models\FeatureToggle::firstOrCreate(
+                        ['key' => $feature['key']],
+                        $feature
+                    );
+                }
+
+                DB::commit();
+                Log::info('Default feature toggles created successfully');
+
+                $features = \App\Models\FeatureToggle::all();
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Error creating default feature toggles: ' . $e->getMessage());
+                // Continue with empty features - user can create them manually
             }
-
-            $features = \App\Models\FeatureToggle::all();
         }
 
         return view('InstallerEragViews::feature-toggles', compact('features'));
@@ -316,19 +387,34 @@ class InstallerController extends Controller
             return $redirect->route('feature_toggles')->withInput()->withErrors($validator->errors());
         }
 
-        // Get all feature toggles
-        $allFeatures = \App\Models\FeatureToggle::all();
+        try {
+            DB::beginTransaction();
 
-        // Extract submitted features from form
-        $submittedFeatures = $request->input('features', []);
+            // Get all feature toggles
+            $allFeatures = \App\Models\FeatureToggle::all();
 
-        // Update each feature's status
-        foreach ($allFeatures as $feature) {
-            $feature->status_aktif = isset($submittedFeatures[$feature->key]) ? true : false;
-            $feature->save();
+            // Extract submitted features from form
+            $submittedFeatures = $request->input('features', []);
+
+            // Update each feature's status
+            foreach ($allFeatures as $feature) {
+                $feature->status_aktif = isset($submittedFeatures[$feature->key]) ? true : false;
+                $feature->save();
+            }
+
+            DB::commit();
+            Log::info('Feature toggles updated successfully');
+
+            return redirect(route('finish'))
+                ->with('success', 'Feature toggles berhasil disimpan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating feature toggles: ' . $e->getMessage());
+            return $redirect->route('feature_toggles')
+                ->withInput()
+                ->withErrors(['general_error' => 'Gagal menyimpan feature toggles: ' . $e->getMessage()]);
         }
-
-        return redirect(route('finish'));
     }
 
     public function finish()
@@ -339,23 +425,53 @@ class InstallerController extends Controller
 
     public function finishSave()
     {
-        InstalledManager::create();
+        try {
+            // Create installation marker
+            $installResult = InstalledManager::create();
 
-        // Update .env file to set APP_INSTALLED=true
-        $envPath = base_path('.env');
-        if (file_exists($envPath)) {
-            $envContent = file_get_contents($envPath);
-
-            // Check if APP_INSTALLED already exists
-            if (strpos($envContent, 'APP_INSTALLED') !== false) {
-                $envContent = preg_replace('/APP_INSTALLED=(.*)/i', 'APP_INSTALLED=true', $envContent);
-            } else {
-                $envContent .= "\nAPP_INSTALLED=true\n";
+            if (!$installResult) {
+                Log::error('Failed to create installation marker');
+                return redirect()->route('finish')
+                    ->with('error', 'Installation could not be completed. Please try again.');
             }
 
-            file_put_contents($envPath, $envContent);
-        }
+            // Update .env file to set APP_INSTALLED=true
+            $envPath = base_path('.env');
+            if (file_exists($envPath)) {
+                $envContent = file_get_contents($envPath);
 
-        return redirect(URL::to('/'));
+                if ($envContent === false) {
+                    Log::error('Could not read .env file');
+                    return redirect()->route('finish')
+                        ->with('error', 'Could not update installation status. Please check file permissions.');
+                }
+
+                // Check if APP_INSTALLED already exists
+                if (strpos($envContent, 'APP_INSTALLED') !== false) {
+                    $envContent = preg_replace('/APP_INSTALLED=(.*)/i', 'APP_INSTALLED=true', $envContent);
+                } else {
+                    $envContent .= "\nAPP_INSTALLED=true\n";
+                }
+
+                if (file_put_contents($envPath, $envContent) === false) {
+                    Log::error('Could not write to .env file');
+                    return redirect()->route('finish')
+                        ->with('error', 'Could not update installation status. Please check file permissions.');
+                }
+            } else {
+                Log::error('.env file does not exist');
+                return redirect()->route('finish')
+                    ->with('error', '.env file not found. Installation may be incomplete.');
+            }
+
+            Log::info('Installation completed successfully');
+            return redirect(URL::to('/'))
+                ->with('success', 'Installation completed successfully!');
+
+        } catch (\Exception $e) {
+            Log::error('Error during installation finalization: ' . $e->getMessage());
+            return redirect()->route('finish')
+                ->with('error', 'Installation failed: ' . $e->getMessage());
+        }
     }
 }
