@@ -9,6 +9,12 @@
                     {{ session('account_exists') }}
                 </div>
             @endif
+            @if (session('database_error'))
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {{ session('database_error') }}
+                </div>
+            @endif
             @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -63,6 +69,21 @@
                                     </button>
                                 </div>
                                 <x-install-error for="password_confirmation" />
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <div class="form-check">
+                                    <input type="checkbox" name="include_dummy_data" id="include_dummy_data"
+                                        class="form-check-input" value="1" {{ old('include_dummy_data') ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="include_dummy_data">
+                                        <strong>Isi dengan data dummy</strong>
+                                    </label>
+                                    <div class="form-text text-muted">
+                                        Centang opsi ini jika Anda ingin mengisi database dengan data contoh untuk keperluan
+                                        testing atau demo.
+                                        Data dummy termasuk artikel, produk, galeri, dan konten lainnya.
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

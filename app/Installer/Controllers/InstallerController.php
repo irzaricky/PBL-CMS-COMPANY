@@ -60,14 +60,18 @@ class InstallerController extends Controller
                     ->with('database_error', 'Database connection failed. Please check your configuration.');
             }
 
-            // If DB connection works, run migrations and seed
-            $migrationResult = DatabaseManager::MigrateAndSeed();
+            // Run migration and essential seeders
+            $migrationResult = DatabaseManager::MigrateAndEssentialSeed();
 
             if ($migrationResult[0] === 'error') {
                 return redirect()->route('database_import')
-                    ->with('database_error', 'Database migration failed: ' . ($migrationResult[1] ?? 'Unknown error'))
-                    ->withErrors(['database_connection' => 'Database migration failed. Please check your database configuration.']);
+                    ->with('database_error', 'Database migration/essential seeding failed: ' . ($migrationResult[1] ?? 'Unknown error'))
+                    ->withErrors(['database_connection' => 'Database setup failed. Please check your database configuration.']);
             }
+
+            Log::info('Database migration and essential seeding completed', [
+                'result' => $migrationResult[1]
+            ]);
 
             return view('InstallerEragViews::profil-perusahaan');
         } catch (\Exception $e) {
@@ -153,6 +157,42 @@ class InstallerController extends Controller
 
     public function saveSuperAdmin(Request $request, Redirector $redirect)
     {
+        // Regular validation
+        $rules = config('install.super_admin');
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            Log::warning('Validation failed', ['errors' => $validator->errors()]);
+            return $redirect->route('super_admin_config')->withInput()->withErrors($validator->errors());
+        }
+
+        // Ambil nilai checkbox untuk data dummy
+        $includeDummyData = $request->has('include_dummy_data') && $request->include_dummy_data == '1';
+
+        // Jika user memilih untuk mengisi data dummy, jalankan seeder lengkap
+        if ($includeDummyData) {
+            try {
+                $seedingResult = DatabaseManager::SeedOnly(true);
+
+                if ($seedingResult[0] === 'error') {
+                    return $redirect->route('super_admin_config')
+                        ->withInput()
+                        ->with('database_error', 'Database seeding failed: ' . ($seedingResult[1] ?? 'Unknown error'))
+                        ->withErrors(['general_error' => 'Database seeding failed. Please check your database configuration.']);
+                }
+
+                Log::info('Database dummy data seeding completed', [
+                    'result' => $seedingResult[1]
+                ]);
+
+            } catch (\Exception $e) {
+                Log::error('Error during dummy data seeding: ' . $e->getMessage());
+                return $redirect->route('super_admin_config')
+                    ->withInput()
+                    ->withErrors(['general_error' => 'Database seeding failed: ' . $e->getMessage()]);
+            }
+        }
+
         // Check if account already exists
         $existingUser = \App\Models\User::where('email', $request->email)->first();
 
@@ -182,16 +222,6 @@ class InstallerController extends Controller
                         ->withErrors(['general_error' => 'Gagal memberikan role Super Admin: ' . $e->getMessage()]);
                 }
             }
-        }
-
-        // Regular validation and creation for new user
-        $rules = config('install.super_admin');
-
-        $validator = Validator::make($request->all(), $rules);
-
-        if ($validator->fails()) {
-            Log::warning('Validation failed', ['errors' => $validator->errors()]);
-            return $redirect->route('super_admin_config')->withInput()->withErrors($validator->errors());
         }
 
         try {
