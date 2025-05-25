@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Testimoni;
 use App\Http\Resources\TestimoniResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class TestimoniController extends Controller
 {
@@ -19,26 +18,12 @@ class TestimoniController extends Controller
     public function index()
     {
         try {
-            $cacheKey = 'testimoni_published_list';
+            $testimoni = Testimoni::with(['user:id_user,name'])
+                ->where('status', ContentStatus::TERPUBLIKASI->value)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-            $result = Cache::flexible($cacheKey, [900, 1800], function () { // 15-30 minutes cache
-                $testimoni = Testimoni::with(['user:id_user,name'])
-                    ->where('status', ContentStatus::TERPUBLIKASI->value)
-                    ->orderBy('created_at', 'desc')
-                    ->get();
-
-                return [
-                    'data' => TestimoniResource::collection($testimoni),
-                    'cached_at' => now()->toISOString(),
-                    'cache_key' => 'testimoni_published'
-                ];
-            });
-
-            return response()->json([
-                'data' => $result['data'],
-                'cached_at' => $result['cached_at'],
-                'cache_key' => $result['cache_key']
-            ]);
+            return TestimoniResource::collection($testimoni);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Lowongan\LowonganListResource;
 use App\Http\Resources\Lowongan\LowonganViewResource;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Cache;
 
 class LowonganController extends Controller
 {
@@ -21,28 +20,13 @@ class LowonganController extends Controller
     public function index()
     {
         try {
-            $cacheKey = 'lowongan.index';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 180; // 3 minutes
+            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
+                ->where('tanggal_dibuka', '<=', now())
+                ->where('tanggal_ditutup', '>=', now())
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-            $lowongan = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 180);
-                return Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                    ->where('tanggal_dibuka', '<=', now())
-                    ->where('tanggal_ditutup', '>=', now())
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(10);
-            });
-
-            $response = LowonganListResource::collection($lowongan);
-
-            // Add cache info for testing
-            $responseData = $response->response()->getData(true);
-            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
-            $responseData['cache_key'] = $cacheKey;
-
-            return response()->json($responseData);
+            return LowonganListResource::collection($lowongan);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -60,29 +44,14 @@ class LowonganController extends Controller
     public function getMostRecentLowongan()
     {
         try {
-            $cacheKey = 'lowongan.most_recent';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 300; // 5 minutes
+            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
+                ->where('tanggal_dibuka', '<=', now())
+                ->where('tanggal_ditutup', '>=', now())
+                ->orderBy('created_at', 'desc')
+                ->take(1)
+                ->get();
 
-            $lowongan = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 300);
-                return Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                    ->where('tanggal_dibuka', '<=', now())
-                    ->where('tanggal_ditutup', '>=', now())
-                    ->orderBy('created_at', 'desc')
-                    ->take(1)
-                    ->get();
-            });
-
-            $response = LowonganListResource::collection($lowongan);
-
-            // Add timestamp for testing
-            $responseData = $response->response()->getData(true);
-            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
-            $responseData['cache_key'] = $cacheKey;
-
-            return response()->json($responseData);
+            return LowonganListResource::collection($lowongan);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -90,6 +59,7 @@ class LowonganController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+
     }
 
     /**
