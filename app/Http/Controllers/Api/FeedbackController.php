@@ -7,6 +7,7 @@ use App\Models\Feedback;
 use App\Http\Resources\FeedbackResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class FeedbackController extends Controller
 {
@@ -41,6 +42,9 @@ class FeedbackController extends Controller
                 'tingkat_kepuasan' => $request->tingkat_kepuasan, // Tambahkan ini
             ]);
 
+            // Clear feedback list cache when new feedback is added
+            Cache::forget('feedback_list');
+
             return (new FeedbackResource($feedback))
                 ->additional([
                     'status' => 'success',
@@ -57,10 +61,24 @@ class FeedbackController extends Controller
 
     public function index()
     {
-        $feedback = Feedback::with('user:id_user,name,foto_profil,email')
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $cacheKey = 'feedback_list';
 
-        return FeedbackResource::collection($feedback);
+        $result = Cache::flexible($cacheKey, [180, 360], function () { // 3-6 minutes cache
+            $feedback = Feedback::with('user:id_user,name,foto_profil,email')
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            return [
+                'data' => FeedbackResource::collection($feedback),
+                'cached_at' => now()->toISOString(),
+                'cache_key' => 'feedback_list'
+            ];
+        });
+
+        return response()->json([
+            'data' => $result['data'],
+            'cached_at' => $result['cached_at'],
+            'cache_key' => $result['cache_key']
+        ]);
     }
 }

@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { megaMenuCache } from "./MegaMenuStore";
 
 const articles = ref([]);
 const isLoading = ref(true);
@@ -12,13 +11,8 @@ onMounted(() => {
 
 async function fetchArticles() {
     try {
-        if (megaMenuCache.isValid("articles")) {
-            articles.value = megaMenuCache.articles;
-        } else {
-            const response = await axios.get("/api/artikel/most-viewed");
-            articles.value = response.data.data;
-            megaMenuCache.setCache("articles", response.data.data);
-        }
+        const response = await axios.get("/api/artikel/most-viewed");
+        articles.value = response.data.data;
     } catch (error) {
         console.error("Error fetching articles:", error);
     } finally {
@@ -48,7 +42,9 @@ function getImageUrl(image) {
                 :key="i"
                 class="flex gap-3 bg-white rounded-lg shadow p-3 items-center animate-pulse"
             >
-                <div class="w-12 h-12 bg-gray-300 rounded-lg flex-shrink-0"></div>
+                <div
+                    class="w-12 h-12 bg-gray-300 rounded-lg flex-shrink-0"
+                ></div>
                 <div class="flex flex-col gap-2 w-full">
                     <div class="h-4 bg-gray-300 rounded w-3/4"></div>
                     <div class="h-3 bg-gray-200 rounded w-full"></div>
