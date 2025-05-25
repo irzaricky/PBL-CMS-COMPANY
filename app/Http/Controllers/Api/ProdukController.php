@@ -10,7 +10,6 @@ use App\Http\Resources\ProdukResource;
 use App\Http\Resources\Produk\ProdukListResource;
 use App\Http\Resources\Produk\ProdukViewResource;
 use App\Models\KategoriProduk;
-use Illuminate\Support\Facades\Cache;
 
 class ProdukController extends Controller
 {
@@ -23,37 +22,17 @@ class ProdukController extends Controller
     public function index(Request $request)
     {
         try {
-            // Create cache key based on request parameters
-            $categoryId = $request->get('category_id');
-            $page = $request->get('page', 1);
-            $cacheKey = "produk.index.category_{$categoryId}.page_{$page}";
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 300; // 5 minutes
+            $query = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->latest();
 
-            $produk = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($request, $timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 300);
+            // Filter berdasarkan kategori jika ada parameter category_id
+            if ($request->has('category_id')) {
+                $query->where('id_kategori_produk', $request->category_id);
+            }
 
-                $query = Produk::with('kategoriProduk')
-                    ->where('status_produk', ContentStatus::TERPUBLIKASI)
-                    ->latest();
-
-                // Filter berdasarkan kategori jika ada parameter category_id
-                if ($request->has('category_id')) {
-                    $query->where('id_kategori_produk', $request->category_id);
-                }
-
-                return $query->paginate(9);
-            });
-
-            $response = ProdukListResource::collection($produk);
-
-            // Add cache info for testing
-            $responseData = $response->response()->getData(true);
-            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
-            $responseData['cache_key'] = $cacheKey;
-
-            return response()->json($responseData);
+            $produk = $query->paginate(9);
+            return ProdukListResource::collection($produk);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -166,21 +145,10 @@ class ProdukController extends Controller
     public function getCategories()
     {
         try {
-            $cacheKey = 'produk.categories';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 900; // 15 minutes - categories don't change often
-
-            $categories = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 900);
-                return KategoriProduk::get();
-            });
-
+            $categories = KategoriProduk::get();
             return response()->json([
                 'status' => 'success',
-                'data' => $categories,
-                'cached_at' => Cache::get($timestampKey, now()->toISOString()),
-                'cache_key' => $cacheKey
+                'data' => $categories
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -194,18 +162,10 @@ class ProdukController extends Controller
     public function latest()
     {
         try {
-            $cacheKey = 'produk.latest';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 300; // 5 minutes
-
-            $produk = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 300);
-                return Produk::with('kategoriProduk')
-                    ->where('status_produk', ContentStatus::TERPUBLIKASI)
-                    ->latest() // default: order by created_at desc
-                    ->first(); // Ambil satu produk terbaru
-            });
+            $produk = Produk::with('kategoriProduk')
+                ->where('status_produk', ContentStatus::TERPUBLIKASI)
+                ->latest() // default: order by created_at desc
+                ->first(); // Ambil satu produk terbaru
 
             if (!$produk) {
                 return response()->json([
@@ -214,14 +174,7 @@ class ProdukController extends Controller
                 ], 404);
             }
 
-            $response = new ProdukListResource($produk);
-
-            // Add cache info for testing
-            $responseData = $response->response()->getData(true);
-            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
-            $responseData['cache_key'] = $cacheKey;
-
-            return response()->json($responseData);
+            return new ProdukListResource($produk);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Mitra;
 use App\Http\Resources\MitraResource;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class MitraController extends Controller
 {
@@ -18,26 +17,11 @@ class MitraController extends Controller
     public function index()
     {
         try {
-            $cacheKey = 'mitra.index';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 900; // 15 minutes - partners change occasionally
+            $mitra = Mitra::where('status', 'aktif')
+                ->orderBy('nama', 'asc')
+                ->get();
 
-            $mitra = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 900);
-                return Mitra::where('status', 'aktif')
-                    ->orderBy('nama', 'asc')
-                    ->get();
-            });
-
-            $response = MitraResource::collection($mitra);
-
-            // Add cache info for testing
-            $responseData = $response->response()->getData(true);
-            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
-            $responseData['cache_key'] = $cacheKey;
-
-            return response()->json($responseData);
+            return MitraResource::collection($mitra);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

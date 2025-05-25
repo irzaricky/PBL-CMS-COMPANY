@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Unduhan\UnduhanListResource;
 use App\Http\Resources\Unduhan\UnduhanViewResource;
 use App\Http\Resources\Unduhan\UnduhanDownloadResource;
-use Illuminate\Support\Facades\Cache;
 
 class UnduhanController extends Controller
 {
@@ -100,21 +99,10 @@ class UnduhanController extends Controller
     public function getCategories()
     {
         try {
-            $cacheKey = 'unduhan.categories';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 900; // 15 minutes - categories don't change often
-
-            $categories = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 900);
-                return KategoriUnduhan::get();
-            });
-
+            $categories = KategoriUnduhan::get();
             return response()->json([
                 'status' => 'success',
-                'data' => $categories,
-                'cached_at' => Cache::get($timestampKey, now()->toISOString()),
-                'cache_key' => $cacheKey
+                'data' => $categories
             ]);
         } catch (\Exception $e) {
             return response()->json([

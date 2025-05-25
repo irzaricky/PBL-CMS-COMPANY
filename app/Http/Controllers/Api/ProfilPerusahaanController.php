@@ -7,7 +7,6 @@ use App\Models\ProfilPerusahaan;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ProfilPerusahaan\ProfilPerusahaanViewResource;
 use App\Http\Resources\ProfilPerusahaan\ProfilPerusahaanNavbarResource;
-use Illuminate\Support\Facades\Cache;
 
 class ProfilPerusahaanController extends Controller
 {
@@ -21,24 +20,9 @@ class ProfilPerusahaanController extends Controller
     public function index(Request $request)
     {
         try {
-            $cacheKey = 'profil_perusahaan.index';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 1800; // 30 minutes - company profile rarely changes
+            $ProfilPerusahaan = ProfilPerusahaan::query()->firstOrFail();
 
-            $profilPerusahaan = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 1800);
-                return ProfilPerusahaan::query()->firstOrFail();
-            });
-
-            $response = new ProfilPerusahaanViewResource($profilPerusahaan);
-
-            // Add cache info for testing
-            $responseData = $response->response()->getData(true);
-            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
-            $responseData['cache_key'] = $cacheKey;
-
-            return response()->json($responseData);
+            return new ProfilPerusahaanViewResource($ProfilPerusahaan);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -57,24 +41,9 @@ class ProfilPerusahaanController extends Controller
     public function getDataNavbar(Request $request)
     {
         try {
-            $cacheKey = 'profil_perusahaan.navbar';
-            $timestampKey = $cacheKey . '.timestamp';
-            $cacheDuration = 1800; // 30 minutes - navbar data rarely changes
+            $ProfilPerusahaan = ProfilPerusahaan::query()->firstOrFail();
 
-            $profilPerusahaan = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
-                // Store timestamp when cache is created
-                Cache::put($timestampKey, now()->toISOString(), 1800);
-                return ProfilPerusahaan::query()->firstOrFail();
-            });
-
-            $response = new ProfilPerusahaanNavbarResource($profilPerusahaan);
-
-            // Add cache info for testing
-            $responseData = $response->response()->getData(true);
-            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
-            $responseData['cache_key'] = $cacheKey;
-
-            return response()->json($responseData);
+            return new ProfilPerusahaanNavbarResource($ProfilPerusahaan);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
