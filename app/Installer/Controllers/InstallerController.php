@@ -125,15 +125,15 @@ class InstallerController extends Controller
                     }
 
                     // Make sure directory exists
-                    $directory = storage_path('app/public/perusahaan-logo');
+                    $directory = storage_path('app/public/logo-perusahaan');
                     if (!file_exists($directory)) {
                         if (!mkdir($directory, 0755, true)) {
                             throw new \Exception('Could not create logo directory');
                         }
                     }
 
-                    // Store the file in the same directory that Filament uses (perusahaan-logo)
-                    $path = $logo->storeAs('perusahaan-logo', $logoName, 'public');
+                    // Store the file in the same directory that Filament uses (logo-perusahaan)
+                    $path = $logo->storeAs('logo-perusahaan', $logoName, 'public');
 
                     if (!$path) {
                         throw new \Exception('Failed to store logo file');
