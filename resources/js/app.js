@@ -32,6 +32,11 @@ createInertiaApp({
                 "AlarmClock",
                 "Wallet",
                 "ChevronRight",
+                "ChevronDown",
+                "Menu",
+                "School",
+                "LucideChevronLeft",
+                "LucideChevronRight",
             ];
 
             // Dynamically import only the icons that are commonly used
