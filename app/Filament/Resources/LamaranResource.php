@@ -220,5 +220,4 @@ class LamaranResource extends Resource
 
         return (string) 'Sedang Diproses';
     }
-
 }

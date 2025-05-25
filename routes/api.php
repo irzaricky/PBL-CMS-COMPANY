@@ -26,7 +26,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // Post feedback (AUTENTIKASI BELUM DITAMBAHKAN)
-Route::post('/feedback', [FeedbackController::class, 'store']);
+
+Route::prefix('feedback')->group(function () {
+
+    Route::get('/', [FeedbackController::class, 'index']);
+
+    Route::post('/', [FeedbackController::class, 'store']);
+
+});
 
 // Lamaran routes (AUTENTIKASI BELUM DITAMBAHKAN)
 Route::post('/lamaran', [LamaranController::class, 'store']);
@@ -66,6 +73,9 @@ Route::prefix('event')->group(function () {
 
     // untuk mengambil event yang baru saja dibuat
     Route::get('/newest', [EventController::class, 'getMostRecentEvent']);
+
+    // untuk mengambil event terbaru untuk navbar
+    Route::get('/navbar', [EventController::class, 'getNavbarRecentEvent']);
 
     // untuk search event berdasarkan nama atau lokasi
     Route::get('/search', [EventController::class, 'search']);
