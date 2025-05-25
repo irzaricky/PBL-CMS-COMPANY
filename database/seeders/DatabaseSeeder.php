@@ -65,6 +65,9 @@ class DatabaseSeeder extends Seeder
      */
     private function runEssentialSeeders(): void
     {
+        // Create necessary storage directories for Filament resources
+        $this->createStorageDirectories();
+
         // Check and run ShieldSeeder if no roles exist
         if (
             class_exists('Spatie\Permission\Models\Role') &&
@@ -87,5 +90,37 @@ class DatabaseSeeder extends Seeder
         if (\App\Models\FeatureToggle::count() === 0) {
             $this->call(FeatureToggleSeeder::class);
         }
+    }
+
+    /**
+     * Create storage directories for Filament resources
+     */
+    private function createStorageDirectories(): void
+    {
+        $directories = [
+            'profile-photos',
+            'artikel-thumbnails',
+            'case-study-thumbnails',
+            'event-thumbnails',
+            'galeri-thumbnails',
+            'lamaran-cv',
+            'lamaran-portfolio',
+            'lowongan-images',
+            'media-social-icons',
+            'mitra-logos',
+            'mitra-dokumen/siup',
+            'mitra-dokumen/npwp',
+            'produk-thumbnails',
+            'logo-perusahaan',
+            'perusahaan-images',
+            'testimoni-images',
+            'unduhan-files',
+        ];
+
+        foreach ($directories as $directory) {
+            Storage::disk('public')->makeDirectory($directory);
+        }
+
+        $this->command->info('Storage directories created successfully.');
     }
 }
