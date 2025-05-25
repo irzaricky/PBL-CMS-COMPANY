@@ -9,6 +9,7 @@ use App\Models\KategoriArtikel;
 use App\Http\Resources\Articles\ArticleListResource;
 use App\Http\Resources\Articles\ArticleViewResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class ArtikelController extends Controller
 {
@@ -21,18 +22,37 @@ class ArtikelController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Artikel::with(['kategoriArtikel', 'user'])
-                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
-                ->orderBy('created_at', 'desc');
+            // Create cache key based on request parameters
+            $categoryId = $request->get('category_id');
+            $page = $request->get('page', 1);
+            $cacheKey = "articles.index.category_{$categoryId}.page_{$page}";
+            $timestampKey = $cacheKey . '.timestamp';
+            $cacheDuration = 180; // 3 minutes
 
-            // Filter berdasarkan kategori jika ada parameter category_id
-            if ($request->has('category_id')) {
-                $query->where('id_kategori_artikel', $request->category_id);
-            }
+            $articles = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($request, $timestampKey) {
+                // Store timestamp when cache is created
+                Cache::put($timestampKey, now()->toISOString(), 180);
 
-            $articles = $query->paginate(10);
+                $query = Artikel::with(['kategoriArtikel', 'user'])
+                    ->where('status_artikel', ContentStatus::TERPUBLIKASI)
+                    ->orderBy('created_at', 'desc');
 
-            return ArticleListResource::collection($articles);
+                // Filter berdasarkan kategori jika ada parameter category_id
+                if ($request->has('category_id')) {
+                    $query->where('id_kategori_artikel', $request->category_id);
+                }
+
+                return $query->paginate(10);
+            });
+
+            $response = ArticleListResource::collection($articles);
+
+            // Add cache info for testing
+            $responseData = $response->response()->getData(true);
+            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
+            $responseData['cache_key'] = $cacheKey;
+
+            return response()->json($responseData);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -98,10 +118,21 @@ class ArtikelController extends Controller
     public function getCategories()
     {
         try {
-            $categories = KategoriArtikel::get();
+            $cacheKey = 'artikel.categories';
+            $timestampKey = $cacheKey . '.timestamp';
+            $cacheDuration = 600; // 10 minutes - categories don't change often
+
+            $categories = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
+                // Store timestamp when cache is created
+                Cache::put($timestampKey, now()->toISOString(), 600);
+                return KategoriArtikel::get();
+            });
+
             return response()->json([
                 'status' => 'success',
-                'data' => $categories
+                'data' => $categories,
+                'cached_at' => Cache::get($timestampKey, now()->toISOString()),
+                'cache_key' => $cacheKey
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -173,13 +204,28 @@ class ArtikelController extends Controller
     public function getArticleByMostView()
     {
         try {
-            $articles = Artikel::with(['kategoriArtikel', 'user'])
-                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
-                ->orderBy('jumlah_view', 'desc')
-                ->take(1)
-                ->get();
+            $cacheKey = 'articles.most_viewed';
+            $timestampKey = $cacheKey . '.timestamp';
+            $cacheDuration = 1800; // 30 minutes - views change slowly, can cache longer
 
-            return ArticleListResource::collection($articles);
+            $articles = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
+                // Store timestamp when cache is created
+                Cache::put($timestampKey, now()->toISOString(), 1800);
+                return Artikel::with(['kategoriArtikel', 'user'])
+                    ->where('status_artikel', ContentStatus::TERPUBLIKASI)
+                    ->orderBy('jumlah_view', 'desc')
+                    ->take(1)
+                    ->get();
+            });
+
+            $response = ArticleListResource::collection($articles);
+
+            // Add timestamp for testing
+            $responseData = $response->response()->getData(true);
+            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
+            $responseData['cache_key'] = $cacheKey;
+
+            return response()->json($responseData);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -191,13 +237,28 @@ class ArtikelController extends Controller
     public function getFeaturedArticles()
     {
         try {
-            $articles = Artikel::with(['kategoriArtikel', 'user'])
-                ->where('status_artikel', ContentStatus::TERPUBLIKASI)
-                ->orderBy('jumlah_view', 'desc')
-                ->take(4)
-                ->get();
+            $cacheKey = 'articles.featured';
+            $timestampKey = $cacheKey . '.timestamp';
+            $cacheDuration = 900; // 15 minutes - featured articles based on views, can cache moderately
 
-            return ArticleListResource::collection($articles);
+            $articles = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
+                // Store timestamp when cache is created
+                Cache::put($timestampKey, now()->toISOString(), 900);
+                return Artikel::with(['kategoriArtikel', 'user'])
+                    ->where('status_artikel', ContentStatus::TERPUBLIKASI)
+                    ->orderBy('jumlah_view', 'desc')
+                    ->take(4)
+                    ->get();
+            });
+
+            $response = ArticleListResource::collection($articles);
+
+            // Add cache info for testing
+            $responseData = $response->response()->getData(true);
+            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
+            $responseData['cache_key'] = $cacheKey;
+
+            return response()->json($responseData);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
