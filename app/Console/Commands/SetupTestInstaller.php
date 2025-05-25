@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 
 class SetupTestInstaller extends Command
 {
@@ -13,14 +14,14 @@ class SetupTestInstaller extends Command
      *
      * @var string
      */
-    protected $signature = 'test:setup-test-installer';
+    protected $signature = 'cms:install';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Setup test installation by running series of commands';
+    protected $description = 'Setup installation by running series of commands';
 
     /**
      * Execute the console command.
@@ -58,15 +59,45 @@ class SetupTestInstaller extends Command
         $this->info('Step 6: Creating storage link...');
         $this->executeArtisanCommand('storage:link');
 
-        // 7. Run specific migration
-        $this->info('Step 7: Running users table migration...');
+        // 7. Clean up public storage
+        $this->info('Step 7: Cleaning up public storage...');
+        $this->cleanupPublicStorage();
+
+        // 8. Run specific migration
+        $this->info('Step 8: Running users table migration...');
         $this->executeArtisanCommand('migrate --path=database/migrations/0001_01_01_000000_create_users_table.php');
 
-        // 8. Set proper permissions for Ubuntu environments
-        $this->info('Step 8: Setting proper permissions for Ubuntu...');
+        // 9. Set proper permissions for Ubuntu environments
+        $this->info('Step 9: Setting proper permissions for Ubuntu...');
         $this->setUbuntuPermissions();
 
         $this->info('Installation setup completed successfully!');
+    }
+
+    /**
+     * Clean up public storage by removing all files except .gitignore
+     * and all directories
+     *
+     * @return void
+     */
+    protected function cleanupPublicStorage()
+    {
+        $files = Storage::disk('public')->allFiles();
+        $directories = Storage::disk('public')->allDirectories();
+
+        // Hapus semua file kecuali .gitignore
+        foreach ($files as $file) {
+            if (basename($file) !== '.gitignore') {
+                Storage::disk('public')->delete($file);
+            }
+        }
+
+        // Hapus semua folder mulai dari yang terdalam
+        foreach (array_reverse($directories) as $directory) {
+            Storage::disk('public')->deleteDirectory($directory);
+        }
+
+        $this->info('Public storage cleaned up successfully.');
     }
 
     /**
