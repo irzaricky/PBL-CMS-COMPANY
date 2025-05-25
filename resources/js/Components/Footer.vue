@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { computed } from "vue";
 import { Link } from "@inertiajs/vue3";
+import { Phone, Mail, MapPin } from "lucide-vue-next";
 
 const profil_perusahaan = ref(null);
 const loading = ref(false);

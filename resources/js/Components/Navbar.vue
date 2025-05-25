@@ -1,5 +1,5 @@
 <script setup>
-import { ChevronDown, Menu } from "lucide-vue-next";
+import { ChevronDown, Menu, UserCog } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import UserMenu from "./MegaMenu/UserMenu.vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";

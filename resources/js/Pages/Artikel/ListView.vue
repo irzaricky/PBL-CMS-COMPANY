@@ -298,7 +298,7 @@ function goToPage(page) {
                             <a :href="`/artikel/${post.slug}`"
                                 class="inline-flex items-center gap-2 font-medium hover:underline">
                                 Baca selengkapnya
-                                <LucideChevronRight class="w-6 h-6" />
+                                <ChevronRight class="w-6 h-6" />
                             </a>
                             <div class="flex items-center gap-4 mt-2">
                                 <img class="w-12 h-12 rounded-full object-cover"
