@@ -12,20 +12,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $files = Storage::disk('public')->allFiles();
-        $directories = Storage::disk('public')->allDirectories();
+        // $files = Storage::disk('public')->allFiles();
+        // $directories = Storage::disk('public')->allDirectories();
 
-        // Hapus semua file kecuali .gitignore
-        foreach ($files as $file) {
-            if (basename($file) !== '.gitignore') {
-                Storage::disk('public')->delete($file);
-            }
-        }
+        // // Hapus semua file kecuali .gitignore
+        // foreach ($files as $file) {
+        //     if (basename($file) !== '.gitignore') {
+        //         Storage::disk('public')->delete($file);
+        //     }
+        // }
 
-        // Hapus semua folder mulai dari yang terdalam
-        foreach (array_reverse($directories) as $directory) {
-            Storage::disk('public')->deleteDirectory($directory);
-        }
+        // // Hapus semua folder mulai dari yang terdalam
+        // foreach (array_reverse($directories) as $directory) {
+        //     Storage::disk('public')->deleteDirectory($directory);
+        // }
 
         // Essential seeders - check if data already exists
         $this->runEssentialSeeders();

@@ -11,6 +11,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Installer\Main\DatabaseManager;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use App\Installer\Main\InstalledManager;
 use Illuminate\Support\Facades\Validator;
 use App\Installer\Main\PermissionsChecker;
@@ -69,9 +70,9 @@ class InstallerController extends Controller
                     ->withErrors(['database_connection' => 'Database setup failed. Please check your database configuration.']);
             }
 
-            Log::info('Database migration and essential seeding completed', [
-                'result' => $migrationResult[1]
-            ]);
+            // Log::info('Database migration and essential seeding completed', [
+            //     'result' => $migrationResult[1]
+            // ]);
 
             return view('InstallerEragViews::profil-perusahaan');
         } catch (\Exception $e) {
@@ -86,15 +87,15 @@ class InstallerController extends Controller
         $rules = config('install.profil_perusahaan');
 
         // Debug information
-        Log::info('Form submission received', [
-            'has_file' => $request->hasFile('logo_perusahaan'),
-            'all_inputs' => $request->all(),
-        ]);
+        // Log::info('Form submission received', [
+        //     'has_file' => $request->hasFile('logo_perusahaan'),
+        //     'all_inputs' => $request->all(),
+        // ]);
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            Log::warning('Validation failed', ['errors' => $validator->errors()]);
+            // Log::warning('Validation failed', ['errors' => $validator->errors()]);
             return $redirect->route('profil_perusahaan')->withInput()->withErrors($validator->errors());
         }
 
@@ -112,28 +113,18 @@ class InstallerController extends Controller
 
                 // Validate the file
                 if ($logo->isValid()) {
-                    $logoName = time() . '.' . $logo->getClientOriginalExtension();
-
                     // Delete old logo file if exists
                     if ($profilPerusahaan && $profilPerusahaan->logo_perusahaan) {
-                        $oldPath = storage_path('app/public/' . $profilPerusahaan->logo_perusahaan);
-                        if (file_exists($oldPath)) {
-                            if (!unlink($oldPath)) {
-                                Log::warning('Could not delete old logo file: ' . $oldPath);
-                            }
-                        }
+                        Storage::disk('public')->delete($profilPerusahaan->logo_perusahaan);
                     }
 
-                    // Make sure directory exists
-                    $directory = storage_path('app/public/logo-perusahaan');
-                    if (!file_exists($directory)) {
-                        if (!mkdir($directory, 0755, true)) {
-                            throw new \Exception('Could not create logo directory');
-                        }
-                    }
+                    // Check if directory exists and is writable
+                    $storageDir = storage_path('app/public/logo-perusahaan');
 
-                    // Store the file in the same directory that Filament uses (logo-perusahaan)
-                    $path = $logo->storeAs('logo-perusahaan', $logoName, 'public');
+
+                    // Store the file with auto-generated name
+                    $path = Storage::disk('public')->putFile('logo-perusahaan', $logo);
+
 
                     if (!$path) {
                         throw new \Exception('Failed to store logo file');
@@ -142,7 +133,7 @@ class InstallerController extends Controller
                     $data['logo_perusahaan'] = $path;
                 } else {
                     // Log error for debugging
-                    Log::error('Logo upload failed: ' . $logo->getErrorMessage());
+                    // Log::error('Logo upload failed: ' . $logo->getErrorMessage());
                     return $redirect->route('profil_perusahaan')
                         ->withInput()
                         ->withErrors(['logo_perusahaan' => 'File upload failed. Please try again.']);
@@ -159,7 +150,7 @@ class InstallerController extends Controller
             }
 
             DB::commit();
-            Log::info('Company profile saved successfully');
+            // Log::info('Company profile saved successfully');
 
             // Redirect to super admin configuration instead of feature toggles
             return redirect(route('super_admin_config'))
@@ -167,7 +158,7 @@ class InstallerController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error saving company profile: ' . $e->getMessage());
+            // Log::error('Error saving company profile: ' . $e->getMessage());
             return $redirect->route('profil_perusahaan')
                 ->withInput()
                 ->withErrors(['general_error' => 'Gagal menyimpan profil perusahaan: ' . $e->getMessage()]);
@@ -186,7 +177,7 @@ class InstallerController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            Log::warning('Validation failed', ['errors' => $validator->errors()]);
+            // Log::warning('Validation failed', ['errors' => $validator->errors()]);
             return $redirect->route('super_admin_config')->withInput()->withErrors($validator->errors());
         }
 
@@ -205,12 +196,12 @@ class InstallerController extends Controller
                         ->withErrors(['general_error' => 'Database seeding failed. Please check your database configuration.']);
                 }
 
-                Log::info('Database dummy data seeding completed', [
-                    'result' => $seedingResult[1]
-                ]);
+                // Log::info('Database dummy data seeding completed', [
+                //     'result' => $seedingResult[1]
+                // ]);
 
             } catch (\Exception $e) {
-                Log::error('Error during dummy data seeding: ' . $e->getMessage());
+                // Log::error('Error during dummy data seeding: ' . $e->getMessage());
                 return $redirect->route('super_admin_config')
                     ->withInput()
                     ->withErrors(['general_error' => 'Database seeding failed: ' . $e->getMessage()]);
@@ -248,14 +239,14 @@ class InstallerController extends Controller
                     }
 
                     DB::commit();
-                    Log::info('Super admin role assigned to existing user: ' . $existingUser->email);
+                    // Log::info('Super admin role assigned to existing user: ' . $existingUser->email);
 
                     return $redirect->route('user_roles_list')
                         ->with('account_exists', 'User dengan email ' . $request->email . ' sudah ada. Role Super Admin telah diberikan pada akun tersebut.');
 
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    Log::error('Error assigning super admin role: ' . $e->getMessage());
+                    // Log::error('Error assigning super admin role: ' . $e->getMessage());
                     return $redirect->route('super_admin_config')
                         ->withInput()
                         ->withErrors(['general_error' => 'Gagal memberikan role Super Admin: ' . $e->getMessage()]);
@@ -285,11 +276,11 @@ class InstallerController extends Controller
                     throw new \Exception('Failed to assign super admin role');
                 }
             } else {
-                Log::warning('Spatie Permission package not found, role assignment skipped');
+                // Log::warning('Spatie Permission package not found, role assignment skipped');
             }
 
             DB::commit();
-            Log::info('Super admin created successfully: ' . $user->email);
+            // Log::info('Super admin created successfully: ' . $user->email);
 
             // Arahkan ke halaman daftar user dengan role
             return redirect(route('user_roles_list'))
@@ -297,7 +288,7 @@ class InstallerController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error creating super admin: ' . $e->getMessage());
+            // Log::error('Error creating super admin: ' . $e->getMessage());
             return $redirect->route('super_admin_config')
                 ->withInput()
                 ->withErrors(['general_error' => 'Failed to create super admin: ' . $e->getMessage()]);
@@ -361,13 +352,13 @@ class InstallerController extends Controller
                 }
 
                 DB::commit();
-                Log::info('Default feature toggles created successfully');
+                // Log::info('Default feature toggles created successfully');
 
                 $features = \App\Models\FeatureToggle::all();
 
             } catch (\Exception $e) {
                 DB::rollBack();
-                Log::error('Error creating default feature toggles: ' . $e->getMessage());
+                // Log::error('Error creating default feature toggles: ' . $e->getMessage());
                 // Continue with empty features - user can create them manually
             }
         }
@@ -383,7 +374,7 @@ class InstallerController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            Log::warning('Feature toggle validation failed', ['errors' => $validator->errors()]);
+            // Log::warning('Feature toggle validation failed', ['errors' => $validator->errors()]);
             return $redirect->route('feature_toggles')->withInput()->withErrors($validator->errors());
         }
 
@@ -403,14 +394,14 @@ class InstallerController extends Controller
             }
 
             DB::commit();
-            Log::info('Feature toggles updated successfully');
+            // Log::info('Feature toggles updated successfully');
 
             return redirect(route('finish'))
                 ->with('success', 'Feature toggles berhasil disimpan.');
 
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Error updating feature toggles: ' . $e->getMessage());
+            // Log::error('Error updating feature toggles: ' . $e->getMessage());
             return $redirect->route('feature_toggles')
                 ->withInput()
                 ->withErrors(['general_error' => 'Gagal menyimpan feature toggles: ' . $e->getMessage()]);
@@ -430,7 +421,7 @@ class InstallerController extends Controller
             $installResult = InstalledManager::create();
 
             if (!$installResult) {
-                Log::error('Failed to create installation marker');
+                // Log::error('Failed to create installation marker');
                 return redirect()->route('finish')
                     ->with('error', 'Installation could not be completed. Please try again.');
             }
@@ -441,7 +432,7 @@ class InstallerController extends Controller
                 $envContent = file_get_contents($envPath);
 
                 if ($envContent === false) {
-                    Log::error('Could not read .env file');
+                    // Log::error('Could not read .env file');
                     return redirect()->route('finish')
                         ->with('error', 'Could not update installation status. Please check file permissions.');
                 }
@@ -454,22 +445,22 @@ class InstallerController extends Controller
                 }
 
                 if (file_put_contents($envPath, $envContent) === false) {
-                    Log::error('Could not write to .env file');
+                    // Log::error('Could not write to .env file');
                     return redirect()->route('finish')
                         ->with('error', 'Could not update installation status. Please check file permissions.');
                 }
             } else {
-                Log::error('.env file does not exist');
+                // Log::error('.env file does not exist');
                 return redirect()->route('finish')
                     ->with('error', '.env file not found. Installation may be incomplete.');
             }
 
-            Log::info('Installation completed successfully');
+            // Log::info('Installation completed successfully');
             return redirect(URL::to('/'))
                 ->with('success', 'Installation completed successfully!');
 
         } catch (\Exception $e) {
-            Log::error('Error during installation finalization: ' . $e->getMessage());
+            // Log::error('Error during installation finalization: ' . $e->getMessage());
             return redirect()->route('finish')
                 ->with('error', 'Installation failed: ' . $e->getMessage());
         }

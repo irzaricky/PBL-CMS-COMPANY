@@ -36,7 +36,7 @@ class CheckDatabaseConnectionMiddleware
 
         if (in_array($request->route()->getName(), $routesRequiringDatabase)) {
             if (!$this->checkDatabaseConnection()) {
-                Log::error('Database connection not configured properly. Redirecting to database setup.');
+                // Log::error('Database connection not configured properly. Redirecting to database setup.');
 
                 // Flash a message to the session
                 session()->flash('database_error', 'Database connection is not configured properly. Please complete the database configuration first.');
@@ -57,7 +57,7 @@ class CheckDatabaseConnectionMiddleware
         try {
             // Check if we have a .env file with DB credentials
             if (!file_exists(base_path('.env'))) {
-                Log::error('Middleware: .env file does not exist');
+                // Log::error('Middleware: .env file does not exist');
                 return false;
             }
 
@@ -69,17 +69,17 @@ class CheckDatabaseConnectionMiddleware
                 $permissionsCheck = ConnectionSupervisor::checkPermissions();
 
                 if (!$permissionsCheck['success']) {
-                    Log::error('Middleware: Database permission check failed: ' . implode(', ', $permissionsCheck['messages']));
+                    // Log::error('Middleware: Database permission check failed: ' . implode(', ', $permissionsCheck['messages']));
                     return false;
                 }
 
-                Log::info('Middleware: Database connection and permissions verified successfully');
+                // Log::info('Middleware: Database connection and permissions verified successfully');
                 return true;
             }
 
             return false;
         } catch (Exception $e) {
-            Log::error('Middleware: Database connection test failed: ' . $e->getMessage());
+            // Log::error('Middleware: Database connection test failed: ' . $e->getMessage());
             return false;
         }
     }

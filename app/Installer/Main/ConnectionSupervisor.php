@@ -20,7 +20,7 @@ class ConnectionSupervisor
             // Check if we can connect to the database
             $pdo = DB::connection()->getPdo();
             if (!$pdo) {
-                Log::error('ConnectionSupervisor: PDO connection failed');
+                // Log::error('ConnectionSupervisor: PDO connection failed');
                 return false;
             }
 
@@ -28,7 +28,7 @@ class ConnectionSupervisor
             $result = DB::select('SELECT 1 as connection_test');
 
             if (!$result || !isset($result[0]->connection_test) || $result[0]->connection_test !== 1) {
-                Log::error('ConnectionSupervisor: Test query failed');
+                // Log::error('ConnectionSupervisor: Test query failed');
                 return false;
             }
 
@@ -36,20 +36,20 @@ class ConnectionSupervisor
             if (DB::connection()->getDriverName() === 'mysql') {
                 try {
                     $version = DB::select('SELECT VERSION() as version')[0]->version;
-                    Log::info("ConnectionSupervisor: Database version: {$version}");
+                    // Log::info("ConnectionSupervisor: Database version: {$version}");
                 } catch (Exception $e) {
-                    Log::warning("ConnectionSupervisor: Failed to get database version: {$e->getMessage()}");
+                    // Log::warning("ConnectionSupervisor: Failed to get database version: {$e->getMessage()}");
                     // Continue even if this fails
                 }
             }
 
-            Log::info('ConnectionSupervisor: Database connection verification successful');
+            // Log::info('ConnectionSupervisor: Database connection verification successful');
             return true;
         } catch (PDOException $e) {
-            Log::error('ConnectionSupervisor: PDO Exception: ' . $e->getMessage());
+            // Log::error('ConnectionSupervisor: PDO Exception: ' . $e->getMessage());
             return false;
         } catch (Exception $e) {
-            Log::error('ConnectionSupervisor: General Exception: ' . $e->getMessage());
+            // Log::error('ConnectionSupervisor: General Exception: ' . $e->getMessage());
             return false;
         }
     }    /**

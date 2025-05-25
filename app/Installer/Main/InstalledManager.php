@@ -2,6 +2,8 @@
 
 namespace App\Installer\Main;
 
+use Illuminate\Support\Facades\Log;
+
 class InstalledManager
 {
     /**
@@ -24,15 +26,15 @@ class InstalledManager
             $result = file_put_contents($installedLogFile, $message . ' ' . $dateStamp . PHP_EOL, FILE_APPEND | LOCK_EX);
 
             if ($result === false) {
-                \Illuminate\Support\Facades\Log::error('Failed to create installation marker file');
+                //Log::error('Failed to create installation marker file');
                 return false;
             }
 
-            \Illuminate\Support\Facades\Log::info('Installation marker created successfully');
+            // Log::info('Installation marker created successfully');
             return true;
 
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Exception creating installation marker: ' . $e->getMessage());
+            // Log::error('Exception creating installation marker: ' . $e->getMessage());
             return false;
         }
     }

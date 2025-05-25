@@ -31,8 +31,8 @@ class EnvironmentManager
         $process = Process::run($command);
 
         if (!$process->successful()) {
-            Log::error("Command failed: {$command}");
-            Log::error($process->errorOutput());
+            // Log::error("Command failed: {$command}");
+            // Log::error($process->errorOutput());
             throw new Exception("Command failed: {$command}");
         }
     }
@@ -125,7 +125,7 @@ class EnvironmentManager
             }
 
         } catch (Exception $e) {
-            Log::error('Error writing .env file: ' . $e->getMessage());
+            // Log::error('Error writing .env file: ' . $e->getMessage());
             $results = 'Installer Errors: ' . $e->getMessage();
             throw $e; // Re-throw to be caught by the controller
         }

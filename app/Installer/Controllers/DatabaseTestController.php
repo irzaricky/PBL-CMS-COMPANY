@@ -37,7 +37,7 @@ class DatabaseTestController extends Controller
                     touch($database);
                     chmod($database, 0644);
                 } catch (Exception $e) {
-                    Log::error('Error creating SQLite database file: ' . $e->getMessage());
+                    // Log::error('Error creating SQLite database file: ' . $e->getMessage());
                     return response()->json([
                         'success' => false,
                         'message' => 'Could not create SQLite database file: ' . $e->getMessage()
@@ -45,10 +45,10 @@ class DatabaseTestController extends Controller
                 }
             }
 
-            Log::info('Testing SQLite database connection', [
-                'connection' => $connection,
-                'database' => $database
-            ]);
+            // Log::info('Testing SQLite database connection', [
+            //     'connection' => $connection,
+            //     'database' => $database
+            // ]);
 
             // Configure SQLite connection
             config([
@@ -72,13 +72,13 @@ class DatabaseTestController extends Controller
             $username = $request->input('database_username', '');
             $password = $request->input('database_password', '');
 
-            Log::info('Testing MySQL database connection', [
-                'connection' => $connection,
-                'host' => $host,
-                'port' => $port,
-                'database' => $database,
-                'username' => $username
-            ]);
+            // Log::info('Testing MySQL database connection', [
+            //     'connection' => $connection,
+            //     'host' => $host,
+            //     'port' => $port,
+            //     'database' => $database,
+            //     'username' => $username
+            // ]);
 
             // Configure MySQL connection
             config([
@@ -111,14 +111,14 @@ class DatabaseTestController extends Controller
             // Try to run a simple query
             DB::connection('testing')->select('SELECT 1 as connection_test');
 
-            Log::info('Database connection test successful');
+            // Log::info('Database connection test successful');
 
             return response()->json([
                 'success' => true,
                 'message' => 'Database connection successful!',
             ]);
         } catch (Exception $e) {
-            Log::error('Database connection test failed: ' . $e->getMessage());
+            // Log::error('Database connection test failed: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,

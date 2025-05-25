@@ -215,13 +215,13 @@ class DatabaseController extends Controller
 
                         // Try to delete the file with proper error handling
                         if (!unlink($tempDbPath)) {
-                            Log::warning('Could not remove temporary database file: ' . $tempDbPath);
+                            // Log::warning('Could not remove temporary database file: ' . $tempDbPath);
                         } else {
-                            Log::info('Removed temporary database file: ' . $tempDbPath);
+                            // Log::info('Removed temporary database file: ' . $tempDbPath);
                         }
                     } catch (\Exception $e) {
                         // Log file deletion failure but continue with the process
-                        Log::warning('Could not remove temporary database file: ' . $e->getMessage());
+                        // Log::warning('Could not remove temporary database file: ' . $e->getMessage());
                         // Continue execution even if we can't delete the file
                     }
                 }
@@ -312,7 +312,7 @@ class DatabaseController extends Controller
                 config(['database.default' => $currentConnection]);
             } catch (Exception $e) {
                 // Log cleanup errors but don't fail the process
-                Log::warning('Error cleaning up temporary database connection: ' . $e->getMessage());
+                // Log::warning('Error cleaning up temporary database connection: ' . $e->getMessage());
             }
         }
 
