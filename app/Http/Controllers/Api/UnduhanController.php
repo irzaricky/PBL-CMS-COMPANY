@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\ContentStatus;
 use App\Models\Unduhan;
-use App\Models\KategoriUnduhan;
+use App\Enums\ContentStatus;
 use Illuminate\Http\Request;
+use App\Models\KategoriUnduhan;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\Unduhan\UnduhanListResource;
 use App\Http\Resources\Unduhan\UnduhanViewResource;
 use App\Http\Resources\Unduhan\UnduhanDownloadResource;
@@ -195,16 +196,23 @@ class UnduhanController extends Controller
      * @param int $id
      * @return \App\Http\Resources\Unduhan\UnduhanDownloadResource|\Illuminate\Http\JsonResponse
      */
+
     public function downloadUnduhan($id)
     {
         try {
             $unduhan = Unduhan::where('status_unduhan', ContentStatus::TERPUBLIKASI)
                 ->findOrFail($id);
 
-            // Increment the download counter
             $unduhan->increment('jumlah_unduhan');
 
-            return new UnduhanDownloadResource($unduhan);
+            $filePath = $unduhan->lokasi_file; // misal 'unduhan-files/namafile.pdf'
+
+            if (!Storage::disk('public')->exists($filePath)) {
+                return response()->json(['message' => 'File tidak ditemukan.'], 404);
+            }
+
+            // Mengirim file sebagai response download
+            return Storage::disk('public')->download($filePath, $unduhan->nama_unduhan . '.' . pathinfo($filePath, PATHINFO_EXTENSION));
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

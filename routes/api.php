@@ -74,6 +74,9 @@ Route::prefix('event')->group(function () {
     // untuk mengambil event yang baru saja dibuat
     Route::get('/newest', [EventController::class, 'getMostRecentEvent']);
 
+    // untuk mengambil event terbaru untuk navbar
+    Route::get('/navbar', [EventController::class, 'getNavbarRecentEvent']);
+
     // untuk search event berdasarkan nama atau lokasi
     Route::get('/search', [EventController::class, 'search']);
 
