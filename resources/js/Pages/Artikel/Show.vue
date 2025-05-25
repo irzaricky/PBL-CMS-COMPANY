@@ -108,13 +108,15 @@ function formatDate(date) {
                                         Artikel
                                         </Link>
                                     </li>
-                                    <li class="flex items-center">
-                                        <ChevronRight class="w-4 h-4 text-gray-400" />
-                                        <span class="ml-1 text-gray-500 font-medium truncate max-w-[200px]"
+                                    <li class="flex items-center min-w-0">
+                                        <ChevronRight class="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                        <span
+                                            class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
                                             :title="article?.judul_artikel">
                                             {{ article?.judul_artikel || "Loading..." }}
                                         </span>
                                     </li>
+
                                 </ol>
                             </nav>
                         </div>
@@ -190,7 +192,7 @@ function formatDate(date) {
                                 </h3>
                                 <p class="text-xs text-gray-500">
                                     {{ Math.ceil(item.konten_artikel.replace(/<[^>]*>/g, '').split(/\s+/).length / 200)
-                                    }} min read
+                                        }} min read
                                 </p>
                             </div>
                         </div>

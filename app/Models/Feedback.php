@@ -31,6 +31,7 @@ class Feedback extends Model
     protected $fillable = [
         'id_user',
         'subjek_feedback',
+        'tingkat_kepuasan',
         'isi_feedback',
         'tanggapan_feedback',
     ];

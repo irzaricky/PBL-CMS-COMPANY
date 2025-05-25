@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Events\EventListResource;
 use App\Http\Resources\Events\EventViewResource;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class EventController extends Controller
 {
@@ -19,11 +20,26 @@ class EventController extends Controller
     public function index()
     {
         try {
-            $events = Event::where('waktu_start_event', '>', Carbon::now())
-                ->orderBy('waktu_start_event', 'asc')
-                ->paginate(10);
+            $cacheKey = 'events.index';
+            $timestampKey = $cacheKey . '.timestamp';
+            $cacheDuration = 180; // 3 minutes
 
-            return EventListResource::collection($events);
+            $events = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
+                // Store timestamp when cache is created
+                Cache::put($timestampKey, now()->toISOString(), 180);
+                return Event::where('waktu_start_event', '>', Carbon::now())
+                    ->orderBy('waktu_start_event', 'asc')
+                    ->paginate(10);
+            });
+
+            $response = EventListResource::collection($events);
+
+            // Add cache info for testing
+            $responseData = $response->response()->getData(true);
+            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
+            $responseData['cache_key'] = $cacheKey;
+
+            return response()->json($responseData);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -54,7 +70,7 @@ class EventController extends Controller
         }
     }
 
-    /**
+    /** 
      * Mengambil daftar event berdasarkan id
      * 
      * @param int $id
@@ -77,17 +93,44 @@ class EventController extends Controller
     /**
      * Mengambil event terbaru
      * 
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \App\Http\Resources\Events\EventListResource|\Illuminate\Http\JsonResponse
      */
     public function getMostRecentEvent()
     {
         try {
-            $event = Event::orderBy('waktu_start_event', 'desc')
-                ->take(1)
-                ->get();
+            $event = Event::orderBy('waktu_start_event', 'desc')->first();
 
-            return EventListResource::collection($event);
+            return new EventListResource($event);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Event',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
+    public function getNavbarRecentEvent()
+    {
+        try {
+            $cacheKey = 'event.navbar_recent';
+            $timestampKey = $cacheKey . '.timestamp';
+            $cacheDuration = 300; // 5 minutes
+
+            $event = Cache::flexible($cacheKey, [$cacheDuration, $cacheDuration * 2], function () use ($timestampKey) {
+                // Store timestamp when cache is created
+                Cache::put($timestampKey, now()->toISOString(), 300);
+                return Event::orderBy('waktu_start_event', 'desc')->first();
+            });
+
+            $response = new EventListResource($event);
+
+            // Add timestamp for testing
+            $responseData = $response->response()->getData(true);
+            $responseData['cached_at'] = Cache::get($timestampKey, now()->toISOString());
+            $responseData['cache_key'] = $cacheKey;
+
+            return response()->json($responseData);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

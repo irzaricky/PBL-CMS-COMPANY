@@ -6,14 +6,15 @@ import { ref, onMounted, onUnmounted, computed } from "vue";
 import axios from "axios";
 import { Link, usePage } from "@inertiajs/vue3";
 
-
-// Reactive variables
 const profil_perusahaan = ref(null);
 const showMegaMenu = ref(false);
-const showUserMenu = ref(false)
+const showUserMenu = ref(false);
 const isMobileMenuOpen = ref(false);
 const loading = ref(false);
 const error = ref(null);
+const isMobile = ref(false);
+const featureToggles = ref({}); 
+
 const greeting = computed(() => {
     const hour = new Date().getHours();
     if (hour >= 5 && hour < 12) return 'Selamat pagi';
@@ -21,7 +22,6 @@ const greeting = computed(() => {
     if (hour >= 17 && hour < 21) return 'Selamat sore';
     return 'Selamat malam';
 });
-
 
 const toggleMegaMenu = () => {
     showMegaMenu.value = !showMegaMenu.value;
@@ -31,28 +31,15 @@ const toggleMobileMenu = () => {
     isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
 
-const isMobile = ref(false);
+function updateIsMobile() {
+    isMobile.value = window.innerWidth < 1024;
+}
 
 const closeOnClickOutside = (event) => {
     if (!event.target.closest(".user-menu-container")) {
         showUserMenu.value = false;
     }
 };
-
-onMounted(() => {
-    updateIsMobile();
-    fetchProfilPerusahaan();
-    window.addEventListener("resize", updateIsMobile);
-    document.addEventListener("click", closeOnClickOutside);
-});
-
-onUnmounted(() => {
-    document.removeEventListener("click", closeOnClickOutside);
-});
-
-function updateIsMobile() {
-    isMobile.value = window.innerWidth < 1024;
-}
 
 async function fetchProfilPerusahaan() {
     try {
@@ -67,6 +54,15 @@ async function fetchProfilPerusahaan() {
     }
 }
 
+async function fetchFeatureToggles() {
+    try {
+        const res = await axios.get('/api/feature-toggles');
+        featureToggles.value = res.data.data || {};
+    } catch (err) {
+        console.error('Error fetching feature toggles:', err);
+    }
+}
+
 function getImageUrl(image) {
     if (!image) return "/image/placeholder.webp";
 
@@ -77,40 +73,24 @@ function getImageUrl(image) {
     return `/storage/${image}`;
 }
 
-// Auth user from Inertia
 const user = computed(() => usePage().props.auth?.user ?? null);
 
 function getImageUser(imagePath) {
     return imagePath ? `/storage/${imagePath}` : '/image/placeholder.webp';
 }
+
+onMounted(() => {
+    updateIsMobile();
+    fetchProfilPerusahaan();
+    fetchFeatureToggles();
+    window.addEventListener("resize", updateIsMobile);
+    document.addEventListener("click", closeOnClickOutside);
+});
+
+onUnmounted(() => {
+    document.removeEventListener("click", closeOnClickOutside);
+});
 </script>
-
-<style scoped>
-.fade-slide-enter-from {
-    opacity: 0;
-    transform: translateY(-10px);
-}
-
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-    transition: opacity 0.3s, transform 0.3s;
-}
-
-.fade-slide-enter-to {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.fade-slide-leave-from {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.fade-slide-leave-to {
-    opacity: 0;
-    transform: translateY(-10px);
-}
-</style>
 
 <template>
     <!-- Navbar -->
@@ -131,10 +111,17 @@ function getImageUser(imagePath) {
             <div class="hidden lg:flex items-center space-x-8">
                 <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda
                 </Link>
-                <Link href="/produk" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Produk
+
+                <Link v-if="featureToggles.produk_module === 1" href="/produk"
+                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">
+                Produk
                 </Link>
-                <Link href="/feedback" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Feedback
+
+                <Link v-if="featureToggles.feedback_module === 1" href="/feedback"
+                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">
+                Feedback
                 </Link>
+
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
                         class="text-typography-dark hover:text-typography-hover2 transition text-lg flex items-center">
@@ -149,16 +136,13 @@ function getImageUser(imagePath) {
                 <template v-if="user">
                     <div @click="showUserMenu = !showUserMenu" class="cursor-pointer flex items-center space-x-2 group">
                         <div class="flex flex-col items-end text-right">
-                            <span class="text-black text-sm font-semibold group-hover:underline">
-                                {{ user.name }}
-                            </span>
+                            <span class="text-black text-sm font-semibold group-hover:underline">{{ user.name }}</span>
                             <span class="text-gray-600 text-xs">{{ user.email }}</span>
                         </div>
                         <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
                             class="w-10 h-10 rounded-full object-cover border border-gray-300" />
                     </div>
 
-                    <!-- Dropdown menu -->
                     <UserMenu v-if="showUserMenu" />
                 </template>
                 <template v-else>
@@ -200,16 +184,13 @@ function getImageUser(imagePath) {
                     </div>
                 </a>
 
-                <!-- Tambahan tombol: Admin Panel & Edit Profil -->
                 <div class="flex flex-col gap-2 mt-4">
-                    <!-- Admin Panel (hanya untuk pegawai tetap) -->
                     <a v-if="user.status_kepegawaian === 'Tetap'" href="/admin"
                         class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
                         <LayoutDashboard class="w-5 h-5 text-gray-700" />
                         <span class="text-sm font-medium text-gray-800">Admin Panel</span>
                     </a>
 
-                    <!-- Edit Profil (selalu tampil) -->
                     <a href="/admin/profile"
                         class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
                         <UserCog class="w-5 h-5 text-gray-700" />
@@ -218,18 +199,15 @@ function getImageUser(imagePath) {
                 </div>
             </template>
 
-
             <Link href="/" class="text-2xl py-1">Beranda</Link>
-            <Link href="/produk" class="text-2xl py-1">Produk</Link>
-            <Link href="/feedback" class="text-2xl py-1">Feedback</Link>
+            <Link v-if="featureToggles.produk_module === 1" href="/produk" class="text-2xl py-1">Produk</Link>
+            <Link v-if="featureToggles.feedback_module === 1" href="/feedback" class="text-2xl py-1">Feedback</Link>
 
-            <!-- Tombol Lainnya -->
             <div class="text-2xl py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">
                 <span>Lainnya</span>
                 <ChevronDown class="w-5 h-5" />
             </div>
 
-            <!-- Mobile MegaMenu (inline inside dropdown) -->
             <div v-if="showMegaMenu && isMobile" class="pt-4">
                 <MegaMenu class="w-full bg-primary rounded-xl p-4" />
             </div>
@@ -252,3 +230,30 @@ function getImageUser(imagePath) {
     <!-- Spacer -->
     <div class="pt-16"></div>
 </template>
+
+<style scoped>
+.fade-slide-enter-from {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.fade-slide-enter-to {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-slide-leave-from {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+</style>
