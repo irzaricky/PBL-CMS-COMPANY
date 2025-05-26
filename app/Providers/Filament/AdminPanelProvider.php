@@ -55,6 +55,7 @@ use App\Filament\Widgets\ContentManager\General\ContentCountsChart;
 use App\Filament\Widgets\ContentManager\General\ContentTrendsChart;
 use App\Filament\Widgets\ContentManager\Unduhan\UnduhanStatusChart;
 use App\Filament\Widgets\CustomerServices\Lamaran\LamaranStatsCard;
+use pxlrbt\FilamentEnvironmentIndicator\EnvironmentIndicatorPlugin;
 use App\Filament\Widgets\ContentManager\Galeri\GaleriDownloadsChart;
 use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
 use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
@@ -187,6 +188,7 @@ class AdminPanelProvider extends PanelProvider
                     ->authorize(
                         fn() => auth()->user()?->can('page_ViewEnv')
                     ),
+                EnvironmentIndicatorPlugin::make(),
             ])
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()
