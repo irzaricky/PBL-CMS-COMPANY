@@ -23,6 +23,7 @@ class FeedbackController extends Controller
                 'id_user' => 'required|exists:users,id_user|integer',
                 'subjek_feedback' => 'required|string|max:200',
                 'isi_feedback' => 'required|string',
+                'tingkat_kepuasan' => 'required|integer|min:1|max:5', // Tambahan validasi
             ]);
 
             if ($validator->fails()) {
@@ -37,6 +38,7 @@ class FeedbackController extends Controller
                 'id_user' => $request->id_user,
                 'subjek_feedback' => $request->subjek_feedback,
                 'isi_feedback' => $request->isi_feedback,
+                'tingkat_kepuasan' => $request->tingkat_kepuasan, // Tambahkan ini
             ]);
 
             return (new FeedbackResource($feedback))
@@ -51,5 +53,14 @@ class FeedbackController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function index()
+    {
+        $feedback = Feedback::with('user:id_user,name,foto_profil,email')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return FeedbackResource::collection($feedback);
     }
 }

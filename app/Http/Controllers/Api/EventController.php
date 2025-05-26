@@ -54,7 +54,7 @@ class EventController extends Controller
         }
     }
 
-    /**
+    /** 
      * Mengambil daftar event berdasarkan id
      * 
      * @param int $id
@@ -82,12 +82,24 @@ class EventController extends Controller
     public function getMostRecentEvent()
     {
         try {
-            $event = Event::orderBy('waktu_start_event', 'desc')
-                ->take(1)
-                ->get();
+            $event = Event::orderBy('waktu_start_event', 'desc')->first();
 
-            return EventListResource::collection($event);
+            return new EventListResource($event);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal Memuat Event',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 
+     public function getNavbarRecentEvent()
+    {
+        try {
+            $event = Event::orderBy('waktu_start_event', 'desc')->first();
+
+            return new EventListResource($event);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',

@@ -22,7 +22,7 @@ class GaleriController extends Controller
     public function index(Request $request)
     {
         try {
-            $query = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
+            $query = Galeri::with(['kategoriGaleri', 'user:id_user,name,foto_profil'])
                 ->where('status_galeri', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
@@ -47,7 +47,7 @@ class GaleriController extends Controller
     public function getGaleriBySlug($slug)
     {
         try {
-            $galeri = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
+            $galeri = Galeri::with(['kategoriGaleri', 'user:id_user,name,foto_profil'])
                 ->where('status_galeri', ContentStatus::TERPUBLIKASI)
                 ->where('slug', $slug)
                 ->firstOrFail();
@@ -71,7 +71,7 @@ class GaleriController extends Controller
     public function getGaleriById($id)
     {
         try {
-            $galeri = Galeri::with(relations: ['kategoriGaleri', 'user:id_user,name'])
+            $galeri = Galeri::with(relations: ['kategoriGaleri', 'user:id_user,name,foto_profil'])
                 ->where('status_galeri', ContentStatus::TERPUBLIKASI)
                 ->findOrFail(id: $id);
 
@@ -124,7 +124,7 @@ class GaleriController extends Controller
                 return $this->index($request);
             }
 
-            $galerisQuery = Galeri::with(['kategoriGaleri', 'user:id_user,name'])
+            $galerisQuery = Galeri::with(['kategoriGaleri', 'user:id_user,name,foto_profil'])
                 ->where('status_galeri', ContentStatus::TERPUBLIKASI);
 
             // Jika ada query pencarian, galeri akan dicari berdasarkan judul

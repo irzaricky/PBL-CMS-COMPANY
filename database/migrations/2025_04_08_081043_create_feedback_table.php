@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('feedback', function (Blueprint $table) {
             $table->id('id_feedback');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+            $table->tinyInteger('tingkat_kepuasan')->default(0);
             $table->string('subjek_feedback', 200);
             $table->text('isi_feedback');
             $table->text('tanggapan_feedback')->nullable();

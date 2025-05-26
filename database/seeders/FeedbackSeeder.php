@@ -34,6 +34,7 @@ class FeedbackSeeder extends Seeder
             $feedbacks[] = [
                 'id_feedback' => $i,
                 'id_user' => $faker->numberBetween(9, 13),
+                'tingkat_kepuasan' => $faker->numberBetween(1, 5), // ← ditambahkan di sini
                 'subjek_feedback' => $faker->randomElement($subjects),
                 'isi_feedback' => $faker->paragraph(rand(1, 3)),
                 'tanggapan_feedback' => $hasResponse ? $faker->paragraph(rand(1, 2)) : null,

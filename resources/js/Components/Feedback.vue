@@ -11,12 +11,12 @@ import { ChevronRight } from "lucide-vue-next";
 
                 <!-- Heading -->
                 <div
-                    class="text-secondary text-xl md:pr-10 lg:pr-10 sm:text-2xl md:text-3xl font-bold text-center md:text-left">
+                    class="text-secondary text-xl md:pr-10 lg:pr-10 sm:text-2xl md:text-3xl font-normal text-center md:text-left">
                     Berikan feedbackmu agar kami lebih baik!
                 </div>
 
                 <Link href="/feedback"
-                    class="relative flex items-center gap-1 bg-secondary text-primary text-lg md:text-xl font-bold px-6 py-3 rounded-lg">
+                    class="relative flex items-center gap-1 bg-secondary text-primary text-lg md:text-xl font-semibold px-6 py-3 rounded-lg">
                 Feedback
                 <ChevronsRight class="w-5 h-5 text-white" />
                 </Link>

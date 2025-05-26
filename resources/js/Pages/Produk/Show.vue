@@ -151,9 +151,11 @@ async function submitTestimoni() {
                                     Produk
                                     </Link>
                                 </li>
-                                <li class="flex items-center">
-                                    <ChevronRight class="w-4 h-4 text-gray-400" />
-                                    <span class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[200px]">
+                                <li class="flex items-center min-w-0">
+                                    <ChevronRight class="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                    <span
+                                        class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
+                                        :title="item?.nama_produk">
                                         {{ item?.nama_produk || "Loading..." }}
                                     </span>
                                 </li>

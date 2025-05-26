@@ -1,5 +1,65 @@
 <script setup lang="ts">
 import AppLayout from '@/Layouts/AppLayout.vue';
+import { ref, onMounted, onUnmounted } from "vue";
+import axios from "axios";
+
+const profil_perusahaan = ref(null);
+const loading = ref(false);
+const error = ref(null);
+
+onMounted(() => {
+    fetchProfilPerusahaan();
+});
+
+async function fetchProfilPerusahaan() {
+    try {
+        loading.value = true;
+        const response = await axios.get(`/api/profil-perusahaan/`);
+        profil_perusahaan.value = response.data.data;
+        loading.value = false;
+    } catch (err) {
+        error.value = "Event not found or an error occurred";
+        loading.value = false;
+        console.error("Error fetching profil_perusahaan:", err);
+    }
+}
+
+function getImageUrl(image) {
+    if (!image) return "/image/placeholder.webp";
+
+    if (typeof image === "object" && image !== null) {
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
+    }
+
+    return `/storage/${image}`;
+}
+
+// Slider index untuk Visi dan Misi, pakai array thumbnail_perusahaan yang sama
+const visiIndex = ref(0);
+const misiIndex = ref(0);
+
+let visiInterval, misiInterval;
+
+onMounted(() => {
+    // auto slide untuk visi
+    visiInterval = setInterval(() => {
+        if (profil_perusahaan.value?.thumbnail_perusahaan?.length > 0) {
+            visiIndex.value = (visiIndex.value + 1) % profil_perusahaan.value.thumbnail_perusahaan.length;
+        }
+    }, 4000);
+
+    // auto slide untuk misi
+    misiInterval = setInterval(() => {
+        if (profil_perusahaan.value?.thumbnail_perusahaan?.length > 0) {
+            misiIndex.value = (misiIndex.value + 1) % profil_perusahaan.value.thumbnail_perusahaan.length;
+        }
+    }, 4000);
+});
+
+onUnmounted(() => {
+    clearInterval(visiInterval);
+    clearInterval(misiInterval);
+});
 </script>
 
 <template>
@@ -11,7 +71,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                     Visi & Misi Perusahaan
                 </h1>
                 <p class="text-base lg:text-lg font-custom font-normal leading-relaxed max-w-3xl">
-                    Nilai-nilai yang menjadi dasar arah langkah dan strategi kami dalam memberikan dampak terbaik bagi pelanggan dan masyarakat.
+                    Nilai-nilai yang menjadi dasar arah langkah dan strategi kami dalam memberikan dampak terbaik bagi
+                    pelanggan dan masyarakat.
                 </p>
             </div>
         </div>
@@ -25,14 +86,24 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                         Visi Kami
                     </h2>
                     <p class="text-base lg:text-lg font-custom font-normal leading-relaxed">
-                        Menjadi perusahaan terdepan dalam inovasi dan pelayanan yang berdampak positif bagi masyarakat global,
-                        menginspirasi perubahan dan mempercepat kemajuan dengan teknologi, nilai sosial, dan keunggulan layanan.
+                        {{ profil_perusahaan?.visi_perusahaan || 'Visi perusahaan belum tersedia.' }}
                     </p>
                 </div>
 
-                <!-- Gambar -->
-                <div class="lg:w-1/2">
-                    <img src="https://placehold.co/600x400" alt="Gambar Visi" class="rounded-2xl shadow w-full h-auto object-cover">
+                <!-- Slider Gambar Visi -->
+                <div class="lg:w-1/2 overflow-hidden rounded-2xl shadow">
+                    <div class="flex transition-transform duration-700 ease-in-out"
+                        :style="{ transform: `translateX(-${visiIndex * 100}%)` }">
+                        <template v-if="profil_perusahaan?.thumbnail_perusahaan?.length">
+                            <img v-for="(img, index) in profil_perusahaan.thumbnail_perusahaan"
+                                :key="'visi-img-' + index" :src="getImageUrl(img)" alt="Gambar Visi"
+                                class="w-full flex-shrink-0 object-cover" style="height: 400px;" />
+                        </template>
+                        <template v-else>
+                            <img src="https://placehold.co/600x400" alt="Placeholder Visi" class="w-full object-cover"
+                                style="height: 400px;" />
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>
@@ -45,18 +116,25 @@ import AppLayout from '@/Layouts/AppLayout.vue';
                     <h2 class="text-3xl lg:text-5xl font-custom font-semibold">
                         Misi Kami
                     </h2>
-                    <ul class="list-disc pl-5 space-y-2 text-base lg:text-lg font-custom font-normal leading-relaxed">
-                        <li>Menghadirkan produk dan layanan berkualitas tinggi yang menjawab kebutuhan pelanggan.</li>
-                        <li>Mendorong inovasi berkelanjutan dalam setiap lini bisnis kami.</li>
-                        <li>Menjalin kemitraan strategis yang berkelanjutan dan saling menguntungkan.</li>
-                        <li>Memberikan kontribusi nyata bagi pembangunan sosial dan lingkungan.</li>
-                        <li>Menjadi tempat kerja yang inklusif, inspiratif, dan penuh semangat kolaborasi.</li>
-                    </ul>
+                    <p v-html="profil_perusahaan?.misi_perusahaan || 'Misi perusahaan belum tersedia.'"
+                        class="text-base text-white prose-white lg:text-lg font-custom font-normal leading-relaxed prose prose-invert">
+                    </p>
                 </div>
 
-                <!-- Gambar -->
-                <div class="lg:w-1/2">
-                    <img src="https://placehold.co/600x400" alt="Gambar Misi" class="rounded-2xl shadow w-full h-auto object-cover">
+                <!-- Slider Gambar Misi -->
+                <div class="lg:w-1/2 overflow-hidden rounded-2xl shadow">
+                    <div class="flex transition-transform duration-700 ease-in-out"
+                        :style="{ transform: `translateX(-${misiIndex * 100}%)` }">
+                        <template v-if="profil_perusahaan?.thumbnail_perusahaan?.length">
+                            <img v-for="(img, index) in profil_perusahaan.thumbnail_perusahaan"
+                                :key="'misi-img-' + index" :src="getImageUrl(img)" alt="Gambar Misi"
+                                class="w-full flex-shrink-0 object-cover" style="height: 400px;" />
+                        </template>
+                        <template v-else>
+                            <img src="https://placehold.co/600x400" alt="Placeholder Misi" class="w-full object-cover"
+                                style="height: 400px;" />
+                        </template>
+                    </div>
                 </div>
             </div>
         </div>

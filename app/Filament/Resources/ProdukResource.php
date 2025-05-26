@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\ContentStatus;
+use App\Filament\Clusters\ProdukCluster;
 use App\Filament\Resources\ProdukResource\Widgets\ProdukStats;
 use App\Filament\Resources\ProdukResource\Pages;
 use App\Filament\Resources\ProdukResource\RelationManagers;
@@ -24,8 +25,9 @@ use Filament\Tables\Filters\TrashedFilter;
 class ProdukResource extends Resource
 {
     protected static ?string $model = Produk::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-shopping-bag';
+    protected static ?string $cluster = ProdukCluster::class;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {
@@ -194,7 +196,7 @@ class ProdukResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->label('arsipkan')
+                    ->label('Arsipkan')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Produk berhasil diarsipkan'),

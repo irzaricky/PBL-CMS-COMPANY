@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\CheckFeatureToggle;
+use App\Http\Controllers\Api\FeedbackController;
 
 
 // Route::get('/dashboard', function () {
@@ -15,8 +17,9 @@ use Inertia\Inertia;
 // })->name('login');
 
 Route::get('/login', function () {
+    session()->put('url.intended', url()->previous());
     return redirect('/admin/login');
-})->name('login')->name('filament.auth.login');
+})->name('login');
 
 Route::get('/logout', function () {
     Auth::logout();
@@ -33,15 +36,19 @@ Route::get('/example', function () {
 
 
 // Rute group untuk artikel
-Route::prefix('artikel')->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('Artikel/ListView');
-    })->name('artikel.list');
 
-    Route::get('/{slug}', function ($slug) {
-        return Inertia::render('Artikel/Show', ['slug' => $slug]);
-    })->name('artikel.show');
-});
+Route::prefix('artikel')
+    ->middleware(CheckFeatureToggle::class . ':artikel_module')
+    ->group(function () {
+
+        Route::get('/', function () {
+            return Inertia::render('Artikel/ListView');
+        })->name('artikel.list');
+
+        Route::get('/{slug}', function ($slug) {
+            return Inertia::render('Artikel/Show', ['slug' => $slug]);
+        })->name('artikel.show');
+    });
 
 
 // Rute group untuk event
@@ -87,7 +94,7 @@ Route::prefix('feedback')->group(function () {
 });
 
 // Rute group Profil Perusahaan
-Route::prefix('profilperusahaan')->group(function () {
+Route::prefix('profil-perusahaan')->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('ProfilPerusahaan/Main');
     });
@@ -117,11 +124,7 @@ Route::prefix('struktur-organisasi')->group(function () {
 // Rute group untuk unduhan
 Route::prefix('unduhan')->group(function () {
     Route::get('/', action: function () {
-        return Inertia::render('Event/ListView');
-    });
-
-    Route::get('/{slug}', action: function ($slug) {
-        return Inertia::render('Event/Show', ['slug' => $slug]);
+        return Inertia::render('Unduhan/Main');
     });
 });
 
