@@ -52,30 +52,29 @@ function getImageUrl(image) {
                     Shopping.</div>
             </div>
 
-        <!-- Grid Produk -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-            <div v-for="item in produk" :key="item.id_produk"
-                class="group rounded-2xl bg-secondary shadow-md hover:shadow-lg hover:bg-typography-hover1 transition-all duration-300 overflow-hidden flex flex-col">
-                <img :src="getImageUrl(item.thumbnail_produk)" alt="Thumbnail Produk"
-                    class="w-full h-48 object-cover" />
+            <!-- Grid Produk -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-12">
+                <div v-for="item in produk" :key="item.id_produk"
+                    class="group rounded-2xl bg-secondary shadow-md hover:shadow-lg hover:bg-typography-hover1 transition-all duration-300 overflow-hidden flex flex-col">
+                    <img :src="getImageUrl(item.thumbnail_produk)" alt="Thumbnail Produk"
+                        class="w-full h-48 object-cover" />
 
-                <!-- Overlay -->
-                <div
-                    class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    <!-- Konten -->
+                    <div class="p-4 flex flex-col gap-2">
+                        <div class="text-xl font-semibold text-third">{{ item.nama_produk }}</div>
+                        <div class="text-sm font-normal text-primary line-clamp-3">{{ item.deskripsi_produk }}</div>
 
-                <!-- Konten -->
-                <div
-                    class="relative z-20 mt-auto text-white flex flex-col gap-2 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                    <div class="text-2xl font-normal">{{ item.nama_produk }}</div>
-                    <div class="text-sm font-normal leading-snug truncate">{{ item.deskripsi_produk }}</div>
-                    <a :href="`/produk/${item.slug}`"
-                        class="flex items-center gap-2 text-white font-medium hover:underline">
-                        Lihat Selengkapnya
-                        <ChevronRight class="w-3" />
-                    </a>
+                        <!-- Button Lihat Selengkapnya -->
+                        <div class="pt-3">
+                            <a :href="`/produk/${item.slug}`"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary text-sm font-semibold rounded-lg hover:bg-typography-dark/40 transition">
+                                Lihat Selengkapnya
+                                <ChevronsRight class="w-5 h-5" />
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </template>

@@ -76,7 +76,7 @@ const upcomingEvents = computed(() => {
         <div v-else>
             <!-- Upcoming Events Section -->
             <div>
-                <h2
+                <!--<h2>
                     class="text-2xl font-semibold text-gray-800 mb-6 flex items-center"
                 >
                     <svg
@@ -94,7 +94,7 @@ const upcomingEvents = computed(() => {
                         />
                     </svg>
                     Upcoming Events
-                </h2>
+                </h2>-->
 
                 <div
                     v-if="upcomingEvents.length === 0"
@@ -112,12 +112,13 @@ const upcomingEvents = computed(() => {
                         :key="event.id_event"
                         class="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
                     >
+                    
                         <!-- Event image -->
-                        <div class="h-48 overflow-hidden">
+                        <div class=" w-full flex justify-center px-3 py-3 h-48 overflow-hidden">
                             <img
                                 :src="getImageUrl(event.thumbnail_event)"
                                 :alt="event.nama_event"
-                                class="w-full h-full object-cover"
+                                class="w-full h-full object-cover rounded-2xl"
                             />
                         </div>
 
