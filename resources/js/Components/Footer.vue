@@ -2,24 +2,25 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { computed } from "vue";
+import { Link } from "@inertiajs/vue3";
+import { Phone, Mail, MapPin } from "lucide-vue-next";
 
-// Reactive variables
 const profil_perusahaan = ref(null);
 const loading = ref(false);
 const error = ref(null);
 
 const maxKalimat = 1
 
-const truncatedSejarah = computed(() => {
-    if (!profil_perusahaan.value?.sejarah_perusahaan) return 'Sejarah perusahaan belum tersedia.'
+const truncatedDeskripsi = computed(() => {
+    if (!profil_perusahaan.value?.deskripsi_perusahaan) return 'Sejarah perusahaan belum tersedia.'
 
-    const kalimat = profil_perusahaan.value.sejarah_perusahaan.split(/(?<=[.!?])\s+/)
+    const kalimat = profil_perusahaan.value.deskripsi_perusahaan.split(`/(?<=[.!?])\s+/`)
     return kalimat.slice(0, maxKalimat).join(' ')
 })
 
 const showReadMore = computed(() => {
-    if (!profil_perusahaan.value?.sejarah_perusahaan) return false
-    return profil_perusahaan.value.sejarah_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
+    if (!profil_perusahaan.value?.deskripsi_perusahaan) return false
+    return profil_perusahaan.value.deskripsi_perusahaan.split(`/(?<=[.!?])\s+/`).length > maxKalimat
 })
 
 onMounted(() => {
@@ -48,12 +49,13 @@ function getImageUrl(image) {
 
     return `/storage/${image}`;
 }
+
 function lihatSelengkapnya() {
     alert(profil_perusahaan.value.sejarah_perusahaan)
 }
 
-
 </script>
+
 
 <template>
     <footer class="bg-secondary text-white w-full font-custom text-sm">
@@ -69,10 +71,10 @@ function lihatSelengkapnya() {
                         </div>
                         <h4 class="font-bold text-center text-lg">{{ profil_perusahaan?.nama_perusahaan }}</h4>
                         <p class="mt-4 text-left font-semibold text-sm">
-                            {{ truncatedSejarah }}
-                            <span v-if="showReadMore" class="text-blue-400 cursor-pointer" @click="lihatSelengkapnya">
+                            {{ truncatedDeskripsi }}
+                            <Link v-if="showReadMore" href="/profil-perusahaan" class="text-blue-400 cursor-pointer">
                                 ... Baca selengkapnya
-                            </span>
+                            </Link>
                         </p>
 
                     <div class="mt-6">
