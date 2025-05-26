@@ -24,8 +24,9 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Widgets\Admin\StorageUsageChart;
 use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use Filament\Http\Middleware\AuthenticateSession;
-use App\Filament\Widgets\Director\ContentGrowthTrend;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use App\Filament\Widgets\Director\ContentGrowthTrend;
+use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use App\Filament\Widgets\Admin\RemainingStorageWidget;
 use App\Filament\Widgets\Director\ContentManagerStats;
@@ -180,7 +181,12 @@ class AdminPanelProvider extends PanelProvider
                     ->mobileFormPanelPosition('bottom')
                     ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
                     ->formPanelWidth('40%'),
-                FilamentApexChartsPlugin::make()
+                FilamentApexChartsPlugin::make(),
+                FilamentEnvEditorPlugin::make()
+                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS')
+                    ->authorize(
+                        fn() => auth()->user()?->can('page_ViewEnv')
+                    ),
             ])
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()

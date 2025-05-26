@@ -14,6 +14,7 @@
         "filament/infolists": "3.3",
         "filament/notifications": "3.3",
         "flowframe/laravel-trend": "^0.4.0",
+        "geo-sot/filament-env-editor": "^0.0.7",
         "inertiajs/inertia-laravel": "^2.0",
         "joshembling/image-optimizer": "^1.6",
         "laravel/framework": "^11.31",
