@@ -1,14 +1,18 @@
-<script setup lang="ts">
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
+<script setup>
+import InputError from '@/Z Deprecated Components/InputError.vue';
+import InputLabel from '@/Z Deprecated Components/InputLabel.vue';
+import PrimaryButton from '@/Z Deprecated Components/PrimaryButton.vue';
+import TextInput from '@/Z Deprecated Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 
-defineProps<{
-    mustVerifyEmail?: Boolean;
-    status?: String;
-}>();
+defineProps({
+    mustVerifyEmail: {
+        type: Boolean,
+    },
+    status: {
+        type: String,
+    },
+});
 
 const user = usePage().props.auth.user;
 

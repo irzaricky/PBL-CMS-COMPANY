@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +12,52 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $files = Storage::disk('public')->allFiles();
+        $directories = Storage::disk('public')->allDirectories();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Hapus semua file kecuali .gitignore
+        foreach ($files as $file) {
+            if (basename($file) !== '.gitignore') {
+                Storage::disk('public')->delete($file);
+            }
+        }
+
+        // Hapus semua folder mulai dari yang terdalam
+        foreach (array_reverse($directories) as $directory) {
+            Storage::disk('public')->deleteDirectory($directory);
+        }
+
+        $this->call([
+            ShieldSeeder::class,
+            FilamentUserSeeder::class,
+            DummyUser::class,
+            KategoriUnduhanSeeder::class,
+            KategoriProdukSeeder::class,
+            KategoriGaleriSeeder::class,
+            KategoriArtikelSeeder::class,
+
+
+            UnduhanSeeder::class,
+            ProdukSeeder::class,
+            GaleriSeeder::class,
+
+
+            ProfilPerusahaanSeeder::class,
+            MediaSosialSeeder::class,
+            FeedbackSeeder::class,
+            TestimoniSeeder::class,
+            LowonganSeeder::class,
+            EventSeeder::class,
+            ArtikelSeeder::class,
+
+
+            LamaranSeeder::class,
+            KontenSliderSeeder::class,
+            MitraSeeder::class,
+            StrukturOrganisasiSeeder::class,
+            FeatureToggleSeeder::class,
+            CaseStudySeeder::class,
+            TestimoniProdukSeeder::class,
         ]);
     }
 }
