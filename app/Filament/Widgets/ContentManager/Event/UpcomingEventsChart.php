@@ -12,6 +12,7 @@ class UpcomingEventsChart extends ApexChartWidget
     protected static ?int $sort = 4;
     protected static bool $deferLoading = true;
     protected string|int|array $columnSpan = 1;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
     protected function getOptions(): array
     {
         $upcomingEvents = Event::query()

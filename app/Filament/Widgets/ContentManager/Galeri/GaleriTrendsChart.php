@@ -13,6 +13,7 @@ class GaleriTrendsChart extends ApexChartWidget
     protected static ?int $sort = 5;
     protected static bool $deferLoading = true;
     protected string|int|array $columnSpan = 2;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
 
     public ?string $filter = 'last_6_months';
 

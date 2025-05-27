@@ -11,6 +11,7 @@ class TopEventsStatsWidget extends BaseWidget
 {
     protected ?string $heading = 'Widget Event';
     protected static ?int $sort = 4;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
     protected string|int|array $columnSpan = 2;
 
     protected function getStats(): array

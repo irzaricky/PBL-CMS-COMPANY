@@ -11,6 +11,8 @@ class TopArticlesByViews extends BaseWidget
     protected ?string $heading = 'Widget Artikel';
     protected static ?int $sort = 2;
     protected static bool $isLazy = true;
+    protected static ?string $pollingInterval = '120s'; // 2 minutes
+
     protected function getStats(): array
     {
         $topArticles = Artikel::query()

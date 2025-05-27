@@ -12,6 +12,7 @@ class UnduhanStatusChart extends ApexChartWidget
     protected static ?string $heading = 'Downloads by Status';
     protected static ?int $sort = 7;
     protected static bool $deferLoading = true;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
 
     protected function getOptions(): array
     {

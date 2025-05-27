@@ -18,6 +18,7 @@ class StorageUsageChart extends ApexChartWidget
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
     public ?string $filter = 'week';
+    protected static ?string $pollingInterval = '900s'; // 15 minutes
 
     public static function canView(): bool
     {

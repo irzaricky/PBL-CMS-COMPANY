@@ -13,6 +13,8 @@ class RemainingStorageWidget extends ApexChartWidget
     protected static ?int $sort = 4;
     protected static bool $deferLoading = true;
 
+    protected static ?string $pollingInterval = '900s'; // 15 minutes
+
     public static function canView(): bool
     {
         return auth()->user()?->can('widget_RemainingStorageWidget');

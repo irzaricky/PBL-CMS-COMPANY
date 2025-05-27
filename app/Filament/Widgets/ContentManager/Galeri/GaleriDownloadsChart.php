@@ -12,6 +12,7 @@ class GaleriDownloadsChart extends ApexChartWidget
     protected static ?int $sort = 5;
     protected static bool $deferLoading = true;
     protected string|int|array $columnSpan = 2;
+    protected static ?string $pollingInterval = '120s'; // 2 minutes
 
     protected function getOptions(): array
     {

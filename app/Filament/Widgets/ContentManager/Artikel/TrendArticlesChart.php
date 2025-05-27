@@ -13,6 +13,7 @@ class TrendArticlesChart extends ApexChartWidget
     protected static ?int $sort = 2;
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 2;
+    protected static ?string $pollingInterval = '120s'; // 2 minutes
 
     protected function getOptions(): array
     {

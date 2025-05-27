@@ -13,6 +13,7 @@ class CaseStudyStatusChart extends ApexChartWidget
     protected static ?int $sort = 3;
     protected static bool $deferLoading = true;
     protected string|int|array $columnSpan = 2;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
 
     protected function getOptions(): array
     {

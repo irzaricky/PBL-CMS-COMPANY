@@ -11,6 +11,7 @@ class DocumentDownloadsChart extends ApexChartWidget
     protected static ?string $heading = 'Jumlah Unduhan File Dokumen';
     protected static ?int $sort = 7;
     protected static bool $deferLoading = true;
+    protected static ?string $pollingInterval = '120s'; // 2 minutes
 
     protected function getOptions(): array
     {
