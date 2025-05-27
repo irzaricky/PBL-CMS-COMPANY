@@ -10,8 +10,14 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class UnduhanStatusChart extends ApexChartWidget
 {
     protected static ?string $heading = 'Downloads by Status';
-    protected static ?int $sort = 7;
+    protected static ?int $sort = 18;
     protected static bool $deferLoading = true;
+    protected string|int|array $columnSpan = [
+        'default' => 2,
+        'sm' => 2,
+        'md' => 1,
+        // layar kecil bakal full, layar medium dan besar bakal 1 kolom
+    ];
     protected static ?string $pollingInterval = '300s'; // 5 minutes
 
     protected function getOptions(): array

@@ -9,7 +9,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class TopArticlesByViews extends BaseWidget
 {
     protected ?string $heading = 'Widget Artikel';
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 3;
+    protected string|int|array $columnSpan = 2;
     protected static bool $isLazy = true;
     protected static ?string $pollingInterval = '120s'; // 2 minutes
 

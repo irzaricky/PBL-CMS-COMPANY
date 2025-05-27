@@ -10,7 +10,7 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class ProductsByStatusChart extends ApexChartWidget
 {
     protected static ?string $heading = 'Products by Status';
-    protected static ?int $sort = 6;
+    protected static ?int $sort = 15;
     protected static bool $deferLoading = true;
     protected string|int|array $columnSpan = 2;
 

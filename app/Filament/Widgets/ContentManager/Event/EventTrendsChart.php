@@ -10,9 +10,14 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class EventTrendsChart extends ApexChartWidget
 {
     protected static ?string $heading = 'Trend Pembuatan Event';
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 7;
     protected static bool $deferLoading = true;
-    protected string|int|array $columnSpan = 2;
+    protected string|int|array $columnSpan = [
+        'default' => 2,
+        'sm' => 2,
+        'md' => 1,
+        // layar kecil bakal full, layar medium dan besar bakal 1 kolom
+    ];
 
     protected static ?string $pollingInterval = '300s'; // 5 minutes
     public ?string $filter = 'last_6_months';
@@ -113,6 +118,23 @@ class EventTrendsChart extends ApexChartWidget
     public static function canView(): bool
     {
         return auth()->user()?->can('widget_EventTrendsChart');
+    }
+
+    protected function extraJSOptions(): ?RawJs
+    {
+        return RawJs::make(<<<JS
+        {
+            yaxis: {
+                labels: {
+                    formatter: function (value) {
+                        return Math.floor(value);
+                    }
+                },
+                forceNiceScale: true,
+                decimalsInFloat: 0
+            }
+        }
+        JS);
     }
 
     protected function getFilters(): ?array

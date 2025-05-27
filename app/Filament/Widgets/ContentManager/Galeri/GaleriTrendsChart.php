@@ -10,9 +10,14 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class GaleriTrendsChart extends ApexChartWidget
 {
     protected static ?string $heading = 'Trend Pembuatan Galeri';
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 11;
     protected static bool $deferLoading = true;
-    protected string|int|array $columnSpan = 2;
+    protected string|int|array $columnSpan = [
+        'default' => 2,
+        'sm' => 2,
+        'md' => 1,
+        // layar kecil bakal full, layar medium dan besar bakal 1 kolom
+    ];
     protected static ?string $pollingInterval = '300s'; // 5 minutes
 
     public ?string $filter = 'last_6_months';
