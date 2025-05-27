@@ -1,5 +1,5 @@
 <x-filament-widgets::widget>
-    <div class="h-[300px] flex flex-col space-y-2">
+    <div class="h-[300px] flex flex-col space-y-2 overflow-y-auto lg:overflow-visible">
         @foreach ($this->getStats() as $stat)
             <div @class([
                 'flex-1 p-4 shadow-sm border border-gray-200 rounded-lg bg-white dark:bg-gray-900 dark:border-gray-700',
