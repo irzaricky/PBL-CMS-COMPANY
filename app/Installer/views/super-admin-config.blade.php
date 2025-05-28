@@ -24,25 +24,24 @@
                     </ul>
                 </div>
             @endif
-            <form action="{{ route('saveSuperAdmin') }}" method="post" class="card">
-                @csrf
-                <div class="card-body">
-                    <div class="tab">
-                        <h4 class="mb-4">Konfigurasi Akun Super Admin</h4>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
+            <div class="col-md-8 cs_center">
+                <form action="{{ route('saveSuperAdmin') }}" method="post" class="card">
+                    @csrf
+                    <div class="card-body">
+                        <div class="tab">
+                            <h4 class="mb-4">Konfigurasi Akun Super Admin</h4>
+                            <!-- single column inputs -->
+                            <div class="col-md-12 mb-3">
                                 <x-install-input label="Nama Lengkap" required="true" name="name" type="text"
                                     value="{{ old('name') }}" />
                                 <x-install-error for="name" />
                             </div>
-
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <x-install-input label="Email" required="true" name="email" type="email"
                                     value="{{ old('email') }}" />
                                 <x-install-error for="email" />
                             </div>
-
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label class="mb-1" for="password">Password <span class="text-danger">*</span></label>
                                 <div class="input-group">
                                     <input type="password" name="password" id="password"
@@ -56,8 +55,7 @@
                                     characters.</small>
                                 <x-install-error for="password" />
                             </div>
-
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <label class="mb-1" for="password_confirmation">Konfirmasi Password <span
                                         class="text-danger">*</span></label>
                                 <div class="input-group">
@@ -70,8 +68,7 @@
                                 </div>
                                 <x-install-error for="password_confirmation" />
                             </div>
-
-                            <div class="col-12 mb-3">
+                            <div class="col-md-12 mb-3">
                                 <div class="form-check">
                                     <input type="checkbox" name="include_dummy_data" id="include_dummy_data"
                                         class="form-check-input" value="1" {{ old('include_dummy_data') ? 'checked' : '' }}>
@@ -85,17 +82,19 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- end single column inputs -->
                         </div>
                     </div>
-                </div>
 
-                <div class="card-footer text-end">
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('profil_perusahaan') }}" class="btn btn-primary">Kembali</a>
-                        <button type="submit" class="btn btn-primary">Selanjutnya</button>
+                    <div class="card-footer text-end">
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ route('profil_perusahaan') }}" class="btn btn-primary px-4">Kembali</a>
+                            <button type="submit" class="btn btn-primary px-4">Selanjutnya</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
+
         </div>
     </section>
 @endsection

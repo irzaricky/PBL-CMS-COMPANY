@@ -80,7 +80,7 @@
                     @if (!isset($permissions['errors']))
                         <div class="card-footer footerHome text-end">
                             <div class="d-flex">
-                                <button type="submit" id="next_button" class="btn btn-primary ms-auto">Next</button>
+                                <button type="submit" id="next_button" class="btn btn-primary ms-auto px-4">Next</button>
                             </div>
                         </div>
                     @endif

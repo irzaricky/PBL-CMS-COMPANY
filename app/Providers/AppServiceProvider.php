@@ -40,9 +40,9 @@ class AppServiceProvider extends ServiceProvider
 
         Vite::prefetch(concurrency: 3);
 
-        if (app()->environment('production')) {
-            URL::forceScheme('https');
-        }
+        // if (app()->environment('production')) {
+        //     URL::forceScheme('https');
+        // }
 
         Inertia::share([
             'auth' => function () {

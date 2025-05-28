@@ -9,8 +9,8 @@ return [
     */
 
     'colors' => [
-        'primary' => '#EB4432',
-        'secondary' => '#f85c58',
+        'primary' => '#344D95',
+        'secondary' => '#3B82F6',
     ],
 
     'install_title' => 'CMS Company Installation',

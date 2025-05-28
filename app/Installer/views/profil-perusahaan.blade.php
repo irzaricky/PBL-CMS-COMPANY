@@ -65,7 +65,8 @@
                     </div>
                     <div class="card-footer text-end">
                         <div class="d-flex">
-                            <button type="submit" id="next_button" class="btn btn-primary ms-auto">Next</button>
+                            <a href="{{ route('database_import') }}" class="btn btn-primary me-auto px-4">Back</a>
+                            <button type="submit" id="next_button" class="btn btn-primary ms-auto px-4">Next</button>
                         </div>
                     </div>
                 </form>
