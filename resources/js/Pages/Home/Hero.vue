@@ -89,13 +89,13 @@ onBeforeUnmount(() => {
         <!-- Konten hero -->
         <div class="relative z-20">
             <div
-                class="w-full min-h-screen bg-black/50 px-6 py-16 lg:px-8 flex flex-col lg:flex-row items-start lg:items-center justify-center lg:justify-start font-custom">
+                class="w-full min-h-screen bg-black/50 px-6 py-16 lg:px-28 flex flex-col lg:flex-row items-start lg:items-center justify-center lg:justify-start font-custom">
                 <div class="w-full lg:w-[560px] flex flex-col justify-start items-start gap-8">
                     <div class="flex flex-col gap-6">
-                        <h1 class="text-white text-4xl lg:text-6xl leading-[48px] lg:leading-[67.2px] font-normal">
+                        <h1 class="text-white text-6xl lg:text-6xl leading-[48px] lg:leading-[67.2px] font-extrabold">
                             Selamat datang {{ user?.name ?? 'pengunjung' }}!
                         </h1>
-                        <p class="text-white text-base lg:text-lg leading-normal lg:leading-relaxed font-normal">
+                        <p class="text-white text-base lg:text-xl leading-normal lg:leading-relaxed font-medium">
                            Temukan informasi terkini seputar produk, event, lowongan kerja, hingga kisah menarik lewat artikel dan galeri kami.
                         </p>
                     </div>

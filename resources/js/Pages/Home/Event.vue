@@ -15,7 +15,7 @@ async function fetchEvent() {
         loading.value = true;
         const response = await axios.get(`/api/event`);
         const allEvent = response.data.data;
-        events.value = getRandomEvent(allEvent, 3);
+        events.value = getRandomEvent(allEvent, 6);
     } catch (err) {
         error.value = "Event not found or an error occurred";
         console.error("Error fetching event:", err);
@@ -67,9 +67,14 @@ function formatDate(date) {
             </div>
 
             <!-- Right Side: Event Cards -->
-            <div class="w-full lg:w-3/4 flex flex-col lg:flex-row lg:flex-nowrap gap-8">
+            <div class="w-full lg:w-3/4 flex flex-nowrap gap-8 overflow-x-auto scrollbar-hide pr-4">
+
+                <!--<div v-for="event in events" :key="event.slug"
+                    class="relative group rounded-2xl overflow-hidden w-full lg:w-1/3 bg-primary text-typography-dark">-->
+
                 <div v-for="event in events" :key="event.slug"
-                    class="relative group rounded-2xl overflow-hidden w-full lg:w-1/3 bg-primary text-typography-dark">
+    class="relative group rounded-2xl overflow-hidden min-w-[280px] sm:min-w-[320px] lg:min-w-[380px] bg-primary text-typography-dark">
+
 
                     <!-- Gambar Event -->
                     <div class="w-full flex justify-center px-3 py-3">
@@ -79,14 +84,14 @@ function formatDate(date) {
 
                     <!-- Konten Informasi Event -->
                     <div class="p-4 space-y-2">
-                        <h3 class="text-lg font-semibold">
+                        <h3 class="text-xl font-semibold mb-4">
                             {{ event.nama_event }}
                         </h3>
-                        <div class="text-sm text-gray-600 flex items-center gap-2">
+                        <div class="text-sm text-typography-dark flex items-center gap-2">
                             <CalendarDays />
                             <span>{{ formatDate(event.waktu_start_event) }}</span>
                         </div>
-                        <div class="text-sm text-gray-600 flex items-center gap-2">
+                        <div class="text-sm text-typography-dark flex items-center gap-2">
                             <MapPin />
                             <span>{{ event.lokasi_event }}</span>
                         </div>
@@ -96,14 +101,14 @@ function formatDate(date) {
 
                             <!--Button Lihat Detail-->
                                 <a :href="`/event/${event.slug}`"
-                                    class="inline-flex items-center gap-2 px-3 py-3 bg-secondary text-white text-sm font-semibold rounded-lg hover:bg-secondary/90 transition">
+                                    class="inline-flex items-center gap-2 px-3 py-3 bg-secondary text-white text-sm font-semibold rounded-lg hover:bg-secondary/80 transition">
                                     Lihat Detail
                                     <ChevronsRight class="w-5 h-5 text-white" />
                                 </a>
 
                             <!--Button Daftar Event-->
                                 <a :href="`/event/${event.slug}`"
-                                    class="block text-center px-3 py-3 bg-secondary text-white text-sm font-semibold rounded-lg hover:bg-secondary/90 transition">
+                                    class="block text-center px-3 py-3 bg-secondary text-white text-sm font-semibold rounded-lg hover:bg-secondary/80 transition">
                                     Daftar Event
                                 </a>
                         </div>
@@ -141,6 +146,15 @@ function formatDate(date) {
         opacity: 1;
         transform: translateX(500px);
     }
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari, Opera */
 }
 
 .animate-panah-berulang {

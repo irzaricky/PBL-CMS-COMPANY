@@ -37,7 +37,7 @@ function getImageUrl(image) {
 
 <template>
     <div>
-        <div class="font-bold text-h6-bold mb-4 text-secondary">
+        <div class="font-semibold text-lg mb-2 text-typography-dark">
             Artikel Populer
         </div>
         <div class="flex flex-col gap-3">
@@ -71,12 +71,12 @@ function getImageUrl(image) {
                 <div class="flex flex-col overflow-hidden">
                     <a
                         :href="`/artikel/${artikel.slug}`"
-                        class="text-h6-bold text-secondary truncate hover:underline"
+                        class="font-bold text-sm text-typography-dark truncate hover:underline"
                     >
                         {{ artikel.judul_artikel }}
                     </a>
                     <span
-                        class="text-xs text-typography-dark line-clamp-2 mt-1"
+                        class="text-xs font-medium text-typography-dark line-clamp-2 mt-1"
                         v-html="artikel.konten_artikel"
                     ></span>
                 </div>

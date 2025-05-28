@@ -46,10 +46,10 @@ function getImageUrl(image) {
         <div class="w-full max-w-screen-xl mx-auto">
             <!-- Judul Section -->
             <div class="text-center max-w-[768px] flex flex-col items-center gap-4 mx-auto">
-                <div class="text-base font-semibold text-Color-Scheme-1-Text">Mau lihat lebih jauh?</div>
-                <div class="text-5xl font-normal text-Color-Scheme-1-Text">Jelajahi produk kami</div>
-                <div class="text-lg font-normal text-Color-Scheme-1-Text">Lihat list lengkap produk, atau sekadar Window
-                    Shopping.</div>
+                <div class="text-base font-semibold text-typography-dark">Mau lihat lebih jauh?</div>
+                <div class="text-5xl font-bold text-typography-dark">Jelajahi produk kami</div>
+                <div class="text-lg font-normal text-typography-dark">Lihat list lengkap produk kami atau jelajahi lebih
+                    lanjut lagi di window shopping.</div>
             </div>
 
             <!-- Grid Produk -->
@@ -60,12 +60,12 @@ function getImageUrl(image) {
                         class="w-full h-48 object-cover" />
 
                     <!-- Konten -->
-                    <div class="p-4 flex flex-col gap-2">
-                        <div class="text-xl font-semibold text-third">{{ item.nama_produk }}</div>
-                        <div class="text-sm font-normal text-primary line-clamp-3">{{ item.deskripsi_produk }}</div>
+                    <div class="p-4 flex flex-col h-full">
+                        <div class="text-xl font-bold text-third mb-4">{{ item.nama_produk }}</div>
+                        <div class="text-sm font-normal text-primary line-clamp-3 flex-grow mb-4">{{ item.deskripsi_produk }}</div>
 
                         <!-- Button Lihat Selengkapnya -->
-                        <div class="pt-3">
+                        <div class="pt-3 mt-auto">
                             <a :href="`/produk/${item.slug}`"
                                 class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary text-sm font-semibold rounded-lg hover:bg-typography-dark/40 transition">
                                 Lihat Selengkapnya

@@ -37,7 +37,7 @@ function getImageUrl(image) {
 
 <template>
     <div>
-        <div class="font-bold text-h6-bold mb-4 text-secondary">
+        <div class="font-semibold text-lg mb-2 text-typography-dark">
             Event Terbaru
         </div>
 
@@ -46,10 +46,10 @@ function getImageUrl(image) {
             <img :src="getImageUrl(event.thumbnail_event)" :alt="event.nama_event"
                 class="w-12 h-12 object-cover rounded-lg flex-shrink-0" />
             <div class="flex flex-col overflow-hidden">
-                <a :href="`/event/${event.slug}`" class="text-h6-bold text-secondary truncate hover:underline">
+                <a :href="`/event/${event.slug}`" class="font-bold text-sm text-typography-dark truncate hover:underline">
                     {{ event.nama_event }}
                 </a>
-                <span class="text-xs text-typography-dark line-clamp-2 mt-1">{{ event.deskripsi_event }}</span>
+                <span class="text-xs font-medium text-typography-dark line-clamp-2 mt-1">{{ event.deskripsi_event }}</span>
             </div>
         </div>
 

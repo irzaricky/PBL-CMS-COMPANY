@@ -77,10 +77,10 @@ onMounted(() => {
             <!-- Menu Sections -->
             <div class="flex-3 w-full lg:w-3/4 flex flex-col lg:flex-row gap-12 lg:gap-32">
                 <div v-for="section in filteredMenuSections" :key="section.title">
-                    <div class="font-bold text-h6-bold mb-6 text-secondary">{{ section.title }}</div>
-                    <div class="flex flex-col gap-6 text-h5 font-medium">
+                    <div class="font-semibold text-lg mb-6 text-typography-dark">{{ section.title }}</div>
+                    <div class="flex flex-col gap-8 text-lg font-semibold">
                         <Link v-for="link in section.links" :key="link.href" :href="link.href"
-                            class="flex items-center gap-4 text-typography-dark hover:text-typography-hover2 transition">
+                            class="flex items-center gap-2 text-typography-dark hover:text-typography-hover2 transition">
                         <component :is="link.icon" class="w-7" />
                         <span>{{ link.label }}</span>
                         </Link>
@@ -89,7 +89,7 @@ onMounted(() => {
             </div>
 
             <!-- Right: MiniArtikel, MiniEvent, MiniLowongan -->
-            <div class="flex-1 w-full lg:w-1/4 flex flex-col gap-8">
+            <div class="flex-1 w-full lg:w-1/4 flex flex-col gap-4">
                 <MiniArtikel v-if="featureToggles.artikel_module === 1" />
                 <MiniEvent v-if="featureToggles.event_module === 1" />
                 <MiniLowongan v-if="featureToggles.lowongan_module === 1" />

@@ -72,8 +72,9 @@ function getImage(image) {
 
 		<!-- Judul -->
 		<div class="w-full max-w-[768px] flex flex-col items-center gap-6 text-center">
-			<h2 class="text-Color-Scheme-1-Text text-4xl lg:text-5xl font-normal leading-tight">Cerita dalam galeri</h2>
-			<p class="text-Color-Scheme-1-Text text-base lg:text-lg leading-relaxed">Setiap foto punya cerita. Yuk, lihat keseruan dan kebersamaan tim kami dari balik lensa.</p>
+			<div class="text-typography-dark text-base font-semibold font-custom">Cari tau</div>
+			<div class="text-typography-dark text-5xl font-bold leading-[57.60px]">Cerita dalam Galeri Kami</div>
+        	<div class="text-typography-dark text-lg font-normal leading-relaxed">Setiap foto punya cerita. Yuk, lihat keseruan dan kebersamaan tim kami dari balik lensa.</div>
 		</div>
 
 		<!-- Kontainer Galeri -->
@@ -98,13 +99,12 @@ function getImage(image) {
 							<!-- Konten -->
 							<div
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
-								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								<div class="text-4xl lg:text-4xl font-bold pb-2">{{ item.judul_galeri }}</div>
+								<div class="text-base font-medium pb-4 leading-snug line-clamp-2">{{ item.deskripsi_galeri }}</div>
 								<a :href="`/galeri/${item.slug}`"
-									class="flex items-center gap-2 text-white hover:underline">
+									class="flex items-center gap-2 text-white text-base font-medium hover:underline">
 									Lihat Selengkapnya
-									<ChevronRight class="w-3" />
+									<ChevronsRight class="w-4" />
 								</a>
 							</div>
 						</div>
@@ -127,13 +127,12 @@ function getImage(image) {
 							<!-- Konten -->
 							<div
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
-								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								<div class="text-4xl lg:text-4xl font-bold pb-2">{{ item.judul_galeri }}</div>
+								<div class="text-base font-medium pb-4 leading-snug line-clamp-2">{{ item.deskripsi_galeri }}</div>
 								<a :href="`/galeri/${item.slug}`"
-									class="flex items-center gap-2 text-white hover:underline">
+									class="flex items-center gap-2 text-white text-base font-medium hover:underline">
 									Lihat Selengkapnya
-									<ChevronRight class="w-3" />
+									<ChevronsRight class="w-4" />
 								</a>
 							</div>
 						</div>
@@ -160,13 +159,12 @@ function getImage(image) {
 							<!-- Konten -->
 							<div
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
-								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								<div class="text-4xl lg:text-4xl font-bold pb-2">{{ item.judul_galeri }}</div>
+								<div class="text-base font-medium pb-4 leading-snug line-clamp-2">{{ item.deskripsi_galeri }}</div>
 								<a :href="`/galeri/${item.slug}`"
-									class="flex items-center gap-2 text-white hover:underline">
+									class="flex items-center gap-2 text-white text-base font-medium hover:underline">
 									Lihat Selengkapnya
-									<ChevronRight class="w-3" />
+									<ChevronsRight class="w-4" />
 								</a>
 							</div>
 						</div>
@@ -189,19 +187,17 @@ function getImage(image) {
 							<!-- Konten -->
 							<div
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
-								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								<div class="text-4xl lg:text-4xl font-bold pb-2">{{ item.judul_galeri }}</div>
+								<div class="text-base font-medium pb-4 leading-snug line-clamp-2">{{ item.deskripsi_galeri }}</div>
 								<a :href="`/galeri/${item.slug}`"
-									class="flex items-center gap-2 text-white hover:underline">
+									class="flex items-center gap-2 text-white text-base font-medium hover:underline">
 									Lihat Selengkapnya
-									<ChevronRight class="w-3" />
+									<ChevronsRight class="w-4" />
 								</a>
 							</div>
 						</div>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</div>
