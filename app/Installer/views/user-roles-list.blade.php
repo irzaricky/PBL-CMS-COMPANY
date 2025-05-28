@@ -17,6 +17,11 @@
                             Akun Super Admin berhasil dibuat! Anda bisa login menggunakan email:
                             <strong>{{ $superAdmin->email }}</strong>
                         </div>
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            Password default untuk akun dummy adalah
+                            <strong>password123</strong>
+                        </div>
                     @endif
 
                     <div class="table-responsive">

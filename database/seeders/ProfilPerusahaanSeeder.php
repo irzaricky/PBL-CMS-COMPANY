@@ -25,7 +25,7 @@ class ProfilPerusahaanSeeder extends Seeder
 
         // --- Thumbnail Perusahaan ---
         $imageSourcePath = database_path('seeders/seeder_image/');
-        $imageTargetPath = 'perusahaan-thumbnails';
+        $imageTargetPath = 'thumbnail_perusahaan';
         Storage::disk('public')->makeDirectory($imageTargetPath);
 
         // Ambil semua nama file gambar di folder
@@ -72,7 +72,7 @@ class ProfilPerusahaanSeeder extends Seeder
         // --- Visi dan Misi ---
         $visiPerusahaan = sprintf(
             'Menjadi perusahaan teknologi terkemuka yang memberikan solusi inovatif untuk meningkatkan efisiensi dan produktivitas bisnis. ' .
-                'Kami bercita-cita untuk %s dan menjadi pemimpin pasar dalam %s pada tahun %d.',
+            'Kami bercita-cita untuk %s dan menjadi pemimpin pasar dalam %s pada tahun %d.',
             $faker->sentence(10),
             $faker->words(5, true),
             $faker->numberBetween(2025, 2030)
@@ -87,7 +87,7 @@ class ProfilPerusahaanSeeder extends Seeder
                 'nama_perusahaan' => $companyName,
                 'deskripsi_perusahaan' => sprintf(
                     'PT %s adalah perusahaan teknologi yang bergerak di bidang pengembangan software, konsultasi IT, ' .
-                        'dan penyediaan solusi teknologi untuk berbagai sektor industri. %s',
+                    'dan penyediaan solusi teknologi untuk berbagai sektor industri. %s',
                     $companyName,
                     $faker->paragraph(3)
                 ),

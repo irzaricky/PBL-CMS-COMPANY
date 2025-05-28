@@ -19,129 +19,139 @@
                 @csrf
                 <div class="card-body">
                     <div class="tab">
-                        <div class="row">
+                        <div class="env-section mb-4">
+                            <h5>App Configuration</h5>
+                            <div class="row">
 
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="App Environment" class="form-control" required="true"
-                                    name="environment">
-                                    <option value="">--Select--</option>
-                                    <option value="local" selected>Local</option>
-                                    <option value="development">Development</option>
-                                    <option value="qa">Qa</option>
-                                    <option value="production">Production</option>
-                                    <option value="other">Other</option>
-                                </x-install-select>
-                            </div>
-
-                            <div class="col-md-4 mt-4">
-                                <div class="form-group">
-                                    <label for="app_debug" class="mr-8">
-                                        App Debug
-                                    </label>
-                                    <label for="app_debug_true">
-                                        <input type="radio" name="app_debug" id="app_debug_true" value="true" {{ old('app_debug', 'true') == 'true' ? 'checked' : '' }}>
-                                        True
-                                    </label>
-                                    <label for="app_debug_false">
-                                        <input type="radio" name="app_debug" id="app_debug_false" value="false" {{ old('app_debug') == 'false' ? 'checked' : '' }}>
-                                        False
-                                    </label>
+                                <div class="col-md-4 mb-3">
+                                    <x-install-select label="App Environment" class="form-control" required="true"
+                                        name="environment">
+                                        <option value="">--Select--</option>
+                                        <option value="local" selected>Local</option>
+                                        <option value="development">Development</option>
+                                        <option value="qa">Qa</option>
+                                        <option value="production">Production</option>
+                                        <option value="other">Other</option>
+                                    </x-install-select>
                                 </div>
-                            </div>
 
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="App Log Level" class="form-control" required="true"
-                                    name="app_log_level">
-                                    <option value="debug" {{ old('app_log_level', 'debug') == 'debug' ? 'selected' : '' }}>
-                                        debug</option>
-                                    <option value="info">info</option>
-                                    <option value="notice">notice</option>
-                                    <option value="warning">warning</option>
-                                    <option value="error">error</option>
-                                    <option value="critical">critical</option>
-                                    <option value="alert">alert</option>
-                                    <option value="emergency">emergency</option>
-                                </x-install-select>
-                            </div>
-
-                            @php
-                                $isHttps = app('request')->isSecure();
-                                $protocol = $isHttps ? 'https://' : 'http://';
-                                $base_url = $protocol . app('request')->getHttpHost();
-                            @endphp
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-input label="App Url" required="true" name="app_url" type="url"
-                                    value="{{ old('app_url', $base_url) }}" />
-                                <x-install-error for="app_url" />
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                @component('InstallerEragViews::components.timezone-select', [
-                                    'label' => 'Timezone',
-                                    'required' => true,
-                                    'name' => 'app_timezone'
-                                ])
-                                @endcomponent
-                                <x-install-error for="app_timezone" />
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="App Locale" class="form-control" required="true" name="app_locale">
-                                    <option value="en" {{ old('app_locale', 'en') == 'en' ? 'selected' : '' }}>English
-                                    </option>
-                                    <option value="id" {{ old('app_locale') == 'id' ? 'selected' : '' }}>Indonesian</option>
-                                </x-install-select>
-                                <x-install-error for="app_locale" />
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="Database Connection" class="form-control" required="true"
-                                    name="database_connection" id="database_connection">
-                                    <option value="mysql" selected>MySQL</option>
-                                    <option value="sqlite" {{ old('database_connection') == 'sqlite' ? 'selected' : '' }}>
-                                        SQLite</option>
-                                </x-install-select>
-                            </div>
-
-                            <!-- Database Name field (always shown) -->
-                            <div class="col-md-4 mb-3" id="database_name_container">
-                                <x-install-input label="Database Name" required="true" name="database_name" type="text"
-                                    value="{{ old('database_name') }}" />
-                                <x-install-error for="database_name" />
-                                <div class="text-muted small mt-1" id="sqlite_help_text" style="display: none;">
-                                    File SQLite akan otomatis dibuat di direktori <code>storage/</code> (contoh:
-                                    <code>mydb.sqlite</code>)
+                                <div class="col-md-4 mt-4">
+                                    <div class="form-group">
+                                        <label for="app_debug" class="mr-8">
+                                            App Debug
+                                        </label>
+                                        <label for="app_debug_true">
+                                            <input type="radio" name="app_debug" id="app_debug_true" value="true" {{ old('app_debug', 'true') == 'true' ? 'checked' : '' }}>
+                                            True
+                                        </label>
+                                        <label for="app_debug_false">
+                                            <input type="radio" name="app_debug" id="app_debug_false" value="false" {{ old('app_debug') == 'false' ? 'checked' : '' }}>
+                                            False
+                                        </label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- MySQL specific fields -->
-                            <div class="mysql-only col-md-4 mb-3" id="database_host_container">
-                                <x-install-input label="Database Host" required="false" name="database_hostname" type="text"
-                                    value="{{ old('database_hostname', '127.0.0.1') }}" />
-                                <x-install-error for="database_hostname" />
-                            </div>
+                                <div class="col-md-4 mb-3">
+                                    <x-install-select label="App Log Level" class="form-control" required="true"
+                                        name="app_log_level">
+                                        <option value="debug" {{ old('app_log_level', 'debug') == 'debug' ? 'selected' : '' }}>
+                                            debug</option>
+                                        <option value="info">info</option>
+                                        <option value="notice">notice</option>
+                                        <option value="warning">warning</option>
+                                        <option value="error">error</option>
+                                        <option value="critical">critical</option>
+                                        <option value="alert">alert</option>
+                                        <option value="emergency">emergency</option>
+                                    </x-install-select>
+                                </div>
 
-                            <div class="mysql-only col-md-4 mb-3" id="database_port_container">
-                                <x-install-input label="Database Port" required="false" name="database_port" type="text"
-                                    value="{{ old('database_port', '3306') }}" />
-                                <x-install-error for="database_port" />
-                            </div>
+                                @php
+                                    $isHttps = app('request')->isSecure();
+                                    $protocol = $isHttps ? 'https://' : 'http://';
+                                    $base_url = $protocol . app('request')->getHttpHost();
+                                @endphp
 
-                            <div class="mysql-only col-md-4 mb-3" id="database_user_container">
-                                <x-install-input label="Database User Name" required="false" name="database_username"
-                                    type="text" value="{{ old('database_username') }}" />
-                                <x-install-error for="database_username" />
-                            </div>
+                                <div class="col-md-4 mb-3">
+                                    <x-install-input label="App Url" required="true" name="app_url" type="url"
+                                        value="{{ old('app_url', $base_url) }}" />
+                                    <x-install-error for="app_url" />
+                                </div>
 
-                            <div class="mysql-only col-md-4 mb-3" id="database_password_container">
-                                <x-install-input label="Database Password" name="database_password" type="text"
-                                    value="{{ old('database_password') }}" />
-                                <x-install-error for="database_password" />
-                            </div>
+                                <div class="col-md-4 mb-3">
+                                    @component('InstallerEragViews::components.timezone-select', [
+                                        'label' => 'Timezone',
+                                        'required' => true,
+                                        'name' => 'app_timezone'
+                                    ])
+                                    @endcomponent
+                                    <x-install-error for="app_timezone" />
+                                </div>
 
+                                <div class="col-md-4 mb-3">
+                                    <x-install-select label="App Locale" class="form-control" required="true"
+                                        name="app_locale">
+                                        <option value="en" {{ old('app_locale', 'en') == 'en' ? 'selected' : '' }}>English
+                                        </option>
+                                        <option value="id" {{ old('app_locale') == 'id' ? 'selected' : '' }}>Indonesian
+                                        </option>
+                                    </x-install-select>
+                                    <x-install-error for="app_locale" />
+                                </div>
+
+                            </div>
                         </div>
+                        <div class="db-section">
+                            <h5>Database Configuration</h5>
+                            <div class="row">
 
+                                <div class="col-md-4 mb-3">
+                                    <x-install-select label="Database Connection" class="form-control" required="true"
+                                        name="database_connection" id="database_connection">
+                                        <option value="mysql" selected>MySQL</option>
+                                        <option value="sqlite" {{ old('database_connection') == 'sqlite' ? 'selected' : '' }}>
+                                            SQLite</option>
+                                    </x-install-select>
+                                </div>
+
+                                <!-- Database Name field (always shown) -->
+                                <div class="col-md-4 mb-3" id="database_name_container">
+                                    <x-install-input label="Database Name" required="true" name="database_name" type="text"
+                                        value="{{ old('database_name') }}" />
+                                    <x-install-error for="database_name" />
+                                    <div class="text-muted small mt-1" id="sqlite_help_text" style="display: none;">
+                                        File SQLite akan otomatis dibuat di direktori <code>storage/</code> (contoh:
+                                        <code>mydb.sqlite</code>)
+                                    </div>
+                                </div>
+
+                                <!-- MySQL specific fields -->
+                                <div class="mysql-only col-md-4 mb-3" id="database_host_container">
+                                    <x-install-input label="Database Host" required="false" name="database_hostname"
+                                        type="text" value="{{ old('database_hostname', '127.0.0.1') }}" />
+                                    <x-install-error for="database_hostname" />
+                                </div>
+
+                                <div class="mysql-only col-md-4 mb-3" id="database_port_container">
+                                    <x-install-input label="Database Port" required="false" name="database_port" type="text"
+                                        value="{{ old('database_port', '3306') }}" />
+                                    <x-install-error for="database_port" />
+                                </div>
+
+                                <div class="mysql-only col-md-4 mb-3" id="database_user_container">
+                                    <x-install-input label="Database User Name" required="false" name="database_username"
+                                        type="text" value="{{ old('database_username') }}" />
+                                    <x-install-error for="database_username" />
+                                </div>
+
+                                <div class="mysql-only col-md-4 mb-3" id="database_password_container">
+                                    <x-install-input label="Database Password" name="database_password" type="text"
+                                        value="{{ old('database_password') }}" />
+                                    <x-install-error for="database_password" />
+                                </div>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -155,6 +165,7 @@
             </form>
         </div>
     </section>
+
     <script>
         /**
          * Database Import Page JavaScript
