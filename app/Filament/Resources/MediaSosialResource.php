@@ -68,6 +68,7 @@ class MediaSosialResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
             ]);
@@ -145,6 +146,7 @@ class MediaSosialResource extends Resource
                                     'aktif' => 'Aktif',
                                     'nonaktif' => 'Nonaktif',
                                 ])
+                                ->native(false)
                                 ->required(),
                         ]),
                     Tables\Actions\DeleteBulkAction::make()

@@ -39,6 +39,7 @@ class LamaranResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->disabled(),
 
 
@@ -47,6 +48,7 @@ class LamaranResource extends Resource
                             ->relationship('lowongan', 'judul_lowongan')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->disabled(),
                     ]),
 
@@ -84,6 +86,7 @@ class LamaranResource extends Resource
                                 'Diterima' => 'Diterima',
                                 'Ditolak' => 'Ditolak',
                             ])
+                            ->native(false)
                             ->default('Diproses')
                             ->required(),
                     ]),
@@ -171,6 +174,7 @@ class LamaranResource extends Resource
                                     'Diterima' => 'Diterima',
                                     'Ditolak' => 'Ditolak',
                                 ])
+                                ->native(false)
                                 ->required(),
                         ])
                         ->action(function (Collection $records, array $data): void {

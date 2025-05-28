@@ -2,19 +2,21 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\ContentStatus;
-use App\Filament\Clusters\ArtikelsCluster;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Artikel;
+use Filament\Forms\Get;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Enums\ContentStatus;
 use Filament\Resources\Resource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Clusters\ArtikelsCluster;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Tables\Actions\RestoreBulkAction;
 use App\Filament\Resources\ArtikelResource\Pages;
 use App\Services\FileHandlers\MultipleFileHandler;
@@ -64,6 +66,7 @@ class ArtikelResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->native(false)
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('nama_kategori_artikel')
                                     ->label('Nama Kategori')
@@ -98,6 +101,7 @@ class ArtikelResource extends Resource
                             ->default(fn() => Auth::id())
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required(),
 
                         Forms\Components\TextInput::make('slug')
@@ -114,6 +118,7 @@ class ArtikelResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
 
@@ -140,7 +145,20 @@ class ArtikelResource extends Resource
                             ->required()
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('artikel-attachments')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->hintAction(
+                                fn(Get $get) => Action::make('previewContent')
+                                    ->label('Preview Konten')
+                                    ->slideOver()
+                                    ->form([
+                                        Forms\Components\ViewField::make('preview')
+                                            ->view('forms.preview-konten-artikel')
+                                            ->viewData([
+                                                'konten' => $get('konten_artikel'),
+                                            ])
+                                            ->columnSpanFull(),
+                                    ])
+                            )
                     ]),
             ]);
     }

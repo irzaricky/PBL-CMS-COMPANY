@@ -54,6 +54,7 @@ class ProdukResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->native(false)
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('nama_kategori_produk')
                                     ->label('Nama Kategori')
@@ -84,8 +85,12 @@ class ProdukResource extends Resource
 
                         Forms\Components\TextInput::make('harga_produk')
                             ->label('Harga Produk')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->suffix(',00')
                             ->required()
                             ->maxLength(50)
+                            ->helperText('Masukkan harga produk dalam format angka tanpa titik')
                             ->placeholder('0'),
 
                         Forms\Components\TextInput::make('slug')
@@ -102,6 +107,7 @@ class ProdukResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
 
@@ -122,12 +128,33 @@ class ProdukResource extends Resource
                             ->imageResizeTargetHeight(720)
                             ->optimize('webp'),
 
-                        Forms\Components\RichEditor::make('deskripsi_produk')
+                        Forms\Components\TextInput::make('deskripsi_produk')
                             ->label('Deskripsi Produk')
                             ->required()
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('produk-attachments')
                             ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Tautan & Informasi Tambahan')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('link_produk')
+                                    ->label('Tautan Produk')
+                                    ->url()
+                                    ->maxLength(255)
+                                    ->helperText('Masukkan tautan produk')
+                                    ->required()
+                                    ->columnSpan(1),
+                                Forms\Components\Actions::make([
+                                    Forms\Components\Actions\Action::make('openLink')
+                                        ->label('Buka Tautan')
+                                        ->icon('heroicon-s-arrow-top-right-on-square')
+                                        ->url(fn ($get) => $get('link_produk'), true)
+                                        ->visible(fn ($get) => filled($get('link_produk')))
+                                        ->button()
+                                ])
+                                ->verticallyAlignCenter()
+                                ->columnSpan(1),
+                            ]),
                     ]),
             ]);
     }
@@ -165,6 +192,13 @@ class ProdukResource extends Resource
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
                     ->rules(['required']),
+
+                Tables\Columns\TextColumn::make('link_produk')
+                    ->label('Tautan Produk')
+                    ->url(fn($record) => $record->link_produk)
+                    ->openUrlInNewTab()
+                    ->searchable()
+                    ->limit(50),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')

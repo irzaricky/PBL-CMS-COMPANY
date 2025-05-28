@@ -66,6 +66,7 @@ class CaseStudyResource extends Resource
                             ->relationship('mitra', 'nama')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required(),
 
                         Forms\Components\TextInput::make('slug_case_study')
@@ -82,6 +83,7 @@ class CaseStudyResource extends Resource
                                 ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
 
                         Forms\Components\Textarea::make('deskripsi_case_study')

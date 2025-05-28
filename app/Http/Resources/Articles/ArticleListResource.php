@@ -26,7 +26,7 @@ class ArticleListResource extends JsonResource
                 'nama_kategori_artikel' => optional($this->kategoriArtikel)->nama_kategori_artikel,
             ],
             'user' => [
-                'id_user' => optional($this->user)->id_user,
+                //'id_user' => optional($this->user)->id_user,
                 'name' => optional($this->user)->name,
                 'foto_profil' => optional($this->user)->foto_profil,
             ],

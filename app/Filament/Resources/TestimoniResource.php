@@ -40,6 +40,7 @@ class TestimoniResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required()
                             ->disabled(),
 
@@ -167,6 +168,7 @@ class TestimoniResource extends Resource
                                     ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                                     ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                                 ])
+                                ->native(false)
                                 ->required(),
                         ])
                         ->action(function (Collection $records, array $data): void {

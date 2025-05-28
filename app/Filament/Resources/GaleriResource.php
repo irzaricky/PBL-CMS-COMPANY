@@ -54,6 +54,7 @@ class GaleriResource extends Resource
                             ->relationship('kategoriGaleri', 'nama_kategori_galeri')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('nama_kategori_galeri')
@@ -89,6 +90,7 @@ class GaleriResource extends Resource
                             ->relationship('user', 'name')
                             ->default(fn() => Auth::id())
                             ->searchable()
+                            ->native(false)
                             ->preload()
                             ->required(),
 
@@ -106,6 +108,7 @@ class GaleriResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
 

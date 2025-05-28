@@ -25,7 +25,7 @@ class ArticleViewResource extends JsonResource
                 'nama_kategori_artikel' => $this->kategoriArtikel->nama_kategori_artikel,
             ],
             'user' => [
-                'id_user' => $this->user->id_user,
+                //'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
                 'foto_profil' => $this->user->foto_profil,
             ],

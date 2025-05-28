@@ -50,6 +50,7 @@ class StrukturOrganisasiResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->native(false)
                             ->helperText('Pilih pengguna yang menempati posisi ini. Status posisi akan mengikuti status pengguna'),
 
                         Forms\Components\TextInput::make('jabatan')

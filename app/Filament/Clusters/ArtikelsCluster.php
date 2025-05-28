@@ -9,7 +9,7 @@ class ArtikelsCluster extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-s-newspaper';
 
-    protected static ?string $navigationLabel = 'Artikel Management';
+    protected static ?string $navigationLabel = 'Artikel';
 
     protected static ?string $slug = 'Content-Management';
 

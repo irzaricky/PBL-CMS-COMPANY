@@ -1,31 +1,65 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
-import { usePage } from '@inertiajs/vue3'
+import { Link, usePage } from '@inertiajs/vue3'
+import axios from 'axios'
 
 const user = usePage().props.auth.user
 
-const images = [
+const defaultImages = [
     '/image/21.jpg',
     '/image/22.jpg',
     '/image/23.jpg',
     '/image/24.jpg',
     '/image/25.jpg',
     '/image/26.jpg',
-];
+]
 
 const currentImage = ref(0)
-let intervalId
+const profilPerusahaan = ref(null)
+const loading = ref(false)
+const error = ref(null)
+let intervalId = null
 
-onMounted(() => {
-    intervalId = setInterval(() => {
-        currentImage.value = (currentImage.value + 1) % images.length
-    }, 6000)
-})
+async function fetchProfilPerusahaan() {
+    try {
+        loading.value = true
+        const response = await axios.get('/api/profil-perusahaan')
+        profilPerusahaan.value = response.data.data
+        loading.value = false
+
+        const slides = getThumbnails()
+        if (slides.length > 1) {
+            intervalId = setInterval(() => {
+                currentImage.value = (currentImage.value + 1) % slides.length
+            }, 6000)
+        }
+
+    } catch (err) {
+        error.value = "Profil perusahaan gagal dimuat."
+        loading.value = false
+        console.error("Error fetching profilPerusahaan:", err)
+    }
+}
+
+function getThumbnails() {
+    const thumbs = profilPerusahaan.value?.thumbnail_perusahaan
+    if (!thumbs) return []
+    if (Array.isArray(thumbs)) return thumbs
+    return [thumbs]
+}
+
+function getImageUrl(image) {
+    if (!image) return '/image/placeholder.webp'
+    return image.startsWith('/image/') ? image : `/storage/${image}`
+}
+
+onMounted(fetchProfilPerusahaan)
 
 onBeforeUnmount(() => {
     clearInterval(intervalId)
 })
 </script>
+
 
 <style scoped>
 @keyframes zoomPan {
@@ -48,9 +82,7 @@ onBeforeUnmount(() => {
     background-size: cover;
     transition: opacity 2s ease-in-out;
     z-index: 0;
-    /* Ensure it's behind the content */
     overflow: hidden;
-    /* Prevent image from overflowing */
 }
 
 .animate-zoomPan {
@@ -65,28 +97,30 @@ onBeforeUnmount(() => {
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 10;
-    /* Ensure it's above the background */
 }
 
 .content {
     position: relative;
     z-index: 20;
-    /* Ensure it's above the overlay */
 }
 </style>
 
 <template>
     <div class="relative w-full h-full overflow-hidden">
-        <!-- Gambar Latar -->
-        <div v-for="(image, index) in images" :key="index" class="background-image transition-opacity"
-            :style="{ backgroundImage: `url(${image})`, opacity: index === currentImage ? 1 : 0 }"
-            :class="{ 'animate-zoomPan': index === currentImage }">
-        </div>
+        <template v-if="getThumbnails().length > 0">
+            <div v-for="(img, index) in getThumbnails()" :key="index" class="background-image transition-opacity"
+                :style="{ backgroundImage: `url(${getImageUrl(img)})`, opacity: index === currentImage ? 1 : 0 }"
+                :class="{ 'animate-zoomPan': index === currentImage }"></div>
+        </template>
 
-        <!-- Overlay hitam transparan -->
+        <template v-else>
+            <div v-for="(img, index) in defaultImages" :key="index" class="background-image transition-opacity"
+                :style="{ backgroundImage: `url(${img})`, opacity: index === currentImage ? 1 : 0 }"
+                :class="{ 'animate-zoomPan': index === currentImage }"></div>
+        </template>
+
         <div class="absolute inset-0 bg-black bg-opacity-50 z-10 pointer-events-none"></div>
 
-        <!-- Konten hero -->
         <div class="relative z-20">
             <div
                 class="w-full min-h-screen bg-black/50 px-6 py-16 lg:px-8 flex flex-col lg:flex-row items-start lg:items-center justify-center lg:justify-start font-custom">
@@ -96,18 +130,19 @@ onBeforeUnmount(() => {
                             Selamat datang {{ user?.name ?? 'pengunjung' }}!
                         </h1>
                         <p class="text-white text-base lg:text-lg leading-normal lg:leading-relaxed font-normal">
-                           Temukan informasi terkini seputar produk, event, lowongan kerja, hingga kisah menarik lewat artikel dan galeri kami.
+                            Temukan informasi terkini seputar produk, event, lowongan kerja, hingga kisah menarik lewat
+                            artikel dan galeri kami.
                         </p>
                     </div>
                     <div class="flex flex-wrap gap-4">
-                        <a href="/produk"
+                        <a href="#KontenSlider"
                             class="px-6 py-2.5 bg-white text-black font-medium text-base rounded-full shadow hover:opacity-90 transition inline-block text-center">
-                            Lihat semua produk kami
+                            Mulai Sekarang
                         </a>
-                        <a href="/event"
+                        <Link href="/profil-perusahaan"
                             class="px-6 py-2.5 bg-white/10 text-white font-medium text-base rounded-full border border-transparent hover:bg-white/20 transition inline-block text-center">
-                            Event terdekat
-                        </a>
+                        Profil Kami
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -28,23 +28,16 @@ class KontenSlider extends Model
      * @var list<string>
      */
     protected $fillable = [
-        'id_user',
+        'durasi_slider',
         'id_galeri',
         'id_produk',
-        'id_lowongan',
         'id_event',
         'id_artikel',
-        'judul_header',
     ];
 
     /**
      * Relationships
      */
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'id_user', 'id_user');
-    }
 
     public function galeri()
     {
@@ -54,11 +47,6 @@ class KontenSlider extends Model
     public function produk()
     {
         return $this->belongsTo(Produk::class, 'id_produk', 'id_produk');
-    }
-
-    public function lowongan()
-    {
-        return $this->belongsTo(Lowongan::class, 'id_lowongan', 'id_lowongan');
     }
 
     public function event()

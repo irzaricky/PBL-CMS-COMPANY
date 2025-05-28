@@ -11,14 +11,25 @@ const currentPage = ref(1);
 const lastPage = ref(1);
 let debounceTimer = null;
 const { props } = usePage();
+const isLoading = ref(true)
 
 onMounted(() => {
+    fetchData();
     fetchProduk();
     fetchKategori();
-    document.documentElement.style.setProperty('--color-secondary', props.theme.secondary);
+    fetchLatestProduct();
+    setTimeout(() => {
+        isLoading.value = false
+    }, 4000)
 });
 
 const selectedCategory = ref(null);
+
+async function fetchData() {
+    isLoading.value = true;
+    await Promise.all([fetchProduk(), fetchKategori()]);
+    isLoading.value = false;
+}
 
 const filterByCategory = (categoryId) => {
     selectedCategory.value = categoryId;
@@ -103,9 +114,12 @@ const prevImage = () => {
         (activeImageIndex.value - 1 + item.value.thumbnail_produk.length) % item.value.thumbnail_produk.length;
 };
 
-onMounted(() => {
-    fetchLatestProduct();
-});
+function formatRupiah(value) {
+    const numberValue = Number(value);
+    if (isNaN(numberValue)) return value;
+    return `Rp${numberValue.toLocaleString('id-ID')},00`;
+}
+
 </script>
 
 <template>
@@ -153,79 +167,122 @@ onMounted(() => {
         <div class="max-w-screen-xl mx-auto px-4 lg:px-8 py-8 flex flex-col items-center gap-20 overflow-hidden">
 
             <!-- Filter Kategori -->
-            <div class="w-full flex flex-wrap gap-2 mt-6 font-custom">
-                <!-- Tombol 'Semua' -->
-                <button @click="filterByCategory(null)" class="px-4 py-2 rounded-xl text-sm font-medium transition"
-                    :class="selectedCategory === null
-                        ? 'bg-secondary text-white'
-                        : 'bg-gray-200 text-gray-800 hover:bg-black hover:text-white'">
-                    Semua
-                </button>
-
-                <!-- Tombol per kategori -->
-                <button v-for="category in categories" :key="category.id_kategori_produk"
-                    @click="filterByCategory(category.id_kategori_produk)"
-                    class="px-4 py-2 rounded-xl text-sm font-medium transition" :class="selectedCategory === category.id_kategori_produk
-                        ? 'bg-secondary text-white'
-                        : 'bg-gray-200 text-gray-800 hover:bg-black hover:text-white'">
-                    {{ category.nama_kategori_produk }}
-                </button>
-            </div>
-
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full font-custom">
-                <div v-for="item in produk" :key="item.id_produk"
-                    class="relative p-6 rounded-2xl bg-cover bg-center bg-no-repeat flex flex-col h-[480px] overflow-hidden transform transition duration-300 hover:scale-105"
-                    :style="item.thumbnail_produk && item.thumbnail_produk.length > 0
-                        ? `background-image: url('${getImageUrl(item.thumbnail_produk)}')`
-                        : 'background-color: #ccc'">
-
-                    <!-- Overlay -->
-                    <div
-                        class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10" />
-
-                    <!-- Konten -->
-                    <div class="relative z-20 mt-auto text-white flex flex-col gap-2">
-                        <!-- Nama Produk -->
-                        <div class="text-2xl font-normal">{{ item.nama_produk }}</div>
-
-                        <!-- Varian dan Harga -->
-                        <div class="flex flex-col gap-2">
-                            <!-- Varian -->
-                            <div class="flex items-center gap-2 text-sm font-normal">
-                                <Tag class="w-4 h-4" />
-                                <span>Kategori: {{ item.kategori_produk.nama_kategori_produk }}</span>
-                            </div>
-
-                            <!-- Harga -->
-                            <div class="flex items-center gap-2 text-sm font-normal">
-                                <Wallet class="w-4 h-4" />
-                                <span>Harga: {{ item.harga_produk.toLocaleString('id-ID') }}</span>
-                            </div>
+            <div class="w-full overflow-x-auto mt-6">
+                <div class="flex gap-2 font-custom text-sm whitespace-nowrap">
+                    <!-- Skeleton Kategori -->
+                    <template v-if="isLoading">
+                        <div v-for="n in 4" :key="n" class="px-4 py-2 rounded-xl bg-gray-200 animate-pulse w-24 h-9">
                         </div>
+                    </template>
 
-                        <!-- Tombol -->
-                        <a :href="`/produk/${item.slug}`"
-                            class="inline-flex items-center justify-center gap-2 px-6 py-2 mt-4 bg-white/30 text-white font-medium text-sm rounded-full hover:bg-white hover:text-black transition-all duration-300">
-                            Lihat Detail
-                        </a>
-                    </div>
+                    <!-- Tombol Kategori asli -->
+                    <template v-else>
+                        <button @click="filterByCategory(null)"
+                            class="px-4 py-2 rounded-xl font-medium transition border" :class="selectedCategory === null
+                                ? 'bg-black text-white'
+                                : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'">
+                            Semua
+                        </button>
+
+                        <button v-for="category in categories" :key="category.id_kategori_produk"
+                            @click="filterByCategory(category.id_kategori_produk)"
+                            class="px-4 py-2 rounded-xl font-medium transition border" :class="selectedCategory === category.id_kategori_produk
+                                ? 'bg-black text-white'
+                                : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'">
+                            {{ category.nama_kategori_produk }}
+                        </button>
+                    </template>
                 </div>
             </div>
+
+            <!-- Grid Produk -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full font-custom">
+                <!-- Skeleton Produk -->
+                <template v-if="isLoading">
+                    <div v-for="n in 6" :key="n"
+                        class="relative p-6 rounded-2xl bg-gray-200 animate-pulse flex flex-col h-[480px] overflow-hidden">
+                        <div
+                            class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/20 to-transparent z-10" />
+                        <div class="relative z-20 mt-auto text-white flex flex-col gap-4">
+                            <div class="h-6 w-2/3 bg-white/50 rounded"></div>
+                            <div class="h-4 w-3/4 bg-white/40 rounded"></div>
+                            <div class="h-4 w-1/2 bg-white/40 rounded"></div>
+                            <div class="h-8 w-32 bg-white/30 rounded-full mt-4"></div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Produk kosong -->
+                <div v-if="!isLoading && produk.length === 0"
+                    class="col-span-full flex flex-col items-center justify-center gap-6 py-20 text-center">
+                    <div class="flex flex-col lg:flex-row items-center gap-6 text-left">
+                        <img src="/image/empty.svg" alt="Empty State"
+                            class="w-40 h-40 lg:w-96 lg:h-96 object-contain" />
+                        <div>
+                            <h3 class="text-xl md:text-2xl font-semibold text-gray-700 font-custom">Yah, produknya ngga
+                                ada...</h3>
+                            <p class="text-sm md:text-base text-gray-500 font-custom">Coba kata kunci lain atau pilih
+                                kategori
+                                berbeda.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Produk asli -->
+                <template v-else>
+                    <div v-for="item in produk" :key="item.id_produk"
+                        class="relative p-6 rounded-2xl bg-cover bg-center bg-no-repeat flex flex-col h-[480px] overflow-hidden transform transition duration-300 hover:scale-105"
+                        :style="item.thumbnail_produk && item.thumbnail_produk.length > 0
+                            ? `background-image: url('${getImageUrl(item.thumbnail_produk)}')`
+                            : 'background-color: #ccc'">
+
+                        <div
+                            class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10" />
+
+                        <div class="relative z-20 mt-auto text-white flex flex-col gap-2">
+                            <div class="text-2xl font-normal">{{ item.nama_produk }}</div>
+                            <div class="flex flex-col gap-2">
+                                <div class="flex items-center gap-2 text-sm font-normal">
+                                    <Tag class="w-4 h-4" />
+                                    <span>Kategori: {{ item.kategori_produk.nama_kategori_produk }}</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm font-normal">
+                                    <Wallet class="w-4 h-4" />
+                                    <span>Harga: {{ formatRupiah(item.harga_produk) }}</span>
+                                </div>
+                            </div>
+                            <a :href="`/produk/${item.slug}`"
+                                class="inline-flex items-center justify-center gap-2 px-6 py-2 mt-4 bg-white/30 text-white font-medium text-sm rounded-full hover:bg-white hover:text-black transition-all duration-300">
+                                Lihat Detail
+                            </a>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
             <!-- Pagination -->
-            <div v-if="lastPage > 1" class="flex justify-center items-center gap-2 mt-10">
+            <div v-if="lastPage > 1" class="flex justify-center items-center gap-4 mt-10 font-custom text-sm">
+                <!-- Tombol Sebelumnya -->
                 <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
-                    class="px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 disabled:opacity-50">
+                    class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === 1
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                        : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'">
                     Sebelumnya
                 </button>
 
-                <span class="text-gray-700">{{ currentPage }} / {{ lastPage }}</span>
+                <!-- Indikator halaman -->
+                <div class="px-4 py-2 rounded-xl border border-black text-black font-semibold">
+                    {{ currentPage }} / {{ lastPage }}
+                </div>
 
+                <!-- Tombol Selanjutnya -->
                 <button @click="goToPage(currentPage + 1)" :disabled="currentPage === lastPage"
-                    class="px-4 py-2 rounded border border-gray-300 bg-white text-gray-700 disabled:opacity-50">
+                    class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === lastPage
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                        : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'">
                     Selanjutnya
                 </button>
             </div>
+
             <div class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end">
                 <div class="w-full lg:w-3/4 flex flex-col gap-4">
                     <div class="text-Color-Scheme-1-Text text-base font-semibold font-custom">Belum puas?</div>
@@ -289,7 +346,7 @@ onMounted(() => {
                     <!-- Title & Price -->
                     <h1 class="text-4xl text-secondary font-bold">{{ item.nama_produk }}</h1>
                     <div class="flex items-center gap-4">
-                        <span class="text-xl font-semibold">{{ item.harga_produk.toLocaleString('id-ID') }}</span>
+                        <span class="text-xl font-semibold">{{ formatRupiah(item.harga_produk) }}</span>
                         <div class="flex items-center gap-3">
                             <div class="h-6 border-l" />
                             <span class="text-xl flex items-center gap-1">
@@ -303,9 +360,10 @@ onMounted(() => {
 
                     <!-- Buy Button -->
                     <div class="space-y-4">
-                        <button class="w-full px-6 py-2.5 bg-secondary text-white font-medium rounded-full">
+                        <a :href="item.link_produk" target="_blank"
+                            class="block text-center w-full px-6 py-2.5 bg-secondary hover:bg-black transition duration-500 text-white font-medium rounded-full">
                             Beli di marketplace
-                        </button>
+                        </a>
                         <p class="text-xs text-center text-gray-500">Anda akan diarahkan ke halaman baru</p>
                     </div>
                 </div>

@@ -15,10 +15,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <div>
+    <div class="min-w-[390px]">
         <Navbar />
         <main>
-            <slot> </slot>
+            <slot />
         </main>
         <Feedback />
         <Footer />

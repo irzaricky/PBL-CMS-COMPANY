@@ -14,6 +14,7 @@ class ProdukListResource extends JsonResource
             'nama_produk' => $this->nama_produk,
             'harga_produk' => $this->harga_produk,
             'thumbnail_produk' => $this->thumbnail_produk,
+            'link_produk' => $this->link_produk,
             'slug' => $this->slug,
             'deskripsi_produk' => substr($this->deskripsi_produk, 0, 100) . '...',
             'kategori_produk' => [

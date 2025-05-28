@@ -96,6 +96,11 @@ async function submitTestimoni() {
         console.error(err)
     }
 }
+function formatRupiah(value) {
+    const numberValue = Number(value);
+    if (isNaN(numberValue)) return value;
+    return `Rp${numberValue.toLocaleString('id-ID')},00`;
+}
 </script>
 
 
@@ -166,7 +171,7 @@ async function submitTestimoni() {
                     <!-- Title & Price -->
                     <h1 class="text-4xl text-secondary font-bold">{{ item.nama_produk }}</h1>
                     <div class="flex items-center gap-4">
-                        <span class="text-xl font-semibold">{{ item.harga_produk.toLocaleString('id-ID') }}</span>
+                        <span class="text-xl font-semibold">{{ formatRupiah(item.harga_produk) }}</span>
                         <div class="flex items-center gap-3">
                             <div class="h-6 border-l" />
                             <span class="text-xl flex items-center gap-1">
@@ -180,9 +185,10 @@ async function submitTestimoni() {
 
                     <!-- Buy Button -->
                     <div class="space-y-4">
-                        <button class="w-full px-6 py-2.5 bg-secondary text-white font-medium rounded-full">
+                        <a :href="item.link_produk" target="_blank"
+                            class="block text-center w-full px-6 py-2.5 bg-secondary hover:bg-black transition duration-500 text-white font-medium rounded-full">
                             Beli di marketplace
-                        </button>
+                        </a>
                         <p class="text-xs text-center text-gray-500">Anda akan diarahkan ke halaman baru</p>
                     </div>
                 </div>
@@ -194,19 +200,20 @@ async function submitTestimoni() {
                 <h2 class="text-2xl font-semibold mb-4">{{ item.nama_produk }}</h2>
                 <div class="space-y-6">
                     <div v-for="testimoni in testimoniList" :key="testimoni.id_testimoni"
-                        class="p-4 border rounded-xl shadow bg-white">
-                        <div class="flex justify-between items-center mb-2">
+                        class="p-4 border border-gray-200 rounded-xl bg-gray-50 transition hover:bg-gray-100">
+
+                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
                             <div class="flex items-center gap-3">
                                 <img v-if="testimoni.user?.foto_profil" :src="`/storage/${testimoni.user.foto_profil}`"
                                     class="w-8 h-8 rounded-full object-cover" alt="Foto Profil" />
                                 <div>
-                                    <p class="font-bold">{{ testimoni.user?.name || 'Anonim' }}</p>
+                                    <p class="font-bold text-gray-800">{{ testimoni.user?.name || 'Anonim' }}</p>
                                     <p class="text-xs text-gray-500">{{ testimoni.user?.email || '' }}</p>
                                 </div>
                             </div>
 
                             <!-- Bintang Rating -->
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 sm:mt-0 mt-2">
                                 <div class="flex gap-1">
                                     <Star v-for="i in 5" :key="i"
                                         :class="i <= testimoni.rating ? 'text-secondary' : 'text-gray-300'"
@@ -215,6 +222,7 @@ async function submitTestimoni() {
                                 <span class="text-sm text-gray-500">{{ testimoni.rating }}/5</span>
                             </div>
                         </div>
+
                         <p class="text-gray-700">{{ testimoni.isi_testimoni }}</p>
                     </div>
                 </div>
@@ -224,19 +232,20 @@ async function submitTestimoni() {
             <div v-if="isLoggedIn && item" class="w-full max-w-3xl mx-auto mt-10">
                 <span class="text-sm text-gray-500">Sudah membeli dan menggunakan {{ item.nama_produk }}?</span>
                 <h2 class="text-xl font-semibold mb-3">Tulis pengalamanmu sendiri</h2>
-                <form @submit.prevent="submitTestimoni" class="space-y-4 border rounded-xl shadow bg-white p-4">
+                <form @submit.prevent="submitTestimoni"
+                    class="space-y-4 border border-gray-200 rounded-xl bg-gray-50 transition hover:bg-gray-100 p-4">
                     <textarea v-model="newTestimoni.isi_testimoni"
-                        class="w-full rounded-md border p-3 focus:outline-none focus:ring-0 focus:border-gray-300"
+                        class="w-full rounded-md border border-gray-300 bg-white p-3 focus:outline-none focus:ring-1 focus:ring-secondary focus:border-secondary"
                         rows="4" placeholder="Tulis testimoni kamu di sini..." required></textarea>
 
                     <!-- Rating Star Selector -->
                     <div class="flex items-center gap-2">
-                        <span class="font-medium">Rating:</span>
+                        <span class="font-medium text-gray-700">Rating:</span>
                         <div class="flex items-center gap-1">
                             <button v-for="i in 5" :key="i" type="button" @click="newTestimoni.rating = i"
                                 class="focus:outline-none">
                                 <Star :class="i <= newTestimoni.rating ? 'text-secondary' : 'text-gray-300'"
-                                    class="w-6 h-6" />
+                                    class="w-6 h-6 transition" />
                             </button>
                         </div>
                     </div>
@@ -249,9 +258,20 @@ async function submitTestimoni() {
             </div>
 
             <!-- LOGIN WARNING -->
-            <div v-else class="w-full max-w-3xl mx-auto text-sm text-gray-500 italic mt-4">
-                Login terlebih dahulu untuk menulis testimoni.
+            <div v-else
+                class="w-full max-w-3xl mx-auto mt-6 bg-yellow-50 border border-yellow-300 text-yellow-800 p-6 rounded-xl flex items-center gap-4">
+                <!-- Ikon atau ilustrasi -->
+                <img src="/image/login.svg" alt="Login Illustration" class="w-36 h-36 object-contain" />
+
+                <!-- Pesan -->
+                <div class="text-sm leading-relaxed">
+                    <p class="font-semibold">Oops! Kamu belum login.</p>
+                    <p class="italic text-gray-600">Login terlebih dahulu untuk menulis testimoni dan berbagi
+                        pengalamanmu.</p>
+                </div>
             </div>
+
+
 
 
         </div>

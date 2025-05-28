@@ -12,13 +12,11 @@ class KontenSliderSeeder extends Seeder
         DB::table('konten_slider')->insert([
             [
                 'id_konten_slider' => 1,
-                'id_user' => 1,
+                'durasi_slider' => 5,
                 'id_galeri' => 1,
-                'id_produk' => null,
-                'id_lowongan' => null,
+                'id_produk' => 1,
                 'id_event' => 1,
                 'id_artikel' => 1,
-                'judul_header' => 'Slider Utama',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

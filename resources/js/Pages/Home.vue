@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from "../Layouts/AppLayout.vue";
 import Hero from "../Pages/Home/Hero.vue";
-import Benefit from "../Pages/Home/Benefit.vue";
+import KontenSlider from "./Home/KontenSlider.vue";
 import Produk from "@/Pages/Home/Produk.vue";
 import Artikel from "@/Pages/Home/Artikel.vue";
 import CallToAction from "../Pages/Home/CallToAction.vue";
@@ -24,7 +24,7 @@ onMounted(async () => {
 <template>
     <AppLayout>
         <Hero />
-        <Benefit />
+        <KontenSlider />
         <div v-if="featureToggles.produk_module">
             <Produk />
         </div>

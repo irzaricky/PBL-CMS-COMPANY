@@ -70,6 +70,7 @@ class MitraResource extends Resource
                                 'aktif' => 'Aktif',
                                 'nonaktif' => 'Nonaktif',
                             ])
+                            ->native(false)
                             ->default('aktif')
                             ->required(),
                     ]),
@@ -200,6 +201,7 @@ class MitraResource extends Resource
                                     'aktif' => 'Aktif',
                                     'nonaktif' => 'Nonaktif',
                                 ])
+                                ->native(false)
                                 ->required(),
                         ])
                         ->action(function (Collection $records, array $data): void {
