@@ -12,6 +12,7 @@ use Filament\Navigation\MenuItem;
 use Filament\Support\Colors\Color;
 use App\Filament\Pages\Auth\Register;
 use Filament\Navigation\NavigationItem;
+use App\Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\EditProfile;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
@@ -96,6 +97,7 @@ class AdminPanelProvider extends PanelProvider
             ->globalSearch(false)
             ->font('Plus jakarta Sans')
             ->registration(Register::class)
+            ->emailVerification(EmailVerificationPrompt::class)
             ->colors([
                 'primary' => '#3b82f6',
             ])

@@ -78,11 +78,16 @@ class AppServiceProvider extends ServiceProvider
 
             // Set the application name (for title)
             config(['app.name' => $titlePerusahaan]);
+
+            // Set email from name configuration
+            config(['mail.from.name' => $titlePerusahaan]);
+
         } catch (\Exception $e) {
             // Set default values if database is not available
             View::share('logoPerusahaan', 'favicon.ico');
             View::share('titlePerusahaan', 'Sistem Informasi Manajemen');
             config(['app.name' => 'Sistem Informasi Manajemen']);
+            config(['mail.from.name' => 'Sistem Informasi Manajemen']);
         }
     }
 }
