@@ -396,6 +396,9 @@ class InstallerController extends Controller
             DB::commit();
             // Log::info('Feature toggles updated successfully');
 
+            // Clear optimization cache after saving feature toggles
+            Artisan::call('optimize:clear');
+
             return redirect(route('finish'))
                 ->with('success', 'Feature toggles berhasil disimpan.');
 
