@@ -5,20 +5,15 @@ namespace App\Providers\Filament;
 
 use Filament\Pages;
 use Filament\Panel;
-use App\Models\User;
 use Filament\PanelProvider;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
-use Filament\Support\Colors\Color;
 use App\Filament\Pages\Auth\Register;
-use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\EditProfile;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
-use Filament\Navigation\NavigationBuilder;
-use App\Filament\Resources\UnduhanResource;
-use Intervention\Image\ImageServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Widgets\Admin\TotalUsersWidget;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -92,6 +87,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
             ->profile(EditProfile::class)
             ->unsavedChangesAlerts()
             ->globalSearch(false)
@@ -188,7 +184,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentEnvEditorPlugin::make()
                     ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS')
                     ->authorize(
-                        fn() => auth()->user()?->can('page_ViewEnv')
+                        fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')
                     ),
                 EnvironmentIndicatorPlugin::make(),
             ])
