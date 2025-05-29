@@ -90,6 +90,8 @@ class GaleriResource extends Resource
                             ->relationship('user', 'name')
                             ->default(fn() => Auth::id())
                             ->searchable()
+                            ->disabled()
+                            ->dehydrated(true)
                             ->native(false)
                             ->preload()
                             ->required(),
@@ -133,8 +135,19 @@ class GaleriResource extends Resource
                         Forms\Components\RichEditor::make('deskripsi_galeri')
                             ->label('Deskripsi Galeri')
                             ->required()
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('galeri-attachments')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'h1',
+                                'h2',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'redo',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -185,6 +198,7 @@ class GaleriResource extends Resource
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
+                    ->disabled(fn() => !auth()->user()->can('update_galeri', Galeri::class))
                     ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')

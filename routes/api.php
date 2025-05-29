@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\KontenSliderController;
 use App\Http\Controllers\Api\FeatureToggleController;
 use App\Http\Controllers\Api\TestimoniProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
+use App\Http\Controllers\Api\TestimoniArtikelController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
 
 Route::middleware('auth')->group(function () {
@@ -119,6 +120,8 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
+Route::get('/testimoni/artikel/{artikelId}', [TestimoniArtikelController::class, 'index']);
+Route::post('/testimoni/artikel/{artikel}', [TestimoniArtikelController::class, 'store']);
 
 
 // Mitra

@@ -101,6 +101,8 @@ class ArtikelResource extends Resource
                             ->default(fn() => Auth::id())
                             ->searchable()
                             ->preload()
+                            ->disabled()
+                            ->dehydrated(true)
                             ->native(false)
                             ->required(),
 
@@ -194,6 +196,7 @@ class ArtikelResource extends Resource
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
+                    ->disabled(fn() => !auth()->user()->can('update_artikel', Artikel::class))  
                     ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')

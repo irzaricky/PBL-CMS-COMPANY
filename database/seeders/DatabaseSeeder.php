@@ -58,6 +58,7 @@ class DatabaseSeeder extends Seeder
             FeatureToggleSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
+            TestimoniArtikelSeeder::class,
         ]);
     }
 }

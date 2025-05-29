@@ -103,7 +103,7 @@ onUnmounted(() => {
                         class="h-full w-full object-contain" />
                 </div>
                 <Link href="/" class="text-h4-bold text-typography-dark px-2">
-                {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}
+                {{ profil_perusahaan?.nama_perusahaan || "CMS" }}
                 </Link>
             </div>
 

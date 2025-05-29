@@ -28,6 +28,7 @@ class ArticleViewResource extends JsonResource
                 //'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
                 'foto_profil' => $this->user->foto_profil,
+                'email' => $this->user->email,
             ],
             'jumlah_view' => $this->jumlah_view,
             'slug' => $this->slug,

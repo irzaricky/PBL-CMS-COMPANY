@@ -143,7 +143,7 @@ function formatRupiah(value) {
                             Produk pilihan dengan harga bersahabat. Temukan kebutuhanmu dengan mudah dan cepat hanya
                             dalam satu tempat.
                         </p>
-                    </div>
+                    </div> 
                 </div>
 
                 <!-- Search form -->
@@ -219,8 +219,8 @@ function formatRupiah(value) {
                         <img src="/image/empty.svg" alt="Empty State"
                             class="w-40 h-40 lg:w-96 lg:h-96 object-contain" />
                         <div>
-                            <h3 class="text-xl md:text-2xl font-semibold text-gray-700 font-custom">Yah, produknya ngga
-                                ada...</h3>
+                            <h3 class="text-xl md:text-2xl font-semibold text-gray-700 font-custom">Yah, produknya tidak
+                                ditemukan</h3>
                             <p class="text-sm md:text-base text-gray-500 font-custom">Coba kata kunci lain atau pilih
                                 kategori
                                 berbeda.</p>

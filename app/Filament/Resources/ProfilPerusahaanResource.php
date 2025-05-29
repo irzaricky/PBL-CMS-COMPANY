@@ -166,44 +166,37 @@ class ProfilPerusahaanResource extends Resource
             ->schema([
                 Infolists\Components\Section::make('Informasi Utama')
                     ->schema([
-                        Infolists\Components\Split::make([
-                            Infolists\Components\Group::make([
-                                Infolists\Components\TextEntry::make('nama_perusahaan')
-                                    ->label('Nama Perusahaan')
-                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
-                                    ->weight('bold')
-                                    ->color('primary'),
+                        Infolists\Components\TextEntry::make('nama_perusahaan')
+                            ->label('Nama Perusahaan')
+                            ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                            ->weight('bold')
+                            ->color('primary'),
 
-                                Infolists\Components\TextEntry::make('email_perusahaan')
-                                    ->label('Email')
-                                    ->icon('heroicon-o-envelope')
-                                    ->copyable()
-                                    ->copyMessage('Email disalin!')
-                                    ->url(fn($record) => 'mailto:' . $record->email_perusahaan),
+                        Infolists\Components\TextEntry::make('email_perusahaan')
+                            ->label('Email')
+                            ->icon('heroicon-o-envelope')
+                            ->copyable()
+                            ->copyMessage('Email disalin!')
+                            ->url(fn($record) => 'mailto:' . $record->email_perusahaan),
 
-                                Infolists\Components\TextEntry::make('alamat_perusahaan')
-                                    ->label('Alamat')
-                                    ->icon('heroicon-o-map-pin')
-                                    ->columnSpanFull(),
+                        Infolists\Components\TextEntry::make('alamat_perusahaan')
+                            ->label('Alamat')
+                            ->icon('heroicon-o-map-pin'),
 
-                                Infolists\Components\TextEntry::make('link_alamat_perusahaan')
-                                    ->label('Lokasi di Google Maps')
-                                    ->icon('heroicon-o-globe-alt')
-                                    ->url(fn($record) => $record->link_alamat_perusahaan)
-                                    ->openUrlInNewTab()
-                                    ->color('primary')
-                                    ->formatStateUsing(fn() => 'Lihat di Google Maps'),
-                            ]),
+                        Infolists\Components\TextEntry::make('link_alamat_perusahaan')
+                            ->label('Lokasi di Google Maps')
+                            ->icon('heroicon-o-globe-alt')
+                            ->url(fn($record) => $record->link_alamat_perusahaan)
+                            ->openUrlInNewTab()
+                            ->color('primary')
+                            ->formatStateUsing(fn() => 'Lihat di Google Maps'),
 
-                            Infolists\Components\Group::make([
-                                Infolists\Components\ImageEntry::make('logo_perusahaan')
-                                    ->label('Logo Perusahaan')
-                                    ->disk('public')
-                                    ->height(150)
-                                    ->width(150),
-                            ])->grow(false),
-                        ]),
-                    ])->columns(2),
+                        Infolists\Components\ImageEntry::make('logo_perusahaan')
+                            ->label('Logo Perusahaan')
+                            ->disk('public')
+                            ->height(150)
+                            ->width(150),
+                    ]),
 
                 Infolists\Components\Section::make('Galeri Perusahaan')
                     ->schema([
@@ -212,8 +205,7 @@ class ProfilPerusahaanResource extends Resource
                             ->disk('public')
                             ->height(200)
                             ->width(300)
-                            ->extraAttributes(['class' => 'rounded-lg'])
-                            ->columnSpanFull(),
+                            ->extraAttributes(['class' => 'rounded-lg']),
                     ])
                     ->visible(fn($record) => !empty($record->thumbnail_perusahaan)),
 
@@ -221,8 +213,7 @@ class ProfilPerusahaanResource extends Resource
                     ->schema([
                         Infolists\Components\TextEntry::make('deskripsi_perusahaan')
                             ->label('')
-                            ->html()
-                            ->columnSpanFull(),
+                            ->html(),
                     ])
                     ->visible(fn($record) => !empty($record->deskripsi_perusahaan)),
 
@@ -231,48 +222,35 @@ class ProfilPerusahaanResource extends Resource
                         Infolists\Components\RepeatableEntry::make('sejarah_perusahaan')
                             ->label('')
                             ->schema([
-                                Infolists\Components\Group::make([
-                                    Infolists\Components\TextEntry::make('tahun')
-                                        ->label('Tahun')
-                                        ->badge()
-                                        ->color('primary')
-                                        ->size(Infolists\Components\TextEntry\TextEntrySize::Large),
+                                Infolists\Components\TextEntry::make('tahun')
+                                    ->label('Tahun')
+                                    ->badge()
+                                    ->color('primary')
+                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Large),
 
-                                    Infolists\Components\TextEntry::make('judul')
-                                        ->label('')
-                                        ->size(Infolists\Components\TextEntry\TextEntrySize::Medium)
-                                        ->weight('bold')
-                                        ->color('gray'),
-                                ])->columnSpan(1),
+                                Infolists\Components\TextEntry::make('judul')
+                                    ->label('')
+                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Medium)
+                                    ->weight('bold')
+                                    ->color('gray'),
 
                                 Infolists\Components\TextEntry::make('deskripsi')
                                     ->label('')
-                                    ->html()
-                                    ->columnSpan(2),
-                            ])
-                            ->columns(3)
-                            ->columnSpanFull(),
+                                    ->html(),
+                            ]),
                     ])
                     ->visible(fn($record) => !empty($record->sejarah_perusahaan)),
 
                 Infolists\Components\Section::make('Visi & Misi')
                     ->schema([
-                        Infolists\Components\Split::make([
-                            Infolists\Components\Group::make([
-                                Infolists\Components\TextEntry::make('visi_perusahaan')
-                                    ->label('Visi Perusahaan')
-                                    ->html()
-                                    ->columnSpanFull(),
-                            ]),
+                        Infolists\Components\TextEntry::make('visi_perusahaan')
+                            ->label('Visi Perusahaan')
+                            ->html(),
 
-                            Infolists\Components\Group::make([
-                                Infolists\Components\TextEntry::make('misi_perusahaan')
-                                    ->label('Misi Perusahaan')
-                                    ->html()
-                                    ->columnSpanFull(),
-                            ]),
-                        ])->from('md'),
-                    ])->columns(2)
+                        Infolists\Components\TextEntry::make('misi_perusahaan')
+                            ->label('Misi Perusahaan')
+                            ->html(),
+                    ])
                     ->visible(fn($record) => !empty($record->visi_perusahaan) || !empty($record->misi_perusahaan)),
 
                 Infolists\Components\Section::make('Pengaturan Tema')
@@ -301,24 +279,10 @@ class ProfilPerusahaanResource extends Resource
 
                         Infolists\Components\ColorEntry::make('tema_perusahaan')
                             ->label('Preview Warna'),
-                    ])->columns(2),
-
-                Infolists\Components\Section::make('Informasi Sistem')
-                    ->schema([
-                        Infolists\Components\TextEntry::make('created_at')
-                            ->label('Dibuat Pada')
-                            ->dateTime('d F Y, H:i')
-                            ->icon('heroicon-o-calendar'),
-
-                        Infolists\Components\TextEntry::make('updated_at')
-                            ->label('Terakhir Diperbarui')
-                            ->dateTime('d F Y, H:i')
-                            ->icon('heroicon-o-clock')
-                            ->color('warning'),
-                    ])->columns(2)
-                    ->collapsible(),
+                    ]),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -368,5 +332,17 @@ class ProfilPerusahaanResource extends Resource
             'view' => Pages\ViewProfilPerusahaan::route('/{record}'),
             'edit' => Pages\EditProfilPerusahaan::route('/{record}/edit'),
         ];
+    }
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?\Illuminate\Database\Eloquent\Model $tenant = null): string
+    {
+        // Jika mengakses index, redirect langsung ke view dengan record pertama
+        if ($name === 'index') {
+            $firstRecord = static::getModel()::first();
+            if ($firstRecord) {
+                return static::getUrl('view', ['record' => $firstRecord->getKey()], $isAbsolute, $panel, $tenant);
+            }
+        }
+
+        return parent::getUrl($name, $parameters, $isAbsolute, $panel, $tenant);
     }
 }

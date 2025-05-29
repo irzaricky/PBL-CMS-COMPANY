@@ -29,6 +29,7 @@ class ArticleListResource extends JsonResource
                 //'id_user' => optional($this->user)->id_user,
                 'name' => optional($this->user)->name,
                 'foto_profil' => optional($this->user)->foto_profil,
+                'email' => optional($this->user)->email,
             ],
             'jumlah_view' => $this->jumlah_view,
             'slug' => $this->slug,

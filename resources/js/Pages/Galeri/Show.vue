@@ -3,11 +3,14 @@ import axios from "axios";
 import { ref, onMounted } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/vue3";
+import { Home, Image, ChevronRight, Download, Copy, Eye } from "lucide-vue-next";
+import CopyLink from "@/Components/Modal/CopyLink.vue";
 
 const gallery = ref(null);
 const loading = ref(true);
 const error = ref(null);
 const activeImageIndex = ref(0);
+const showCopyModal = ref(false);
 
 const props = defineProps({
     slug: String,
@@ -28,6 +31,20 @@ async function fetchGallery() {
         loading.value = false;
         console.error("Error fetching gallery:", err);
     }
+}
+
+function copyLink() {
+    const url = window.location.href;
+    navigator.clipboard.writeText(url).then(() => {
+        showCopyModal.value = true;
+    }).catch(() => {
+        // Fallback jika clipboard API tidak tersedia
+        alert("Link berhasil disalin!");
+    });
+}
+
+function closeCopyModal() {
+    showCopyModal.value = false;
 }
 
 function getImageUrl(image) {
@@ -120,7 +137,7 @@ function setActiveImage(index) {
                             {{ gallery?.kategoriGaleri?.nama_kategori_galeri || 'Tanpa Kategori' }}
                         </div>
                         <div class="text-sm font-semibold text-black">
-                            {{ gallery?.thumbnail_galeri.length }} gambar
+                            {{ gallery?.thumbnail_galeri?.length || 0 }} gambar
                         </div>
                     </div>
                     <h1 class="text-4xl sm:text-5xl font-normal leading-tight">
@@ -130,12 +147,12 @@ function setActiveImage(index) {
 
                 <!-- Gambar Utama -->
                 <div class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white">
-                    <img :src="getImageUrl(gallery?.thumbnail_galeri[activeImageIndex])" :alt="gallery?.judul_galeri"
+                    <img :src="getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])" :alt="gallery?.judul_galeri"
                         class="w-full h-full object-cover" />
                 </div>
 
                 <!-- Thumbnails -->
-                <div v-if="gallery?.thumbnail_galeri.length > 1" class="flex overflow-x-auto gap-4 py-4">
+                <div v-if="gallery?.thumbnail_galeri?.length > 1" class="flex overflow-x-auto gap-4 py-4">
                     <div v-for="(img, i) in gallery.thumbnail_galeri" :key="i"
                         class="w-20 aspect-square rounded-lg cursor-pointer border-2 overflow-hidden flex-shrink-0"
                         :class="{
@@ -146,34 +163,45 @@ function setActiveImage(index) {
                     </div>
                 </div>
 
-                <!-- Info Penulis dan Action (compact, sejajar) -->
-                <div class="flex justify-between items-center flex-wrap">
-                    <div class="flex gap-8 items-center">
-                        <img class="w-12 h-12 rounded-full object-cover border"
+                <!-- Info Penulis dengan style dari Artikel -->
+                <div class="bg-gray-50 rounded-xl w-full p-6 border border-gray-100">
+                    <!-- Author Profile -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <img class="w-14 h-14 rounded-full object-cover ring-2 ring-white shadow-sm"
                             :src="getImageUrl(gallery?.user?.foto_profil)" alt="Foto Penulis" />
-                        <div class="flex flex-col gap-1">
-                            <span class="text-base font-normal">Dibuat oleh</span>
-                            <span class="text-base font-medium">{{ gallery?.user?.name || 'Anonim' }}</span>
-                        </div>
-                        <div class="flex flex-col gap-1">
-                            <span class="text-base font-normal">Dirilis pada</span>
-                            <span class="text-base font-medium">{{ formatDate(gallery?.created_at) }}</span>
+                        <div class="flex-1">
+                            <h4 class="font-semibold text-lg text-black">
+                                {{ gallery?.user?.name || 'Anonim' }}
+                            </h4>
+                            <p class="text-sm text-gray-600">
+                                {{ formatDate(gallery?.created_at) }}
+                            </p>
                         </div>
                     </div>
 
-                    <div class="flex gap-4 items-center">
-                        <div class="flex items-center gap-2 text-sm text-black">
-                            <Download class="w-5 h-5" />
-                            {{ gallery?.jumlah_unduhan || 0 }}
+                    <!-- Stats & Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2 text-gray-600">
+                                <Download class="w-4 h-4" />
+                                <span class="text-sm font-medium">{{ gallery?.jumlah_unduhan || 0 }}× diunduh</span>
+                            </div>
                         </div>
-                        <button class="p-2 rounded-full bg-white border" @click="copyLink" title="Salin Link">
-                            <Copy class="w-5 h-5" />
-                        </button>
-                        <button @click="downloadGallery(gallery.id_galeri)"
-                            class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-secondary text-white hover:bg-black transition">
-                            <Download class="w-5 h-5" />
-                            Unduh gambar terpilih
-                        </button>
+
+                        <div class="flex gap-2">
+                            <button
+                                class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 text-sm font-medium"
+                                @click="copyLink">
+                                <Copy class="w-4 h-4" />
+                                <span class="hidden sm:inline">Salin Link</span>
+                            </button>
+
+                            <button @click="downloadGallery(gallery.id_galeri)"
+                                class="flex items-center gap-2 px-4 py-2 rounded-lg bg-secondary text-white hover:bg-black transition text-sm font-medium">
+                                <Download class="w-4 h-4" />
+                                <span class="hidden sm:inline">Unduh Gambar</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -185,5 +213,8 @@ function setActiveImage(index) {
 
             </div>
         </div>
+
+        <!-- Copy Link Modal -->
+        <CopyLink :show="showCopyModal" @close="closeCopyModal" :auto-close="true" :auto-close-delay="3000" />
     </AppLayout>
 </template>

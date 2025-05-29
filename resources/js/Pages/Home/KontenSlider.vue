@@ -157,7 +157,7 @@ function goToSlide(index) {
             <div class="text-base font-semibold font-custom">Jadi</div>
             <div class="text-5xl font-normal font-custom mb-4">Kenapa sih harus ke sini?</div>
             <div class="text-lg font-normal font-custom leading-relaxed">
-                Karena {{ profil_perusahaan?.nama_perusahaan || "Loading..." }} ini bukan cuma informatif, tapi
+                Karena {{ profil_perusahaan?.nama_perusahaan || "CMS" }} ini bukan cuma informatif, tapi
                 juga nyaman dan seru buat dijelajahi!
             </div>
         </div>
@@ -207,7 +207,7 @@ function goToSlide(index) {
 
             <!-- Fallback jika semua module tidak aktif -->
             <div v-else class="bg-white/5 border border-white/10 rounded-2xl p-8 text-center text-white/70">
-                <div class="text-3xl font-semibold mb-2">Tidak Ada Konten</div>
+                <div class="text-3xl font-normal mb-2">Tidak Ada Konten</div>
                 <p class="text-sm">
                     Belum ada konten yang tersedia. Silakan hubungi admin untuk informasi lebih lanjut.
                 </p>

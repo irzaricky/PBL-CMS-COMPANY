@@ -3,6 +3,8 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { usePage, Link } from '@inertiajs/vue3'
+import { Home, ChevronRight, ChevronLeft, ShoppingBag, Tag, Star } from 'lucide-vue-next'
+import TestimoniTerkirim from '@/Components/Modal/TestimoniTerkirim.vue'
 
 // Props dari route
 const { slug } = defineProps({ slug: String })
@@ -18,6 +20,7 @@ const loading = ref(false)
 const activeImageIndex = ref(0)
 const isLoggedIn = computed(() => !!user.value)
 const testimoniList = ref([])
+const showTestimoniModal = ref(false)
 
 const newTestimoni = ref({
     isi_testimoni: '',
@@ -87,15 +90,35 @@ async function submitTestimoni() {
             id_user: user.value.id_user,
         })
 
-        alert('Testimoni berhasil dikirim dan menunggu persetujuan')
+        // Tampilkan modal success
+        showTestimoniModal.value = true
+
+        // Reset form
         newTestimoni.value.isi_testimoni = ''
         newTestimoni.value.rating = 5
+
+        // Refresh testimoni list
         await fetchTestimoni()
     } catch (err) {
         alert('Gagal mengirim testimoni')
         console.error(err)
     }
 }
+
+function closeTestimoniModal() {
+    showTestimoniModal.value = false
+}
+
+function writeAnotherTestimoni() {
+    setTimeout(() => {
+        const textarea = document.querySelector('textarea[placeholder*="testimoni"]')
+        if (textarea) {
+            textarea.focus()
+            textarea.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        }
+    }, 100)
+}
+
 function formatRupiah(value) {
     const numberValue = Number(value);
     if (isNaN(numberValue)) return value;
@@ -103,14 +126,63 @@ function formatRupiah(value) {
 }
 </script>
 
-
 <template>
     <AppLayout>
         <div class="w-full px-4 lg:px-16 py-10 lg:py-20 bg-white flex flex-col items-start gap-20 font-custom">
 
-            <!-- Product Detail -->
-            <div class="flex flex-col lg:flex-row gap-10 lg:gap-20 w-full max-w-7xl mx-auto">
+            <!-- Skeleton Loading -->
+            <div v-if="loading" class="flex flex-col lg:flex-row gap-10 lg:gap-20 w-full max-w-7xl mx-auto">
+                <!-- Left: Product Image Skeleton -->
+                <div class="w-full lg:w-1/2 flex justify-center">
+                    <div class="relative w-full max-w-[600px] aspect-[4/3] bg-gray-200 animate-pulse rounded-2xl overflow-hidden">
+                        <!-- Pagination Dots Skeleton -->
+                        <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                            <div v-for="i in 3" :key="i" class="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Right: Product Info Skeleton -->
+                <div class="w-full lg:w-1/2 flex flex-col gap-8">
+                    <!-- Breadcrumbs Skeleton -->
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
+                            <div class="h-4 w-4 bg-gray-200 animate-pulse rounded-full"></div>
+                            <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
+                            <div class="h-4 w-4 bg-gray-200 animate-pulse rounded-full"></div>
+                            <div class="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
+                        </div>
+                    </div>
+
+                    <!-- Title Skeleton -->
+                    <div class="h-12 bg-gray-200 animate-pulse rounded w-3/4"></div>
+                    
+                    <!-- Price & Category Skeleton -->
+                    <div class="flex items-center gap-4">
+                        <div class="h-8 bg-gray-200 animate-pulse rounded w-32"></div>
+                        <div class="h-6 border-l"></div>
+                        <div class="h-8 bg-gray-200 animate-pulse rounded w-40"></div>
+                    </div>
+
+                    <!-- Description Skeleton -->
+                    <div class="flex flex-col gap-2">
+                        <div class="h-4 bg-gray-200 animate-pulse rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 animate-pulse rounded w-full"></div>
+                        <div class="h-4 bg-gray-200 animate-pulse rounded w-5/6"></div>
+                        <div class="h-4 bg-gray-200 animate-pulse rounded w-3/4"></div>
+                    </div>
+
+                    <!-- Buy Button Skeleton -->
+                    <div class="space-y-4">
+                        <div class="h-10 bg-gray-300 animate-pulse rounded-full w-full"></div>
+                        <div class="h-3 bg-gray-200 animate-pulse rounded w-40 mx-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actual Product Detail - Show when not loading -->
+            <div v-else class="flex flex-col lg:flex-row gap-10 lg:gap-20 w-full max-w-7xl mx-auto">
                 <!-- Left: Product Image -->
                 <div class="w-full lg:w-1/2 flex justify-center">
                     <div class="relative w-full max-w-[600px] aspect-[4/3] overflow-hidden rounded-2xl">
@@ -161,7 +233,7 @@ function formatRupiah(value) {
                                     <span
                                         class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
                                         :title="item?.nama_produk">
-                                        {{ item?.nama_produk || "Loading..." }}
+                                        {{ item?.nama_produk || "Memuat" }}
                                     </span>
                                 </li>
                             </ol>
@@ -195,7 +267,7 @@ function formatRupiah(value) {
             </div>
 
             <!-- TESTIMONI LIST -->
-            <div v-if="testimoniList.length" class="w-full max-w-3xl mx-auto">
+            <div v-if="testimoniList.length" class="w-full max-w-3xl mx-auto border-t pt-10">
                 <span class="text-sm text-gray-500">Ulasan dari</span>
                 <h2 class="text-2xl font-semibold mb-4">{{ item.nama_produk }}</h2>
                 <div class="space-y-6">
@@ -270,10 +342,10 @@ function formatRupiah(value) {
                         pengalamanmu.</p>
                 </div>
             </div>
-
-
-
-
         </div>
+
+        <!-- Testimoni Success Modal -->
+        <TestimoniTerkirim :show="showTestimoniModal" @close="closeTestimoniModal"
+            @write-another="writeAnotherTestimoni" :auto-close="false" />
     </AppLayout>
 </template>
