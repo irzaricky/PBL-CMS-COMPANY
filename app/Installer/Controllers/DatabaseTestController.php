@@ -25,7 +25,7 @@ class DatabaseTestController extends Controller
         // SQLite configuration
         if ($connection == 'sqlite') {
             // Set SQLite database path to storage root directory
-            $database = storage_path($database ?: 'database.sqlite');
+            $database = storage_path($database ?: 'database-test.sqlite');
 
             // Create empty SQLite file if it doesn't exist
             if (!file_exists(dirname($database))) {
@@ -106,12 +106,15 @@ class DatabaseTestController extends Controller
         DB::purge();
 
         try {
-            $pdo = DB::connection('testing')->getPdo();
+            DB::connection('testing')->getPdo();
 
             // Try to run a simple query
             DB::connection('testing')->select('SELECT 1 as connection_test');
+            DB::disconnect('testing');
 
             // Log::info('Database connection test successful');
+
+            unlink($database); // Clean up SQLite file if it was created
 
             return response()->json([
                 'success' => true,

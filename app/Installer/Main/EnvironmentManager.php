@@ -99,18 +99,10 @@ class EnvironmentManager
             'REDIS_CLIENT=phpredis' . "\n" .
             'REDIS_HOST=127.0.0.1' . "\n" .
             'REDIS_PASSWORD=null' . "\n" .
-            'REDIS_PORT=6379' . "\n\n" .
-            'MAIL_MAILER=log' . "\n" .
-            'MAIL_SCHEME=null' . "\n" .
-            'MAIL_HOST=127.0.0.1' . "\n" .
-            'MAIL_PORT=2525' . "\n" .
-            'MAIL_USERNAME=null' . "\n" .
-            'MAIL_PASSWORD=null' . "\n" .
-            'MAIL_FROM_ADDRESS="hello@example.com"' . "\n" .
-            'MAIL_FROM_NAME="${APP_NAME}"' . "\n\n";
+            'REDIS_PORT=6379' . "\n\n";
 
-        // Add the rest of the environment configuration
-        $envFileData .= $env;
+            // Add the rest of the environment configuration
+            $envFileData .= $env;
 
         try {
             // Make sure the directory exists
