@@ -16,17 +16,17 @@ class ProdukSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        // bagian proses image
+        // Path untuk gambar
         $sourcePath = database_path('seeders/seeder_image/');
         $targetPath = 'produk-thumbnails';
 
-        // Pastikan folder target ada
+        // Buat folder target jika belum ada
         Storage::disk('public')->makeDirectory($targetPath);
 
-        // Ambil semua file di folder seeder_image
+        // Ambil file gambar
         $files = array_values(array_filter(scandir($sourcePath), fn($f) => !in_array($f, ['.', '..'])));
 
-        // Base products data
+        // Data dasar produk
         $products = [
             ['nama' => 'Aplikasi Manajemen Keuangan', 'kategori' => 3, 'harga' => 1500000],
             ['nama' => 'Jasa Konsultasi IT', 'kategori' => 2, 'harga' => 500000],
@@ -40,45 +40,48 @@ class ProdukSeeder extends Seeder
             ['nama' => 'Sistem Keamanan Data Enterprise', 'kategori' => 3, 'harga' => 4500000],
         ];
 
-        // Generate 20 products
+        // Daftar link marketplace
+        $marketplaces = [
+            'https://www.tokopedia.com/',
+            'https://shopee.co.id/',
+            'https://www.lazada.co.id/',
+            'https://www.blibli.com/',
+        ];
+
+        // Generate 80 produk
         for ($i = 1; $i <= 80; $i++) {
             $randomProduct = $faker->randomElement($products);
             $createdAt = Carbon::now()->subYear()->addDays(rand(0, 365));
 
-            // Generate array untuk menyimpan multiple images
             $images = [];
-
-            // Tentukan jumlah gambar untuk produk ini (1-3 gambar)
             $imageCount = rand(1, 3);
 
-            // Pilih dan proses beberapa gambar
             for ($j = 0; $j < $imageCount; $j++) {
-                // Pilih gambar random
                 $originalFile = $files[array_rand($files)];
-
-                // Buat nama baru biar unik
                 $newFileName = Str::random(10) . '-' . $originalFile;
 
-                // Copy ke storage dan set modification time
                 Storage::disk('public')->putFileAs($targetPath, new File("$sourcePath/$originalFile"), $newFileName);
                 $fullPath = Storage::disk('public')->path($targetPath . '/' . $newFileName);
                 touch($fullPath, $createdAt->getTimestamp());
 
-                // Tambahkan path gambar ke array images
                 $images[] = $targetPath . '/' . $newFileName;
             }
+
+            $randomName = $randomProduct['nama'] . ' ' . $faker->words(2, true);
+            $slug = Str::slug($randomName);
 
             DB::table('produk')->insert([
                 'id_produk' => $i,
                 'id_kategori_produk' => $randomProduct['kategori'],
-                'nama_produk' => $randomProduct['nama'] . ' ' . $faker->words(2, true),
+                'nama_produk' => $randomName,
                 'thumbnail_produk' => json_encode($images),
-                'harga_produk' => 'Rp ' . number_format($randomProduct['harga'] * $faker->randomFloat(1, 0.8, 1.2), 0, ',', '.'),
-                'slug' => Str::slug($randomProduct['nama'] . ' ' . $faker->words(2, true)),
+                'harga_produk' => $randomProduct['harga'],
+                'slug' => $slug,
+                'link_produk' => $faker->randomElement($marketplaces),
                 'status_produk' => $faker->randomElement(['terpublikasi', 'tidak terpublikasi']),
                 'deskripsi_produk' => $faker->paragraph(10),
                 'created_at' => $createdAt,
-                'updated_at' => $createdAt->addDays(rand(0, 30)),
+                'updated_at' => $createdAt->copy()->addDays(rand(0, 30)),
             ]);
         }
     }

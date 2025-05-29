@@ -18,7 +18,7 @@ class StrukturOrganisasiResource extends JsonResource
         return [
             // 'id_struktur_organisasi' => $this->id_struktur_organisasi,
             'user' => [
-                'id_user' => $this->user->id_user,
+                //'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
                 'foto_profil' => $this->user->foto_profil,
             ],

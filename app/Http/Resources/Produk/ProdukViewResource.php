@@ -14,6 +14,7 @@ class ProdukViewResource extends JsonResource
             'nama_produk' => $this->nama_produk,
             'harga_produk' => $this->harga_produk,
             'thumbnail_produk' => $this->thumbnail_produk,
+            'link_produk' => $this->link_produk,
             'slug' => $this->slug,
             'deskripsi_produk' => $this->deskripsi_produk,
             'kategori_produk' => [

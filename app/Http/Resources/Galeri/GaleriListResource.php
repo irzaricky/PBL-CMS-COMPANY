@@ -18,7 +18,7 @@ class GaleriListResource extends JsonResource
         return [
             'id_galeri' => $this->id_galeri,
             'user' => [
-                'id_user' => $this->user->id_user,
+                //'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
                 'foto_profil' => $this->user->foto_profil,
             ],

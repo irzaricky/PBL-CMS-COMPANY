@@ -37,6 +37,7 @@ class FeedbackResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->disabled(),
 
                         Forms\Components\TextInput::make('subjek_feedback')

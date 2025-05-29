@@ -53,6 +53,7 @@ class UnduhanResource extends Resource
                             ->relationship('kategoriUnduhan', 'nama_kategori_unduhan')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('nama_kategori_unduhan')
@@ -78,6 +79,7 @@ class UnduhanResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required(),
 
                         Forms\Components\TextInput::make('slug')
@@ -94,6 +96,7 @@ class UnduhanResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
 

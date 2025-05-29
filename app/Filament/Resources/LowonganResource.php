@@ -49,6 +49,7 @@ class LowonganResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->default(fn() => Auth::id())
                             ->required(),
 
@@ -60,6 +61,7 @@ class LowonganResource extends Resource
                                 'Freelance' => 'Freelance',
                                 'Internship' => 'Internship',
                             ])
+                            ->native(false)
                             ->required(),
 
                         Forms\Components\TextInput::make('gaji')

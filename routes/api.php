@@ -14,9 +14,11 @@ use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\CaseStudyController;
 use App\Http\Controllers\Api\TestimoniController;
 use App\Http\Controllers\Api\MediaSosialController;
+use App\Http\Controllers\Api\KontenSliderController;
 use App\Http\Controllers\Api\FeatureToggleController;
 use App\Http\Controllers\Api\TestimoniProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
+use App\Http\Controllers\Api\TestimoniArtikelController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
 
 Route::middleware('auth')->group(function () {
@@ -118,6 +120,8 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
+Route::get('/testimoni/artikel/{artikelId}', [TestimoniArtikelController::class, 'index']);
+Route::post('/testimoni/artikel/{artikel}', [TestimoniArtikelController::class, 'store']);
 
 
 // Mitra
@@ -145,8 +149,11 @@ Route::prefix('profil-perusahaan')->group(function () {
     Route::get('/navbar', [ProfilPerusahaanController::class, 'getDataNavbar']);
 });
 
+// Konten Slider
+Route::get('/konten-slider', [KontenSliderController::class, 'index']);
+
 // Produk
-Route::prefix('produk')->group(function () {
+Route::prefix('produk')->group(function () { 
 
     // Untuk mengambil semua produk
     Route::get('/', [ProdukController::class, 'index']);

@@ -52,7 +52,9 @@ Route::prefix('artikel')
 
 
 // Rute group untuk event
-Route::prefix('event')->group(function () {
+Route::prefix('event')
+    ->middleware(CheckFeatureToggle::class . ':event_module')
+    ->group(function () {
     Route::get('/', function () {
         return Inertia::render('Event/ListView');
     })->name('event.list');
@@ -64,7 +66,9 @@ Route::prefix('event')->group(function () {
 
 
 // Rute group untuk galeri
-Route::prefix('galeri')->group(function () {
+Route::prefix('galeri')
+    ->middleware(CheckFeatureToggle::class . ':galeri_module')
+    ->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Galeri/ListView');
     });
@@ -76,7 +80,9 @@ Route::prefix('galeri')->group(function () {
 
 
 // Rute group untuk portofolio
-Route::prefix('portofolio')->group(function () {
+Route::prefix('portofolio')
+    ->middleware(CheckFeatureToggle::class . ':portofolio_module')
+    ->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Event/ListView');
     });
@@ -87,7 +93,9 @@ Route::prefix('portofolio')->group(function () {
 });
 
 // Rute group feedback
-Route::prefix('feedback')->group(function () {
+Route::prefix('feedback')
+    ->middleware(CheckFeatureToggle::class . ':feedback_module')
+    ->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Feedback/Main');
     });
@@ -122,7 +130,9 @@ Route::prefix('struktur-organisasi')->group(function () {
 });
 
 // Rute group untuk unduhan
-Route::prefix('unduhan')->group(function () {
+Route::prefix('unduhan')
+    ->middleware(CheckFeatureToggle::class . ':unduhan_module')
+    ->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Unduhan/Main');
     });
@@ -130,7 +140,9 @@ Route::prefix('unduhan')->group(function () {
 
 
 // Rute group untuk lowongan
-Route::prefix('lowongan')->group(function () {
+Route::prefix('lowongan')
+    ->middleware(CheckFeatureToggle::class . ':lowongan_module')
+    ->group(function () {
     Route::get('/', action: function () {
         return Inertia::render('Event/ListView');
     });
@@ -142,7 +154,9 @@ Route::prefix('lowongan')->group(function () {
 
 
 // Rute group untuk produk
-Route::prefix('produk')->group(function () {
+Route::prefix('produk')
+    ->middleware(CheckFeatureToggle::class . ':produk_module')
+    ->group(function () {
     Route::get('/', function () {
         return Inertia::render('Produk/ListView');
     })->name('produk.list');

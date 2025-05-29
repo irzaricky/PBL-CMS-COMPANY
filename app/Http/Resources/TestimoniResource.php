@@ -19,7 +19,7 @@ class TestimoniResource extends JsonResource
         return [
             'id_testimoni' => $this->id_testimoni,
             'user' => [
-                'id_user' => $this->user->id_user,
+                //'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
             ],
             'isi_testimoni' => $this->isi_testimoni,
