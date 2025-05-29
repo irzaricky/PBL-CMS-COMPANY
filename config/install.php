@@ -75,28 +75,33 @@ return [
                 'database_name' => 'required|string|max:50',
                 'database_username' => 'nullable|string|max:50',
                 'database_password' => 'nullable|string|max:50',
+                // Email configuration validation rules
+                'mail_mailer' => 'required|string|in:smtp,sendmail,mailgun,ses,log',
+                'mail_host' => 'nullable|string|max:100',
+                'mail_port' => 'nullable|numeric|min:1|max:65535',
+                'mail_username' => 'nullable|string|max:100',
+                'mail_password' => 'nullable|string|max:100',
+                'mail_encryption' => 'nullable|string|in:tls,ssl',
+                'mail_from_address' => 'required|email|max:100',
             ],
         ],
     ],
 
-    'env' => 'BROADCAST_DRIVER=log' . "\n" .
-        'CACHE_DRIVER=file' . "\n" .
+    'env' => 'BROADCAST_CONNECTION=log' . "\n" .
+        'CACHE_STORE=database' . "\n" .
+        'CACHE_PREFIX=' . "\n" .
         'FILESYSTEM_DISK=local' . "\n" .
-        'QUEUE_CONNECTION=sync' . "\n" .
-        'SESSION_DRIVER=file' . "\n" .
-        'SESSION_LIFETIME=120' . "\n\n" .
+        'QUEUE_CONNECTION=database' . "\n" .
+        'SESSION_DRIVER=database' . "\n" .
+        'SESSION_LIFETIME=120' . "\n" .
+        'SESSION_ENCRYPT=false' . "\n" .
+        'SESSION_PATH=/' . "\n" .
+        'SESSION_DOMAIN=null' . "\n\n" .
         'MEMCACHED_HOST=127.0.0.1' . "\n\n" .
+        'REDIS_CLIENT=phpredis' . "\n" .
         'REDIS_HOST=127.0.0.1' . "\n" .
         'REDIS_PASSWORD=null' . "\n" .
         'REDIS_PORT=6379' . "\n\n" .
-        'MAIL_MAILER=smtp' . "\n" .
-        'MAIL_HOST=mailpit' . "\n" .
-        'MAIL_PORT=1025' . "\n" .
-        'MAIL_USERNAME=null' . "\n" .
-        'MAIL_PASSWORD=null' . "\n" .
-        'MAIL_ENCRYPTION=null' . "\n" .
-        'MAIL_FROM_ADDRESS="hello@example.com"' . "\n" .
-        'MAIL_FROM_NAME="${APP_NAME}"' . "\n\n" .
         'AWS_ACCESS_KEY_ID=' . "\n" .
         'AWS_SECRET_ACCESS_KEY=' . "\n" .
         'AWS_DEFAULT_REGION=us-east-1' . "\n" .
@@ -114,7 +119,18 @@ return [
         'VITE_PUSHER_HOST="${PUSHER_HOST}"' . "\n" .
         'VITE_PUSHER_PORT="${PUSHER_PORT}"' . "\n" .
         'VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"' . "\n" .
-        'VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"',
+        'VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"' . "\n\n" .
+        '# Duplicate configurations for compatibility' . "\n" .
+        'BROADCAST_DRIVER=log' . "\n" .
+        'CACHE_DRIVER=file' . "\n" .
+        'FILESYSTEM_DISK=local' . "\n" .
+        'QUEUE_CONNECTION=sync' . "\n" .
+        'SESSION_DRIVER=file' . "\n" .
+        'SESSION_LIFETIME=120' . "\n\n" .
+        'MEMCACHED_HOST=127.0.0.1' . "\n\n" .
+        'REDIS_HOST=127.0.0.1' . "\n" .
+        'REDIS_PASSWORD=null' . "\n" .
+        'REDIS_PORT=6379',
 
     // profil perusahaan
 

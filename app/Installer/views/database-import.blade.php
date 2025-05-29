@@ -157,12 +157,93 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Email Configuration Card -->
+                <div class="card mb-4" id="email-config-card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Email Configuration</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <x-install-select label="Mail Driver" class="form-control" required="true"
+                                    name="mail_mailer">
+                                    <option value="smtp" {{ old('mail_mailer', 'smtp') == 'smtp' ? 'selected' : '' }}>SMTP
+                                    </option>
+                                    <option value="sendmail" {{ old('mail_mailer') == 'sendmail' ? 'selected' : '' }}>Sendmail
+                                    </option>
+                                    <option value="mailgun" {{ old('mail_mailer') == 'mailgun' ? 'selected' : '' }}>Mailgun
+                                    </option>
+                                    <option value="ses" {{ old('mail_mailer') == 'ses' ? 'selected' : '' }}>Amazon SES
+                                    </option>
+                                    <option value="log" {{ old('mail_mailer') == 'log' ? 'selected' : '' }}>Log (Testing)
+                                    </option>
+                                </x-install-select>
+                                <x-install-error for="mail_mailer" />
+                            </div>
+
+                            <div class="col-md-4 mb-3" id="mail_host_container">
+                                <x-install-input label="Mail Host" required="false" name="mail_host" type="text"
+                                    value="{{ old('mail_host', 'smtp.gmail.com') }}" />
+                                <x-install-error for="mail_host" />
+                            </div>
+
+                            <div class="col-md-4 mb-3" id="mail_port_container">
+                                <x-install-input label="Mail Port" required="false" name="mail_port" type="number"
+                                    value="{{ old('mail_port', '587') }}" />
+                                <x-install-error for="mail_port" />
+                            </div>
+
+                            <div class="col-md-4 mb-3" id="mail_username_container">
+                                <x-install-input label="Mail Username" required="false" name="mail_username" type="text"
+                                    value="{{ old('mail_username') }}" />
+                                <x-install-error for="mail_username" />
+                            </div>
+
+                            <div class="col-md-4 mb-3" id="mail_password_container">
+                                <label class="mb-1" for="mail_password">Mail Password</label>
+                                <div class="input-group">
+                                    <input type="password" name="mail_password" id="mail_password"
+                                        class="form-control @error('mail_password') is-invalid @enderror"
+                                        value="{{ old('mail_password') }}">
+                                    <button type="button" class="btn btn-outline-secondary toggle-password"
+                                        data-target="mail_password">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                <x-install-error for="mail_password" />
+                            </div>
+
+                            <div class="col-md-4 mb-3" id="mail_encryption_container">
+                                <x-install-select label="Mail Encryption" class="form-control" required="false"
+                                    name="mail_encryption">
+                                    <option value="">None</option>
+                                    <option value="tls" {{ old('mail_encryption', 'tls') == 'tls' ? 'selected' : '' }}>TLS
+                                    </option>
+                                    <option value="ssl" {{ old('mail_encryption') == 'ssl' ? 'selected' : '' }}>SSL</option>
+                                </x-install-select>
+                                <x-install-error for="mail_encryption" />
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <x-install-input label="Mail From Address" required="true" name="mail_from_address"
+                                    type="email" value="{{ old('mail_from_address', 'noreply@example.com') }}" />
+                                <x-install-error for="mail_from_address" />
+                                <div class="text-muted small mt-1">
+                                    Mail From Name will be automatically set to your APP_NAME
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="card-footer footerHome text-end">
                     <div class="d-flex">
                         <button type="button" id="back_button" class="btn btn-primary me-auto ms-3 px-4"
                             onclick="window.history.back()">Back</button>
                         <button type="button" id="test_connection_button" class="btn btn-warning me-2">Test
                             Connection</button>
+                        <button type="button" id="test_email_button" class="btn btn-info me-2">Test Email</button>
                         <button type="submit" id="next_button" class="btn btn-primary px-4">Next</button>
                     </div>
                 </div>
@@ -331,6 +412,98 @@
                             window.scrollTo(0, 0);
 
                             console.error('Error testing connection:', error);
+                        });
+                });
+            }
+
+            // Add test email functionality
+            const testEmailBtn = document.getElementById('test_email_button');
+            if (testEmailBtn) {
+                testEmailBtn.addEventListener('click', function () {
+                    // Clear any previous email test messages
+                    const previousEmailMessages = document.querySelectorAll('.alert');
+                    previousEmailMessages.forEach(msg => {
+                        // Only remove messages that are above the email config card
+                        const emailCard = document.getElementById('email-config-card');
+                        if (emailCard && msg.nextElementSibling === emailCard) {
+                            msg.remove();
+                        }
+                    });
+
+                    // Disable test button
+                    testEmailBtn.disabled = true;
+                    testEmailBtn.innerHTML = 'Testing Email...';
+
+                    // Collect form data
+                    const formData = new FormData();
+                    formData.append('_token', document.querySelector('input[name="_token"]').value);
+                    formData.append('mail_mailer', document.querySelector('select[name="mail_mailer"]').value);
+                    formData.append('mail_host', document.querySelector('input[name="mail_host"]').value);
+                    formData.append('mail_port', document.querySelector('input[name="mail_port"]').value);
+                    formData.append('mail_username', document.querySelector('input[name="mail_username"]').value);
+                    formData.append('mail_password', document.querySelector('input[name="mail_password"]').value);
+                    formData.append('mail_encryption', document.querySelector('select[name="mail_encryption"]').value);
+                    formData.append('mail_from_address', document.querySelector('input[name="mail_from_address"]').value);
+
+                    fetch('{{ route("test_email_connection") }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            // Enable the button again
+                            testEmailBtn.disabled = false;
+                            testEmailBtn.innerHTML = 'Test Email';
+
+                            // Create message div
+                            const messageDiv = document.createElement('div');
+                            messageDiv.className = data.success ? 'alert alert-success' : 'alert alert-danger';
+                            messageDiv.innerHTML = '<strong>' + (data.success ? 'Email Test Success!' : 'Email Test Failed!') + '</strong> ' + data.message;
+
+                            // Add message above Email Configuration card
+                            const emailCard = document.getElementById('email-config-card');
+                            if (emailCard) {
+                                emailCard.parentNode.insertBefore(messageDiv, emailCard);
+                            } else {
+                                // Fallback to adding above form
+                                const container = document.querySelector('.container');
+                                const firstChild = container && container.firstChild;
+                                if (firstChild) container.insertBefore(messageDiv, firstChild);
+                                else if (container) container.appendChild(messageDiv);
+                            }
+
+                            // Scroll to the email card to show message
+                            if (emailCard) {
+                                emailCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                        })
+                        .catch(error => {
+                            // Enable the button again
+                            testEmailBtn.disabled = false;
+                            testEmailBtn.innerHTML = 'Test Email';
+
+                            // Create error message
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'alert alert-danger';
+                            errorDiv.innerHTML = '<strong>Email Test Error!</strong> Could not test email configuration.';
+
+                            // Place error above Email Configuration card
+                            const emailCard = document.getElementById('email-config-card');
+                            if (emailCard) {
+                                emailCard.parentNode.insertBefore(errorDiv, emailCard);
+                                emailCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            } else {
+                                // Fallback to adding above form
+                                const container = document.querySelector('.container');
+                                const firstChild = container && container.firstChild;
+                                if (firstChild) container.insertBefore(errorDiv, firstChild);
+                                else if (container) container.appendChild(errorDiv);
+                            }
+
+                            console.error('Error testing email:', error);
                         });
                 });
             }
@@ -517,6 +690,55 @@
                         window.scrollTo(0, 0);
                     });
             });
+
+            // Email Configuration Toggle Logic
+            const mailDriverSelect = document.querySelector('select[name="mail_mailer"]');
+            const mailRequiredFields = [
+                'mail_host_container',
+                'mail_port_container',
+                'mail_username_container',
+                'mail_password_container',
+                'mail_encryption_container'
+            ];
+
+            function toggleMailFields() {
+                const selectedDriver = mailDriverSelect.value;
+
+                if (selectedDriver === 'log' || selectedDriver === 'sendmail') {
+                    // Hide SMTP fields for log and sendmail drivers
+                    mailRequiredFields.forEach(fieldId => {
+                        const container = document.getElementById(fieldId);
+                        if (container) {
+                            container.style.display = 'none';
+                            // Remove required attribute
+                            const input = container.querySelector('input, select');
+                            if (input && input.hasAttribute('required')) {
+                                input.removeAttribute('required');
+                            }
+                        }
+                    });
+                } else {
+                    // Show SMTP fields for other drivers
+                    mailRequiredFields.forEach(fieldId => {
+                        const container = document.getElementById(fieldId);
+                        if (container) {
+                            container.style.display = 'block';
+                            // Add required attribute for critical fields
+                            const input = container.querySelector('input, select');
+                            if (input && (fieldId === 'mail_host_container' || fieldId === 'mail_port_container')) {
+                                input.setAttribute('required', 'required');
+                            }
+                        }
+                    });
+                }
+            }
+
+            // Add event listener to mail driver dropdown
+            if (mailDriverSelect) {
+                mailDriverSelect.addEventListener('change', toggleMailFields);
+                // Run toggle on page load
+                toggleMailFields();
+            }
         });
     </script>
 @endsection

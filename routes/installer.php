@@ -20,6 +20,7 @@ Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], func
     Route::get('database-import', [DatabaseController::class, 'databaseImport'])->name('database_import');
     Route::post('save-wizard', [DatabaseController::class, 'saveWizard'])->name('saveWizard');
     Route::post('test-database-connection', [DatabaseTestController::class, 'testConnection'])->name('test_database_connection');
+    Route::post('test-email-connection', [DatabaseController::class, 'testEmailConnection'])->name('test_email_connection');
 
     Route::middleware([CheckDatabaseConnectionMiddleware::class])->group(function () {
         Route::get('profil-perusahaan', [InstallerController::class, 'profilPerusahaan'])->name('profil_perusahaan');
