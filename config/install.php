@@ -91,7 +91,7 @@ return [
         'CACHE_STORE=database' . "\n" .
         'CACHE_PREFIX=' . "\n" .
         'FILESYSTEM_DISK=local' . "\n" .
-        'QUEUE_CONNECTION=database' . "\n" .
+        'QUEUE_CONNECTION=sync' . "\n" .
         'SESSION_DRIVER=database' . "\n" .
         'SESSION_LIFETIME=120' . "\n" .
         'SESSION_ENCRYPT=false' . "\n" .
@@ -119,18 +119,7 @@ return [
         'VITE_PUSHER_HOST="${PUSHER_HOST}"' . "\n" .
         'VITE_PUSHER_PORT="${PUSHER_PORT}"' . "\n" .
         'VITE_PUSHER_SCHEME="${PUSHER_SCHEME}"' . "\n" .
-        'VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"' . "\n\n" .
-        '# Duplicate configurations for compatibility' . "\n" .
-        'BROADCAST_DRIVER=log' . "\n" .
-        'CACHE_DRIVER=file' . "\n" .
-        'FILESYSTEM_DISK=local' . "\n" .
-        'QUEUE_CONNECTION=sync' . "\n" .
-        'SESSION_DRIVER=file' . "\n" .
-        'SESSION_LIFETIME=120' . "\n\n" .
-        'MEMCACHED_HOST=127.0.0.1' . "\n\n" .
-        'REDIS_HOST=127.0.0.1' . "\n" .
-        'REDIS_PASSWORD=null' . "\n" .
-        'REDIS_PORT=6379',
+        'VITE_PUSHER_APP_CLUSTER="${PUSHER_APP_CLUSTER}"',
 
     // profil perusahaan
 
