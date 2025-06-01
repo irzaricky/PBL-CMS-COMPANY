@@ -38,6 +38,14 @@ import {
     ScrollText,
     Users,
     BriefcaseBusiness,
+    Bell,
+    Check,
+    X,
+    MailCheck,
+    UserCheck,
+    AlertCircle,
+    Info,
+    AlertTriangle,
 } from "lucide-vue-next";
 
 // Get company name from server-side config (set in AppServiceProvider)
@@ -88,6 +96,14 @@ createInertiaApp({
             ScrollText,
             Users,
             BriefcaseBusiness,
+            Bell,
+            Check,
+            X,
+            MailCheck,
+            UserCheck,
+            AlertCircle,
+            Info,
+            AlertTriangle,
         };
 
         Object.entries(iconComponents).forEach(([name, component]) => {

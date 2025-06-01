@@ -29,10 +29,49 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
+                'unreadNotifications' => $user ? $user->unreadNotifications()->count() : 0,
+            ],
+            'notifications' => [
+                'unread' => $user ? $user->unreadNotifications()
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
+                    ->get()
+                    ->map(function ($notification) {
+                        return [
+                            'id' => $notification->id,
+                            'type' => $notification->data['type'] ?? 'info',
+                            'title' => $notification->data['title'] ?? 'Notification',
+                            'message' => $notification->data['message'] ?? '',
+                            'icon' => $notification->data['icon'] ?? 'bell',
+                            'action_url' => $notification->data['action_url'] ?? null,
+                            'action_text' => $notification->data['action_text'] ?? null,
+                            'created_at' => $notification->created_at,
+                            'read_at' => $notification->read_at,
+                        ];
+                    }) : [],
+                'recent' => $user ? $user->notifications()
+                    ->orderBy('created_at', 'desc')
+                    ->limit(3)
+                    ->get()
+                    ->map(function ($notification) {
+                        return [
+                            'id' => $notification->id,
+                            'type' => $notification->data['type'] ?? 'info',
+                            'title' => $notification->data['title'] ?? 'Notification',
+                            'message' => $notification->data['message'] ?? '',
+                            'icon' => $notification->data['icon'] ?? 'bell',
+                            'action_url' => $notification->data['action_url'] ?? null,
+                            'action_text' => $notification->data['action_text'] ?? null,
+                            'created_at' => $notification->created_at,
+                            'read_at' => $notification->read_at,
+                        ];
+                    }) : [],
             ],
         ];
     }
