@@ -104,10 +104,20 @@ function nextImage(id) {
             .length || 0;
     activeSlideIndex.value[id] = (index + 1) % total;
 }
-function stripHtmlTags(html) {
-    const div = document.createElement("div");
-    div.innerHTML = html;
-    return div.textContent || div.innerText || "";
+function stripHtmlTags(html, maxLength = 150) {
+    if (!html) return '';
+    
+    // Create a temporary div to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Get text content (strips HTML tags)
+    const text = tempDiv.textContent || tempDiv.innerText || '';
+    const trimmed = text.trim();
+    
+    // Limit text length if needed
+    if (trimmed.length <= maxLength) return trimmed;
+    return trimmed.substring(0, maxLength) + '...';
 }
 </script>
 
@@ -229,7 +239,7 @@ function stripHtmlTags(html) {
                                         {{ galeri.judul_galeri }}
                                     </h3>
                                     <p class="text-base text-secondary/80 mt-2">
-                                        {{ stripHtmlTags(galeri.deskripsi_galeri) }}
+                                        {{ stripHtmlTags(galeri.deskripsi_galeri, 200) }}
                                     </p>
                                     <Link :href="`/galeri/${galeri.slug}`"
                                         class="inline-flex items-center justify-center gap-2 px-6 py-2 mt-4 bg-white/30 text-white font-medium text-sm rounded-full hover:bg-white hover:text-black transition-all duration-300">

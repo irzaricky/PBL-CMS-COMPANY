@@ -77,14 +77,6 @@ class ProfilPerusahaanResource extends Resource
                             ->url()
                             ->helperText('Berikan URL Google Maps untuk lokasi perusahaan')
                             ->prefixIcon('heroicon-s-map-pin')
-                            ->rules([
-                                function($get, $value, $fail) {
-                                    if (!str_contains(strtolower($value), 'google.com/maps') && 
-                                        !str_contains(strtolower($value), 'goo.gl/maps')) {
-                                        $fail('URL harus berupa tautan Google Maps yang valid.');
-                                    }
-                                },
-                            ])
                             ->suffixAction(
                                 Forms\Components\Actions\Action::make('open')
                                     ->icon('heroicon-o-arrow-top-right-on-square')

@@ -123,6 +123,17 @@ const getFileIcon = (ext) => {
     }
 }
 
+const stripToHtml = (html) => {
+    if (!html) return '';
+    
+    // Create a temporary div to parse HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    
+    // Return text content (strips HTML tags)
+    return tempDiv.textContent || tempDiv.innerText || '';
+}
+
 onMounted(() => {
     fetchCategories()
     fetchMostDownloaded()
@@ -254,7 +265,7 @@ onMounted(() => {
                                         {{ item.nama_unduhan }}
                                     </h2>
                                     <p class="text-base font-normal leading-normal">
-                                        {{ item.deskripsi }}
+                                        {{ stripToHtml(item.deskripsi) }}
                                     </p>
                                     <!-- Icon SVG -->
                                     <img :src="getFileIcon(item.jenis_file)" alt="File icon"

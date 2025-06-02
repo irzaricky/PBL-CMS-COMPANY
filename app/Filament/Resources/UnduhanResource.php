@@ -75,12 +75,16 @@ class UnduhanResource extends Resource
                             ]),
 
                         Forms\Components\Select::make('id_user')
-                            ->label('Pengunggah')
+                            ->label('Penulis')
                             ->relationship('user', 'name')
+                            ->default(fn() => Auth::id())
                             ->searchable()
                             ->preload()
+                            ->disabled()
+                            ->dehydrated(true)
                             ->native(false)
                             ->required(),
+
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
@@ -116,15 +120,20 @@ class UnduhanResource extends Resource
                             ->label('Deskripsi Unduhan')
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('unduhan-attachments')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'h1',
+                                'h2',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'redo',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
-
-                        Forms\Components\TextInput::make('jumlah_unduhan')
-                            ->label('Jumlah Unduhan')
-                            ->numeric()
-                            ->default(0)
-                            ->disabled()
-                            ->dehydrated()
-                            ->helperText('Jumlah ini akan bertambah otomatis ketika file diunduh'),
                     ]),
             ]);
     }
@@ -162,8 +171,7 @@ class UnduhanResource extends Resource
 
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
-                    ->numeric()
-                ,
+                    ->numeric(),
 
                 Tables\Columns\SelectColumn::make('status_unduhan')
                     ->label('Status')
@@ -171,6 +179,7 @@ class UnduhanResource extends Resource
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
+                    ->disabled(fn() => !auth()->user()->can('update_unduhan', Unduhan::class))
                     ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')

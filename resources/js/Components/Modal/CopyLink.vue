@@ -57,7 +57,7 @@ watch(() => props.show, (newValue) => {
 
                     <!-- Description -->
                     <p class="text-sm text-gray-600 mb-6">
-                        Link artikel telah disalin ke clipboard Anda
+                        Link telah disalin ke clipboard Anda
                     </p>
 
                     <!-- Close Button -->

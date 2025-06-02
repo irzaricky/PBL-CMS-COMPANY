@@ -10,14 +10,18 @@ import {
     Pencil,
     User,
     CheckCircle,
+    Copy,
 } from "lucide-vue-next";
 import AppLayout from "@/Layouts/AppLayout.vue";
+import CopyLink from "@/Components/Modal/CopyLink.vue";
+import EventTimer from "@/Pages/Event/EventTimer.vue";
 
 const event = ref(null);
 const loading = ref(true);
 const error = ref(null);
 const registering = ref(false);
 const page = usePage();
+const showCopyModal = ref(false);
 
 const props = defineProps({
     slug: String,
@@ -187,6 +191,38 @@ async function unregisterFromEvent() {
         registering.value = false;
     }
 }
+
+// Copy event link
+async function copyEventLink() {
+    const url = window.location.href;
+    try {
+        if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+            await navigator.clipboard.writeText(url);
+            showCopyModal.value = true;
+        } else {
+            throw new Error("Clipboard API not available");
+        }
+    } catch (err) {
+        console.warn("Clipboard write failed, using fallback:", err);
+        fallbackCopy(url);
+    }
+}
+
+function fallbackCopy(text) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    showCopyModal.value = true;
+}
+
+function closeCopyModal() {
+    showCopyModal.value = false;
+}
 </script>
 
 <template>
@@ -243,6 +279,7 @@ async function unregisterFromEvent() {
 
                 <!-- Detail -->
                 <div v-else class="space-y-10">
+                    <!-- Featured Image -->
                     <div class="w-full aspect-[3/1] bg-gray-100">
                         <img
                             :src="getImageUrl(event.thumbnail_event)"
@@ -251,8 +288,16 @@ async function unregisterFromEvent() {
                         />
                     </div>
 
+                    <!-- Title and Date -->
                     <div class="space-y-2">
-                        <h1 class="text-2xl font-semibold">
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="px-3 py-1 rounded-full border text-sm font-semibold bg-black/5 text-black"
+                            >
+                                Event
+                            </div>
+                        </div>
+                        <h1 class="text-2xl md:text-3xl lg:text-4xl font-semibold">
                             {{ event.nama_event }}
                         </h1>
                         <div class="text-sm text-gray-600">
@@ -262,77 +307,91 @@ async function unregisterFromEvent() {
                         </div>
                     </div>
 
-                    <!-- Info Blocks -->
-                    <div
-                        class="flex flex-col md:grid md:grid-cols-3 gap-y-4 md:gap-y-8 divide-y md:divide-y-0 md:divide-x divide-gray-200"
-                    >
-                        <div
-                            class="flex items-start gap-2 pb-4 md:pb-0 md:pr-6"
-                        >
-                            <Calendar class="w-5 h-5 text-secondary mt-1" />
-                            <div>
-                                <div class="font-medium">Tanggal & Waktu</div>
+                    <!-- Info Blocks in Card -->
+                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                        <h3 class="font-semibold text-lg mb-4">Informasi Event</h3>
+                        <div class="flex flex-col md:grid md:grid-cols-3 gap-y-4 md:gap-y-6 md:gap-x-6">
+                            <div class="flex items-start gap-3 pb-4 md:pb-0 border-b md:border-b-0 border-gray-200">
+                                <Calendar class="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
                                 <div>
-                                    {{ formatDate(event.waktu_start_event) }}
+                                    <div class="font-medium">Tanggal & Waktu</div>
+                                    <div>
+                                        {{ formatDate(event.waktu_start_event) }}
+                                    </div>
+                                    <div>
+                                        {{ formatTime(event.waktu_start_event) }} -
+                                        {{ formatTime(event.waktu_end_event) }}
+                                    </div>
                                 </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 py-4 md:py-0 border-b md:border-b-0 border-gray-200">
+                                <MapPin class="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
                                 <div>
-                                    {{ formatTime(event.waktu_start_event) }} -
-                                    {{ formatTime(event.waktu_end_event) }}
+                                    <div class="font-medium">Lokasi</div>
+                                    <a
+                                        :href="event.link_lokasi_event"
+                                        target="_blank"
+                                        class="text-secondary hover:underline"
+                                    >
+                                        {{ event.lokasi_event }}
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="flex items-start gap-3 pt-4 md:pt-0">
+                                <User class="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
+                                <div>
+                                    <div class="font-medium">Pendaftar</div>
+                                    <div class="text-sm text-gray-600">
+                                        {{ event.jumlah_pendaftar || 0 }} orang
+                                        terdaftar
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div
-                            class="flex items-start gap-2 py-4 md:py-0 md:px-6"
-                        >
-                            <MapPin class="w-5 h-5 text-secondary mt-1" />
-                            <div>
-                                <div class="font-medium">Lokasi</div>
-                                <a
-                                    :href="event.link_lokasi_event"
-                                    target="_blank"
-                                    class="text-secondary hover:underline"
+                        
+                        <!-- Stats & Actions -->
+                        <div class="flex items-center justify-end pt-4 border-t border-gray-200 mt-4">
+                            <div class="flex items-center gap-2">
+                                <button
+                                    class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 text-sm font-medium"
+                                    @click="copyEventLink"
                                 >
-                                    {{ event.lokasi_event }}
-                                </a>
-                            </div>
-                        </div>
-
-                        <div
-                            class="flex items-start gap-2 pt-4 md:pt-0 md:pl-6"
-                        >
-                            <User class="w-5 h-5 text-secondary mt-1" />
-                            <div>
-                                <div class="font-medium">Pendaftar</div>
-                                <div class="text-sm text-gray-600">
-                                    {{ event.jumlah_pendaftar || 0 }} orang
-                                    terdaftar
-                                </div>
+                                    <Copy class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Salin Link</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Countdown -->
+                    <div class="space-y-4">
+                        <h3 class="text-center font-semibold text-lg sm:text-xl text-black">
+                            Event akan dimulai dalam:
+                        </h3>
+                        <EventTimer 
+                            :target-date="event.waktu_start_event" 
+                            finished-text="Event telah selesai"
+                        />
+                    </div>
+
                     <!-- Registration Section -->
-                    <div class="mt-6 p-4 bg-gray-50 rounded-xl">
-                        <div
-                            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-                        >
+                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                             <div>
-                                <h3 class="font-semibold text-lg">
+                                <h3 class="font-semibold text-lg mb-1">
                                     Daftarkan Diri Anda
                                 </h3>
-                                <p class="text-sm text-gray-600 mt-1">
-                                    Dapatkan pengingat event melalui email dan
-                                    notifikasi
+                                <p class="text-sm text-gray-600 mb-2">
+                                    Dapatkan pengingat event melalui email dan notifikasi
                                 </p>
                                 <div
                                     v-if="event.is_registered"
-                                    class="flex items-center gap-2 mt-2 text-green-600"
+                                    class="flex items-center gap-2 text-green-600"
                                 >
                                     <CheckCircle class="w-4 h-4" />
-                                    <span class="text-sm font-medium"
-                                        >Anda sudah terdaftar</span
-                                    >
+                                    <span class="text-sm font-medium">Anda sudah terdaftar</span>
                                 </div>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-2">
@@ -342,11 +401,7 @@ async function unregisterFromEvent() {
                                     :disabled="registering || !isAuthenticated"
                                     class="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
-                                    {{
-                                        registering
-                                            ? "Mendaftar..."
-                                            : "Daftar Event"
-                                    }}
+                                    {{ registering ? "Mendaftar..." : "Daftar Event" }}
                                 </button>
                                 <button
                                     v-else
@@ -354,11 +409,7 @@ async function unregisterFromEvent() {
                                     :disabled="registering"
                                     class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                                 >
-                                    {{
-                                        registering
-                                            ? "Membatalkan..."
-                                            : "Batal Daftar"
-                                    }}
+                                    {{ registering ? "Membatalkan..." : "Batal Daftar" }}
                                 </button>
                                 <Link
                                     v-if="!isAuthenticated"
@@ -371,84 +422,27 @@ async function unregisterFromEvent() {
                         </div>
                     </div>
 
-                    <!-- Countdown -->
-                    <div class="mt-4 space-y-2">
-                        <h2
-                            class="text-center font-semibold text-base sm:text-lg text-black"
-                        >
-                            Event akan dimulai dalam:
-                        </h2>
-                        <div
-                            class="bg-secondary text-white rounded-xl p-4 sm:p-6 shadow w-full max-w-4xl mx-auto"
-                        >
-                            <div
-                                v-if="timeRemaining.total > 0"
-                                class="flex flex-row justify-between items-center text-white text-center gap-2 sm:gap-4 md:gap-6"
-                            >
-                                <div
-                                    class="countdown-wrapper text-xl sm:text-2xl md:text-3xl font-normal"
-                                >
-                                    <div>{{ timeRemaining.days }}</div>
-                                    <div
-                                        class="text-[10px] sm:text-xs md:text-sm font-normal"
-                                    >
-                                        Hari
-                                    </div>
-                                </div>
-
-                                <div
-                                    class="countdown-wrapper text-xl sm:text-2xl md:text-3xl font-normal"
-                                >
-                                    <div>{{ timeRemaining.hours }}</div>
-                                    <div
-                                        class="text-[10px] sm:text-xs md:text-sm font-normal"
-                                    >
-                                        Jam
-                                    </div>
-                                </div>
-
-                                <div
-                                    class="countdown-wrapper text-xl sm:text-2xl md:text-3xl font-normal"
-                                >
-                                    <div>{{ timeRemaining.minutes }}</div>
-                                    <div
-                                        class="text-[10px] sm:text-xs md:text-sm font-normal"
-                                    >
-                                        Menit
-                                    </div>
-                                </div>
-
-                                <div
-                                    class="countdown-wrapper text-xl sm:text-2xl md:text-3xl font-normal"
-                                >
-                                    <div>{{ timeRemaining.seconds }}</div>
-                                    <div
-                                        class="text-[10px] sm:text-xs md:text-sm font-normal"
-                                    >
-                                        Detik
-                                    </div>
-                                </div>
-                            </div>
-                            <div
-                                v-else
-                                class="text-center text-white font-semibold text-lg"
-                            >
-                                Event telah selesai
+                    <!-- Deskripsi Event -->
+                    <div class="space-y-3">
+                        <h2 class="text-xl font-semibold">Deskripsi Event</h2>
+                        <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
+                            <div class="prose prose-lg max-w-none text-black">
+                                <p class="whitespace-pre-line text-left leading-relaxed">
+                                    {{ event.deskripsi_event }}
+                                </p>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Deskripsi -->
-                    <div class="space-y-3">
-                        <h2 class="text-lg font-semibold">Deskripsi Event</h2>
-                        <p
-                            class="whitespace-pre-line text-left leading-relaxed text-sm"
-                        >
-                            {{ event.deskripsi_event }}
-                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </AppLayout>
+
+    <!-- Copy Link Modal -->
+    <CopyLink
+        :show="showCopyModal"
+        @close="closeCopyModal"
+        :auto-close="true"
+        :auto-close-delay="3000"
+    />
 </template>
