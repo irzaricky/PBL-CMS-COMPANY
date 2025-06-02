@@ -6,6 +6,7 @@ namespace App\Providers\Filament;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use App\Filament\Pages\ViewEnv;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
 use Illuminate\Support\Facades\Auth;
@@ -187,7 +188,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup('System')
                     ->navigationLabel('Environment Editor')
                     ->navigationIcon('heroicon-o-cog')
-                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS')
+                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS', 'APP_NAME')
                     ->viewPage(ViewEnv::class)
                     ->authorize(
                         fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')

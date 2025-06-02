@@ -3,3 +3,4 @@ installed
 *.sqlite3
 *.db
 *.db-journal
+/env-editor
