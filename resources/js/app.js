@@ -45,6 +45,8 @@ import {
     AlertCircle,
     Info,
     AlertTriangle,
+    LucideEye,
+    LucideSearch,
 } from "lucide-vue-next";
 
 import AOS from "aos";
@@ -105,6 +107,8 @@ createInertiaApp({
             AlertCircle,
             Info,
             AlertTriangle,
+            LucideEye,
+            LucideSearch,
         };
 
         Object.entries(iconComponents).forEach(([name, component]) => {
