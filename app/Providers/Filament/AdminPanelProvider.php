@@ -8,18 +8,18 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
+use Illuminate\Support\Facades\Auth;
 use App\Filament\Pages\Auth\Register;
-use App\Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\EditProfile;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Widgets\Admin\TotalUsersWidget;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Widgets\Admin\StorageUsageChart;
 use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use Filament\Http\Middleware\AuthenticateSession;
+use App\Filament\Widgets\Admin\FeatureTooglesWidget;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use App\Filament\Widgets\Director\ContentGrowthTrend;
 use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
@@ -57,6 +57,7 @@ use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
 use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackStatsCard;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganStatsCard;
+use App\Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use App\Filament\Widgets\ContentManager\Galeri\TopGaleriesStatsWidget;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
@@ -110,6 +111,7 @@ class AdminPanelProvider extends PanelProvider
                 StorageUsageChart::class,
                 RemainingStorageWidget::class,
                 StorageUsageByFeatureChart::class,
+                FeatureTooglesWidget::class,
 
                     // Content Manager widgets
                 ContentCountsChart::class,
@@ -186,6 +188,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationLabel('Environment Editor')
                     ->navigationIcon('heroicon-o-cog')
                     ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS')
+                    ->viewPage(ViewEnv::class)
                     ->authorize(
                         fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')
                     ),
