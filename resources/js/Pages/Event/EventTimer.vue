@@ -190,8 +190,8 @@ function padZero(num) {
 
 <style scoped>
 .timer-container {
-    /* Change var(--secondary-color) to var(--color-secondary) for consistency */
-    background: linear-gradient(145deg, var(--color-secondary, #003366), var(--color-secondary-dark, #001e36));
+    /* Replace gradient with solid background color */
+    background-color: var(--color-secondary, #003366);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 

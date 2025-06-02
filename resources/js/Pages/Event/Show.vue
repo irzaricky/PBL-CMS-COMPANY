@@ -11,10 +11,17 @@ import {
     User,
     CheckCircle,
     Copy,
+    UserPlus,
+    UserMinus,
+    LogIn
 } from "lucide-vue-next";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import CopyLink from "@/Components/Modal/CopyLink.vue";
 import EventTimer from "@/Pages/Event/EventTimer.vue";
+import PendaftaranBerhasil from "@/Components/Modal/PendaftaranBerhasil.vue";
+import PembatalanBerhasil from "@/Components/Modal/PembatalanBerhasil.vue";
+import KonfirmasiPembatalan from "@/Components/Modal/KonfirmasiPembatalan.vue";
+import LoginDiperlukan from "@/Components/Modal/LoginDiperlukan.vue";
 
 const event = ref(null);
 const loading = ref(true);
@@ -22,6 +29,12 @@ const error = ref(null);
 const registering = ref(false);
 const page = usePage();
 const showCopyModal = ref(false);
+const showRegistrationSuccessModal = ref(false);
+const showCancellationSuccessModal = ref(false);
+const showCancellationConfirmModal = ref(false);
+const showErrorModal = ref(false);
+const showLoginRequiredModal = ref(false);
+const errorMessage = ref('');
 
 const props = defineProps({
     slug: String,
@@ -151,10 +164,18 @@ const isAuthenticated = computed(() => {
     return page.props.auth && page.props.auth.user;
 });
 
-// Register for event
+// Check if event has finished
+const isEventFinished = computed(() => {
+    if (!event.value || !event.value.waktu_end_event) return false;
+    const endTime = new Date(event.value.waktu_end_event).getTime();
+    const now = new Date().getTime();
+    return now > endTime;
+});
+
+// Register for event - updated to use modals
 async function registerForEvent() {
     if (!isAuthenticated.value) {
-        alert("Silakan login terlebih dahulu untuk mendaftar event.");
+        showLoginRequiredModal.value = true;
         return;
     }
 
@@ -166,33 +187,33 @@ async function registerForEvent() {
             // Update event data
             event.value.jumlah_pendaftar = response.data.jumlah_pendaftar;
             event.value.is_registered = response.data.is_registered;
-            alert(
-                "Berhasil mendaftar event! Anda akan mendapat pengingat melalui email dan notifikasi."
-            );
+            // Show success modal instead of alert
+            showRegistrationSuccessModal.value = true;
         }
     } catch (err) {
         if (err.response && err.response.data) {
-            alert(err.response.data.message || "Gagal mendaftar event");
+            errorMessage.value = err.response.data.message || "Gagal mendaftar event";
         } else {
-            alert("Terjadi kesalahan saat mendaftar event");
+            errorMessage.value = "Terjadi kesalahan saat mendaftar event";
         }
+        showErrorModal.value = true;
     } finally {
         registering.value = false;
     }
 }
 
-// Unregister from event
+// Unregister from event - updated to use modals
 async function unregisterFromEvent() {
     if (!isAuthenticated.value) {
         return;
     }
+    
+    // Show confirmation modal instead of confirm()
+    showCancellationConfirmModal.value = true;
+}
 
-    if (
-        !confirm("Apakah Anda yakin ingin membatalkan pendaftaran event ini?")
-    ) {
-        return;
-    }
-
+// Actual unregister function to call after confirmation
+async function doUnregister() {
     try {
         registering.value = true;
         const response = await axios.delete(
@@ -203,14 +224,16 @@ async function unregisterFromEvent() {
             // Update event data
             event.value.jumlah_pendaftar = response.data.jumlah_pendaftar;
             event.value.is_registered = response.data.is_registered;
-            alert("Pendaftaran event berhasil dibatalkan.");
+            // Show success modal instead of alert
+            showCancellationSuccessModal.value = true;
         }
     } catch (err) {
         if (err.response && err.response.data) {
-            alert(err.response.data.message || "Gagal membatalkan pendaftaran");
+            errorMessage.value = err.response.data.message || "Gagal membatalkan pendaftaran";
         } else {
-            alert("Terjadi kesalahan saat membatalkan pendaftaran");
+            errorMessage.value = "Terjadi kesalahan saat membatalkan pendaftaran";
         }
+        showErrorModal.value = true;
     } finally {
         registering.value = false;
     }
@@ -331,9 +354,53 @@ function closeCopyModal() {
                         </div>
                     </div>
 
-                    <!-- Info Blocks in Card -->
+                    <!-- Info Blocks in Card with Registration -->
                     <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                        <h3 class="font-semibold text-lg mb-4">Informasi Event</h3>
+                        <div class="flex flex-col md:flex-row justify-between gap-6 mb-6">
+                            <div>
+                                <h3 class="font-semibold text-lg mb-4">Informasi Event</h3>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button
+                                    class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 text-sm font-medium"
+                                    @click="copyEventLink"
+                                >
+                                    <Copy class="w-4 h-4" />
+                                    <span class="hidden sm:inline">Salin Link</span>
+                                </button>
+                                
+                                <!-- Registration buttons with icons -->
+                                <div>
+                                    <button
+                                        v-if="!event.is_registered"
+                                        @click="registerForEvent"
+                                        :disabled="registering || !isAuthenticated || isEventFinished"
+                                        class="flex items-center gap-2 px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                                    >
+                                        <UserPlus class="w-4 h-4" />
+                                        <span>{{ registering ? "Mendaftar..." : isEventFinished ? "Event Selesai" : "Daftar Event" }}</span>
+                                    </button>
+                                    <button
+                                        v-else
+                                        @click="unregisterFromEvent"
+                                        :disabled="registering || isEventFinished"
+                                        class="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-medium"
+                                    >
+                                        <UserMinus class="w-4 h-4" />
+                                        <span>{{ registering ? "Membatalkan..." : "Batal Daftar" }}</span>
+                                    </button>
+                                </div>
+                                <a
+                                    v-if="!isAuthenticated"
+                                    href="/admin/login"
+                                    class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
+                                >
+                                    <LogIn class="w-4 h-4" />
+                                    <span>Login</span>
+                                </a>
+                            </div>
+                        </div>
+
                         <div class="flex flex-col md:grid md:grid-cols-3 gap-y-4 md:gap-y-6 md:gap-x-6">
                             <div class="flex items-start gap-3 pb-4 md:pb-0 border-b md:border-b-0 border-gray-200">
                                 <Calendar class="w-5 h-5 text-secondary mt-1 flex-shrink-0" />
@@ -371,20 +438,11 @@ function closeCopyModal() {
                                         {{ event.jumlah_pendaftar || 0 }} orang
                                         terdaftar
                                     </div>
+                                    <div v-if="event.is_registered" class="flex items-center gap-2 text-green-600 mt-1">
+                                        <CheckCircle class="w-4 h-4" />
+                                        <span class="text-xs font-medium">Anda sudah terdaftar</span>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Stats & Actions -->
-                        <div class="flex items-center justify-end pt-4 border-t border-gray-200 mt-4">
-                            <div class="flex items-center gap-2">
-                                <button
-                                    class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 text-sm font-medium"
-                                    @click="copyEventLink"
-                                >
-                                    <Copy class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Salin Link</span>
-                                </button>
                             </div>
                         </div>
                     </div>
@@ -398,52 +456,6 @@ function closeCopyModal() {
                             :target-date="event.waktu_start_event" 
                             finished-text="Event telah selesai"
                         />
-                    </div>
-
-                    <!-- Registration Section -->
-                    <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                            <div>
-                                <h3 class="font-semibold text-lg mb-1">
-                                    Daftarkan Diri Anda
-                                </h3>
-                                <p class="text-sm text-gray-600 mb-2">
-                                    Dapatkan pengingat event melalui email dan notifikasi
-                                </p>
-                                <div
-                                    v-if="event.is_registered"
-                                    class="flex items-center gap-2 text-green-600"
-                                >
-                                    <CheckCircle class="w-4 h-4" />
-                                    <span class="text-sm font-medium">Anda sudah terdaftar</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-col sm:flex-row gap-2">
-                                <button
-                                    v-if="!event.is_registered"
-                                    @click="registerForEvent"
-                                    :disabled="registering || !isAuthenticated"
-                                    class="px-6 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {{ registering ? "Mendaftar..." : "Daftar Event" }}
-                                </button>
-                                <button
-                                    v-else
-                                    @click="unregisterFromEvent"
-                                    :disabled="registering"
-                                    class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                >
-                                    {{ registering ? "Membatalkan..." : "Batal Daftar" }}
-                                </button>
-                                <Link
-                                    v-if="!isAuthenticated"
-                                    href="/admin/login"
-                                    class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-center"
-                                >
-                                    Login untuk Daftar
-                                </Link>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Deskripsi Event -->
@@ -462,11 +474,42 @@ function closeCopyModal() {
         </div>
     </AppLayout>
 
-    <!-- Copy Link Modal -->
+    <!-- Add all modals at the end of the template -->
     <CopyLink
         :show="showCopyModal"
         @close="closeCopyModal"
         :auto-close="true"
         :auto-close-delay="3000"
+    />
+    
+    <PendaftaranBerhasil
+        :show="showRegistrationSuccessModal"
+        @close="showRegistrationSuccessModal = false"
+        :auto-close="true"
+        :auto-close-delay="5000"
+    />
+    
+    <PembatalanBerhasil
+        :show="showCancellationSuccessModal"
+        @close="showCancellationSuccessModal = false"
+        :auto-close="true"
+        :auto-close-delay="5000"
+    />
+    
+    <KonfirmasiPembatalan
+        :show="showCancellationConfirmModal"
+        @close="showCancellationConfirmModal = false"
+        @confirm="doUnregister"
+    />
+    
+    <GagalModal
+        :show="showErrorModal"
+        :message="errorMessage"
+        @close="showErrorModal = false"
+    />
+    
+    <LoginDiperlukan
+        :show="showLoginRequiredModal"
+        @close="showLoginRequiredModal = false"
     />
 </template>
