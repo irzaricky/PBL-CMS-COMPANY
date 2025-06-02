@@ -5,7 +5,6 @@ import { createInertiaApp } from "@inertiajs/vue3";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 import { createApp, h } from "vue";
 import { ZiggyVue } from "../../vendor/tightenco/ziggy";
-
 // Static imports for better tree-shaking and bundler optimization
 import {
     User,
@@ -48,7 +47,9 @@ import {
     AlertTriangle,
 } from "lucide-vue-next";
 
-// Get company name from server-side config (set in AppServiceProvider)
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 const appName =
     document.querySelector('meta[name="app-name"]')?.getAttribute("content") ||
     import.meta.env.VITE_APP_NAME ||
@@ -127,6 +128,12 @@ createInertiaApp({
         };
 
         vueApp.use(plugin).use(ZiggyVue).mount(el);
+
+        // Init AOS setelah app mount
+        AOS.init({
+            duration: 800,
+            once: true,
+        });
     },
     progress: {
         color: "#4B5563",
