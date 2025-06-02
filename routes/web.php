@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('notifications.readAll');
 
     Route::get('/notifications', function () {
-        return Inertia::render('Notifications/Index');
+        return Inertia::render('Notifications/Show');
     })->name('notifications.index');
 });
 
@@ -164,11 +164,11 @@ Route::prefix('lowongan')
     ->middleware(CheckFeatureToggle::class . ':lowongan_module')
     ->group(function () {
         Route::get('/', action: function () {
-            return Inertia::render('Event/ListView');
+            return Inertia::render('Lowongan/ListView');
         });
 
         Route::get('/{slug}', action: function ($slug) {
-            return Inertia::render('Event/Show', ['slug' => $slug]);
+            return Inertia::render('Lowongan/Show', ['slug' => $slug]);
         });
     });
 

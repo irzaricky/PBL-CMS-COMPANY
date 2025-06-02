@@ -5,7 +5,7 @@ import axios from "axios";
 
 const user = usePage().props.auth.user;
 
-const images = [
+const defaultImages = [
     "/image/21.webp",
     "/image/22.webp",
     "/image/23.webp",

@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from "vue";
 import { usePage } from "@inertiajs/vue3";
+import NotificationCenter from "@/Components/Notification/NotificationCenter.vue";
 import { User, LayoutDashboard, LogOut } from "lucide-vue-next";
 
 const page = usePage();
@@ -35,6 +36,11 @@ const canAccessPanel = computed(() => {
                 <User class="w-4 h-4" />
                 <a href="/admin/profile" class="hover:underline">Ubah Profil</a>
             </li>
+            <li class="flex items-center gap-2">
+                <NotificationCenter />
+                <a href="/notifications" class="hover:underline">Notifikasi</a>
+            </li>
+
             <li v-if="canAccessPanel" class="flex items-center gap-2">
                 <LayoutDashboard class="w-4 h-4" />
                 <a href="/admin" class="hover:underline">Panel Admin</a>

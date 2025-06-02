@@ -130,7 +130,94 @@ function setActiveImage(index) {
         <div
             class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-20 font-custom text-black"
         >
-            <div class="flex flex-col gap-20">
+            <!-- Loading Skeleton -->
+            <div v-if="loading" class="flex flex-col gap-20">
+                <!-- Skeleton Breadcrumb -->
+                <nav class="flex" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
+                        <li>
+                            <div class="inline-flex items-center">
+                                <div class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"></div>
+                                <div class="w-16 h-4 bg-gray-200 animate-pulse rounded"></div>
+                            </div>
+                        </li>
+                        <li class="inline-flex items-center">
+                            <div class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"></div>
+                            <div class="inline-flex items-center">
+                                <div class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"></div>
+                                <div class="w-16 h-4 bg-gray-200 animate-pulse rounded"></div>
+                            </div>
+                        </li>
+                        <li class="flex items-center min-w-0">
+                            <div class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"></div>
+                            <div class="w-24 h-4 bg-gray-200 animate-pulse rounded ml-1"></div>
+                        </li>
+                    </ol>
+                </nav>
+
+                <!-- Skeleton Judul & Kategori -->
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-24 h-8 bg-gray-200 animate-pulse rounded-full"></div>
+                        <div class="w-20 h-6 bg-gray-200 animate-pulse rounded"></div>
+                    </div>
+                    <div class="w-3/4 h-12 bg-gray-200 animate-pulse rounded"></div>
+                </div>
+
+                <!-- Skeleton Gambar Utama -->
+                <div class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-gray-200 animate-pulse">
+                </div>
+
+                <!-- Skeleton Thumbnails -->
+                <div class="flex overflow-x-auto gap-4 py-4">
+                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
+                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
+                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
+                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
+                </div>
+
+                <!-- Skeleton Info Penulis -->
+                <div class="bg-gray-50 rounded-xl w-full p-6 border border-gray-100">
+                    <!-- Skeleton Author Profile -->
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-full bg-gray-200 animate-pulse"></div>
+                        <div class="flex-1">
+                            <div class="w-40 h-6 bg-gray-200 animate-pulse rounded mb-2"></div>
+                            <div class="w-32 h-4 bg-gray-200 animate-pulse rounded"></div>
+                        </div>
+                    </div>
+
+                    <!-- Skeleton Stats & Actions -->
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                                <div class="w-24 h-4 bg-gray-200 animate-pulse rounded"></div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2">
+                            <div class="w-24 h-10 bg-gray-200 animate-pulse rounded-lg"></div>
+                            <div class="w-32 h-10 bg-gray-200 animate-pulse rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skeleton Deskripsi -->
+                <div>
+                    <div class="w-32 h-6 bg-gray-200 animate-pulse rounded mb-4"></div>
+                    <div class="space-y-3">
+                        <div class="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
+                        <div class="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
+                        <div class="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
+                        <div class="w-5/6 h-4 bg-gray-200 animate-pulse rounded"></div>
+                        <div class="w-3/4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actual Content (Existing) -->
+            <div v-else-if="!error" class="flex flex-col gap-20">
                 <!-- Breadcrumb -->
                 <nav class="flex" aria-label="Breadcrumb">
                     <ol
@@ -292,6 +379,25 @@ function setActiveImage(index) {
                         class="prose max-w-none"
                         v-html="gallery?.deskripsi_galeri"
                     ></div>
+                </div>
+            </div>
+
+            <!-- Error State -->
+            <div v-else class="flex flex-col items-center justify-center py-20">
+                <div class="text-center">
+                    <Image class="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                    <h2 class="text-2xl font-medium text-gray-900 mb-2">
+                        Gallery tidak ditemukan
+                    </h2>
+                    <p class="text-gray-600 mb-8">
+                        {{ error }}
+                    </p>
+                    <Link
+                        href="/galeri"
+                        class="inline-flex items-center px-6 py-3 bg-secondary text-white rounded-xl hover:bg-black transition"
+                    >
+                        Kembali ke Galeri
+                    </Link>
                 </div>
             </div>
         </div>

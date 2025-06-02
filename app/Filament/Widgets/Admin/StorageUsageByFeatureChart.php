@@ -10,7 +10,7 @@ class StorageUsageByFeatureChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'storageUsageByFeature';
     protected static ?string $heading = 'Penggunaan Storage per Fitur';
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 6;
     protected static ?string $pollingInterval = '900s'; // 15 minutes
 
     public static function canView(): bool

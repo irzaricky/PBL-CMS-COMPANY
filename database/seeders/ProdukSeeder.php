@@ -48,8 +48,8 @@ class ProdukSeeder extends Seeder
             'https://www.blibli.com/',
         ];
 
-        // Generate 80 produk
-        for ($i = 1; $i <= 80; $i++) {
+        // Generate 30 produk
+        for ($i = 1; $i <= 30; $i++) {
             $randomProduct = $faker->randomElement($products);
             $createdAt = Carbon::now()->subYear()->addDays(rand(0, 365));
 

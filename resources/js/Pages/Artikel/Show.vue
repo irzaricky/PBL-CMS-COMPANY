@@ -430,7 +430,7 @@ function writeAnotherTestimoni() {
                                     <div
                                         class="flex items-center gap-2 text-gray-600"
                                     >
-                                        <Eye class="w-4 h-4" />
+                                        <LucideEye class="w-4 h-4" />
                                         <span class="text-sm font-medium"
                                             >{{ article?.jumlah_view || 0 }}×
                                             dilihat</span
