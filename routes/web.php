@@ -46,7 +46,7 @@ Route::middleware(['auth'])->group(function () {
     })->name('notifications.readAll');
 
     Route::get('/notifications', function () {
-        return Inertia::render('Notifications/Index');
+        return Inertia::render('Notifications/Show');
     })->name('notifications.index');
 });
 
