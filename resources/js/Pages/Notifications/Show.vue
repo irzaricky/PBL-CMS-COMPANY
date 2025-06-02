@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { usePage, router, Head } from "@inertiajs/vue3";
 import Navbar from "@/Components/Navbar.vue";
 import {
@@ -12,6 +12,17 @@ import {
     AlertTriangle,
     ArrowLeft,
 } from "lucide-vue-next";
+
+const theme = usePage().props.theme;
+
+onMounted(() => {
+    if (theme && theme.secondary) {
+        document.documentElement.style.setProperty(
+            "--color-secondary",
+            theme.secondary
+        );
+    }
+});
 
 const page = usePage();
 const notifications = computed(
@@ -125,8 +136,8 @@ const allNotifications = computed(() => {
     <Head title="Notifikasi" />
 
     <Navbar />
-    <div class="min-w-[390px] bg-gray-50 py-8 font-custom">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="min-w-[390px py-8 font-custom">
+        <div class="lg:mx-20 px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-8">
                 <div

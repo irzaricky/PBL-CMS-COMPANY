@@ -57,6 +57,7 @@ use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
 use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackStatsCard;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganStatsCard;
+use App\Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use App\Filament\Widgets\ContentManager\Galeri\TopGaleriesStatsWidget;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
