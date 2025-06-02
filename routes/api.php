@@ -85,7 +85,12 @@ Route::prefix('event')->group(function () {
     // untuk mengambil event berdasarkan id
     Route::get('/id/{id}', [EventController::class, 'getEventById']);
 
-    // Untuk mengambil event berdasarkan slug
+    // Event registration routes (require authentication) - MUST come before /{slug} route
+    Route::middleware(['web', 'auth'])->group(function () {
+        Route::post('/{slug}/register', [EventController::class, 'register']);
+        Route::delete('/{slug}/register', [EventController::class, 'unregister']);
+    });
+
     Route::get('/{slug}', [EventController::class, 'getEventBySlug']);
 });
 
@@ -153,7 +158,7 @@ Route::prefix('profil-perusahaan')->group(function () {
 Route::get('/konten-slider', [KontenSliderController::class, 'index']);
 
 // Produk
-Route::prefix('produk')->group(function () { 
+Route::prefix('produk')->group(function () {
 
     // Untuk mengambil semua produk
     Route::get('/', [ProdukController::class, 'index']);

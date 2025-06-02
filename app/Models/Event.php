@@ -58,4 +58,35 @@ class Event extends Model
     {
         return $this->hasMany(KontenSlider::class, 'id_event', 'id_event');
     }
+
+    /**
+     * The users registered for this event.
+     */
+    public function users()
+    {
+        return $this->belongsToMany(
+            config('auth.providers.users.model'),
+            'pendaftaran_event',
+            'id_event',
+            'id_user',
+            'id_event',
+            'id_user'
+        )->withTimestamps();
+    }
+
+    /**
+     * Check if a user is registered for this event.
+     */
+    public function isUserRegistered($userId = null)
+    {
+        if (!$userId) {
+            $userId = auth()->user()?->id_user;
+        }
+
+        if (!$userId) {
+            return false;
+        }
+
+        return $this->users()->where('pendaftaran_event.id_user', $userId)->exists();
+    }
 }
