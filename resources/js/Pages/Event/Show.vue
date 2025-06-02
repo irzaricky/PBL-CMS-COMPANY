@@ -392,7 +392,7 @@ function closeCopyModal() {
                                 </div>
                                 <a
                                     v-if="!isAuthenticated"
-                                    href="/admin/login"
+                                    href="/login"
                                     class="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm font-medium"
                                 >
                                     <LogIn class="w-4 h-4" />
@@ -438,7 +438,7 @@ function closeCopyModal() {
                                         {{ event.jumlah_pendaftar || 0 }} orang
                                         terdaftar
                                     </div>
-                                    <div v-if="event.is_registered" class="flex items-center gap-2 text-green-600 mt-1">
+                                    <div v-if="event.is_registered" class="flex items-center gap-2 text-secondary mt-1">
                                         <CheckCircle class="w-4 h-4" />
                                         <span class="text-xs font-medium">Anda sudah terdaftar</span>
                                     </div>
