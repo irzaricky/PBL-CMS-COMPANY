@@ -46,6 +46,8 @@ import {
     AlertCircle,
     Info,
     AlertTriangle,
+    LucideEye,
+    LucideSearch,
 } from "lucide-vue-next";
 
 // Get company name from server-side config (set in AppServiceProvider)
@@ -104,6 +106,8 @@ createInertiaApp({
             AlertCircle,
             Info,
             AlertTriangle,
+            LucideEye,
+            LucideSearch,
         };
 
         Object.entries(iconComponents).forEach(([name, component]) => {

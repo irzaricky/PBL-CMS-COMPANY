@@ -125,11 +125,13 @@ const allNotifications = computed(() => {
     <Head title="Notifikasi" />
 
     <Navbar />
-    <div class="min-h-screen bg-gray-50 py-8">
+    <div class="min-w-[390px] bg-gray-50 py-8 font-custom">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-8">
-                <div class="flex items-center justify-between">
+                <div
+                    class="flex flex-col lg:flex-row lg:items-center lg:justify-between"
+                >
                     <div class="flex items-center space-x-4">
                         <button
                             @click="router.visit('/')"
@@ -150,7 +152,7 @@ const allNotifications = computed(() => {
                     <button
                         v-if="notifications.unread.length > 0"
                         @click="markAllAsRead"
-                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                        class="mt-4 lg:mt-0 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
                         <Check class="w-4 h-4 mr-2" />
                         Tandai Semua Dibaca
@@ -194,11 +196,11 @@ const allNotifications = computed(() => {
                                 <div class="flex items-start justify-between">
                                     <div class="flex-1">
                                         <h3
-                                            class="text-lg font-medium text-gray-900 mb-1"
+                                            class="text-base font-medium text-gray-900 mb-1"
                                         >
                                             {{ notification.title }}
                                         </h3>
-                                        <p class="text-gray-700 mb-2">
+                                        <p class="text-sm text-gray-700 mb-2">
                                             {{ notification.message }}
                                         </p>
                                         <p class="text-sm text-gray-500">
@@ -266,11 +268,11 @@ const allNotifications = computed(() => {
                             <!-- Content -->
                             <div class="flex-1 min-w-0">
                                 <h3
-                                    class="text-lg font-medium text-gray-900 mb-1"
+                                    class="text-base font-medium text-gray-900 mb-1"
                                 >
                                     {{ notification.title }}
                                 </h3>
-                                <p class="text-gray-700 mb-2">
+                                <p class="text-sm text-gray-700 mb-2">
                                     {{ notification.message }}
                                 </p>
                                 <p class="text-sm text-gray-500">

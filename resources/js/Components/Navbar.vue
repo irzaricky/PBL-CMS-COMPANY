@@ -2,7 +2,6 @@
 import { ChevronDown, Menu, UserCog } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import UserMenu from "./MegaMenu/UserMenu.vue";
-import NotificationCenter from "./Notification/NotificationCenter.vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import axios from "axios";
 import { Link, usePage } from "@inertiajs/vue3";
@@ -175,9 +174,6 @@ onUnmounted(() => {
                         />
                     </div>
 
-                    <!-- Notification Bell -->
-                    <NotificationCenter />
-
                     <UserMenu v-if="showUserMenu" />
                 </template>
                 <template v-else>
@@ -257,6 +253,16 @@ onUnmounted(() => {
                         <UserCog class="w-5 h-5 text-gray-700" />
                         <span class="text-sm font-medium text-gray-800"
                             >Edit Profil</span
+                        >
+                    </a>
+
+                    <a
+                        href="/notifications"
+                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition"
+                    >
+                        <Bell class="w-5 h-5 text-gray-700" />
+                        <span class="text-sm font-medium text-gray-800"
+                            >Notifikasi</span
                         >
                     </a>
                 </div>

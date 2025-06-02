@@ -114,7 +114,10 @@ class DatabaseTestController extends Controller
 
             // Log::info('Database connection test successful');
 
-            unlink($database); // Clean up SQLite file if it was created
+            if ($connection == 'sqlite') {
+                // If SQLite, unlink the database file after testing
+                unlink($database);
+            }
 
             return response()->json([
                 'success' => true,

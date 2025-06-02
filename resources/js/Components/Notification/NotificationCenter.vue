@@ -114,9 +114,9 @@ onMounted(() => {
         <!-- Notification Bell Button -->
         <button
             @click="showDropdown = !showDropdown"
-            class="relative flex items-center justify-center p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
+            class="relative flex items-center justify-center text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-full"
         >
-            <Bell class="w-6 h-6" />
+            <Bell class="w-4 h-4" />
 
             <!-- Unread Badge -->
             <span
