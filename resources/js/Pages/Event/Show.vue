@@ -34,12 +34,36 @@ onMounted(() => {
 async function fetchEvent() {
     try {
         loading.value = true;
-        const response = await axios.get(`/api/event/${props.slug}`);
+        const response = await axios.get(`/api/event/${props.slug}`, {
+            withCredentials: true
+        });
         event.value = response.data.data;
+        
+        // If user is authenticated, check registration status separately
+        if (isAuthenticated.value && event.value) {
+            await checkRegistrationStatus();
+        }
     } catch (err) {
         error.value = "Event not found or an error occurred";
+        console.error("Error fetching event:", err);
     } finally {
         loading.value = false;
+    }
+}
+
+// Add this new function
+async function checkRegistrationStatus() {
+    if (!isAuthenticated.value || !event.value) return;
+    
+    try {
+        const response = await axios.get(`/api/event/${props.slug}/check-registration`, {
+            withCredentials: true
+        });
+        if (response.data && typeof response.data.is_registered !== 'undefined') {
+            event.value.is_registered = response.data.is_registered;
+        }
+    } catch (err) {
+        console.error("Error checking registration status:", err);
     }
 }
 

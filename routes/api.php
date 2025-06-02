@@ -89,6 +89,7 @@ Route::prefix('event')->group(function () {
     Route::middleware(['web', 'auth'])->group(function () {
         Route::post('/{slug}/register', [EventController::class, 'register']);
         Route::delete('/{slug}/register', [EventController::class, 'unregister']);
+        Route::get('/{slug}/check-registration', [EventController::class, 'checkRegistration']);
     });
 
     Route::get('/{slug}', [EventController::class, 'getEventBySlug']);

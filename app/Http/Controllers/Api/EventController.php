@@ -237,4 +237,36 @@ class EventController extends Controller
             'is_registered' => false,
         ]);
     }
+
+    /**
+     * Check if the authenticated user is registered for an event.
+     */
+    public function checkRegistration($slug)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+                'is_registered' => false
+            ], 401);
+        }
+
+        try {
+            $event = Event::where('slug', $slug)->firstOrFail();
+            $isRegistered = $event->isUserRegistered($user->id_user);
+
+            return response()->json([
+                'status' => 'success',
+                'is_registered' => $isRegistered
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Event not found',
+                'is_registered' => false
+            ], 404);
+        }
+    }
 }
