@@ -75,6 +75,7 @@ function getImageUrl(image) {
 }
 
 const user = computed(() => usePage().props.auth?.user ?? null);
+const unreadCount = computed(() => usePage().props.auth?.unreadNotifications || 0);
 
 function getImageUser(imagePath) {
     return imagePath ? `/storage/${imagePath}` : "/image/placeholder.webp";
@@ -95,54 +96,37 @@ onUnmounted(() => {
 
 <template>
     <!-- Navbar -->
-    <nav
-        class="w-full px-6 py-2 lg:px-16 bg-primary shadow-sm fixed top-0 left-0 z-50 font-custom"
-    >
+    <nav class="w-full px-6 py-2 lg:px-16 bg-primary shadow-sm fixed top-0 left-0 z-50 font-custom">
         <div class="container mx-auto flex items-center justify-between py-2">
             <!-- Logo -->
             <div class="flex items-center space-x-2">
-                <div
-                    class="h-12 w-12 flex items-center justify-center overflow-hidden"
-                >
-                    <img
-                        :src="getImageUrl(profil_perusahaan?.logo_perusahaan)"
-                        alt="Logo Perusahaan"
-                        class="h-full w-full object-contain"
-                    />
+                <div class="h-12 w-12 flex items-center justify-center overflow-hidden">
+                    <img :src="getImageUrl(profil_perusahaan?.logo_perusahaan)" alt="Logo Perusahaan"
+                        class="h-full w-full object-contain" />
                 </div>
                 <Link href="/" class="text-h4-bold text-typography-dark px-2">
-                    {{ profil_perusahaan?.nama_perusahaan || "CMS" }}
+                {{ profil_perusahaan?.nama_perusahaan || "CMS" }}
                 </Link>
             </div>
 
             <!-- Desktop Menu -->
             <div class="hidden lg:flex items-center space-x-8">
-                <Link
-                    href="/"
-                    class="text-typography-dark hover:text-typography-hover2 transition text-lg"
-                    >Beranda
+                <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda
                 </Link>
 
-                <Link
-                    v-if="featureToggles.produk_module === 1"
-                    href="/produk"
-                    class="text-typography-dark hover:text-typography-hover2 transition text-lg"
-                >
-                    Produk
+                <Link v-if="featureToggles.produk_module === 1" href="/produk"
+                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">
+                Produk
                 </Link>
 
-                <Link
-                    v-if="featureToggles.feedback_module === 1"
-                    href="/feedback"
-                    class="text-typography-dark hover:text-typography-hover2 transition text-lg"
-                >
-                    Feedback
+                <Link v-if="featureToggles.feedback_module === 1" href="/feedback"
+                    class="text-typography-dark hover:text-typography-hover2 transition text-lg">
+                Feedback
                 </Link>
 
                 <div class="relative cursor-pointer" @click="toggleMegaMenu">
                     <span
-                        class="text-typography-dark hover:text-typography-hover2 transition text-lg flex items-center"
-                    >
+                        class="text-typography-dark hover:text-typography-hover2 transition text-lg flex items-center">
                         Lainnya
                         <ChevronDown class="w-4" />
                     </span>
@@ -150,15 +134,10 @@ onUnmounted(() => {
             </div>
 
             <!-- Desktop Login / Foto Profil -->
-            <div
-                class="hidden lg:flex items-center space-x-3 relative user-menu-container"
-            >
+            <div class="hidden lg:flex items-center space-x-3 relative user-menu-container">
                 <template v-if="user">
                     <!-- User Profile -->
-                    <div
-                        @click="showUserMenu = !showUserMenu"
-                        class="cursor-pointer flex items-center space-x-2 group"
-                    >
+                    <div @click="showUserMenu = !showUserMenu" class="cursor-pointer flex items-center space-x-2 group">
                         <div class="flex flex-col items-end text-right">
                             <span
                                 class="text-black text-sm font-semibold group-hover:underline"
@@ -168,20 +147,27 @@ onUnmounted(() => {
                                 user.email
                             }}</span>
                         </div>
-                        <img
-                            :src="getImageUser(user.foto_profil)"
-                            alt="Foto Profil"
-                            class="w-10 h-10 rounded-full object-cover border border-gray-300"
-                        />
+                        <div class="relative">
+                            <img
+                                :src="getImageUser(user.foto_profil)"
+                                alt="Foto Profil"
+                                class="w-10 h-10 rounded-full object-cover border border-gray-300"
+                            />
+                            <!-- Unread Badge -->
+                            <span
+                                v-if="unreadCount > 0"
+                                class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full"
+                            >
+                                {{ unreadCount > 99 ? "99+" : unreadCount }}
+                            </span>
+                        </div>
                     </div>
 
                     <UserMenu v-if="showUserMenu" />
                 </template>
                 <template v-else>
-                    <a
-                        href="/login"
-                        class="bg-secondary text-primary px-8 py-2 rounded-xl-figma shadow hover:bg-black transition"
-                    >
+                    <a href="/login"
+                        class="bg-secondary text-primary px-8 py-2 rounded-xl-figma shadow hover:bg-black transition">
                         Login
                     </a>
                 </template>
@@ -189,104 +175,63 @@ onUnmounted(() => {
 
             <!-- Burger icon -->
             <div class="lg:hidden flex items-center">
-                <Menu
-                    class="w-7 h-7 text-black cursor-pointer"
-                    @click="toggleMobileMenu"
-                />
+                <Menu class="w-7 h-7 text-black cursor-pointer" @click="toggleMobileMenu" />
             </div>
         </div>
 
         <!-- Desktop MegaMenu (overlay) -->
         <Transition name="fade-slide">
-            <MegaMenu
-                v-if="showMegaMenu && !isMobile"
-                class="fixed left-0 top-[64px] w-screen z-40"
-                @click.self="showMegaMenu = false"
-            />
+            <MegaMenu v-if="showMegaMenu && !isMobile" class="fixed left-0 top-[64px] w-screen z-40"
+                @click.self="showMegaMenu = false" />
         </Transition>
     </nav>
 
     <!-- Mobile Menu Dropdown -->
     <Transition name="fade-slide">
-        <div
-            v-if="isMobileMenuOpen"
-            class="lg:hidden fixed top-[64px] left-0 w-full bg-white px-6 pt-8 pb-8 flex flex-col space-y-4 shadow z-40 font-custom text-black max-h-[calc(100vh-64px)] overflow-y-auto"
-        >
+        <div v-if="isMobileMenuOpen"
+            class="lg:hidden fixed top-[64px] left-0 w-full bg-white px-6 pt-8 pb-8 flex flex-col space-y-4 shadow z-40 font-custom text-black max-h-[calc(100vh-64px)] overflow-y-auto">
             <!-- User Info Mobile -->
             <template v-if="user">
-                <a
-                    href="#"
-                    class="flex items-center space-x-4 pb-4 border-b border-gray-200 hover:bg-gray-50 px-2 py-2 rounded-md transition"
-                >
-                    <img
-                        :src="getImageUser(user.foto_profil)"
-                        alt="Foto Profil"
-                        class="w-12 h-12 rounded-full object-cover border border-gray-300"
-                    />
+                <a href="#"
+                    class="flex items-center space-x-4 pb-4 border-b border-gray-200 hover:bg-gray-50 px-2 py-2 rounded-md transition">
+                    <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
+                        class="w-12 h-12 rounded-full object-cover border border-gray-300" />
                     <div class="flex flex-col">
                         <div class="flex items-center gap-2">
-                            <span class="font-semibold text-base text-black"
-                                >{{ greeting }}, {{ user.name }}</span
-                            >
+                            <span class="font-semibold text-base text-black">{{ greeting }}, {{ user.name }}</span>
                         </div>
                         <span class="text-sm text-gray-500">{{
                             user.email
-                        }}</span>
+                            }}</span>
                     </div>
                 </a>
 
                 <div class="flex flex-col gap-2 mt-4">
-                    <a
-                        v-if="user.status_kepegawaian === 'Tetap'"
-                        href="/admin"
-                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition"
-                    >
+                    <a v-if="user.status_kepegawaian === 'Tetap'" href="/admin"
+                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
                         <LayoutDashboard class="w-5 h-5 text-gray-700" />
-                        <span class="text-sm font-medium text-gray-800"
-                            >Admin Panel</span
-                        >
+                        <span class="text-sm font-medium text-gray-800">Admin Panel</span>
                     </a>
 
-                    <a
-                        href="/admin/profile"
-                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition"
-                    >
+                    <a href="/admin/profile"
+                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
                         <UserCog class="w-5 h-5 text-gray-700" />
-                        <span class="text-sm font-medium text-gray-800"
-                            >Edit Profil</span
-                        >
+                        <span class="text-sm font-medium text-gray-800">Edit Profil</span>
                     </a>
 
-                    <a
-                        href="/notifications"
-                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition"
-                    >
+                    <a href="/notifications"
+                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
                         <NotificationCenter />
-                        <span class="text-sm font-medium text-gray-800"
-                            >Notifikasi</span
-                        >
+                        <span class="text-sm font-medium text-gray-800">Notifikasi</span>
                     </a>
                 </div>
             </template>
 
             <Link href="/" class="text-2xl py-1">Beranda</Link>
-            <Link
-                v-if="featureToggles.produk_module === 1"
-                href="/produk"
-                class="text-2xl py-1"
-                >Produk</Link
-            >
-            <Link
-                v-if="featureToggles.feedback_module === 1"
-                href="/feedback"
-                class="text-2xl py-1"
-                >Feedback</Link
-            >
+            <Link v-if="featureToggles.produk_module === 1" href="/produk" class="text-2xl py-1">Produk</Link>
+            <Link v-if="featureToggles.feedback_module === 1" href="/feedback" class="text-2xl py-1">Feedback</Link>
 
-            <div
-                class="text-2xl py-1 flex justify-between items-center cursor-pointer"
-                @click="toggleMegaMenu"
-            >
+            <div class="text-2xl py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">
                 <span>Lainnya</span>
                 <ChevronDown class="w-5 h-5" />
             </div>
@@ -296,18 +241,14 @@ onUnmounted(() => {
             </div>
 
             <template v-if="user">
-                <a
-                    href="/logout"
-                    class="mt-4 bg-red-500 text-primary px-6 py-2 rounded-xl-figma text-center shadow hover:bg-red-600 transition w-full"
-                >
+                <a href="/logout"
+                    class="mt-4 bg-red-500 text-primary px-6 py-2 rounded-xl-figma text-center shadow hover:bg-red-600 transition w-full">
                     Logout
                 </a>
             </template>
             <template v-else>
-                <a
-                    href="/login"
-                    class="mt-4 bg-secondary text-primary px-6 py-2 rounded-xl-figma text-center shadow hover:bg-black transition"
-                >
+                <a href="/login"
+                    class="mt-4 bg-secondary text-primary px-6 py-2 rounded-xl-figma text-center shadow hover:bg-black transition">
                     Login
                 </a>
             </template>
