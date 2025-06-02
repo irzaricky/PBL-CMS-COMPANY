@@ -182,6 +182,9 @@ class AdminPanelProvider extends PanelProvider
                     ->formPanelWidth('40%'),
                 FilamentApexChartsPlugin::make(),
                 FilamentEnvEditorPlugin::make()
+                    ->navigationGroup('System')
+                    ->navigationLabel('Environment Editor')
+                    ->navigationIcon('heroicon-o-cog')
                     ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS')
                     ->authorize(
                         fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')
