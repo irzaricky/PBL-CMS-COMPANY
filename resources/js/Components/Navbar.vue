@@ -1,10 +1,9 @@
 <script setup>
-import { ChevronDown, Menu, UserCog } from "lucide-vue-next";
+import { ChevronDown, Menu, UserCog, LayoutDashboard } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import UserMenu from "./MegaMenu/UserMenu.vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import axios from "axios";
-import NotificationCenter from "@/Components/Notification/NotificationCenter.vue";
 import { Link, usePage } from "@inertiajs/vue3";
 
 const profil_perusahaan = ref(null);
@@ -221,8 +220,14 @@ onUnmounted(() => {
 
                     <a href="/notifications"
                         class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
-                        <NotificationCenter />
+                        <Bell class="w-5 h-5 text-gray-700" />
                         <span class="text-sm font-medium text-gray-800">Notifikasi</span>
+                        <span
+                            v-if="unreadCount > 0"
+                            class="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full ml-auto"
+                        >
+                            {{ unreadCount > 99 ? "99+" : unreadCount }}
+                        </span>
                     </a>
                 </div>
             </template>
