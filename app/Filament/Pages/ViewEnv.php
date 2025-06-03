@@ -983,7 +983,7 @@ class ViewEnv extends BaseViewEnvEditor
      */
     protected function keyExists(string $key, ?string $excludeKey = null): bool
     {
-        $envData = EnvEditor::getEnvFile();
+        $envData = EnvEditor::getEnvFileContent();
 
         foreach ($envData as $entry) {
             if ($entry->key === $key && $key !== $excludeKey) {
@@ -1090,7 +1090,7 @@ class ViewEnv extends BaseViewEnvEditor
                         EnvEditor::deleteKey($obj->key);
                         $result = EnvEditor::addKey($data['key'], $data['value'] ?? '');
                     } else {
-                        $result = EnvEditor::updateKey($obj->key, $data['value'] ?? '');
+                        $result = EnvEditor::editKey($obj->key, $data['value'] ?? '');
                     }
 
                     if ($result) {
