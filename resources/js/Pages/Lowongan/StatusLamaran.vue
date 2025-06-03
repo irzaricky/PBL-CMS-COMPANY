@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import { RefreshCw } from 'lucide-vue-next'
+import { RefreshCw, CheckCircle } from 'lucide-vue-next'
 
 const props = defineProps({
     application: {
@@ -42,9 +42,7 @@ async function refreshApplicationStatus() {
     <div class="bg-blue-50 border border-blue-100 rounded-lg p-5">
         <div class="flex items-center justify-center mb-4">
             <div class="p-2 rounded-full bg-blue-100">
-                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
+                <CheckCircle class="w-6 h-6 text-blue-600" />
             </div>
         </div>
         

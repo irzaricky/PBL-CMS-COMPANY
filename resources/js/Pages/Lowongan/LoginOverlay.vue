@@ -1,3 +1,8 @@
+<script setup>
+import { Link } from '@inertiajs/vue3'
+import { UserPlus } from 'lucide-vue-next'
+</script>
+
 <template>
     <div class="relative">
         <!-- Blurred Form Background (for visual effect) -->
@@ -14,15 +19,15 @@
         
         <!-- Login Required Message -->
         <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-white bg-opacity-95 rounded-xl">
-            <img src="/image/recruitment.svg" alt="Recruitment Illustration" class="w-36 h-36 mb-4" />
+            <UserPlus class="w-36 h-36 mb-4 text-secondary" />
             <h4 class="text-lg font-semibold text-gray-800 mb-2">Mau Mendaftar?</h4>
             <p class="text-gray-600 mb-4">Silakan login terlebih dahulu untuk mengirim lamaran Anda</p>
-            <a 
+            <Link 
                 href="/login"
                 class="px-6 py-2 bg-secondary hover:bg-black transition-colors duration-300 text-white rounded-full font-medium"
             >
                 Login Sekarang
-            </a>
+            </Link>
         </div>
     </div>
 </template>

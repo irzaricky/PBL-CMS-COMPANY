@@ -9,7 +9,8 @@ import FormLamaran from '@/Pages/Lowongan/FormLamaran.vue'
 import StatusLamaran from '@/Pages/Lowongan/StatusLamaran.vue'
 import LoginOverlay from '@/Pages/Lowongan/LoginOverlay.vue'
 import LowonganTutup from '@/Pages/Lowongan/LowonganTutup.vue'
-import { Wallet } from 'lucide-vue-next'
+// Menambahkan import icons dari lucide
+import { Wallet, RefreshCw, Loader, FrownIcon } from 'lucide-vue-next'
 
 // Props dari route
 const { slug } = defineProps({ slug: String })
@@ -181,12 +182,9 @@ function isLowonganActive(tanggalDibuka, tanggalDitutup) {
                             <!-- Login Overlay - Show when user is not logged in -->
                             <LoginOverlay v-if="!isLoggedIn" />
                             
-                            <!-- Checking Application Status -->
+                            <!-- Checking Application Status - Menggunakan Lucide Loader -->
                             <div v-else-if="checkingApplication" class="py-8 flex flex-col items-center justify-center">
-                                <svg class="animate-spin h-8 w-8 text-secondary mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
+                                <Loader class="animate-spin h-8 w-8 text-secondary mb-4" />
                                 <p class="text-gray-600">Memeriksa status lamaran...</p>
                             </div>
                             
@@ -213,11 +211,9 @@ function isLowonganActive(tanggalDibuka, tanggalDitutup) {
                 </div>
             </LowonganDetail>
             
-            <!-- No Data Found -->
+            <!-- No Data Found - Menggunakan Lucide FrownIcon -->
             <div v-else class="w-full max-w-3xl mx-auto text-center py-12">
-                <svg class="mx-auto h-16 w-16 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+                <FrownIcon class="mx-auto h-16 w-16 text-gray-400" />
                 <h3 class="mt-2 text-xl font-medium text-gray-900">Lowongan tidak ditemukan</h3>
                 <p class="mt-1 text-gray-500">Lowongan mungkin sudah tidak tersedia atau telah dihapus.</p>
                 <div class="mt-6">
