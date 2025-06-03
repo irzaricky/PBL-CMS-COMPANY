@@ -111,9 +111,8 @@ class ProfilPerusahaanResource extends Resource
                                 Forms\Components\TextInput::make('judul')
                                     ->label('Judul')
                                     ->required(),
-                                Forms\Components\RichEditor::make('deskripsi')
+                                Forms\Components\TextInput::make('deskripsi')
                                     ->label('Deskripsi')
-                                    ->disableToolbarButtons(['attachFiles'])
                                     ->required(),
                             ])
                             ->columnSpanFull()
