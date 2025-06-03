@@ -114,7 +114,7 @@ async function fetchProfilPerusahaan() {
                                 class="relative">
                                 <!-- Timeline Dot -->
                                 <div
-                                    class="absolute left-4 md:left-1/2 w-10 h-10 bg-secondary rounded-full shadow-lg border-4 border-white transform translate-x-[-15px] md:translate-x-[-20px] flex items-center justify-center z-10">
+                                    class="absolute left-4 md:left-1/2 w-10 h-10 bg-secondary rounded-full border-4 border-white transform translate-x-[-15px] md:translate-x-[-20px] flex items-center justify-center z-10">
                                     <span class="text-white font-bold text-xs">{{ index + 1 }}</span>
                                 </div>
 

@@ -142,7 +142,7 @@ onUnmounted(() => {
 
                 <!-- KOLOM TEKS with modern card styling -->
                 <div class="flex-1 flex flex-col justify-center items-center gap-6">
-                    <div class="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10 shadow-lg">
+                    <div class="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
                         <p class="text-base lg:text-lg font-normal font-custom leading-relaxed">
                             {{ profil_perusahaan?.deskripsi_perusahaan
                                 ? profil_perusahaan.deskripsi_perusahaan
@@ -157,7 +157,7 @@ onUnmounted(() => {
         <div class="w-full px-4 sm:px-8 lg:px-16 py-20 bg-white text-white">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 max-w-screen-xl mx-auto">
                 <!-- Visi - top-left petal -->
-                <div class="order-1 flex flex-col justify-center items-start lg:items-end gap-4 bg-secondary py-8 px-10 shadow-lg 
+                <div class="order-1 flex flex-col justify-center items-start lg:items-end gap-4 bg-secondary py-8 px-10 
                      rounded-lg lg:rounded-tl-[100px] lg:rounded-bl-[100px] lg:rounded-tr-[100px] lg:rounded-br-[20px]
                      transform hover:translate-y-[-5px] transition-all duration-300">
                     <h3 class="text-2xl lg:text-4xl font-semibold font-custom lg:text-right">
@@ -174,7 +174,7 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Gambar atas - top-right petal (Slider 1) -->
-                <div class="order-2 overflow-hidden shadow-lg rounded-lg lg:rounded-tr-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-bl-[20px] h-96">
+                <div class="order-2 overflow-hidden rounded-lg lg:rounded-tr-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-bl-[20px] h-96">
                     <div v-if="thumbnailTop.length" class="flex h-full transition-transform duration-700 ease-in-out"
                         :style="{ transform: `translateX(-${topIndex * 100}%)` }">
                         <div v-for="(img, i) in thumbnailTop" :key="'top-slide-' + i"
@@ -188,7 +188,7 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Gambar bawah - bottom-left petal (Slider 2) -->
-                <div class="order-3 overflow-hidden shadow-lg rounded-lg lg:rounded-bl-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-tr-[20px] h-96">
+                <div class="order-3 overflow-hidden rounded-lg lg:rounded-bl-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-tr-[20px] h-96">
                     <div v-if="thumbnailBottom.length" class="flex h-full transition-transform duration-700 ease-in-out"
                         :style="{ transform: `translateX(-${bottomIndex * 100}%)` }">
                         <div v-for="(img, i) in thumbnailBottom" :key="'bottom-slide-' + i"
@@ -202,7 +202,7 @@ onUnmounted(() => {
                 </div>
 
                 <!-- Misi - bottom-right petal -->
-                <div class="order-4 flex flex-col justify-center items-start gap-4 bg-secondary py-8 px-10 shadow-lg
+                <div class="order-4 flex flex-col justify-center items-start gap-4 bg-secondary py-8 px-10
                      rounded-lg lg:rounded-br-[100px] lg:rounded-tr-[100px] lg:rounded-bl-[100px] lg:rounded-tl-[20px]
                      transform hover:translate-y-[-5px] transition-all duration-300">
                     <h3 class="text-2xl lg:text-4xl font-semibold font-custom">Misi Kami</h3>
