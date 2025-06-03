@@ -21,8 +21,8 @@ class LowonganController extends Controller
     {
         try {
             $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                ->where('tanggal_dibuka', '<=', now())
-                ->where('tanggal_ditutup', '>=', now())
+                // ->where('tanggal_dibuka', '<=', now())
+                // ->where('tanggal_ditutup', '>=', now())
                 ->orderBy('created_at', 'desc')
                 ->paginate(10);
 
