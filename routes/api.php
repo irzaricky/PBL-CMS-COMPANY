@@ -19,6 +19,7 @@ use App\Http\Controllers\Api\FeatureToggleController;
 use App\Http\Controllers\Api\TestimoniProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\TestimoniArtikelController;
+use App\Http\Controllers\Api\TestimoniEventController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
 
 Route::middleware('auth')->group(function () {
@@ -128,7 +129,8 @@ Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'i
 Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
 Route::get('/testimoni/artikel/{artikelId}', [TestimoniArtikelController::class, 'index']);
 Route::post('/testimoni/artikel/{artikel}', [TestimoniArtikelController::class, 'store']);
-
+Route::get('/testimoni/event/{eventId}', [TestimoniEventController::class, 'index']);
+Route::post('/testimoni/event/{event}', [TestimoniEventController::class, 'store']);
 
 // Mitra
 Route::prefix('mitra')->group(function () {

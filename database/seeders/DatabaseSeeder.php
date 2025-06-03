@@ -43,6 +43,7 @@ class DatabaseSeeder extends Seeder
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
             TestimoniArtikelSeeder::class,
+            TestimoniEventSeeder::class,
         ]);
     }
 
