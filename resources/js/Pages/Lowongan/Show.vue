@@ -3,7 +3,7 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import { ref, onMounted, computed } from 'vue'
 import axios from 'axios'
 import { usePage, Link } from '@inertiajs/vue3'
-import { Home, ChevronRight, Briefcase, CalendarDays, Users, MapPin, Clock, Send } from 'lucide-vue-next'
+import { Home, ChevronRight, Briefcase, CalendarDays, Users, MapPin, Clock, Send, BriefcaseBusiness } from 'lucide-vue-next'
 
 // Props dari route
 const { slug } = defineProps({ slug: String })
@@ -225,7 +225,7 @@ function isLowonganActive(tanggalDibuka, tanggalDitutup) {
                                 <ChevronRight class="w-4 h-4 text-gray-400" />
                                 <Link href="/lowongan"
                                     class="ml-1 inline-flex items-center text-sm text-gray-500 hover:text-secondary">
-                                    <Briefcase class="w-4 h-4 mr-2" />
+                                    <BriefcaseBusiness class="w-4 h-4 mr-2" />
                                     Lowongan
                                 </Link>
                             </li>
