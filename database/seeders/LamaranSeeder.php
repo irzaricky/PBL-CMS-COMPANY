@@ -23,7 +23,7 @@ class LamaranSeeder extends Seeder
                 'id_lamaran' => $i,
                 'id_user' => $faker->numberBetween(9, 13),
                 'id_lowongan' => $faker->numberBetween(1, 3),
-                'nama_asli' => $faker->name,
+                'pesan_pelamar' => $faker->sentence(10),
                 'status_lamaran' => $faker->randomElement($statusOptions),
                 'created_at' => $createdAt,
                 'updated_at' => $updatedAt,

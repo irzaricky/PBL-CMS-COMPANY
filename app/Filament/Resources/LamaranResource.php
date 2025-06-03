@@ -54,26 +54,36 @@ class LamaranResource extends Resource
 
                 Forms\Components\Section::make('Dokumen Pelamar')
                     ->schema([
-                        Forms\Components\TextInput::make('nama_asli')
-                            ->label('Nama Asli')
+                        Forms\Components\FileUpload::make('surat_lamaran')
+                            ->label('Surat Lamaran')
+                            ->directory('lamaran-surat')
+                            ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                            ->maxSize(5120)
+                            ->disk('public')
+                            ->downloadable()
                             ->disabled(),
+                            
                         Forms\Components\FileUpload::make('cv')
                             ->label('Curriculum Vitae (CV)')
                             ->directory('lamaran-cv')
-                            ->acceptedFileTypes(['application/pdf'])
+                            ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
                             ->maxSize(5120)
                             ->disk('public')
                             ->downloadable()
                             ->disabled(),
 
-
                         Forms\Components\FileUpload::make('portfolio')
                             ->label('Portfolio')
                             ->directory('lamaran-portfolio')
-                            ->acceptedFileTypes(['application/pdf'])
+                            ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/zip'])
                             ->maxSize(10240)
                             ->disk('public')
                             ->downloadable()
+                            ->disabled(),
+                            
+                        Forms\Components\Textarea::make('pesan_pelamar')
+                            ->label('Pesan Lamaran')
+                            ->maxLength(500)
                             ->disabled(),
                     ]),
 
@@ -99,13 +109,19 @@ class LamaranResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pelamar')
-                    ->searchable()
-                ,
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('lowongan.judul_lowongan')
                     ->label('Lowongan')
                     ->searchable()
                     ->limit(50),
+
+                Tables\Columns\IconColumn::make('surat_lamaran')
+                    ->label('Surat Lamaran')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-document')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->state(fn(Lamaran $record): bool => !empty($record->surat_lamaran)),
 
                 Tables\Columns\IconColumn::make('cv')
                     ->label('CV')
@@ -132,8 +148,7 @@ class LamaranResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Tanggal Lamaran')
-                    ->dateTime('d M Y H:i')
-                ,
+                    ->dateTime('d M Y H:i'),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
@@ -159,7 +174,7 @@ class LamaranResource extends Resource
                     ->label('Arsipkan')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
-                    ->successNotificationTitle('Artikel berhasil diarsipkan'),
+                    ->successNotificationTitle('Lamaran berhasil diarsipkan'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
