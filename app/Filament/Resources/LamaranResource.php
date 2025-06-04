@@ -16,6 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\LamaranResource\RelationManagers;
 use App\Filament\Resources\LamaranResource\Widgets\LamaranStats;
 use App\Helpers\FilamentGroupingHelper;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Filters\TrashedFilter;
+use App\Services\FileHandlers\SingleFileHandler;
 
 class LamaranResource extends Resource
 {
@@ -26,6 +30,14 @@ class LamaranResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return FilamentGroupingHelper::getNavigationGroup('Customer Service');
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
     }
 
     public static function form(Form $form): Form
@@ -62,7 +74,7 @@ class LamaranResource extends Resource
                             ->disk('public')
                             ->downloadable()
                             ->disabled(),
-                            
+
                         Forms\Components\FileUpload::make('cv')
                             ->label('Curriculum Vitae (CV)')
                             ->directory('lamaran-cv')
@@ -80,7 +92,7 @@ class LamaranResource extends Resource
                             ->disk('public')
                             ->downloadable()
                             ->disabled(),
-                            
+
                         Forms\Components\Textarea::make('pesan_pelamar')
                             ->label('Pesan Lamaran')
                             ->maxLength(500)
@@ -154,6 +166,11 @@ class LamaranResource extends Resource
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                Tables\Columns\TextColumn::make('deleted_at')
+                    ->label('Dihapus Pada')
+                    ->dateTime('d M Y H:i')
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status_lamaran')
@@ -167,14 +184,29 @@ class LamaranResource extends Resource
                 Tables\Filters\SelectFilter::make('id_lowongan')
                     ->label('Lowongan')
                     ->relationship('lowongan', 'judul_lowongan'),
+
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Lamaran')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Lamaran berhasil diarsipkan'),
+                Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Lamaran')
+                    ->successNotificationTitle('Lamaran berhasil dipulihkan'),
+                Tables\Actions\ForceDeleteAction::make()
+                    ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Lamaran')
+                    ->successNotificationTitle('Lamaran berhasil dihapus permanen')
+                    ->before(function ($record) {
+                        SingleFileHandler::deleteFile($record, 'surat_lamaran');
+                        SingleFileHandler::deleteFile($record, 'cv');
+                        SingleFileHandler::deleteFile($record, 'portfolio');
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -199,31 +231,22 @@ class LamaranResource extends Resource
                                 ]);
                             }
                         }),
-                        
-                    // Tambahkan bulk action untuk mengarsipkan lamaran
-                    Tables\Actions\BulkAction::make('archive')
+
+                    Tables\Actions\DeleteBulkAction::make()
                         ->label('Arsipkan')
-                        ->icon('heroicon-o-archive-box-arrow-down')
-                        ->color('warning')
-                        ->requiresConfirmation()
-                        ->deselectRecordsAfterCompletion()
-                        ->action(function (Collection $records): void {
-                            $count = $records->count();
-                            
+                        ->successNotificationTitle('Lamaran berhasil diarsipkan'),
+                    RestoreBulkAction::make()
+                        ->successNotificationTitle('Lamaran berhasil dipulihkan'),
+                    ForceDeleteBulkAction::make()
+                        ->successNotificationTitle('Lamaran berhasil dihapus permanen')
+                        ->before(function (Collection $records) {
                             foreach ($records as $record) {
-                                $record->delete(); // Menggunakan soft delete
+                                SingleFileHandler::deleteFile($record, 'surat_lamaran');
+                                SingleFileHandler::deleteFile($record, 'cv');
+                                SingleFileHandler::deleteFile($record, 'portfolio');
                             }
                         }),
                 ]),
-                
-                // Opsi untuk menghapus secara permanen jika diperlukan
-                Tables\Actions\DeleteBulkAction::make()
-                    ->label('Hapus Permanen')
-                    ->modalHeading('Hapus Lamaran Secara Permanen')
-                    ->modalDescription('Lamaran yang dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?')
-                    ->modalSubmitActionLabel('Ya, Hapus Permanen')
-                    ->color('danger')
-                    ->hidden(fn () => !auth()->user()->can('delete_lamaran')), 
             ]);
     }
 

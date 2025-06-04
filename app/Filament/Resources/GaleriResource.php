@@ -43,7 +43,9 @@ class GaleriResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $set('slug', str($state)->slug());
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug', $baseSlug . '-' . $dateSlug);
                                 } else {
                                     $set('slug', null);
                                 }
@@ -99,9 +101,12 @@ class GaleriResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true)
+                            ->unique(Galeri::class, 'slug', ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan judul'),
+                            ->helperText('Akan terisi otomatis berdasarkan judul')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\Select::make('status_galeri')
                             ->label('Status Galeri')
@@ -235,13 +240,16 @@ class GaleriResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Galeri')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Galeri berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Galeri')
                     ->successNotificationTitle('Galeri berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Galeri')
                     ->successNotificationTitle('Galeri berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_galeri');
@@ -250,10 +258,7 @@ class GaleriResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Galeri berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_galeri');
-                        }),
+                        ->successNotificationTitle('Galeri berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Galeri berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()

@@ -42,7 +42,9 @@ class ProdukResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $set('slug', str($state)->slug());
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug', $baseSlug . '-' . $dateSlug);
                                 } else {
                                     $set('slug', null);
                                 }
@@ -96,9 +98,12 @@ class ProdukResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true)
+                            ->unique(Produk::class, 'slug', ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan nama produk'),
+                            ->helperText('Akan terisi otomatis berdasarkan nama produk')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\Select::make('status_produk')
                             ->label('Status Produk')
@@ -148,12 +153,12 @@ class ProdukResource extends Resource
                                     Forms\Components\Actions\Action::make('openLink')
                                         ->label('Buka Tautan')
                                         ->icon('heroicon-s-arrow-top-right-on-square')
-                                        ->url(fn ($get) => $get('link_produk'), true)
-                                        ->visible(fn ($get) => filled($get('link_produk')))
+                                        ->url(fn($get) => $get('link_produk'), true)
+                                        ->visible(fn($get) => filled($get('link_produk')))
                                         ->button()
                                 ])
-                                ->verticallyAlignCenter()
-                                ->columnSpan(1),
+                                    ->verticallyAlignCenter()
+                                    ->columnSpan(1),
                             ]),
                     ]),
             ]);
@@ -231,13 +236,16 @@ class ProdukResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Produk')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Produk berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Produk')
                     ->successNotificationTitle('Produk berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Produk')
                     ->successNotificationTitle('Produk berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_produk');
@@ -246,10 +254,7 @@ class ProdukResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Produk berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_produk');
-                        }),
+                        ->successNotificationTitle('Produk berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Produk berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()

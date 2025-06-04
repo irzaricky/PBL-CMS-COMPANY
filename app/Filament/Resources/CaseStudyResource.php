@@ -55,7 +55,9 @@ class CaseStudyResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $set('slug_case_study', str($state)->slug());
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug_case_study', $baseSlug . '-' . $dateSlug);
                                 } else {
                                     $set('slug_case_study', null);
                                 }
@@ -72,9 +74,12 @@ class CaseStudyResource extends Resource
                         Forms\Components\TextInput::make('slug_case_study')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true)
+                            ->unique(CaseStudy::class, 'slug_case_study', ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan judul'),
+                            ->helperText('Akan terisi otomatis berdasarkan judul')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\Select::make('status_case_study')
                             ->label('Status')
@@ -181,13 +186,16 @@ class CaseStudyResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Case Study')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Case study berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Case Study')
                     ->successNotificationTitle('Case study berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Case Study')
                     ->successNotificationTitle('Case study berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_case_study');
@@ -196,10 +204,7 @@ class CaseStudyResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Case study berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_case_study');
-                        }),
+                        ->successNotificationTitle('Case study berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Case study berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()

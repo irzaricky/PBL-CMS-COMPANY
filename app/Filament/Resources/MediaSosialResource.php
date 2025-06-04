@@ -124,7 +124,7 @@ class MediaSosialResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (MediaSosial $record) {
-                        SingleFileHandler::deleteFile($record, 'icon');
+                        SingleFileHandler::deleteFile($record->icon, 'icon');
                     }),
             ])
             ->bulkActions([

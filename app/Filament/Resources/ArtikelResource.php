@@ -54,7 +54,9 @@ class ArtikelResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $set('slug', str($state)->slug());
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug', $baseSlug . '-' . $dateSlug);
                                 } else {
                                     $set('slug', null);
                                 }
@@ -109,9 +111,12 @@ class ArtikelResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true)
+                            ->unique(Artikel::class, 'slug', ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan judul'),
+                            ->helperText('Akan terisi otomatis berdasarkan judul')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\Select::make('status_artikel')
                             ->label('Status Artikel')
@@ -196,7 +201,7 @@ class ArtikelResource extends Resource
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
-                    ->disabled(fn() => !auth()->user()->can('update_artikel', Artikel::class))  
+                    ->disabled(fn() => !auth()->user()->can('update_artikel', Artikel::class))
                     ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -238,13 +243,16 @@ class ArtikelResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Artikel')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Artikel berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Artikel')
                     ->successNotificationTitle('Artikel berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Artikel')
                     ->successNotificationTitle('Artikel berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_artikel');
@@ -253,10 +261,7 @@ class ArtikelResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Artikel berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');
-                        }),
+                        ->successNotificationTitle('Artikel berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Artikel berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
