@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lamaran;
+use App\Models\Lowongan;
+use App\Models\User;
 use App\Http\Resources\LamaranResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\LamaranSubmissionNotification; // Add this import
 
 class LamaranController extends Controller
 {
@@ -24,7 +27,7 @@ class LamaranController extends Controller
                 'id_user' => 'required|exists:users,id_user|integer',
                 'id_lowongan' => 'required|exists:lowongan,id_lowongan|integer',
                 'surat_lamaran' => 'required|file|mimes:pdf,doc,docx|max:5120',
-                'cv' => 'required|file|mimes:pdf,doc,docx|max:2048', 
+                'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
                 'portfolio' => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
                 'pesan_pelamar' => 'nullable|string|max:500',
             ]);
@@ -63,6 +66,11 @@ class LamaranController extends Controller
             }
             
             $lamaran = Lamaran::create($data);
+            
+            // Send notification to user
+            $lowongan = Lowongan::find($request->id_lowongan);
+            $user = User::find($request->id_user);
+            $user->notify(new LamaranSubmissionNotification($lamaran, $lowongan));
 
             return (new LamaranResource($lamaran))
                 ->additional([

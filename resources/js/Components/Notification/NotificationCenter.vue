@@ -29,6 +29,9 @@ const iconMap = {
     "alert-circle": AlertCircle,
     info: Info,
     "alert-triangle": AlertTriangle,
+    "briefcase": Briefcase,
+    "check-circle": CheckCircle,
+    "x-circle": XCircle,
 };
 
 // Color mapping based on notification type
