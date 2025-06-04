@@ -1,6 +1,6 @@
 <script setup>
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, onUnmounted } from "vue";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Link } from "@inertiajs/vue3";
 import {
@@ -10,6 +10,8 @@ import {
     Download,
     Copy,
     Eye,
+    Info,
+    X,
 } from "lucide-vue-next";
 import CopyLink from "@/Components/Modal/CopyLink.vue";
 
@@ -18,14 +20,56 @@ const loading = ref(true);
 const error = ref(null);
 const activeImageIndex = ref(0);
 const showCopyModal = ref(false);
+const showImageModal = ref(false);
+const showMetaModal = ref(false);
+const imageMetadata = ref({});
+const loadingMeta = ref(false);
 
 const props = defineProps({
     slug: String,
 });
 
+// Computed property for current image metadata
+const currentImageMeta = computed(() => {
+    if (!gallery.value?.thumbnail_galeri?.[activeImageIndex.value]) return null;
+    return imageMetadata.value[activeImageIndex.value] || null;
+});
+
 onMounted(() => {
     fetchGallery();
+    document.addEventListener("keydown", handleKeyDown);
 });
+
+onUnmounted(() => {
+    document.removeEventListener("keydown", handleKeyDown);
+});
+
+// Handle keyboard navigation
+function handleKeyDown(event) {
+    if (
+        !gallery.value?.thumbnail_galeri?.length ||
+        gallery.value.thumbnail_galeri.length <= 1
+    )
+        return;
+
+    switch (event.key) {
+        case "ArrowLeft":
+            event.preventDefault();
+            prevImage();
+            break;
+        case "ArrowRight":
+            event.preventDefault();
+            nextImage();
+            break;
+        case "Escape":
+            if (showImageModal.value) {
+                closeImageModal();
+            } else if (showMetaModal.value) {
+                closeMetaModal();
+            }
+            break;
+    }
+}
 
 async function fetchGallery() {
     try {
@@ -33,10 +77,43 @@ async function fetchGallery() {
         const response = await axios.get(`/api/galeri/${props.slug}`);
         gallery.value = response.data.data;
         loading.value = false;
+
+        // Load metadata for all images after gallery is loaded
+        await loadImageMetadata();
     } catch (err) {
         error.value = "Gallery not found or an error occurred";
         loading.value = false;
         console.error("Error fetching gallery:", err);
+    }
+}
+
+async function loadImageMetadata() {
+    if (!gallery.value?.thumbnail_galeri?.length) return;
+
+    try {
+        loadingMeta.value = true;
+
+        // Prepare image paths for API
+        const imagePaths = gallery.value.thumbnail_galeri
+            .map((img) => {
+                if (typeof img === "object" && img !== null) {
+                    return img[0] || "";
+                }
+                return img || "";
+            })
+            .filter((path) => path !== "");
+
+        const response = await axios.post("/api/image-meta/bulk", {
+            images: imagePaths,
+        });
+
+        if (response.data.status === "success") {
+            imageMetadata.value = response.data.data;
+        }
+    } catch (err) {
+        console.error("Error loading image metadata:", err);
+    } finally {
+        loadingMeta.value = false;
     }
 }
 
@@ -79,10 +156,20 @@ function getImageUrl(image) {
     if (!image) return "/image/placeholder.webp";
 
     if (typeof image === "object" && image !== null) {
-        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
+        const imagePath = image[0];
+        if (!imagePath) return "/image/placeholder.webp";
+
+        // All gallery images are stored in storage/app/public and accessed via /storage/
+        return `/storage/${imagePath}`;
     }
 
-    return `/storage/${image}`;
+    // Handle string paths
+    if (typeof image === "string") {
+        // All gallery images are stored in storage/app/public and accessed via /storage/
+        return `/storage/${image}`;
+    }
+
+    return "/image/placeholder.webp";
 }
 
 function formatDate(date) {
@@ -104,16 +191,37 @@ async function downloadGallery(galleryId) {
             gallery.value.jumlah_unduhan++;
         }
 
-        // Get the first image if available
-        const image = gallery.value.thumbnail_galeri;
-        if (image && typeof image === "object" && image.length > 0) {
-            // Create a download link
-            const link = document.createElement("a");
-            link.href = `/storage/${image[activeImageIndex.value]}`;
-            link.download = `gallery-${galleryId}-${activeImageIndex.value}.jpg`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        // Get the current image
+        const currentImage =
+            gallery.value.thumbnail_galeri[activeImageIndex.value];
+        if (currentImage) {
+            let imagePath;
+
+            if (typeof currentImage === "object" && currentImage !== null) {
+                imagePath = currentImage[0];
+            } else {
+                imagePath = currentImage;
+            }
+
+            if (imagePath) {
+                // Create download URL based on path type
+                let downloadUrl;
+                if (imagePath.startsWith("galeri-thumbnails/")) {
+                    downloadUrl = `/${imagePath}`;
+                } else {
+                    downloadUrl = `/storage/${imagePath}`;
+                }
+
+                // Create a download link
+                const link = document.createElement("a");
+                link.href = downloadUrl;
+                link.download = `gallery-${galleryId}-image-${
+                    activeImageIndex.value + 1
+                }.jpg`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     } catch (error) {
         console.error("Error downloading gallery:", error);
@@ -122,6 +230,39 @@ async function downloadGallery(galleryId) {
 
 function setActiveImage(index) {
     activeImageIndex.value = index;
+}
+
+function openImageModal() {
+    showImageModal.value = true;
+}
+
+function closeImageModal() {
+    showImageModal.value = false;
+}
+
+function openMetaModal() {
+    showMetaModal.value = true;
+}
+
+function closeMetaModal() {
+    showMetaModal.value = false;
+}
+
+function nextImage() {
+    if (gallery.value?.thumbnail_galeri?.length > 1) {
+        activeImageIndex.value =
+            (activeImageIndex.value + 1) %
+            gallery.value.thumbnail_galeri.length;
+    }
+}
+
+function prevImage() {
+    if (gallery.value?.thumbnail_galeri?.length > 1) {
+        activeImageIndex.value =
+            activeImageIndex.value === 0
+                ? gallery.value.thumbnail_galeri.length - 1
+                : activeImageIndex.value - 1;
+    }
 }
 </script>
 
@@ -134,23 +275,39 @@ function setActiveImage(index) {
             <div v-if="loading" class="flex flex-col gap-20">
                 <!-- Skeleton Breadcrumb -->
                 <nav class="flex" aria-label="Breadcrumb">
-                    <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
+                    <ol
+                        class="inline-flex items-center space-x-1 md:space-x-3 text-sm"
+                    >
                         <li>
                             <div class="inline-flex items-center">
-                                <div class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"></div>
-                                <div class="w-16 h-4 bg-gray-200 animate-pulse rounded"></div>
+                                <div
+                                    class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"
+                                ></div>
+                                <div
+                                    class="w-16 h-4 bg-gray-200 animate-pulse rounded"
+                                ></div>
                             </div>
                         </li>
                         <li class="inline-flex items-center">
-                            <div class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"></div>
+                            <div
+                                class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"
+                            ></div>
                             <div class="inline-flex items-center">
-                                <div class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"></div>
-                                <div class="w-16 h-4 bg-gray-200 animate-pulse rounded"></div>
+                                <div
+                                    class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"
+                                ></div>
+                                <div
+                                    class="w-16 h-4 bg-gray-200 animate-pulse rounded"
+                                ></div>
                             </div>
                         </li>
                         <li class="flex items-center min-w-0">
-                            <div class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"></div>
-                            <div class="w-24 h-4 bg-gray-200 animate-pulse rounded ml-1"></div>
+                            <div
+                                class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"
+                            ></div>
+                            <div
+                                class="w-24 h-4 bg-gray-200 animate-pulse rounded ml-1"
+                            ></div>
                         </li>
                     </ol>
                 </nav>
@@ -158,60 +315,105 @@ function setActiveImage(index) {
                 <!-- Skeleton Judul & Kategori -->
                 <div class="flex flex-col gap-4">
                     <div class="flex items-center gap-4">
-                        <div class="w-24 h-8 bg-gray-200 animate-pulse rounded-full"></div>
-                        <div class="w-20 h-6 bg-gray-200 animate-pulse rounded"></div>
+                        <div
+                            class="w-24 h-8 bg-gray-200 animate-pulse rounded-full"
+                        ></div>
+                        <div
+                            class="w-20 h-6 bg-gray-200 animate-pulse rounded"
+                        ></div>
                     </div>
-                    <div class="w-3/4 h-12 bg-gray-200 animate-pulse rounded"></div>
+                    <div
+                        class="w-3/4 h-12 bg-gray-200 animate-pulse rounded"
+                    ></div>
                 </div>
 
                 <!-- Skeleton Gambar Utama -->
-                <div class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-gray-200 animate-pulse">
-                </div>
+                <div
+                    class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-gray-200 animate-pulse"
+                ></div>
 
                 <!-- Skeleton Thumbnails -->
                 <div class="flex overflow-x-auto gap-4 py-4">
-                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
-                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
-                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
-                    <div class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"></div>
+                    <div
+                        class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"
+                    ></div>
+                    <div
+                        class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"
+                    ></div>
+                    <div
+                        class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"
+                    ></div>
+                    <div
+                        class="w-20 aspect-square rounded-lg bg-gray-200 animate-pulse flex-shrink-0"
+                    ></div>
                 </div>
 
                 <!-- Skeleton Info Penulis -->
-                <div class="bg-gray-50 rounded-xl w-full p-6 border border-gray-100">
+                <div
+                    class="bg-gray-50 rounded-xl w-full p-6 border border-gray-100"
+                >
                     <!-- Skeleton Author Profile -->
                     <div class="flex items-center gap-4 mb-4">
-                        <div class="w-14 h-14 rounded-full bg-gray-200 animate-pulse"></div>
+                        <div
+                            class="w-14 h-14 rounded-full bg-gray-200 animate-pulse"
+                        ></div>
                         <div class="flex-1">
-                            <div class="w-40 h-6 bg-gray-200 animate-pulse rounded mb-2"></div>
-                            <div class="w-32 h-4 bg-gray-200 animate-pulse rounded"></div>
+                            <div
+                                class="w-40 h-6 bg-gray-200 animate-pulse rounded mb-2"
+                            ></div>
+                            <div
+                                class="w-32 h-4 bg-gray-200 animate-pulse rounded"
+                            ></div>
                         </div>
                     </div>
 
                     <!-- Skeleton Stats & Actions -->
-                    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                    <div
+                        class="flex items-center justify-between pt-4 border-t border-gray-200"
+                    >
                         <div class="flex items-center gap-4">
                             <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 bg-gray-200 animate-pulse rounded"></div>
-                                <div class="w-24 h-4 bg-gray-200 animate-pulse rounded"></div>
+                                <div
+                                    class="w-4 h-4 bg-gray-200 animate-pulse rounded"
+                                ></div>
+                                <div
+                                    class="w-24 h-4 bg-gray-200 animate-pulse rounded"
+                                ></div>
                             </div>
                         </div>
 
                         <div class="flex gap-2">
-                            <div class="w-24 h-10 bg-gray-200 animate-pulse rounded-lg"></div>
-                            <div class="w-32 h-10 bg-gray-200 animate-pulse rounded-lg"></div>
+                            <div
+                                class="w-24 h-10 bg-gray-200 animate-pulse rounded-lg"
+                            ></div>
+                            <div
+                                class="w-32 h-10 bg-gray-200 animate-pulse rounded-lg"
+                            ></div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Skeleton Deskripsi -->
                 <div>
-                    <div class="w-32 h-6 bg-gray-200 animate-pulse rounded mb-4"></div>
+                    <div
+                        class="w-32 h-6 bg-gray-200 animate-pulse rounded mb-4"
+                    ></div>
                     <div class="space-y-3">
-                        <div class="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
-                        <div class="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
-                        <div class="w-full h-4 bg-gray-200 animate-pulse rounded"></div>
-                        <div class="w-5/6 h-4 bg-gray-200 animate-pulse rounded"></div>
-                        <div class="w-3/4 h-4 bg-gray-200 animate-pulse rounded"></div>
+                        <div
+                            class="w-full h-4 bg-gray-200 animate-pulse rounded"
+                        ></div>
+                        <div
+                            class="w-full h-4 bg-gray-200 animate-pulse rounded"
+                        ></div>
+                        <div
+                            class="w-full h-4 bg-gray-200 animate-pulse rounded"
+                        ></div>
+                        <div
+                            class="w-5/6 h-4 bg-gray-200 animate-pulse rounded"
+                        ></div>
+                        <div
+                            class="w-3/4 h-4 bg-gray-200 animate-pulse rounded"
+                        ></div>
                     </div>
                 </div>
             </div>
@@ -278,7 +480,8 @@ function setActiveImage(index) {
 
                 <!-- Gambar Utama -->
                 <div
-                    class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white"
+                    class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white group cursor-pointer"
+                    @click="openImageModal"
                 >
                     <img
                         :src="
@@ -287,8 +490,51 @@ function setActiveImage(index) {
                             )
                         "
                         :alt="gallery?.judul_galeri"
-                        class="w-full h-full object-cover"
+                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
+
+                    <!-- Overlay dengan info dan tombol -->
+                    <div
+                        class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center"
+                    >
+                        <div
+                            class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-3"
+                        >
+                            <button
+                                @click.stop="openImageModal"
+                                class="p-3 bg-white/90 rounded-full text-black hover:bg-white transition-colors"
+                                title="Lihat gambar penuh"
+                            >
+                                <Eye class="w-5 h-5" />
+                            </button>
+                            <button
+                                @click.stop="openMetaModal"
+                                class="p-3 bg-white/90 rounded-full text-black hover:bg-white transition-colors"
+                                title="Info gambar"
+                            >
+                                <Info class="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation arrows for keyboard users -->
+                    <div
+                        v-if="gallery?.thumbnail_galeri?.length > 1"
+                        class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                    >
+                        <button
+                            @click.stop="prevImage"
+                            class="p-2 bg-white/80 rounded-full text-black hover:bg-white transition-colors pointer-events-auto"
+                        >
+                            <ChevronRight class="w-5 h-5 rotate-180" />
+                        </button>
+                        <button
+                            @click.stop="nextImage"
+                            class="p-2 bg-white/80 rounded-full text-black hover:bg-white transition-colors pointer-events-auto"
+                        >
+                            <ChevronRight class="w-5 h-5" />
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Thumbnails -->
@@ -409,5 +655,313 @@ function setActiveImage(index) {
             :auto-close="true"
             :auto-close-delay="3000"
         />
+
+        <!-- Full Screen Image Modal -->
+        <div
+            v-if="showImageModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
+            @click="closeImageModal"
+        >
+            <div class="relative max-w-7xl max-h-full p-4">
+                <!-- Close Button -->
+                <button
+                    @click="closeImageModal"
+                    class="absolute top-6 right-6 z-10 p-2 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors"
+                >
+                    <X class="w-6 h-6" />
+                </button>
+
+                <!-- Navigation Buttons -->
+                <div
+                    v-if="gallery?.thumbnail_galeri?.length > 1"
+                    class="absolute inset-y-0 left-4 right-4 flex items-center justify-between pointer-events-none"
+                >
+                    <button
+                        @click.stop="prevImage"
+                        class="p-3 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors pointer-events-auto"
+                    >
+                        <ChevronRight class="w-6 h-6 rotate-180" />
+                    </button>
+                    <button
+                        @click.stop="nextImage"
+                        class="p-3 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors pointer-events-auto"
+                    >
+                        <ChevronRight class="w-6 h-6" />
+                    </button>
+                </div>
+
+                <!-- Main Image -->
+                <img
+                    :src="
+                        getImageUrl(
+                            gallery?.thumbnail_galeri?.[activeImageIndex]
+                        )
+                    "
+                    :alt="gallery?.judul_galeri"
+                    class="max-w-full max-h-full object-contain rounded-lg"
+                    @click.stop
+                />
+
+                <!-- Image Counter -->
+                <div
+                    v-if="gallery?.thumbnail_galeri?.length > 1"
+                    class="absolute bottom-6 left-1/2 transform -translate-x-1/2"
+                >
+                    <div
+                        class="px-3 py-1 bg-white/20 rounded-full text-white text-sm"
+                    >
+                        {{ activeImageIndex + 1 }} /
+                        {{ gallery.thumbnail_galeri.length }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Metadata Modal -->
+        <div
+            v-if="showMetaModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            @click="closeMetaModal"
+        >
+            <div
+                class="bg-white rounded-xl max-w-md w-full max-h-[80vh] overflow-hidden shadow-2xl"
+                @click.stop
+            >
+                <!-- Header -->
+                <div
+                    class="flex items-center justify-between p-6 border-b border-gray-200"
+                >
+                    <h3 class="text-lg font-semibold text-gray-900">
+                        Info Gambar
+                    </h3>
+                    <button
+                        @click="closeMetaModal"
+                        class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                        <X class="w-5 h-5" />
+                    </button>
+                </div>
+
+                <!-- Content -->
+                <div class="p-6 space-y-4 overflow-y-auto max-h-96">
+                    <!-- Loading State -->
+                    <div v-if="loadingMeta" class="text-center py-8">
+                        <div
+                            class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"
+                        ></div>
+                        <p class="mt-2 text-sm text-gray-600">
+                            Memuat informasi gambar...
+                        </p>
+                    </div>
+
+                    <!-- Metadata Display -->
+                    <div
+                        v-else-if="currentImageMeta && !currentImageMeta.error"
+                        class="space-y-4"
+                    >
+                        <!-- Image Preview -->
+                        <div
+                            class="aspect-video rounded-lg overflow-hidden bg-gray-100"
+                        >
+                            <img
+                                :src="
+                                    getImageUrl(
+                                        gallery?.thumbnail_galeri?.[
+                                            activeImageIndex
+                                        ]
+                                    )
+                                "
+                                :alt="gallery?.judul_galeri"
+                                class="w-full h-full object-cover"
+                            />
+                        </div>
+
+                        <!-- Basic Info -->
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <dt class="font-medium text-gray-600">
+                                    Dimensi
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{ currentImageMeta.resolution }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-600">
+                                    Ukuran File
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{ currentImageMeta.size_formatted }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-600">
+                                    Format
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{ currentImageMeta.type }}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt class="font-medium text-gray-600">
+                                    Aspek Rasio
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{ currentImageMeta.aspect_ratio }}:1
+                                </dd>
+                            </div>
+                        </div>
+
+                        <!-- Additional Info -->
+                        <div
+                            class="border-t border-gray-200 pt-4 space-y-3 text-sm"
+                        >
+                            <div v-if="currentImageMeta.bits">
+                                <dt class="font-medium text-gray-600">
+                                    Kedalaman Bit
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{ currentImageMeta.bits }} bit
+                                </dd>
+                            </div>
+                            <div v-if="currentImageMeta.channels">
+                                <dt class="font-medium text-gray-600">
+                                    Channel
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{ currentImageMeta.channels }}
+                                </dd>
+                            </div>
+                            <div v-if="currentImageMeta.file_created">
+                                <dt class="font-medium text-gray-600">
+                                    Dibuat
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{
+                                        formatDate(
+                                            currentImageMeta.file_created
+                                        )
+                                    }}
+                                </dd>
+                            </div>
+                            <div v-if="currentImageMeta.file_modified">
+                                <dt class="font-medium text-gray-600">
+                                    Dimodifikasi
+                                </dt>
+                                <dd class="text-gray-900">
+                                    {{
+                                        formatDate(
+                                            currentImageMeta.file_modified
+                                        )
+                                    }}
+                                </dd>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Error State -->
+                    <div
+                        v-else-if="currentImageMeta?.error"
+                        class="text-center py-8"
+                    >
+                        <div class="text-gray-400 mb-2">
+                            <Info class="w-12 h-12 mx-auto" />
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            {{
+                                currentImageMeta.message ||
+                                "Tidak dapat memuat informasi gambar"
+                            }}
+                        </p>
+                    </div>
+
+                    <!-- No Data State -->
+                    <div v-else class="text-center py-8">
+                        <div class="text-gray-400 mb-2">
+                            <Info class="w-12 h-12 mx-auto" />
+                        </div>
+                        <p class="text-sm text-gray-600">
+                            Informasi gambar tidak tersedia
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <div
+                    class="flex justify-end gap-3 p-6 border-t border-gray-200"
+                >
+                    <button
+                        @click="closeMetaModal"
+                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                    >
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Screen Image Modal -->
+        <div
+            v-if="showImageModal"
+            class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+            @click="closeImageModal"
+        >
+            <div class="relative max-w-7xl max-h-full">
+                <!-- Close Button -->
+                <button
+                    @click="closeImageModal"
+                    class="absolute top-4 right-4 z-10 p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
+                >
+                    <X class="w-6 h-6" />
+                </button>
+
+                <!-- Navigation Buttons -->
+                <div
+                    v-if="gallery?.thumbnail_galeri?.length > 1"
+                    class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4"
+                >
+                    <button
+                        @click.stop="prevImage"
+                        class="p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
+                    >
+                        <ChevronRight class="w-6 h-6 rotate-180" />
+                    </button>
+                    <button
+                        @click.stop="nextImage"
+                        class="p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
+                    >
+                        <ChevronRight class="w-6 h-6" />
+                    </button>
+                </div>
+
+                <!-- Image -->
+                <img
+                    :src="
+                        getImageUrl(
+                            gallery?.thumbnail_galeri?.[activeImageIndex]
+                        )
+                    "
+                    :alt="gallery?.judul_galeri"
+                    class="max-w-full max-h-full object-contain"
+                    @click.stop
+                />
+
+                <!-- Image Counter -->
+                <div
+                    v-if="gallery?.thumbnail_galeri?.length > 1"
+                    class="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+                >
+                    <div
+                        class="px-3 py-1 bg-white/10 rounded-full text-white text-sm"
+                    >
+                        {{ activeImageIndex + 1 }} /
+                        {{ gallery.thumbnail_galeri.length }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Copy Link Modal -->
+        <CopyLink :show="showCopyModal" @close="closeCopyModal" />
     </AppLayout>
 </template>

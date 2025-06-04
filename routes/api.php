@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\TestimoniArtikelController;
 use App\Http\Controllers\Api\TestimoniEventController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
+use App\Http\Controllers\ImageMetaController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -241,4 +242,14 @@ Route::prefix('unduhan')->group(function () {
 
     // Untuk mengambil unduhan berdasarkan slug
     Route::get('/{slug}', [UnduhanController::class, 'getUnduhanBySlug']);
+});
+
+// Image Metadata
+Route::prefix('image-meta')->group(function () {
+    // Get metadata for a single image
+    Route::get('/{imagePath}', [ImageMetaController::class, 'getImageMeta'])
+        ->where('imagePath', '.*'); // Allow paths with slashes and special characters
+
+    // Get metadata for multiple images (bulk)
+    Route::post('/bulk', [ImageMetaController::class, 'getBulkImageMeta']);
 });
