@@ -119,22 +119,22 @@ class LamaranResource extends Resource
                 Tables\Columns\IconColumn::make('surat_lamaran')
                     ->label('Surat Lamaran')
                     ->boolean()
-                    ->trueIcon('heroicon-o-document')
-                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueIcon('heroicon-s-document')
+                    ->falseIcon('heroicon-s-x-circle')
                     ->state(fn(Lamaran $record): bool => !empty($record->surat_lamaran)),
 
                 Tables\Columns\IconColumn::make('cv')
                     ->label('CV')
                     ->boolean()
-                    ->trueIcon('heroicon-o-document')
-                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueIcon('heroicon-s-document')
+                    ->falseIcon('heroicon-s-x-circle')
                     ->state(fn(Lamaran $record): bool => !empty($record->cv)),
 
                 Tables\Columns\IconColumn::make('portfolio')
                     ->label('Portfolio')
                     ->boolean()
-                    ->trueIcon('heroicon-o-document')
-                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueIcon('heroicon-s-document')
+                    ->falseIcon('heroicon-s-x-circle')
                     ->state(fn(Lamaran $record): bool => !empty($record->portfolio)),
 
                 Tables\Columns\TextColumn::make('status_lamaran')
@@ -199,7 +199,31 @@ class LamaranResource extends Resource
                                 ]);
                             }
                         }),
+                        
+                    // Tambahkan bulk action untuk mengarsipkan lamaran
+                    Tables\Actions\BulkAction::make('archive')
+                        ->label('Arsipkan')
+                        ->icon('heroicon-o-archive-box-arrow-down')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->deselectRecordsAfterCompletion()
+                        ->action(function (Collection $records): void {
+                            $count = $records->count();
+                            
+                            foreach ($records as $record) {
+                                $record->delete(); // Menggunakan soft delete
+                            }
+                        }),
                 ]),
+                
+                // Opsi untuk menghapus secara permanen jika diperlukan
+                Tables\Actions\DeleteBulkAction::make()
+                    ->label('Hapus Permanen')
+                    ->modalHeading('Hapus Lamaran Secara Permanen')
+                    ->modalDescription('Lamaran yang dihapus tidak dapat dikembalikan. Apakah Anda yakin ingin melanjutkan?')
+                    ->modalSubmitActionLabel('Ya, Hapus Permanen')
+                    ->color('danger')
+                    ->hidden(fn () => !auth()->user()->can('delete_lamaran')), 
             ]);
     }
 

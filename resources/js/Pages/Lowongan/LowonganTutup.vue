@@ -1,6 +1,6 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
-import { AlertCircle, Clock, Archive } from 'lucide-vue-next'
+import { AlertCircle, Clock, Archive, BriefcaseBusiness } from 'lucide-vue-next'
 </script>
 
 <template>
@@ -10,10 +10,10 @@ import { AlertCircle, Clock, Archive } from 'lucide-vue-next'
         <p class="text-sm text-red-700 mt-1">Silakan cek lowongan lainnya yang masih dibuka.</p>
         <Link 
             href="/lowongan" 
-            class="mt-3 inline-block px-4 py-2 bg-red-500 hover:bg-black transition duration-200 text-white rounded-full text-sm font-medium items-center justify-center gap-1"
+            class="mt-3 flex px-4 py-2 bg-red-500 hover:bg-black transition duration-200 text-white rounded-full text-sm font-medium items-center justify-center gap-1"
         >
-            <Archive class="w-4 h-4" />
-            Lihat Lowongan Lainnya
+            <BriefcaseBusiness class="w-4 h-4" />
+            Lowongan Lainnya
         </Link>
     </div>
 </template>
