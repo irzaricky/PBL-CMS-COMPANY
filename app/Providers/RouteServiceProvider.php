@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Route;
+
+class RouteServiceProvider extends ServiceProvider
+{
+    /**
+     * Define your route model bindings, pattern filters, etc.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        $this->configureRateLimiting();
+
+        $this->routes(function () {
+            Route::prefix('api')
+                ->middleware('api')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/api.php'));
+
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/web.php'));
+
+            // Load installer routes from routes/installer.php
+            Route::middleware(['installCheck'])
+                ->namespace($this->namespace)
+                ->group(base_path('routes/installer.php'));
+        });
+    }
+
+    /**
+     * Configure the rate limiters for the application.
+     * Limit the number of requests to 60 per minute for authenticated users and 100 per minute
+     *
+     * @return void
+     */
+    protected function configureRateLimiting()
+    {
+        // RateLimiter::for('api', function (Request $request) {
+        //     return Limit::perMinute(1000)->by(optional($request->user())->id ?: $request->ip());
+        // });
+    }
+}

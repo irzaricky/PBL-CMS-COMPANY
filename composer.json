@@ -7,11 +7,26 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "bezhansalleh/filament-shield": "^3.3",
+        "dedoc/scramble": "^0.12.19",
+        "diogogpinto/filament-auth-ui-enhancer": "^1.0",
+        "filament/filament": "^3.3",
+        "filament/infolists": "3.3",
+        "filament/notifications": "3.3",
+        "flowframe/laravel-trend": "^0.4.0",
+        "geo-sot/filament-env-editor": "^0.0.7",
+        "inertiajs/inertia-laravel": "^2.0",
+        "joshembling/image-optimizer": "^1.6",
         "laravel/framework": "^11.31",
-        "laravel/tinker": "^2.9"
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.9",
+        "leandrocfe/filament-apex-charts": "^3.2",
+        "pxlrbt/filament-environment-indicator": "^2.1",
+        "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "laravel/breeze": "^2.3",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
@@ -34,7 +49,8 @@
     "scripts": {
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
-            "@php artisan package:discover --ansi"
+            "@php artisan package:discover --ansi",
+            "@php artisan filament:upgrade"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

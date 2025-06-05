@@ -2,15 +2,26 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles, SoftDeletes;
+
+    /**
+     * The primary key for the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'id_user';
 
     /**
      * The attributes that are mass assignable.
@@ -21,6 +32,13 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'foto_profil',
+        'alamat',
+        'no_hp',
+        'nik',
+        'tanggal_lahir',
+        'status_kepegawaian',
+        'status',
     ];
 
     /**
@@ -43,6 +61,19 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'tanggal_lahir' => 'date',
         ];
+    }
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->foto_profil
+            ? asset('storage/' . $this->foto_profil)
+            : null;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Izinkan akses berdasarkan status aktif dan status kepegawaian saja
+        return $this->status === 'aktif' && $this->status_kepegawaian !== 'Non Pegawai' || $this->status_kepegawaian !== null;
     }
 }
