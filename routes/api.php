@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\TestimoniArtikelController;
 use App\Http\Controllers\Api\TestimoniEventController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
+use App\Http\Controllers\Api\CacheController;
 use App\Http\Controllers\ImageMetaController;
 
 Route::middleware('auth')->group(function () {
@@ -242,6 +243,14 @@ Route::prefix('unduhan')->group(function () {
 
     // Untuk mengambil unduhan berdasarkan slug
     Route::get('/{slug}', [UnduhanController::class, 'getUnduhanBySlug']);
+});
+
+// Cache Management (for admin use)
+Route::prefix('cache')->group(function () {
+    Route::get('/stats', [CacheController::class, 'stats']);
+    Route::post('/clear', [CacheController::class, 'clearAll']);
+    Route::post('/clear-endpoint', [CacheController::class, 'clearEndpoint']);
+    Route::post('/warmup', [CacheController::class, 'warmup']);
 });
 
 // Image Metadata

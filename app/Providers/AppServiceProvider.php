@@ -27,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(LoginResponseContract::class, \App\Http\Responses\LoginResponse::class);
         $this->app->bind(LogoutResponseContract::class, \App\Http\Responses\LogoutResponse::class);
         $this->app->bind(RegistrationResponseContract::class, \App\Http\Responses\RegistrationResponse::class);
+
+        // Register API Cache Service
+        $this->app->singleton(\App\Services\ApiCacheService::class);
     }
 
     /**
@@ -88,6 +91,93 @@ class AppServiceProvider extends ServiceProvider
             View::share('titlePerusahaan', 'Sistem Informasi Manajemen');
             config(['app.name' => 'Sistem Informasi Manajemen']);
             config(['mail.from.name' => 'Sistem Informasi Manajemen']);
+        }
+
+        // Register model observers for cache invalidation
+        if (class_exists('\App\Models\Artikel')) {
+            \App\Models\Artikel::observe(\App\Observers\ArtikelObserver::class);
+        }
+
+        if (class_exists('\App\Models\Event')) {
+            \App\Models\Event::observe(\App\Observers\EventObserver::class);
+        }
+
+        if (class_exists('\App\Models\Produk')) {
+            \App\Models\Produk::observe(\App\Observers\ProdukObserver::class);
+        }
+
+        if (class_exists('\App\Models\CaseStudy')) {
+            \App\Models\CaseStudy::observe(\App\Observers\CaseStudyObserver::class);
+        }
+
+        if (class_exists('\App\Models\Galeri')) {
+            \App\Models\Galeri::observe(\App\Observers\GaleriObserver::class);
+        }
+
+        if (class_exists('\App\Models\Unduhan')) {
+            \App\Models\Unduhan::observe(\App\Observers\UnduhanObserver::class);
+        }
+
+        if (class_exists('\App\Models\Lowongan')) {
+            \App\Models\Lowongan::observe(\App\Observers\LowonganObserver::class);
+        }
+
+        if (class_exists('\App\Models\Mitra')) {
+            \App\Models\Mitra::observe(\App\Observers\MitraObserver::class);
+        }
+
+        if (class_exists('\App\Models\FeatureToggle')) {
+            \App\Models\FeatureToggle::observe(\App\Observers\FeatureToggleObserver::class);
+        }
+
+        if (class_exists('\App\Models\KontenSlider')) {
+            \App\Models\KontenSlider::observe(\App\Observers\KontenSliderObserver::class);
+        }
+
+        if (class_exists('\App\Models\MediaSosial')) {
+            \App\Models\MediaSosial::observe(\App\Observers\MediaSosialObserver::class);
+        }
+
+        if (class_exists('\App\Models\ProfilPerusahaan')) {
+            \App\Models\ProfilPerusahaan::observe(\App\Observers\ProfilPerusahaanObserver::class);
+        }
+
+        if (class_exists('\App\Models\Testimoni')) {
+            \App\Models\Testimoni::observe(\App\Observers\TestimoniObserver::class);
+        }
+
+        // Register category observers
+        if (class_exists('\App\Models\KategoriArtikel')) {
+            \App\Models\KategoriArtikel::observe(\App\Observers\KategoriArtikelObserver::class);
+        }
+
+        if (class_exists('\App\Models\KategoriProduk')) {
+            \App\Models\KategoriProduk::observe(\App\Observers\KategoriProdukObserver::class);
+        }
+
+        if (class_exists('\App\Models\KategoriGaleri')) {
+            \App\Models\KategoriGaleri::observe(\App\Observers\KategoriGaleriObserver::class);
+        }
+
+        if (class_exists('\App\Models\KategoriUnduhan')) {
+            \App\Models\KategoriUnduhan::observe(\App\Observers\KategoriUnduhanObserver::class);
+        }
+
+        // Register specific testimoni observers
+        if (class_exists('\App\Models\TestimoniProduk')) {
+            \App\Models\TestimoniProduk::observe(\App\Observers\TestimoniProdukObserver::class);
+        }
+
+        if (class_exists('\App\Models\TestimoniArtikel')) {
+            \App\Models\TestimoniArtikel::observe(\App\Observers\TestimoniArtikelObserver::class);
+        }
+
+        if (class_exists('\App\Models\TestimoniEvent')) {
+            \App\Models\TestimoniEvent::observe(\App\Observers\TestimoniEventObserver::class);
+        }
+
+        if (class_exists('\App\Models\StrukturOrganisasi')) {
+            \App\Models\StrukturOrganisasi::observe(\App\Observers\StrukturOrganisasiObserver::class);
         }
     }
 }
