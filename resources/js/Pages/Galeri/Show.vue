@@ -14,6 +14,8 @@ import {
     X,
 } from "lucide-vue-next";
 import CopyLink from "@/Components/Modal/CopyLink.vue";
+import ZoomGaleri from "@/Components/Modal/ZoomGaleri.vue";
+import MetaGambarGaleri from "@/Components/Modal/MetaGambarGaleri.vue";
 
 const gallery = ref(null);
 const loading = ref(true);
@@ -656,312 +658,34 @@ function prevImage() {
             :auto-close-delay="3000"
         />
 
-        <!-- Full Screen Image Modal -->
-        <div
-            v-if="showImageModal"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm"
-            @click="closeImageModal"
-        >
-            <div class="relative max-w-7xl max-h-full p-4">
-                <!-- Close Button -->
-                <button
-                    @click="closeImageModal"
-                    class="absolute top-6 right-6 z-10 p-2 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors"
-                >
-                    <X class="w-6 h-6" />
-                </button>
-
-                <!-- Navigation Buttons -->
-                <div
-                    v-if="gallery?.thumbnail_galeri?.length > 1"
-                    class="absolute inset-y-0 left-4 right-4 flex items-center justify-between pointer-events-none"
-                >
-                    <button
-                        @click.stop="prevImage"
-                        class="p-3 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors pointer-events-auto"
-                    >
-                        <ChevronRight class="w-6 h-6 rotate-180" />
-                    </button>
-                    <button
-                        @click.stop="nextImage"
-                        class="p-3 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors pointer-events-auto"
-                    >
-                        <ChevronRight class="w-6 h-6" />
-                    </button>
-                </div>
-
-                <!-- Main Image -->
-                <img
-                    :src="
-                        getImageUrl(
-                            gallery?.thumbnail_galeri?.[activeImageIndex]
-                        )
-                    "
-                    :alt="gallery?.judul_galeri"
-                    class="max-w-full max-h-full object-contain rounded-lg"
-                    @click.stop
-                />
-
-                <!-- Image Counter -->
-                <div
-                    v-if="gallery?.thumbnail_galeri?.length > 1"
-                    class="absolute bottom-6 left-1/2 transform -translate-x-1/2"
-                >
-                    <div
-                        class="px-3 py-1 bg-white/20 rounded-full text-white text-sm"
-                    >
-                        {{ activeImageIndex + 1 }} /
-                        {{ gallery.thumbnail_galeri.length }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Image Metadata Modal -->
-        <div
-            v-if="showMetaModal"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            @click="closeMetaModal"
-        >
-            <div
-                class="bg-white rounded-xl max-w-md w-full max-h-[80vh] overflow-hidden shadow-2xl"
-                @click.stop
-            >
-                <!-- Header -->
-                <div
-                    class="flex items-center justify-between p-6 border-b border-gray-200"
-                >
-                    <h3 class="text-lg font-semibold text-gray-900">
-                        Info Gambar
-                    </h3>
-                    <button
-                        @click="closeMetaModal"
-                        class="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                        <X class="w-5 h-5" />
-                    </button>
-                </div>
-
-                <!-- Content -->
-                <div class="p-6 space-y-4 overflow-y-auto max-h-96">
-                    <!-- Loading State -->
-                    <div v-if="loadingMeta" class="text-center py-8">
-                        <div
-                            class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-secondary"
-                        ></div>
-                        <p class="mt-2 text-sm text-gray-600">
-                            Memuat informasi gambar...
-                        </p>
-                    </div>
-
-                    <!-- Metadata Display -->
-                    <div
-                        v-else-if="currentImageMeta && !currentImageMeta.error"
-                        class="space-y-4"
-                    >
-                        <!-- Image Preview -->
-                        <div
-                            class="aspect-video rounded-lg overflow-hidden bg-gray-100"
-                        >
-                            <img
-                                :src="
-                                    getImageUrl(
-                                        gallery?.thumbnail_galeri?.[
-                                            activeImageIndex
-                                        ]
-                                    )
-                                "
-                                :alt="gallery?.judul_galeri"
-                                class="w-full h-full object-cover"
-                            />
-                        </div>
-
-                        <!-- Basic Info -->
-                        <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <dt class="font-medium text-gray-600">
-                                    Dimensi
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{ currentImageMeta.resolution }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="font-medium text-gray-600">
-                                    Ukuran File
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{ currentImageMeta.size_formatted }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="font-medium text-gray-600">
-                                    Format
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{ currentImageMeta.type }}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt class="font-medium text-gray-600">
-                                    Aspek Rasio
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{ currentImageMeta.aspect_ratio }}:1
-                                </dd>
-                            </div>
-                        </div>
-
-                        <!-- Additional Info -->
-                        <div
-                            class="border-t border-gray-200 pt-4 space-y-3 text-sm"
-                        >
-                            <div v-if="currentImageMeta.bits">
-                                <dt class="font-medium text-gray-600">
-                                    Kedalaman Bit
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{ currentImageMeta.bits }} bit
-                                </dd>
-                            </div>
-                            <div v-if="currentImageMeta.channels">
-                                <dt class="font-medium text-gray-600">
-                                    Channel
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{ currentImageMeta.channels }}
-                                </dd>
-                            </div>
-                            <div v-if="currentImageMeta.file_created">
-                                <dt class="font-medium text-gray-600">
-                                    Dibuat
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{
-                                        formatDate(
-                                            currentImageMeta.file_created
-                                        )
-                                    }}
-                                </dd>
-                            </div>
-                            <div v-if="currentImageMeta.file_modified">
-                                <dt class="font-medium text-gray-600">
-                                    Dimodifikasi
-                                </dt>
-                                <dd class="text-gray-900">
-                                    {{
-                                        formatDate(
-                                            currentImageMeta.file_modified
-                                        )
-                                    }}
-                                </dd>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Error State -->
-                    <div
-                        v-else-if="currentImageMeta?.error"
-                        class="text-center py-8"
-                    >
-                        <div class="text-gray-400 mb-2">
-                            <Info class="w-12 h-12 mx-auto" />
-                        </div>
-                        <p class="text-sm text-gray-600">
-                            {{
-                                currentImageMeta.message ||
-                                "Tidak dapat memuat informasi gambar"
-                            }}
-                        </p>
-                    </div>
-
-                    <!-- No Data State -->
-                    <div v-else class="text-center py-8">
-                        <div class="text-gray-400 mb-2">
-                            <Info class="w-12 h-12 mx-auto" />
-                        </div>
-                        <p class="text-sm text-gray-600">
-                            Informasi gambar tidak tersedia
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div
-                    class="flex justify-end gap-3 p-6 border-t border-gray-200"
-                >
-                    <button
-                        @click="closeMetaModal"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
-                    >
-                        Tutup
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Full Screen Image Modal -->
-        <div
-            v-if="showImageModal"
-            class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
-            @click="closeImageModal"
-        >
-            <div class="relative max-w-7xl max-h-full">
-                <!-- Close Button -->
-                <button
-                    @click="closeImageModal"
-                    class="absolute top-4 right-4 z-10 p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
-                >
-                    <X class="w-6 h-6" />
-                </button>
-
-                <!-- Navigation Buttons -->
-                <div
-                    v-if="gallery?.thumbnail_galeri?.length > 1"
-                    class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4"
-                >
-                    <button
-                        @click.stop="prevImage"
-                        class="p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
-                    >
-                        <ChevronRight class="w-6 h-6 rotate-180" />
-                    </button>
-                    <button
-                        @click.stop="nextImage"
-                        class="p-3 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors"
-                    >
-                        <ChevronRight class="w-6 h-6" />
-                    </button>
-                </div>
-
-                <!-- Image -->
-                <img
-                    :src="
-                        getImageUrl(
-                            gallery?.thumbnail_galeri?.[activeImageIndex]
-                        )
-                    "
-                    :alt="gallery?.judul_galeri"
-                    class="max-w-full max-h-full object-contain"
-                    @click.stop
-                />
-
-                <!-- Image Counter -->
-                <div
-                    v-if="gallery?.thumbnail_galeri?.length > 1"
-                    class="absolute bottom-4 left-1/2 transform -translate-x-1/2"
-                >
-                    <div
-                        class="px-3 py-1 bg-white/10 rounded-full text-white text-sm"
-                    >
-                        {{ activeImageIndex + 1 }} /
-                        {{ gallery.thumbnail_galeri.length }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Copy Link Modal -->
         <CopyLink :show="showCopyModal" @close="closeCopyModal" />
+
+        <!-- Zoom Modal Component -->
+        <ZoomGaleri
+            :show="showImageModal"
+            :images="gallery?.thumbnail_galeri"
+            :current-image-url="
+                getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])
+            "
+            :gallery-title="gallery?.judul_galeri"
+            :current-index="activeImageIndex"
+            :total-images="gallery?.thumbnail_galeri?.length || 0"
+            @close="closeImageModal"
+            @next="nextImage"
+            @prev="prevImage"
+        />
+
+        <!-- Metadata Modal Component -->
+        <MetaGambarGaleri
+            :show="showMetaModal"
+            :metadata="currentImageMeta"
+            :loading-meta="loadingMeta"
+            :current-image-url="
+                getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])
+            "
+            :gallery-title="gallery?.judul_galeri"
+            @close="closeMetaModal"
+        />
     </AppLayout>
 </template>
