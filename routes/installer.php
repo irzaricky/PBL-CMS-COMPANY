@@ -7,12 +7,15 @@ use App\Installer\Controllers\DatabaseTestController;
 use App\Installer\Middleware\CheckDatabaseConnectionMiddleware;
 
 Route::get('install-app', function () {
-    return redirect(route('installs'));
+    return redirect(route('welcome'));
 });
 
 
 
 Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], function () {
+
+    Route::get('welcome', [InstallerController::class, 'welcome'])->name('welcome');
+    Route::post('welcome-continue', [InstallerController::class, 'welcomeContinue'])->name('welcome_continue');
 
     Route::get('requirements-permissions', [InstallerController::class, 'index'])->name('installs');
     Route::post('install-check', [InstallerController::class, 'install_check'])->name('install_check');

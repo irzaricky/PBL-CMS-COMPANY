@@ -1,7 +1,7 @@
 @section('title', 'Konfigurasi Super Admin')
 @extends('InstallerEragViews::app-layout')
 @section('content')
-    <section class="mt-4">
+    <section class="mt-4 installer-content">
         <div class="container">
             @if (session('account_exists'))
                 <div class="alert alert-warning">

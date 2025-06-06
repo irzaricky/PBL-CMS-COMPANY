@@ -1,7 +1,7 @@
 @section('title', 'Profil Perusahaan')
 @extends('InstallerEragViews::app-layout')
 @section('content')
-    <section class="mt-4">
+    <section class="mt-4 installer-content">
         <div class="container">
             @if(session('database_error'))
                 <div class="alert alert-danger mb-4">

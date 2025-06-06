@@ -1,7 +1,7 @@
 @section('title', 'Daftar User Role')
 @extends('InstallerEragViews::app-layout')
 @section('content')
-    <section class="mt-4">
+    <section class="mt-4 installer-content">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-8 text-center card mb-4">

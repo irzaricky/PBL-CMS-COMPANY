@@ -29,6 +29,16 @@ class InstallerController extends Controller
         $this->requirements = $requirements;
     }
 
+    public function welcome()
+    {
+        return view('InstallerEragViews::welcome');
+    }
+
+    public function welcomeContinue()
+    {
+        return redirect(route('installs'));
+    }
+
     public function index()
     {
 

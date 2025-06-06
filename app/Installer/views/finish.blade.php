@@ -1,7 +1,7 @@
 @section('title', 'Finish')
 @extends('InstallerEragViews::app-layout')
 @section('content')
-    <section class="mt-4">
+    <section class="mt-4 installer-content">
         <div class="container">
             <div class="row justify-content-center">
                 <i class="bi bi-check2-circle text-center"></i>
