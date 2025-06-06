@@ -71,6 +71,25 @@ Route::prefix('artikel')->group(function () {
     Route::get('/{slug}', [ArtikelController::class, 'getArticleBySlug']);
 });
 
+// Case Study
+Route::prefix('case-study')->group(function () {
+
+    // Untuk mengambil semua case study
+    Route::get('/', [CaseStudyController::class, 'index']);
+
+    // Untuk mengambil case study berdasarkan id
+    Route::get('/id/{id}', [CaseStudyController::class, 'getCaseStudyById']);
+
+     // Untuk mengambil case study terbaru
+    Route::get('/latest', [CaseStudyController::class, 'latest']);
+
+    // Untuk mencari case study
+    Route::get('/search', [CaseStudyController::class, 'search']);
+
+    // Untuk mengambil case study berdasarkan slug
+    Route::get('/{slug}', [CaseStudyController::class, 'getCaseStudyBySlug']);
+});
+
 // Event
 Route::prefix('event')->group(function () {
 
