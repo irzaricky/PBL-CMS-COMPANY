@@ -1,4 +1,4 @@
-@section('title', 'Feature Toggles')
+@section('title', __('installer.features_title'))
 @extends('InstallerEragViews::app-layout')
 @section('content')
     <section class="mt-4 installer-content">
@@ -8,9 +8,8 @@
                     <form action="{{ route('saveFeatureToggles') }}" method="post" class="card mb-4">
                         @csrf
                         <div class="card-header bg-light">
-                            <h4 class="mb-1">Konfigurasi Feature Toggles</h4>
-                            <p class="text-muted mb-0 small">Pilih fitur yang akan diaktifkan dan ditampilkan pada frontend
-                                website.</p>
+                            <h4 class="mb-1">{{ __('installer.features_title') }}</h4>
+                            <p class="text-muted mb-0 small">{{ __('installer.features_subtitle') }}</p>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -40,9 +39,11 @@
                             </div>
                         </div>
                         <div class="card-footer text-end">
-                            <div class="d-flex">
-                                <a href="{{ route('profil_perusahaan') }}" class="btn btn-primary px-4">Sebelumnya</a>
-                                <button type="submit" id="next_button" class="btn btn-primary ms-auto px-4">Next</button>
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ route('user_roles_list') }}"
+                                    class="btn btn-primary px-4">{{ __('installer.back') }}</a>
+                                <button type="submit" id="next_button"
+                                    class="btn btn-primary px-4">{{ __('installer.next') }}</button>
                             </div>
                         </div>
                     </form>

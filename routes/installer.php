@@ -5,14 +5,16 @@ use App\Installer\Controllers\InstallerController;
 use App\Installer\Controllers\DatabaseController;
 use App\Installer\Controllers\DatabaseTestController;
 use App\Installer\Middleware\CheckDatabaseConnectionMiddleware;
+use App\Installer\Middleware\SetInstallerLocale;
 
 Route::get('install-app', function () {
     return redirect(route('welcome'));
 });
 
+Route::group(['middleware' => ['installCheck', SetInstallerLocale::class], 'prefix' => 'install-app'], function () {
 
-
-Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], function () {
+    // Language switching route
+    Route::get('language/{locale}', [InstallerController::class, 'switchLanguage'])->name('installer.language');
 
     Route::get('welcome', [InstallerController::class, 'welcome'])->name('welcome');
     Route::post('welcome-continue', [InstallerController::class, 'welcomeContinue'])->name('welcome_continue');

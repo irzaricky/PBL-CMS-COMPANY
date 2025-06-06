@@ -34,6 +34,35 @@ class InstallerController extends Controller
         return view('InstallerEragViews::welcome');
     }
 
+    public function switchLanguage($locale)
+    {
+        // Validate locale
+        $supportedLocales = ['en', 'id'];
+        if (!in_array($locale, $supportedLocales)) {
+            $locale = 'en'; // Default to English if invalid locale
+        }
+
+        // Store locale in session
+        session(['installer_locale' => $locale]);
+
+        // Set app locale for current request
+        app()->setLocale($locale);
+
+        // Get the previous URL or default to welcome page
+        $previousUrl = url()->previous();
+        $baseUrl = url('install-app');
+
+        // If previous URL doesn't contain install-app, redirect to welcome
+        if (!str_contains($previousUrl, 'install-app')) {
+            $previousUrl = route('welcome');
+        }
+
+        // Redirect back with cookie and session flash for debugging
+        return redirect($previousUrl)
+            ->withCookie(cookie('installer_locale', $locale, 60 * 24 * 30)) // 30 days
+            ->with('language_switched', $locale);
+    }
+
     public function welcomeContinue()
     {
         return redirect(route('installs'));
@@ -164,14 +193,14 @@ class InstallerController extends Controller
 
             // Redirect to super admin configuration instead of feature toggles
             return redirect(route('super_admin_config'))
-                ->with('success', 'Profil perusahaan berhasil disimpan.');
+                ->with('success', __('installer.company_profile_saved'));
 
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::error('Error saving company profile: ' . $e->getMessage());
             return $redirect->route('profil_perusahaan')
                 ->withInput()
-                ->withErrors(['general_error' => 'Gagal menyimpan profil perusahaan: ' . $e->getMessage()]);
+                ->withErrors(['general_error' => __('installer.company_profile_save_error') . ': ' . $e->getMessage()]);
         }
     }
 
@@ -225,7 +254,7 @@ class InstallerController extends Controller
             // If user already exists, check if they have super_admin role
             if ($existingUser->hasRole('super_admin')) {
                 return $redirect->route('user_roles_list')
-                    ->with('account_exists', 'Super Admin dengan email ' . $request->email . ' sudah ada dan memiliki akses super admin. Anda dapat melanjutkan.');
+                    ->with('account_exists', __('installer.super_admin_exists', ['email' => $request->email]));
             } else {
                 // User exists but doesn't have super_admin role
                 try {
@@ -252,14 +281,14 @@ class InstallerController extends Controller
                     // Log::info('Super admin role assigned to existing user: ' . $existingUser->email);
 
                     return $redirect->route('user_roles_list')
-                        ->with('account_exists', 'User dengan email ' . $request->email . ' sudah ada. Role Super Admin telah diberikan pada akun tersebut.');
+                        ->with('account_exists', __('installer.user_exists_role_assigned', ['email' => $request->email]));
 
                 } catch (\Exception $e) {
                     DB::rollBack();
                     // Log::error('Error assigning super admin role: ' . $e->getMessage());
                     return $redirect->route('super_admin_config')
                         ->withInput()
-                        ->withErrors(['general_error' => 'Gagal memberikan role Super Admin: ' . $e->getMessage()]);
+                        ->withErrors(['general_error' => __('installer.failed_assign_role') . ': ' . $e->getMessage()]);
                 }
             }
         }
@@ -294,7 +323,7 @@ class InstallerController extends Controller
 
             // Arahkan ke halaman daftar user dengan role
             return redirect(route('user_roles_list'))
-                ->with('success', 'Super Admin berhasil dibuat.');
+                ->with('success', __('installer.super_admin_created_msg'));
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -410,14 +439,14 @@ class InstallerController extends Controller
             Artisan::call('optimize:clear');
 
             return redirect(route('finish'))
-                ->with('success', 'Feature toggles berhasil disimpan.');
+                ->with('success', __('installer.feature_toggles_saved'));
 
         } catch (\Exception $e) {
             DB::rollBack();
             // Log::error('Error updating feature toggles: ' . $e->getMessage());
             return $redirect->route('feature_toggles')
                 ->withInput()
-                ->withErrors(['general_error' => 'Gagal menyimpan feature toggles: ' . $e->getMessage()]);
+                ->withErrors(['general_error' => __('installer.feature_toggles_save_error') . ': ' . $e->getMessage()]);
         }
     }
 

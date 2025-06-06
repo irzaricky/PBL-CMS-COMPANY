@@ -1,4 +1,4 @@
-@section('title', 'Database Import')
+@section('title', __('installer.database_title'))
 @extends('InstallerEragViews::app-layout')
 @section('content')
 
@@ -19,52 +19,33 @@
                 @csrf
                 <div class="card mb-4">
                     <div class="card-header">
-                        <h5 class="mb-0">App Configuration</h5>
+                        <h5 class="mb-0">{{ __('installer.database_configuration') }}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
 
                             <div class="col-md-4 mb-3">
-                                <x-install-select label="App Environment" class="form-control" required="true"
-                                    name="environment">
-                                    <option value="">--Select--</option>
-                                    <option value="local" selected>Local</option>
-                                    <option value="development">Development</option>
-                                    <option value="qa">Qa</option>
-                                    <option value="production">Production</option>
-                                    <option value="other">Other</option>
+                                <x-install-select label="{{ __('installer.database_connection') }}" class="form-control"
+                                    required="true" name="environment">
+                                    <option value="production" selected>Production</option>
+                                    <option value="local">Local</option>
                                 </x-install-select>
                             </div>
-
-                            <div class="col-md-4 mt-4">
-                                <div class="form-group">
-                                    <label for="app_debug" class="mr-8">
-                                        App Debug
-                                    </label>
-                                    <label for="app_debug_true">
-                                        <input type="radio" name="app_debug" id="app_debug_true" value="true" {{ old('app_debug', 'true') == 'true' ? 'checked' : '' }}>
-                                        True
-                                    </label>
-                                    <label for="app_debug_false">
-                                        <input type="radio" name="app_debug" id="app_debug_false" value="false" {{ old('app_debug') == 'false' ? 'checked' : '' }}>
-                                        False
-                                    </label>
-                                </div>
+                            <div class="col-md-4 mb-3">
+                                <x-install-select label="{{ __('installer.app_debug') }}" class="form-control"
+                                    required="true" name="app_debug">
+                                    <option value="true" {{ old('app_debug') == 'true' ? 'selected' : '' }}>
+                                        True</option>
+                                    <option value="false" {{ old('app_debug', 'false') == 'false' ? 'selected' : '' }}>
+                                        False</option>
+                                </x-install-select>
+                                <x-install-error for="app_debug" />
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <x-install-select label="App Log Level" class="form-control" required="true"
-                                    name="app_log_level">
-                                    <option value="debug" {{ old('app_log_level', 'debug') == 'debug' ? 'selected' : '' }}>
-                                        debug</option>
-                                    <option value="info">info</option>
-                                    <option value="notice">notice</option>
-                                    <option value="warning">warning</option>
-                                    <option value="error">error</option>
-                                    <option value="critical">critical</option>
-                                    <option value="alert">alert</option>
-                                    <option value="emergency">emergency</option>
-                                </x-install-select>
+                                <x-install-input label="{{ __('installer.app_log_level') }}" name="app_log_level"
+                                    type="text" value="debug" readonly>
+                                </x-install-input>
                             </div>
 
                             @php
@@ -74,14 +55,14 @@
                             @endphp
 
                             <div class="col-md-4 mb-3">
-                                <x-install-input label="App Url" required="true" name="app_url" type="url"
-                                    value="{{ old('app_url', $base_url) }}" />
+                                <x-install-input label="{{ __('installer.app_url') }}" required="true" name="app_url"
+                                    type="url" value="{{ old('app_url', $base_url) }}" />
                                 <x-install-error for="app_url" />
                             </div>
 
                             <div class="col-md-4 mb-3">
                                 @component('InstallerEragViews::components.timezone-select', [
-                                    'label' => 'Timezone',
+                                    'label' => __('installer.app_timezone'),
                                     'required' => true,
                                     'name' => 'app_timezone'
                                 ])
@@ -90,10 +71,11 @@
                             </div>
 
                             <div class="col-md-4 mb-3">
-                                <x-install-select label="App Locale" class="form-control" required="true" name="app_locale">
-                                    <option value="en" {{ old('app_locale', 'en') == 'en' ? 'selected' : '' }}>English
+                                <x-install-select label="{{ __('installer.app_locale') }}" class="form-control"
+                                    required="true" name="app_locale">
+                                    <option value="en" {{ old('app_locale') == 'en' ? 'selected' : '' }}>English
                                     </option>
-                                    <option value="id" {{ old('app_locale') == 'id' ? 'selected' : '' }}>Indonesian
+                                    <option value="id" {{ old('app_locale', 'id') == 'id' ? 'selected' : '' }}>Indonesian
                                     </option>
                                 </x-install-select>
                                 <x-install-error for="app_locale" />
@@ -104,14 +86,15 @@
                 </div>
                 <div class="card mb-4" id="db-config-card">
                     <div class="card-header">
-                        <h5 class="mb-0">Database Configuration</h5>
+                        <h5 class="mb-0">{{ __('installer.database_configuration') }}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
 
                             <div class="col-md-4 mb-3">
-                                <x-install-select label="Database Connection" class="form-control" required="true"
-                                    name="database_connection" id="database_connection">
+                                <x-install-select label="{{ __('installer.database_connection_type') }}"
+                                    class="form-control" required="true" name="database_connection"
+                                    id="database_connection">
                                     <option value="mysql" selected>MySQL</option>
                                     <option value="sqlite" {{ old('database_connection') == 'sqlite' ? 'selected' : '' }}>
                                         SQLite</option>
@@ -120,37 +103,38 @@
 
                             <!-- Database Name field (always shown) -->
                             <div class="col-md-4 mb-3" id="database_name_container">
-                                <x-install-input label="Database Name" required="true" name="database_name" type="text"
-                                    value="{{ old('database_name') }}" />
+                                <x-install-input label="{{ __('installer.database_name') }}" required="true"
+                                    name="database_name" type="text" value="{{ old('database_name') }}" />
                                 <x-install-error for="database_name" />
                                 <div class="text-muted small mt-1" id="sqlite_help_text" style="display: none;">
-                                    File SQLite akan otomatis dibuat di direktori <code>storage/</code> (contoh:
+                                    {{ __('installer.sqlite_help_text') }} ({{ __('installer.example') }}:
                                     <code>mydb.sqlite</code>)
                                 </div>
                             </div>
 
                             <!-- MySQL specific fields -->
                             <div class="mysql-only col-md-4 mb-3" id="database_host_container">
-                                <x-install-input label="Database Host" required="false" name="database_hostname" type="text"
+                                <x-install-input label="{{ __('installer.database_host') }}" required="false"
+                                    name="database_hostname" type="text"
                                     value="{{ old('database_hostname', '127.0.0.1') }}" />
                                 <x-install-error for="database_hostname" />
                             </div>
 
                             <div class="mysql-only col-md-4 mb-3" id="database_port_container">
-                                <x-install-input label="Database Port" required="false" name="database_port" type="text"
-                                    value="{{ old('database_port', '3306') }}" />
+                                <x-install-input label="{{ __('installer.database_port') }}" required="false"
+                                    name="database_port" type="text" value="{{ old('database_port', '3306') }}" />
                                 <x-install-error for="database_port" />
                             </div>
 
                             <div class="mysql-only col-md-4 mb-3" id="database_user_container">
-                                <x-install-input label="Database User Name" required="false" name="database_username"
-                                    type="text" value="{{ old('database_username') }}" />
+                                <x-install-input label="{{ __('installer.database_username') }}" required="false"
+                                    name="database_username" type="text" value="{{ old('database_username') }}" />
                                 <x-install-error for="database_username" />
                             </div>
 
                             <div class="mysql-only col-md-4 mb-3" id="database_password_container">
-                                <x-install-input label="Database Password" name="database_password" type="text"
-                                    value="{{ old('database_password') }}" />
+                                <x-install-input label="{{ __('installer.database_password') }}" name="database_password"
+                                    type="text" value="{{ old('database_password') }}" />
                                 <x-install-error for="database_password" />
                             </div>
 
@@ -161,47 +145,37 @@
                 <!-- Email Configuration Card -->
                 <div class="card mb-4" id="email-config-card">
                     <div class="card-header">
-                        <h5 class="mb-0">Email Configuration</h5>
+                        <h5 class="mb-0">{{ __('installer.email_configuration') }}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-4 mb-3">
-                                <x-install-select label="Mail Driver" class="form-control" required="true"
-                                    name="mail_mailer">
-                                    <option value="smtp" {{ old('mail_mailer', 'smtp') == 'smtp' ? 'selected' : '' }}>SMTP
-                                    </option>
-                                    <option value="sendmail" {{ old('mail_mailer') == 'sendmail' ? 'selected' : '' }}>Sendmail
-                                    </option>
-                                    <option value="mailgun" {{ old('mail_mailer') == 'mailgun' ? 'selected' : '' }}>Mailgun
-                                    </option>
-                                    <option value="ses" {{ old('mail_mailer') == 'ses' ? 'selected' : '' }}>Amazon SES
-                                    </option>
-                                    <option value="log" {{ old('mail_mailer') == 'log' ? 'selected' : '' }}>Log (Testing)
-                                    </option>
-                                </x-install-select>
-                                <x-install-error for="mail_mailer" />
+                                <x-install-input label="{{ __('installer.mail_driver') }}" type="text" value="smtp"
+                                    name="mail_mailer" readonly>
+                                    </x-install-select>
+                                    <x-install-error for="mail_mailer" />
                             </div>
 
                             <div class="col-md-4 mb-3" id="mail_host_container">
-                                <x-install-input label="Mail Host" required="false" name="mail_host" type="text"
-                                    value="{{ old('mail_host', 'smtp.gmail.com') }}" />
+                                <x-install-input label="{{ __('installer.mail_host') }}" required="false" name="mail_host"
+                                    type="text" value="{{ old('mail_host', 'smtp.gmail.com') }}" readonly />
                                 <x-install-error for="mail_host" />
                             </div>
 
                             <div class="col-md-4 mb-3" id="mail_port_container">
-                                <x-install-input label="Mail Port" required="false" name="mail_port" type="number"
-                                    value="{{ old('mail_port', '587') }}" />
+                                <x-install-input label="{{ __('installer.mail_port') }}" required="false" name="mail_port"
+                                    type="number" value="{{ old('mail_port', '587') }}" readonly />
                                 <x-install-error for="mail_port" />
                             </div>
 
                             <div class="col-md-4 mb-3" id="mail_username_container">
-                                <x-install-input label="Mail Username" required="false" name="mail_username" type="text"
-                                    value="{{ old('mail_username') }}" />
+                                <x-install-input label="{{ __('installer.mail_username') }}" required="false"
+                                    name="mail_username" type="text" value="{{ old('mail_username') }}" />
                                 <x-install-error for="mail_username" />
                             </div>
 
                             <div class="col-md-4 mb-3" id="mail_password_container">
-                                <label class="mb-1" for="mail_password">Mail Password</label>
+                                <label class="mb-1" for="mail_password">{{ __('installer.mail_password') }}</label>
                                 <div class="input-group">
                                     <input type="password" name="mail_password" id="mail_password"
                                         class="form-control @error('mail_password') is-invalid @enderror"
@@ -215,8 +189,8 @@
                             </div>
 
                             <div class="col-md-4 mb-3" id="mail_encryption_container">
-                                <x-install-select label="Mail Encryption" class="form-control" required="false"
-                                    name="mail_encryption">
+                                <x-install-select label="{{ __('installer.mail_encryption') }}" class="form-control"
+                                    required="false" name="mail_encryption">
                                     <option value="">None</option>
                                     <option value="tls" {{ old('mail_encryption', 'tls') == 'tls' ? 'selected' : '' }}>TLS
                                     </option>
@@ -225,12 +199,13 @@
                                 <x-install-error for="mail_encryption" />
                             </div>
 
-                            <div class="col-md-6 mb-3">
-                                <x-install-input label="Mail From Address" required="true" name="mail_from_address"
-                                    type="email" value="{{ old('mail_from_address', 'noreply@example.com') }}" />
+                            <div class="col-md-6 mb-3" hidden>
+                                <x-install-input label="{{ __('installer.mail_from_address') }}" required="true"
+                                    name="mail_from_address" type="email"
+                                    value="{{ old('mail_from_address', 'noreply@example.com') }}" readonly />
                                 <x-install-error for="mail_from_address" />
                                 <div class="text-muted small mt-1">
-                                    Mail From Name will be automatically set to your APP_NAME
+                                    {{ __('installer.mail_from_name_description') }}
                                 </div>
                             </div>
                         </div>
@@ -239,12 +214,14 @@
 
                 <div class="card-footer footerHome text-end">
                     <div class="d-flex">
-                        <button type="button" id="back_button" class="btn btn-primary me-auto ms-3 px-4"
-                            onclick="window.history.back()">Back</button>
-                        <button type="button" id="test_connection_button" class="btn btn-warning me-2">Test
-                            Connection</button>
-                        <button type="button" id="test_email_button" class="btn btn-info me-2">Test Email</button>
-                        <button type="submit" id="next_button" class="btn btn-primary px-4">Next</button>
+                        <a href="{{ route('installs') }}"
+                            class="btn btn-primary me-auto ms-3 px-4">{{ __('installer.back') }}</a>
+                        <button type="button" id="test_connection_button"
+                            class="btn btn-warning me-2">{{ __('installer.test_connection') }}</button>
+                        <button type="button" id="test_email_button"
+                            class="btn btn-info me-2">{{ __('installer.test_email') }}</button>
+                        <button type="submit" id="next_button"
+                            class="btn btn-primary px-4">{{ __('installer.next') }}</button>
                     </div>
                 </div>
             </form>
@@ -255,10 +232,10 @@
         /**
          * Database Import Page JavaScript
          * 
-         * Fitur:
-         * 1. Mengatur tampilan form berdasarkan jenis database yang dipilih (MySQL atau SQLite)
-         * 2. Menangani tombol Test Connection untuk menguji koneksi database
-         * 3. Menangani submisi form dengan AJAX untuk validasi dan memproses error
+         * Features:
+         * 1. Manage form display based on selected database type (MySQL or SQLite)
+         * 2. Handle Test Connection button for database connection testing
+         * 3. Handle form submission with AJAX for validation and error processing
          */
         document.addEventListener('DOMContentLoaded', function () {
             // Get form element and important elements
@@ -349,7 +326,7 @@
 
                     // Disable test button
                     testConnectionBtn.disabled = true;
-                    testConnectionBtn.innerHTML = 'Testing...';
+                    testConnectionBtn.innerHTML = '{{ __("installer.testing") }}';
 
                     // Collect form data
                     const formData = new FormData(form);
@@ -366,12 +343,12 @@
                         .then(data => {
                             // Enable the button again
                             testConnectionBtn.disabled = false;
-                            testConnectionBtn.innerHTML = 'Test Connection';
+                            testConnectionBtn.innerHTML = '{{ __("installer.test_connection") }}';
 
                             // Create message div
                             const messageDiv = document.createElement('div');
                             messageDiv.className = data.success ? 'alert alert-success' : 'alert alert-danger';
-                            messageDiv.innerHTML = '<strong>' + (data.success ? 'Success!' : 'Error!') + '</strong> ' + data.message;
+                            messageDiv.innerHTML = '<strong>' + (data.success ? '{{ __("installer.success") }}' : '{{ __("installer.error") }}') + '</strong> ' + data.message;
 
                             // Add message above Database Configuration card
                             const dbCard = document.getElementById('db-config-card');
@@ -390,12 +367,12 @@
                         .catch(error => {
                             // Enable the button again
                             testConnectionBtn.disabled = false;
-                            testConnectionBtn.innerHTML = 'Test Connection';
+                            testConnectionBtn.innerHTML = '{{ __("installer.test_connection") }}';
 
                             // Create error message
                             const errorDiv = document.createElement('div');
                             errorDiv.className = 'alert alert-danger';
-                            errorDiv.innerHTML = '<strong>Connection Error!</strong> Could not test database connection.';
+                            errorDiv.innerHTML = '<strong>{{ __("installer.connection_error") }}</strong> {{ __("installer.could_not_test_database") }}';
 
                             // Place error above Database Configuration card
                             const dbCardErr = document.getElementById('db-config-card');
@@ -432,7 +409,7 @@
 
                     // Disable test button
                     testEmailBtn.disabled = true;
-                    testEmailBtn.innerHTML = 'Testing Email...';
+                    testEmailBtn.innerHTML = '{{ __("installer.testing") }} Email...';
 
                     // Collect form data
                     const formData = new FormData();
@@ -456,12 +433,12 @@
                         .then(data => {
                             // Enable the button again
                             testEmailBtn.disabled = false;
-                            testEmailBtn.innerHTML = 'Test Email';
+                            testEmailBtn.innerHTML = '{{ __("installer.test_email") }}';
 
                             // Create message div
                             const messageDiv = document.createElement('div');
                             messageDiv.className = data.success ? 'alert alert-success' : 'alert alert-danger';
-                            messageDiv.innerHTML = '<strong>' + (data.success ? 'Email Test Success!' : 'Email Test Failed!') + '</strong> ' + data.message;
+                            messageDiv.innerHTML = '<strong>' + (data.success ? '{{ __("installer.email_test_success") }}' : '{{ __("installer.email_test_failed") }}') + '</strong> ' + data.message;
 
                             // Add message above Email Configuration card
                             const emailCard = document.getElementById('email-config-card');
@@ -483,12 +460,12 @@
                         .catch(error => {
                             // Enable the button again
                             testEmailBtn.disabled = false;
-                            testEmailBtn.innerHTML = 'Test Email';
+                            testEmailBtn.innerHTML = '{{ __("installer.test_email") }}';
 
                             // Create error message
                             const errorDiv = document.createElement('div');
                             errorDiv.className = 'alert alert-danger';
-                            errorDiv.innerHTML = '<strong>Email Test Error!</strong> Could not test email configuration.';
+                            errorDiv.innerHTML = '<strong>{{ __("installer.email_test_error") }}</strong> {{ __("installer.could_not_test_email") }}';
 
                             // Place error above Email Configuration card
                             const emailCard = document.getElementById('email-config-card');
@@ -549,7 +526,7 @@
                 const nextButton = document.getElementById('next_button');
                 if (nextButton) {
                     nextButton.disabled = true;
-                    nextButton.innerHTML = 'Processing...';
+                    nextButton.innerHTML = '{{ __("installer.processing") }}';
                 }
 
                 // Collect all form data
@@ -608,7 +585,7 @@
                                 if (jsonData.errors) {
                                     const errorDiv = document.createElement('div');
                                     errorDiv.className = 'alert alert-danger';
-                                    errorDiv.innerHTML = '<strong>Database Connection Error!</strong><ul>';
+                                    errorDiv.innerHTML = '<strong>{{ __("installer.database_connection_error") }}</strong><ul>';
 
                                     // Process each error
                                     Object.keys(jsonData.errors).forEach(key => {
@@ -671,13 +648,13 @@
                         const nextButton = document.getElementById('next_button');
                         if (nextButton) {
                             nextButton.disabled = false;
-                            nextButton.innerHTML = 'Next';
+                            nextButton.innerHTML = '{{ __("installer.next") }}';
                         }
 
                         // Create error message
                         const errorDiv = document.createElement('div');
                         errorDiv.className = 'alert alert-danger';
-                        errorDiv.innerHTML = '<strong>Connection Error!</strong><p>An error occurred while communicating with the server. Please check your connection and try again.</p>';
+                        errorDiv.innerHTML = '<strong>{{ __("installer.connection_error") }}</strong><p>{{ __("installer.server_communication_error") }}</p>';
 
                         // Add error message at top of form content
                         const formCard = form.querySelector('.card-body');
@@ -738,6 +715,31 @@
                 mailDriverSelect.addEventListener('change', toggleMailFields);
                 // Run toggle on page load
                 toggleMailFields();
+            }
+
+            // Function to set app_debug based on environment
+            function setAppDebugBasedOnEnvironment() {
+                const environmentSelect = document.querySelector('select[name="environment"]');
+                const appDebugSelect = document.querySelector('select[name="app_debug"]');
+
+                if (environmentSelect && appDebugSelect) {
+                    const environment = environmentSelect.value;
+
+                    // Set app_debug based on environment
+                    if (environment === 'production') {
+                        appDebugSelect.value = 'false';
+                    } else if (environment === 'local') {
+                        appDebugSelect.value = 'true';
+                    }
+                }
+            }
+
+            // Add event listener to environment dropdown
+            const environmentSelect = document.querySelector('select[name="environment"]');
+            if (environmentSelect) {
+                environmentSelect.addEventListener('change', setAppDebugBasedOnEnvironment);
+                // Run on page load to set initial state
+                setAppDebugBasedOnEnvironment();
             }
         });
     </script>

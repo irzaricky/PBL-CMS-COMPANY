@@ -100,8 +100,8 @@ class DatabaseController extends Controller
 
         // Add conditional validation for email fields based on mail driver
         $mailDriver = $request->input('mail_mailer');
-        if (in_array($mailDriver, ['smtp', 'mailgun', 'ses'])) {
-            // Require host and port for SMTP-based drivers
+        if ($mailDriver === 'smtp') {
+            // Require host and port for SMTP
             $rules['mail_host'] = 'required|string|max:100';
             $rules['mail_port'] = 'required|numeric|min:1|max:65535';
         }
@@ -181,7 +181,7 @@ class DatabaseController extends Controller
         try {
             // Validate basic email configuration
             $validator = Validator::make($request->all(), [
-                'mail_mailer' => 'required|string|in:smtp,sendmail,mailgun,ses,log',
+                'mail_mailer' => 'required|string|in:smtp',
                 'mail_from_address' => 'required|email',
             ]);
 
@@ -194,95 +194,70 @@ class DatabaseController extends Controller
 
             $mailDriver = $request->input('mail_mailer');
 
-            // For log driver, just return success as it doesn't require real sending
-            if ($mailDriver === 'log') {
+            // Only SMTP is supported now
+            if ($mailDriver !== 'smtp') {
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Log mail driver configuration is valid. Emails will be logged to storage/logs/laravel.log'
+                    'success' => false,
+                    'message' => 'Only SMTP mail driver is supported'
                 ]);
             }
 
-            // For sendmail, check if sendmail is available
-            if ($mailDriver === 'sendmail') {
-                $sendmailPath = config('mail.mailers.sendmail.path', '/usr/sbin/sendmail -bs');
-                $command = explode(' ', $sendmailPath)[0];
-
-                if (!is_executable($command)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Sendmail is not available or not executable on this system'
-                    ]);
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Sendmail configuration is valid'
-                ]);
-            }
-
-            // For SMTP-based drivers, validate required fields
-            if (in_array($mailDriver, ['smtp', 'mailgun', 'ses'])) {
-                $additionalValidator = Validator::make($request->all(), [
-                    'mail_host' => 'required|string',
-                    'mail_port' => 'required|numeric|min:1|max:65535',
-                ]);
-
-                if ($additionalValidator->fails()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Missing required SMTP configuration: ' . implode(', ', $additionalValidator->errors()->all())
-                    ]);
-                }
-
-                // Configure temporary mail settings
-                $originalMailConfig = config('mail');
-
-                config([
-                    'mail.default' => $mailDriver,
-                    'mail.mailers.' . $mailDriver => [
-                        'transport' => $mailDriver === 'smtp' ? 'smtp' : $mailDriver,
-                        'host' => $request->input('mail_host'),
-                        'port' => $request->input('mail_port'),
-                        'encryption' => $request->input('mail_encryption'),
-                        'username' => $request->input('mail_username'),
-                        'password' => $request->input('mail_password'),
-                        'timeout' => 10,
-                        'local_domain' => env('MAIL_EHLO_DOMAIN'),
-                    ],
-                    'mail.from.address' => $request->input('mail_from_address'),
-                    'mail.from.name' => 'CMS Company Installation Test',
-                ]);
-
-                // Try to send a test email
-                try {
-                    \Illuminate\Support\Facades\Mail::raw('This is a test email from CMS Company installer.', function ($message) use ($request) {
-                        $message->to($request->input('mail_from_address'))
-                            ->subject('CMS Company Installation - Email Test');
-                    });
-
-                    // Restore original mail configuration
-                    config(['mail' => $originalMailConfig]);
-
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Email test successful! Test email sent to ' . $request->input('mail_from_address')
-                    ]);
-
-                } catch (\Exception $e) {
-                    // Restore original mail configuration
-                    config(['mail' => $originalMailConfig]);
-
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Email test failed: ' . $e->getMessage()
-                    ]);
-                }
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Unsupported mail driver: ' . $mailDriver
+            // For SMTP, validate required fields
+            $additionalValidator = Validator::make($request->all(), [
+                'mail_host' => 'required|string',
+                'mail_port' => 'required|numeric|min:1|max:65535',
             ]);
+
+            if ($additionalValidator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Missing required SMTP configuration: ' . implode(', ', $additionalValidator->errors()->all())
+                ]);
+            }
+
+            // Configure temporary mail settings for SMTP
+            $originalMailConfig = config('mail');
+
+            config([
+                'mail.default' => 'smtp',
+                'mail.mailers.smtp' => [
+                    'transport' => 'smtp',
+                    'host' => $request->input('mail_host'),
+                    'port' => $request->input('mail_port'),
+                    'encryption' => $request->input('mail_encryption'),
+                    'username' => $request->input('mail_username'),
+                    'password' => $request->input('mail_password'),
+                    'timeout' => 10,
+                    'local_domain' => env('MAIL_EHLO_DOMAIN'),
+                ],
+                'mail.from.address' => $request->input('mail_from_address'),
+                'mail.from.name' => 'CMS Company Installation Test',
+            ]);
+
+            // Try to send a test email
+            try {
+                \Illuminate\Support\Facades\Mail::raw('This is a test email from CMS Company installer.', function ($message) use ($request) {
+                    $message->to($request->input('mail_from_address'))
+                        ->subject('CMS Company Installation - Email Test');
+                });
+
+                // Restore original mail configuration
+                config(['mail' => $originalMailConfig]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Email test successful! Test email sent to ' . $request->input('mail_from_address')
+                ]);
+
+            } catch (\Exception $e) {
+                // Restore original mail configuration
+                config(['mail' => $originalMailConfig]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Email test failed: ' . $e->getMessage()
+                ]);
+            }
 
         } catch (\Exception $e) {
             return response()->json([

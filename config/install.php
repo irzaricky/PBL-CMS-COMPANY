@@ -13,8 +13,6 @@ return [
         'secondary' => '#3B82F6',
     ],
 
-    'install_title' => 'CMS Company Installation',
-
     //
     'core' => [
         'minPhpVersion' => '8.2.0',
@@ -37,6 +35,11 @@ return [
             'session',
             'zip',
             'intl',
+            'exif',
+            'sqlite3',
+            'pcre',
+            'hash',
+            'iconv',
         ],
         'apache' => [
             'mod_rewrite',
@@ -54,8 +57,15 @@ return [
     */
     'permissions' => [
         'storage/framework/' => '775',
+        'storage/framework/cache/' => '775',
+        'storage/framework/sessions/' => '775',
+        'storage/framework/views/' => '775',
+        'storage/app/' => '775',
+        'storage/app/public/' => '775',
         'storage/logs/' => '775',
         'bootstrap/cache/' => '775',
+        'public/storage/' => '755',
+
     ],
 
     // environment
@@ -76,13 +86,13 @@ return [
                 'database_username' => 'nullable|string|max:50',
                 'database_password' => 'nullable|string|max:50',
                 // Email configuration validation rules
-                'mail_mailer' => 'required|string|in:smtp,sendmail,mailgun,ses,log',
+                'mail_mailer' => 'required|string|in:smtp',
                 'mail_host' => 'nullable|string|max:100',
                 'mail_port' => 'nullable|numeric|min:1|max:65535',
                 'mail_username' => 'nullable|string|max:100',
                 'mail_password' => 'nullable|string|max:100',
                 'mail_encryption' => 'nullable|string|in:tls,ssl',
-                'mail_from_address' => 'required|email|max:100',
+                'mail_from_address' => 'email|max:100',
             ],
         ],
     ],

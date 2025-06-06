@@ -100,12 +100,28 @@
 </head>
 
 <body>
+    @include('InstallerEragViews::language-switcher')
     @include('InstallerEragViews::step')
     @yield('content')
 
     <script src="{{ asset('install/bootstrap.bundle.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Language switcher initialization
+            const languageDropdown = document.getElementById('languageDropdown');
+            if (languageDropdown) {
+                // Initialize Bootstrap dropdown
+                const dropdown = new bootstrap.Dropdown(languageDropdown);
+
+                // Handle dropdown clicks
+                document.querySelectorAll('.language-switcher .dropdown-item').forEach(item => {
+                    item.addEventListener('click', function (e) {
+                        // Allow the link to be followed normally
+                        window.location.href = this.href;
+                    });
+                });
+            }
+
             // Password visibility toggle
             document.querySelectorAll('.toggle-password').forEach(button => {
                 button.addEventListener('click', function () {
