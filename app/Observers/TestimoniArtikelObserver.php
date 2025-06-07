@@ -19,7 +19,7 @@ class TestimoniArtikelObserver
      */
     public function created(TestimoniArtikel $testimoniArtikel): void
     {
-        $this->clearRelatedCache();
+        $this->clearRelatedCache($testimoniArtikel);
     }
 
     /**
@@ -27,7 +27,7 @@ class TestimoniArtikelObserver
      */
     public function updated(TestimoniArtikel $testimoniArtikel): void
     {
-        $this->clearRelatedCache();
+        $this->clearRelatedCache($testimoniArtikel);
     }
 
     /**
@@ -35,14 +35,20 @@ class TestimoniArtikelObserver
      */
     public function deleted(TestimoniArtikel $testimoniArtikel): void
     {
-        $this->clearRelatedCache();
+        $this->clearRelatedCache($testimoniArtikel);
     }
 
     /**
      * Clear all testimoni artikel-related cache
      */
-    protected function clearRelatedCache(): void
+    protected function clearRelatedCache(TestimoniArtikel $testimoniArtikel): void
     {
-        $this->cacheService->clearEndpointCache('api/testimoni');
+        // Clear testimoni cache for all artikel endpoints
+        $this->cacheService->clearEndpointCache('testimoni/artikel');
+
+        // Also clear specific artikel cache if we can identify it
+        if ($testimoniArtikel->id_artikel) {
+            $this->cacheService->clearEndpointCache('testimoni/artikel/' . $testimoniArtikel->id_artikel);
+        }
     }
 }

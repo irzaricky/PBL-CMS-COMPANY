@@ -19,7 +19,7 @@ class TestimoniEventObserver
      */
     public function created(TestimoniEvent $testimoniEvent): void
     {
-        $this->clearRelatedCache();
+        $this->clearRelatedCache($testimoniEvent);
     }
 
     /**
@@ -27,7 +27,7 @@ class TestimoniEventObserver
      */
     public function updated(TestimoniEvent $testimoniEvent): void
     {
-        $this->clearRelatedCache();
+        $this->clearRelatedCache($testimoniEvent);
     }
 
     /**
@@ -35,14 +35,20 @@ class TestimoniEventObserver
      */
     public function deleted(TestimoniEvent $testimoniEvent): void
     {
-        $this->clearRelatedCache();
+        $this->clearRelatedCache($testimoniEvent);
     }
 
     /**
      * Clear all testimoni event-related cache
      */
-    protected function clearRelatedCache(): void
+    protected function clearRelatedCache(TestimoniEvent $testimoniEvent): void
     {
-        $this->cacheService->clearEndpointCache('api/testimoni');
+        // Clear testimoni cache for all event endpoints
+        $this->cacheService->clearEndpointCache('testimoni/event');
+
+        // Also clear specific event cache if we can identify it
+        if ($testimoniEvent->id_event) {
+            $this->cacheService->clearEndpointCache('testimoni/event/' . $testimoniEvent->id_event);
+        }
     }
 }

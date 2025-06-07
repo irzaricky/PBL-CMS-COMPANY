@@ -30,6 +30,11 @@ class ApiCacheService
         'lowongan' => 60,          // Job openings cache for 1 hour
         'case-study' => 90,        // Case studies cache for 1.5 hours
         'unduhan' => 45,           // Downloads cache for 45 minutes
+        'feedback' => 30,          // Feedback cache for 30 minutes
+        'testimoni' => 30,         // Testimoni cache for 30 minutes
+        'testimoni.produk' => 30,  // Product testimoni cache for 30 minutes
+        'testimoni.artikel' => 30, // Article testimoni cache for 30 minutes
+        'testimoni.event' => 30,   // Event testimoni cache for 30 minutes
     ];
 
     /**
@@ -85,10 +90,13 @@ class ApiCacheService
     {
         $cacheDriver = config('cache.default');
 
+        // Remove leading 'api/' if present to avoid duplication
+        $cleanEndpoint = str_replace('api/', '', $endpoint);
+
         if ($cacheDriver === 'database') {
             $table = config('cache.stores.database.table', 'cache');
             // Laravel prefixes cache keys, so we need to account for that
-            \DB::table($table)->where('key', 'like', '%api_cache:api/' . $endpoint . '%')->delete();
+            \DB::table($table)->where('key', 'like', '%api_cache:api/' . $cleanEndpoint . '%')->delete();
         } else {
             // For non-database drivers, just clear all cache as fallback
             Cache::flush();

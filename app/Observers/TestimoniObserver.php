@@ -43,6 +43,12 @@ class TestimoniObserver
      */
     protected function clearRelatedCache(): void
     {
-        $this->cacheService->clearEndpointCache('api/testimoni');
+        // Clear general testimoni cache
+        $this->cacheService->clearEndpointCache('testimoni');
+
+        // Clear specific testimoni type caches
+        $this->cacheService->clearEndpointCache('testimoni/produk');
+        $this->cacheService->clearEndpointCache('testimoni/artikel');
+        $this->cacheService->clearEndpointCache('testimoni/event');
     }
 }

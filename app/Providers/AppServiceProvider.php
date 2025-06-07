@@ -179,5 +179,10 @@ class AppServiceProvider extends ServiceProvider
         if (class_exists('\App\Models\StrukturOrganisasi')) {
             \App\Models\StrukturOrganisasi::observe(\App\Observers\StrukturOrganisasiObserver::class);
         }
+
+        // Register additional observers for cache invalidation
+        if (class_exists('\App\Models\Feedback')) {
+            \App\Models\Feedback::observe(\App\Observers\FeedbackObserver::class);
+        }
     }
 }
