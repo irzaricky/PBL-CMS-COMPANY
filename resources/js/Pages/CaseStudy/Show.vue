@@ -202,40 +202,71 @@ function formatDate(date) {
                         <img class="w-full h-[300px] sm:h-[400px] lg:h-[600px] rounded-2xl object-cover"
                             :src="getImageUrl(caseStudy.thumbnail_case_study)" :alt="caseStudy.judul_case_study" />
                     </div>
-                    <div class="flex justify-between items-start flex-wrap gap-8">
-                        <!-- Info Mitra - Clean Layout -->
-                        <div class="bg-gray-50 rounded-xl w-full p-6 border border-gray-100">
-                            <!-- Mitra Profile -->
-                            <div class="flex items-center gap-4 mb-4">
-                                <img v-if="caseStudy.mitra?.logo" :src="getImageUrl(caseStudy.mitra.logo)"
-                                    class="w-16 h-16 object-contain p-1"
-                                    alt="Logo Mitra" />
-                                <div v-else
-                                    class="w-16 h-16 bg-secondary/20 flex items-center justify-center text-secondary font-bold">
-                                    {{ caseStudy.mitra?.nama_mitra?.charAt(0) || "M" }}
+                    
+                    <!-- Info Mitra - Enhanced Layout -->
+                    <div class="bg-gradient-to-r from-secondary/5 via-white to-secondary/5 rounded-2xl border-2 border-secondary/20 overflow-hidden">
+                        <!-- Header dengan Background -->
+                        <div class="bg-secondary/10 px-6 py-4 border-b border-secondary/20">
+                            <h3 class="text-lg font-semibold text-secondary uppercase tracking-wider">Klien & Mitra</h3>
+                        </div>
+                        
+                        <!-- Content -->
+                        <div class="p-6">
+                            <!-- Mitra Profile - Enhanced -->
+                            <div class="flex items-center gap-6 mb-6">
+                                <div class="relative">
+                                    <img v-if="caseStudy.mitra?.logo" 
+                                        :src="getImageUrl(caseStudy.mitra.logo)"
+                                        class="w-20 h-20 object-contain bg-white p-2 rounded-xl border-2 border-gray-200 shadow-sm"
+                                        alt="Logo Mitra" />
+                                    <div v-else
+                                        class="w-20 h-20 bg-gradient-to-br from-secondary to-secondary/80 flex items-center justify-center text-white font-bold text-2xl rounded-xl shadow-lg">
+                                        {{ caseStudy.mitra?.nama_mitra?.charAt(0) || "M" }}
+                                    </div>
                                 </div>
+                                
                                 <div class="flex-1">
-                                    <h4 class="font-semibold text-lg text-black">
-                                        {{ caseStudy.mitra?.nama_mitra || "Mitra" }}
-                                    </h4>
-                                    <p class="text-sm text-gray-600">
-                                        {{ formatDate(caseStudy.created_at) }}
-                                    </p>
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                                        {{ caseStudy.mitra?.nama_mitra || "Mitra Strategis" }}
+                                    </h2>
+                                    <div class="flex items-center gap-4 text-sm text-gray-600">
+                                        <div class="flex items-center gap-1">
+                                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                            <span>Klien Aktif</span>
+                                        </div>
+                                        <div class="w-1 h-4 bg-gray-300"></div>
+                                        <span>{{ formatDate(caseStudy.created_at) }}</span>
+                                    </div>
                                 </div>
                             </div>
+                            
+                            <!-- Description jika ada -->
+                            <div v-if="caseStudy.mitra?.deskripsi" class="mb-6 p-4 bg-gray-50 rounded-lg">
+                                <p class="text-gray-700 leading-relaxed">{{ caseStudy.mitra.deskripsi }}</p>
+                            </div>
+                            
                             <!-- Stats & Actions -->
                             <div class="flex items-center justify-between pt-4 border-t border-gray-200">
-                                <div class="text-sm font-medium text-gray-600">
-                                    Studi Kasus {{ caseStudy.mitra?.nama_mitra || "Mitra" }}
+                                <div class="flex items-center gap-6">
+                                    <div class="text-center">
+                                        <div class="text-lg font-bold text-secondary">Informasi</div>
+                                        <div class="text-xs text-gray-500 uppercase">STUDI KASUS</div>
+                                    </div>
+                                    <div class="w-px h-8 bg-gray-300"></div>
+                                    <div class="text-sm font-medium text-gray-700">
+                                        Partnership dengan {{ caseStudy.mitra?.nama_mitra || "Mitra" }}
+                                    </div>
                                 </div>
 
-                                <button
-                                    class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 
-                                    hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 text-sm font-medium"
-                                    @click="copyLink">
-                                    <Copy class="w-4 h-4" />
-                                    <span class="hidden sm:inline">Salin Link</span>
-                                </button>
+                                <div class="flex gap-3">
+                                    <button
+                                        class="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-gray-200 
+                                        hover:bg-gray-50 hover:border-secondary/50 transition-all duration-200 text-sm font-medium"
+                                        @click="copyLink">
+                                        <Copy class="w-4 h-4" />
+                                        <span class="hidden sm:inline">Bagikan</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -253,14 +284,15 @@ function formatDate(date) {
                 <!-- Next/Previous Navigation -->
                 <div class="border-t border-gray-200 pt-10 mt-10">
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                        <Link href="/studi-kasus"
-                            class="px-6 py-3 bg-secondary text-white rounded-full font-medium hover:bg-black transition-colors">
-                        Lihat Semua Studi Kasus
+                        <Link href="/case-study"
+                            class="px-6 py-3 bg-secondary text-white rounded-full font-medium hover:bg-black transition-colors flex items-center gap-2">
+                            <BookOpenCheck class="w-5 h-5" />
+                            Lihat Semua Studi Kasus
                         </Link>
 
                         <Link v-if="caseStudy.mitra" :href="`/mitra/${caseStudy.mitra.id_mitra}`" class="px-6 py-3 bg-white border border-secondary text-secondary rounded-full font-medium
                             hover:bg-secondary/5 transition-colors">
-                        Lihat Profil {{ caseStudy.mitra.nama_mitra }}
+                        Hubungi kami
                         </Link>
                     </div>
                 </div>
