@@ -193,4 +193,39 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Route::prefix('error')->group(function () {
+//     Route::get('/404', function () {
+//         abort(404);
+//     })->name('error.404');
+
+//     Route::get('/403', function () {
+//         abort(403);
+//     })->name('error.403');
+
+//     Route::get('/500', function () {
+//         abort(500);
+//     })->name('error.500');
+
+//     Route::get('/503', function () {
+//         abort(503);
+//     })->name('error.503');
+
+//     Route::get('/401', function () {
+//         abort(401);
+//     })->name('error.401');
+
+//     Route::get('/419', function () {
+//         abort(419);
+//     })->name('error.419');
+
+//     Route::get('/429', function () {
+//         abort(429);
+//     })->name('error.429');
+
+//     Route::get('/custom', function () {
+//         throw new \Exception('This is a custom error for testing purposes');
+//     })->name('error.custom');
+// });
+
+
 require __DIR__ . '/auth.php';
