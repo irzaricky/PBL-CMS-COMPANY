@@ -71,6 +71,19 @@ Route::prefix('artikel')
     });
 
 
+// Rute group untuk studi kasus
+Route::prefix('case-study')
+    ->middleware(CheckFeatureToggle::class . ':case_study_module')
+    ->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('CaseStudy/ListView');
+        })->name('studi-kasus.list');
+
+        Route::get('/{slug}', function ($slug) {
+            return Inertia::render('CaseStudy/Show', ['slug' => $slug]);
+        })->name('studi-kasus.show');
+    });
+
 // Rute group untuk event
 Route::prefix('event')
     ->middleware(CheckFeatureToggle::class . ':event_module')
@@ -98,19 +111,6 @@ Route::prefix('galeri')
         });
     });
 
-
-// Rute group untuk portofolio
-Route::prefix('portofolio')
-    ->middleware(CheckFeatureToggle::class . ':portofolio_module')
-    ->group(function () {
-        Route::get('/', action: function () {
-            return Inertia::render('Event/ListView');
-        });
-
-        Route::get('/{slug}', action: function ($slug) {
-            return Inertia::render('Event/Show', ['slug' => $slug]);
-        });
-    });
 
 // Rute group feedback
 Route::prefix('feedback')

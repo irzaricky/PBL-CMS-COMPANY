@@ -122,6 +122,7 @@ return [
     'email' => 'Email',
     'password' => 'Password',
     'password_confirmation' => 'Konfirmasi Password',
+    'password_description' => 'Password harus minimal 8 karakter',
     'include_dummy_data' => 'Isi dengan Data Sample',
     'dummy_data_description' => 'Centang opsi ini jika Anda ingin mengisi database dengan data contoh untuk keperluan testing atau demo. Data Sample termasuk user, artikel, produk, galeri, dan konten lainnya.',
 

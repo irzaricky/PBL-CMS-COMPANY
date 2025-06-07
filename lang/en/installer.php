@@ -122,6 +122,7 @@ return [
     'email' => 'Email',
     'password' => 'Password',
     'password_confirmation' => 'Confirm Password',
+    'password_description' => 'Password must be at least 8 characters long.',
     'include_dummy_data' => 'Include Dummy Data',
     'dummy_data_description' => 'Check this option if you want to populate the database with sample data for testing or demo purposes. Dummy data includes articles, products, galleries, and other content.',
 
