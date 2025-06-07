@@ -147,7 +147,7 @@ const setupAnimation = async () => {
 
     // Calculate duration based on width (adjust speed here)
     // Slower = higher multiplier, faster = lower multiplier
-    const speedMultiplier = 0.1; // Adjust this to change speed
+    const speedMultiplier = 1; // Adjust this to change speed
     const duration = setWidth * speedMultiplier / 100;
 
     // Apply the calculated duration
@@ -156,7 +156,7 @@ const setupAnimation = async () => {
 };
 
 const openPartnerForm = () => {
-    window.location.href = '/contact?subject=Partnership';
+    window.location.href = '/sejarah-perusahaan';
 };
 
 onMounted(async () => {

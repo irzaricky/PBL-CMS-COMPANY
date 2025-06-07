@@ -233,7 +233,7 @@ function formatDate(dateString) {
                                 </span>
                             </div>
                             
-                            <a :href="`/studi-kasus/${item.slug_case_study}`" class="group-hover:text-secondary">
+                            <a :href="`/case-study/${item.slug_case_study}`" class="group-hover:text-secondary">
                                 <h3 class="text-xl font-custom font-medium transition-colors">
                                     {{ item.judul_case_study }}
                                 </h3>
@@ -245,7 +245,7 @@ function formatDate(dateString) {
                                 {{ formatDate(item.created_at) }}
                             </div>
                             
-                            <a :href="`/studi-kasus/${item.slug_case_study}`" class="mt-4 text-secondary font-medium flex items-center group-hover:underline">
+                            <a :href="`/case-study/${item.slug_case_study}`" class="mt-4 text-secondary font-medium flex items-center group-hover:underline">
                                 Lihat studi kasus
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" 
                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" 

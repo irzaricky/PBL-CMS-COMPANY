@@ -112,19 +112,6 @@ Route::prefix('galeri')
     });
 
 
-// Rute group untuk portofolio
-Route::prefix('portofolio')
-    ->middleware(CheckFeatureToggle::class . ':portofolio_module')
-    ->group(function () {
-        Route::get('/', action: function () {
-            return Inertia::render('Event/ListView');
-        });
-
-        Route::get('/{slug}', action: function ($slug) {
-            return Inertia::render('Event/Show', ['slug' => $slug]);
-        });
-    });
-
 // Rute group feedback
 Route::prefix('feedback')
     ->middleware(CheckFeatureToggle::class . ':feedback_module')
