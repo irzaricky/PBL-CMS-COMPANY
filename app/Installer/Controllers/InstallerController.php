@@ -369,15 +369,16 @@ class InstallerController extends Controller
             try {
                 $defaultFeatures = [
                     ['key' => 'artikel_module', 'label' => 'Modul Artikel', 'status_aktif' => true],
-                    ['key' => 'produk_module', 'label' => 'Modul Produk', 'status_aktif' => true],
-                    ['key' => 'galeri_module', 'label' => 'Modul Galeri', 'status_aktif' => true],
+                    ['key' => 'case_study_module', 'label' => 'Modul Case Study', 'status_aktif' => true],
                     ['key' => 'event_module', 'label' => 'Modul Event', 'status_aktif' => true],
-                    ['key' => 'download_module', 'label' => 'Modul Download', 'status_aktif' => true],
-                    ['key' => 'struktur_organisasi_module', 'label' => 'Modul Struktur Organisasi', 'status_aktif' => true],
-                    ['key' => 'testimoni_module', 'label' => 'Modul Testimoni', 'status_aktif' => true],
+                    ['key' => 'feedback_module', 'label' => 'Modul Feedback', 'status_aktif' => true],
+                    ['key' => 'galeri_module', 'label' => 'Modul Galeri', 'status_aktif' => true],
+                    ['key' => 'lamaran_module', 'label' => 'Modul Lamaran', 'status_aktif' => true],
+                    ['key' => 'lowongan_module', 'label' => 'Modul Lowongan', 'status_aktif' => true],
                     ['key' => 'mitra_module', 'label' => 'Modul Mitra', 'status_aktif' => true],
-                    ['key' => 'magang_module', 'label' => 'Modul Magang', 'status_aktif' => true],
-                    ['key' => 'feedback_module', 'label' => 'Modul Feedback & Saran', 'status_aktif' => true],
+                    ['key' => 'produk_module', 'label' => 'Modul Produk', 'status_aktif' => true],
+                    ['key' => 'testimoni_module', 'label' => 'Modul Testimoni', 'status_aktif' => true],
+                    ['key' => 'unduhan_module', 'label' => 'Modul Unduhan', 'status_aktif' => true],
                 ];
 
                 // Use batch insert for better performance and atomicity
