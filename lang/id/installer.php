@@ -60,7 +60,7 @@ return [
 
     // Halaman: Welcome
     'welcome_title' => 'Selamat Datang di Instalasi CMS Company',
-    'welcome_subtitle' => 'Terima kasih telah memilih solusi CMS kami. Installer ini akan memandu Anda melalui proses pengaturan.',
+    'welcome_subtitle' => 'Terima kasih telah memilih produk CMS kami',
     'installation_process' => 'Proses Instalasi',
     'get_started' => 'Mulai',
     'installation_time' => 'Waktu Instalasi',
@@ -73,6 +73,7 @@ return [
     'server_requirements' => 'Versi Minimal',
     'software_type' => 'Software',
     'php_extensions' => 'Ekstensi',
+    'php_requirements' => 'Persyaratan PHP',
     'folder_permissions' => 'Izin Folder',
     'folder' => 'Folder',
 
@@ -129,17 +130,20 @@ return [
     // Halaman: User Roles
     'roles_title' => 'Peran Pengguna & Izin',
     'user_roles_list' => 'Daftar User dengan Role',
+    'user_roles_subtitle' => 'Review role user dan alamat email',
+    'user_accounts' => 'Akun Pengguna',
     'name' => 'Nama',
     'role' => 'Role',
     'no_role' => 'Tidak Ada Role',
     'super_admin_created' => 'Akun Super Admin berhasil dibuat! Anda bisa login menggunakan email:',
     'dummy_password_info' => 'Password default untuk akun Sample adalah',
-    'continue_to_features' => 'Lanjut ke Konfigurasi Fitur',
+    'continue_to_features' => 'Lanjut',
 
     // Halaman: Features
     'features_title' => 'Konfigurasi Fitur',
     'features_subtitle' => 'Pilih fitur yang akan diaktifkan dan ditampilkan pada frontend website.',
     'feature_status' => 'Status',
+    'configure_features' => 'Konfigurasi Fitur',
 
     // Halaman: Finish
     'finish_title' => 'Instalasi Selesai!',
@@ -162,7 +166,7 @@ return [
         ],
         'database' => [
             'title' => 'Konfigurasi Database',
-            'description' => 'Konfigurasi koneksi database dan pengaturan email'
+            'description' => 'Konfigurasi database dan pengaturan email'
         ],
         'company' => [
             'title' => 'Profil Perusahaan',
@@ -198,7 +202,7 @@ return [
     'info' => 'Informasi',
     'loading' => 'Memuat...',
     'please_wait' => 'Mohon tunggu...',
-    'testing' => 'Mengetes...',
+    'testing' => 'Menguji...',
     'processing' => 'Memproses...',
 
     // Pesan Feedback Aksi Pengguna
@@ -210,9 +214,12 @@ return [
     // Pesan Koneksi & AJAX
     'connection_error' => 'Error Koneksi!',
     'could_not_test_database' => 'Tidak dapat menguji koneksi database.',
+    'database_connection_successful' => 'Koneksi database berhasil!',
+    'database_connection_failed' => 'Koneksi database gagal. Mohon periksa pengaturan Anda dan coba lagi.',
+    'sqlite_file_creation_failed' => 'Tidak dapat membuat file database SQLite',
     'email_test_success' => 'Tes Email Berhasil!',
-    'email_test_failed' => 'Tes Email Gagal!',
-    'email_test_error' => 'Error Tes Email!',
+    'email_test_failed' => 'Tes email gagal. Mohon periksa pengaturan SMTP dan koneksi internet Anda.',
+    'email_test_error' => 'Tidak dapat menguji koneksi email. Mohon periksa konfigurasi Anda.',
     'could_not_test_email' => 'Tidak dapat menguji konfigurasi email.',
     'server_communication_error' => 'Terjadi kesalahan saat berkomunikasi dengan server. Silakan periksa koneosi Anda dan coba lagi.',
     'database_connection_error' => 'Kesalahan Koneksi Database!',
@@ -221,6 +228,37 @@ return [
     'database_exists' => 'Database sudah ada',
     'credentials_correct' => 'Username dan password Anda benar',
     'user_has_permissions' => 'Pengguna memiliki izin yang tepat pada database',
+
+    // Detail Error Database (BARU)
+    'database_error_details' => 'Detail Teknis',
+    'database_connection_failed_friendly' => 'Tidak dapat terhubung ke database. Mohon periksa pengaturan Anda dan coba lagi.',
+    'sqlite_file_creation_failed_friendly' => 'Tidak dapat membuat file database SQLite. Mohon periksa izin file dan coba lagi.',
+
+    // Validation messages
+    'validation_error' => 'Kesalahan Validasi',
+    'please_fill_required_fields' => 'Mohon isi field yang wajib diisi',
+    'go_to_environment_tab' => 'Pergi ke Tab Environment',
+    'go_to_database_tab' => 'Pergi ke Tab Database',
+    'go_to_email_tab' => 'Pergi ke Tab Email',
+
+    // Email error messages (user-friendly)
+    'email_test_failed_friendly' => 'Tidak dapat mengirim email tes. Mohon periksa konfigurasi email Anda dan coba lagi.',
+    'email_test_error_friendly' => 'Tes email tidak dapat diselesaikan. Mohon verifikasi pengaturan dan koneksi internet Anda.',
+
+    // Pesan Tes Email (Baru)
+    'email_config_invalid' => 'Mohon periksa konfigurasi email Anda dan coba lagi.',
+    'email_smtp_only' => 'Saat ini hanya email SMTP yang didukung. Silakan pilih SMTP sebagai metode email Anda.',
+    'email_smtp_config_missing' => 'Mohon isi alamat server SMTP dan nomor port.',
+    'email_test_successful' => 'Tes email berhasil! Email tes telah dikirim ke :email',
+    'email_fields_required' => 'Mohon isi semua field email yang wajib sebelum melakukan tes.',
+
+    // Pesan Konfigurasi Database (Baru)
+    'database_name_required' => 'Mohon masukkan nama database.',
+    'database_name_invalid' => 'Nama database hanya boleh berisi huruf, angka, tanda strip, dan titik.',
+    'mysql_credentials_required' => 'Mohon isi alamat server dan username untuk database MySQL.',
+    'config_save_failed' => 'Tidak dapat menyimpan konfigurasi. Mohon periksa izin file dan coba lagi.',
+    'form_validation_failed' => 'Mohon lengkapi semua field yang wajib diisi sebelum melanjutkan.',
+    'check_all_tabs' => 'Mohon periksa semua tab dan isi informasi yang diperlukan.',
 
     // Pesan Khusus (Logika Super Admin)
     'super_admin_exists' => 'Super Admin dengan email :email sudah ada dan memiliki akses super admin. Anda dapat melanjutkan.',

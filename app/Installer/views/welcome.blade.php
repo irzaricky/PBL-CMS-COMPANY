@@ -3,120 +3,135 @@
 @section('title', __('installer.welcome_title'))
 
 @section('content')
-
-    <section class="mt-4 bg-radial-gradient installer-welcome">
+    <section class="mt-4 installer-content bg-radial-gradient">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-10">
-                    <div class="card mb-4 fade-in">
-                        <div class="card-body text-center py-5">
-                            <div class="mb-4">
-                                <i class="bi bi-gear-fill display-1" style="color: var(--primary-color);"></i>
+                    <div class="card mb-4 shadow-lg border-0 welcome-config-card">
+                        <div class="card-body py-5">
+                            <!-- Header Section with Logo and Title -->
+                            <div class="text-center mb-5">
+                                <!-- Welcome Icon -->
+                                <div class="mb-4">
+                                    <i class="bi bi-rocket-takeoff display-1" style="color: var(--primary-color);"></i>
+                                </div>
+                                <!-- Title -->
+                                <h1 class="display-5 mb-3 welcome-title" style="color: var(--primary-color);">
+                                    {{ __('installer.welcome_title') }}
+                                </h1>
+                                <p class="lead mb-0 text-muted welcome-subtitle">
+                                    {{ __('installer.welcome_subtitle') }}
+                                </p>
                             </div>
-                            <h1 class="display-4 mb-4 welcome-title" style="color: var(--primary-color);">
-                                {{ __('installer.welcome_title') }}
-                            </h1>
-                            <p class="lead mb-4 welcome-text">
-                                {{ __('installer.welcome_subtitle') }}
-                            </p>
 
-                            <div class="row mt-5">
-                                <div class="col-md-12">
-                                    <h3 class="mb-3 welcome-subtitle" style="color: var(--secondary-color);">
+                            <!-- Installation Process Content -->
+                            <div class="row justify-content-center">
+                                <div class="col-md-10">
+                                    <h4 class="mb-4 text-center" style="color: var(--primary-color);">
                                         {{ __('installer.installation_process') }}
-                                    </h3>
-                                </div>
-                            </div>
+                                    </h4>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-4">
-                                    <div class="card border-primary h-100 card-hover">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <i class="bi bi-check-circle-fill display-6 text-success feature-icon"></i>
+                                    <!-- Features Grid -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="feature-item p-3 rounded bg-light">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-3">
+                                                        <i class="bi bi-check-circle-fill text-success"
+                                                            style="font-size: 2rem;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1">{{ __('installer.features.requirements.title') }}
+                                                        </h6>
+                                                        <small
+                                                            class="text-muted">{{ __('installer.features.requirements.description') }}</small>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <h5 class="card-title">{{ __('installer.features.requirements.title') }}</h5>
-                                            <p class="card-text text-muted">
-                                                {{ __('installer.features.requirements.description') }}
-                                            </p>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="feature-item p-3 rounded bg-light">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-3">
+                                                        <i class="bi bi-database-fill text-info"
+                                                            style="font-size: 2rem;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1">{{ __('installer.features.database.title') }}</h6>
+                                                        <small
+                                                            class="text-muted">{{ __('installer.features.database.description') }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="feature-item p-3 rounded bg-light">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-3">
+                                                        <i class="bi bi-building text-warning" style="font-size: 2rem;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1">{{ __('installer.features.company.title') }}</h6>
+                                                        <small
+                                                            class="text-muted">{{ __('installer.features.company.description') }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="feature-item p-3 rounded bg-light">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-3">
+                                                        <i class="bi bi-person-gear text-danger"
+                                                            style="font-size: 2rem;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1">{{ __('installer.features.admin.title') }}</h6>
+                                                        <small
+                                                            class="text-muted">{{ __('installer.features.admin.description') }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="feature-item p-3 rounded bg-light">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-3">
+                                                        <i class="bi bi-toggles"
+                                                            style="color: var(--primary-color); font-size: 2rem;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1">{{ __('installer.features.features.title') }}</h6>
+                                                        <small
+                                                            class="text-muted">{{ __('installer.features.features.description') }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6 mb-3">
+                                            <div class="feature-item p-3 rounded bg-light">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="me-3">
+                                                        <i class="bi bi-check-circle text-success"
+                                                            style="font-size: 2rem;"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="mb-1">{{ __('installer.features.complete.title') }}</h6>
+                                                        <small
+                                                            class="text-muted">{{ __('installer.features.complete.description') }}</small>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="col-md-6 mb-4">
-                                    <div class="card border-primary h-100 card-hover">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <i class="bi bi-database-fill display-6 text-info feature-icon"></i>
-                                            </div>
-                                            <h5 class="card-title">{{ __('installer.features.database.title') }}</h5>
-                                            <p class="card-text text-muted">
-                                                {{ __('installer.features.database.description') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <div class="card border-primary h-100 card-hover">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <i class="bi bi-building display-6 text-warning feature-icon"></i>
-                                            </div>
-                                            <h5 class="card-title">{{ __('installer.features.company.title') }}</h5>
-                                            <p class="card-text text-muted">
-                                                {{ __('installer.features.company.description') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <div class="card border-primary h-100 card-hover">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <i class="bi bi-person-gear display-6 text-danger feature-icon"></i>
-                                            </div>
-                                            <h5 class="card-title">{{ __('installer.features.admin.title') }}</h5>
-                                            <p class="card-text text-muted">
-                                                {{ __('installer.features.admin.description') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <div class="card border-primary h-100 card-hover">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <i class="bi bi-toggles display-6 feature-icon"
-                                                    style="color: var(--primary-color);"></i>
-                                            </div>
-                                            <h5 class="card-title">{{ __('installer.features.features.title') }}</h5>
-                                            <p class="card-text text-muted">
-                                                {{ __('installer.features.features.description') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6 mb-4">
-                                    <div class="card border-primary h-100 card-hover">
-                                        <div class="card-body">
-                                            <div class="mb-3">
-                                                <i class="bi bi-rocket-takeoff display-6 text-success feature-icon"></i>
-                                            </div>
-                                            <h5 class="card-title">{{ __('installer.features.complete.title') }}</h5>
-                                            <p class="card-text text-muted">
-                                                {{ __('installer.features.complete.description') }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row mt-5">
-                                <div class="col-md-12">
-                                    <div class="alert alert-info" role="alert">
+                                    <!-- Installation Info Alert -->
+                                    <div class="alert alert-info mb-4" role="alert">
                                         <i class="bi bi-info-circle-fill me-2"></i>
                                         <strong>{{ __('installer.installation_time') }}:</strong>
                                         {{ __('installer.installation_time_description') }}
@@ -124,18 +139,110 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="card-footer text-end">
-                            <form action="{{ route('welcome_continue') }}" method="post" class="mb-0">
-                                @csrf <button type="submit" class="btn btn-primary px-4">
-                                    {{ __('installer.get_started') }} <i class="bi bi-arrow-right me-2"></i>
-                                </button>
-                            </form>
+                            <!-- Action Button -->
+                            <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
+                                <form action="{{ route('welcome_continue') }}" method="post" class="mb-0">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 welcome-btn">
+                                        <i class="bi bi-rocket-takeoff me-2"></i>
+                                        {{ __('installer.get_started') }}
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <style>
+        /* Welcome page specific styles - matching unified design */
+        .welcome-config-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            border-radius: 20px !important;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .welcome-title {
+            font-weight: 700;
+            animation: fadeInDown 1s ease-out 0.3s both;
+        }
+
+        .welcome-subtitle {
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .welcome-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #4338ca 100%);
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .welcome-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Feature items styling */
+        .feature-item {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        /* Animations */
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Alert styling */
+        .alert-info {
+            border-radius: 10px;
+            border: none;
+            background: rgba(13, 202, 240, 0.1);
+            color: #0c4a6e;
+        }
+    </style>
 @endsection

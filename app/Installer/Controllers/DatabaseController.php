@@ -15,6 +15,7 @@ use App\Installer\Main\EnvironmentManager;
 class DatabaseController extends Controller
 {
     protected EnvironmentManager $EnvironmentManager;
+    private string $lastDatabaseError = '';
 
     public function __construct(EnvironmentManager $environmentManager)
     {
@@ -39,12 +40,12 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['database_fields' => ['Please provide a database name']]
+                    'errors' => ['database_fields' => [__('installer.database_name_required')]]
                 ], 422);
             }
 
             return $redirect->route('database_import')->withInput()->withErrors([
-                'database_fields' => 'Please provide a database name',
+                'database_fields' => __('installer.database_name_required'),
             ]);
         }
 
@@ -61,12 +62,12 @@ class DatabaseController extends Controller
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => false,
-                        'errors' => ['database_name' => ['Database name can only contain letters, numbers, dashes, underscores and periods.']]
+                        'errors' => ['database_name' => [__('installer.database_name_invalid')]]
                     ], 422);
                 }
 
                 return $redirect->route('database_import')->withInput()->withErrors([
-                    'database_name' => 'Database name can only contain letters, numbers, dashes, underscores and periods.',
+                    'database_name' => __('installer.database_name_invalid'),
                 ]);
             }
 
@@ -86,12 +87,12 @@ class DatabaseController extends Controller
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => false,
-                        'errors' => ['database_fields' => ['Please provide all required MySQL database information']]
+                        'errors' => ['database_fields' => [__('installer.mysql_credentials_required')]]
                     ], 422);
                 }
 
                 return $redirect->route('database_import')->withInput()->withErrors([
-                    'database_fields' => 'Please provide all required MySQL database information',
+                    'database_fields' => __('installer.mysql_credentials_required'),
                 ]);
             }
         }
@@ -131,12 +132,17 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['database_connection' => ['Database connection failed. Please check your credentials and make sure the database exists.']]
+                    'errors' => [
+                        'database_connection' => [
+                            'message' => __('installer.database_connection_failed_friendly'),
+                            'technical_details' => $this->lastDatabaseError
+                        ]
+                    ]
                 ], 422);
             }
 
             return $redirect->route('database_import')->withInput()->withErrors([
-                'database_connection' => 'Database connection failed. Please check your credentials and make sure the database exists.',
+                'database_connection' => __('installer.database_connection_failed_friendly'),
             ]);
         }
 
@@ -160,12 +166,12 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['save_error' => ['Failed to save environment: ' . $e->getMessage()]]
+                    'errors' => ['save_error' => [__('installer.config_save_failed')]]
                 ], 500);
             }
 
             return $redirect->route('database_import')->withInput()->withErrors([
-                'save_error' => 'Failed to save environment: ' . $e->getMessage(),
+                'save_error' => __('installer.config_save_failed'),
             ]);
         }
     }
@@ -188,7 +194,7 @@ class DatabaseController extends Controller
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid email configuration: ' . implode(', ', $validator->errors()->all())
+                    'message' => __('installer.email_config_invalid')
                 ]);
             }
 
@@ -198,7 +204,7 @@ class DatabaseController extends Controller
             if ($mailDriver !== 'smtp') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Only SMTP mail driver is supported'
+                    'message' => __('installer.email_smtp_only')
                 ]);
             }
 
@@ -211,7 +217,7 @@ class DatabaseController extends Controller
             if ($additionalValidator->fails()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Missing required SMTP configuration: ' . implode(', ', $additionalValidator->errors()->all())
+                    'message' => __('installer.email_smtp_config_missing')
                 ]);
             }
 
@@ -246,7 +252,7 @@ class DatabaseController extends Controller
 
                 return response()->json([
                     'success' => true,
-                    'message' => 'Email test successful! Test email sent to ' . $request->input('mail_from_address')
+                    'message' => __('installer.email_test_successful', ['email' => $request->input('mail_from_address')])
                 ]);
 
             } catch (\Exception $e) {
@@ -255,14 +261,16 @@ class DatabaseController extends Controller
 
                 return response()->json([
                     'success' => false,
-                    'message' => 'Email test failed: ' . $e->getMessage()
+                    'message' => __('installer.email_test_failed_friendly'),
+                    'technical_details' => $e->getMessage()
                 ]);
             }
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email test error: ' . $e->getMessage()
+                'message' => __('installer.email_test_error_friendly'),
+                'technical_details' => $e->getMessage()
             ]);
         }
     }
@@ -341,6 +349,7 @@ class DatabaseController extends Controller
                         // Log::info('Created SQLite database file at: ' . $databasePath);
                     } catch (\Exception $e) {
                         // Log::error('Failed to create SQLite database file: ' . $e->getMessage());
+                        $this->lastDatabaseError = 'SQLite file creation failed: ' . $e->getMessage();
                         return false;
                     }
                 }
@@ -383,6 +392,7 @@ class DatabaseController extends Controller
 
             if (!$result || !isset($result[0]->connection_test) || $result[0]->connection_test !== 1) {
                 // Log::error('Database connection failed: Test query failed');
+                $this->lastDatabaseError = 'Database test query failed';
                 return false;
             }
 
@@ -399,6 +409,7 @@ class DatabaseController extends Controller
 
                 if (!$permissionResults['success']) {
                     // Log::error('Database permission check failed: ' . implode(', ', $permissionResults['messages']));
+                    $this->lastDatabaseError = 'Permission check failed: ' . implode(', ', $permissionResults['messages']);
                     return false;
                 }
 
@@ -409,6 +420,7 @@ class DatabaseController extends Controller
             $connectionSuccess = true;
         } catch (Exception $e) {
             // Log::error('Database connection error: ' . $e->getMessage());
+            $this->lastDatabaseError = $e->getMessage();
             $connectionSuccess = false;
         } finally {
             // Always disconnect the temporary connection and restore original state

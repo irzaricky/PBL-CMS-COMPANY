@@ -60,7 +60,7 @@ return [
 
     // Halaman: Welcome
     'welcome_title' => 'Welcome to CMS Company Installation',
-    'welcome_subtitle' => 'Thank you for choosing our CMS solution. This installer will guide you through the setup process.',
+    'welcome_subtitle' => 'Thank you for choosing our CMS product',
     'installation_process' => 'Installation Process',
     'get_started' => 'Get Started',
     'installation_time' => 'Installation Time',
@@ -73,6 +73,7 @@ return [
     'server_requirements' => 'Server Requirements',
     'software_type' => 'Software',
     'php_extensions' => 'Extensions',
+    'php_requirements' => 'PHP Requirements',
     'folder_permissions' => 'Folder Permissions',
     'folder' => 'Folder',
 
@@ -129,17 +130,20 @@ return [
     // Halaman: User Roles
     'roles_title' => 'User Roles & Permissions',
     'user_roles_list' => 'User List with Roles',
+    'user_roles_subtitle' => 'Review user roles and email addresses',
+    'user_accounts' => 'User Accounts',
     'name' => 'Name',
     'role' => 'Role',
     'no_role' => 'No Role',
     'super_admin_created' => 'Super Admin account created successfully! You can login using email:',
     'dummy_password_info' => 'Default password for sample accounts is',
-    'continue_to_features' => 'Continue to Feature Configuration',
+    'continue_to_features' => 'Continue',
 
     // Halaman: Features
     'features_title' => 'Feature Configuration',
     'features_subtitle' => 'Select features to be enabled and displayed on the website frontend.',
     'feature_status' => 'Status',
+    'configure_features' => 'Configure Features',
 
     // Halaman: Finish
     'finish_title' => 'Installation Complete!',
@@ -162,7 +166,7 @@ return [
         ],
         'database' => [
             'title' => 'Database Configuration',
-            'description' => 'Configure your database connection and email settings'
+            'description' => 'Configure database connection and email settings'
         ],
         'company' => [
             'title' => 'Company Profile',
@@ -210,9 +214,12 @@ return [
     // Pesan Koneksi & AJAX
     'connection_error' => 'Connection Error!',
     'could_not_test_database' => 'Could not test database connection.',
+    'database_connection_successful' => 'Database connection successful!',
+    'database_connection_failed' => 'Database connection failed. Please check your settings and try again.',
+    'sqlite_file_creation_failed' => 'Failed to create SQLite database file',
     'email_test_success' => 'Email Test Success!',
-    'email_test_failed' => 'Email Test Failed!',
-    'email_test_error' => 'Email Test Error!',
+    'email_test_failed' => 'Email test failed. Please check your SMTP settings and internet connection.',
+    'email_test_error' => 'Unable to test email connection. Please check your configuration.',
     'could_not_test_email' => 'Could not test email configuration.',
     'server_communication_error' => 'An error occurred while communicating with the server. Please check your connection and try again.',
     'database_connection_error' => 'Database Connection Error!',
@@ -221,6 +228,37 @@ return [
     'database_exists' => 'The database exists',
     'credentials_correct' => 'Your username and password are correct',
     'user_has_permissions' => 'The user has proper permissions on the database',
+
+    // Database Error Details (NEW)
+    'database_error_details' => 'Technical Details',
+    'database_connection_failed_friendly' => 'Unable to connect to the database. Please check your settings and try again.',
+    'sqlite_file_creation_failed_friendly' => 'Unable to create SQLite database file. Please check file permissions and try again.',
+
+    // Validation messages
+    'validation_error' => 'Validation Error',
+    'please_fill_required_fields' => 'Please fill in the required fields',
+    'go_to_environment_tab' => 'Go to Environment Tab',
+    'go_to_database_tab' => 'Go to Database Tab',
+    'go_to_email_tab' => 'Go to Email Tab',
+
+    // Email error messages (user-friendly)
+    'email_test_failed_friendly' => 'Unable to send test email. Please check your email configuration and try again.',
+    'email_test_error_friendly' => 'Email test could not be completed. Please verify your settings and internet connection.',
+
+    // Email Test Messages  
+    'email_config_invalid' => 'Please check your email configuration and try again.',
+    'email_smtp_only' => 'Currently only SMTP email is supported. Please select SMTP as your email method.',
+    'email_smtp_config_missing' => 'Please fill in the SMTP server address and port number.',
+    'email_test_successful' => 'Email test successful! A test email has been sent to :email',
+    'email_fields_required' => 'Please fill in all required email fields before testing.',
+
+    // Database Configuration Messages
+    'database_name_required' => 'Please enter a database name.',
+    'database_name_invalid' => 'Database name can only contain letters, numbers, dashes, and dots.',
+    'mysql_credentials_required' => 'Please fill in the server address and username for MySQL database.',
+    'config_save_failed' => 'Unable to save configuration. Please check file permissions and try again.',
+    'form_validation_failed' => 'Please complete all required fields before continuing.',
+    'check_all_tabs' => 'Please check all tabs and fill in the required information.',
 
     // Pesan Khusus (Logika Super Admin)
     'super_admin_exists' => 'Super Admin with email :email already exists and has super admin access. You can continue.',

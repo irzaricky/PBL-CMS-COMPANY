@@ -2,231 +2,595 @@
 @extends('InstallerEragViews::app-layout')
 @section('content')
 
-    <section class="mt-4 installer-content">
+    <section class="mt-4 installer-content bg-radial-gradient">
         <div class="container">
-            @include('InstallerEragViews::includes.database-connection-error')
-
-            @if ($errors->any() && !$errors->has('database_connection') && !$errors->has('database_fields') && !$errors->has('save_error'))
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-            <form action="{{ route('saveWizard') }}" method="post" id="database-form">
-                @csrf
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">{{ __('installer.database_configuration') }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="{{ __('installer.database_connection') }}" class="form-control"
-                                    required="true" name="environment">
-                                    <option value="production" selected>Production</option>
-                                    <option value="local">Local</option>
-                                </x-install-select>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="{{ __('installer.app_debug') }}" class="form-control"
-                                    required="true" name="app_debug">
-                                    <option value="true" {{ old('app_debug') == 'true' ? 'selected' : '' }}>
-                                        True</option>
-                                    <option value="false" {{ old('app_debug', 'false') == 'false' ? 'selected' : '' }}>
-                                        False</option>
-                                </x-install-select>
-                                <x-install-error for="app_debug" />
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-input label="{{ __('installer.app_log_level') }}" name="app_log_level"
-                                    type="text" value="debug" readonly>
-                                </x-install-input>
-                            </div>
-
-                            @php
-                                $isHttps = app('request')->isSecure();
-                                $protocol = $isHttps ? 'https://' : 'http://';
-                                $base_url = $protocol . app('request')->getHttpHost();
-                            @endphp
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-input label="{{ __('installer.app_url') }}" required="true" name="app_url"
-                                    type="url" value="{{ old('app_url', $base_url) }}" />
-                                <x-install-error for="app_url" />
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                @component('InstallerEragViews::components.timezone-select', [
-                                    'label' => __('installer.app_timezone'),
-                                    'required' => true,
-                                    'name' => 'app_timezone'
-                                ])
-                                @endcomponent
-                                <x-install-error for="app_timezone" />
-                            </div>
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="{{ __('installer.app_locale') }}" class="form-control"
-                                    required="true" name="app_locale">
-                                    <option value="en" {{ old('app_locale') == 'en' ? 'selected' : '' }}>English
-                                    </option>
-                                    <option value="id" {{ old('app_locale', 'id') == 'id' ? 'selected' : '' }}>Indonesian
-                                    </option>
-                                </x-install-select>
-                                <x-install-error for="app_locale" />
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="card mb-4" id="db-config-card">
-                    <div class="card-header">
-                        <h5 class="mb-0">{{ __('installer.database_configuration') }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-
-                            <div class="col-md-4 mb-3">
-                                <x-install-select label="{{ __('installer.database_connection_type') }}"
-                                    class="form-control" required="true" name="database_connection"
-                                    id="database_connection">
-                                    <option value="mysql" selected>MySQL</option>
-                                    <option value="sqlite" {{ old('database_connection') == 'sqlite' ? 'selected' : '' }}>
-                                        SQLite</option>
-                                </x-install-select>
-                            </div>
-
-                            <!-- Database Name field (always shown) -->
-                            <div class="col-md-4 mb-3" id="database_name_container">
-                                <x-install-input label="{{ __('installer.database_name') }}" required="true"
-                                    name="database_name" type="text" value="{{ old('database_name') }}" />
-                                <x-install-error for="database_name" />
-                                <div class="text-muted small mt-1" id="sqlite_help_text" style="display: none;">
-                                    {{ __('installer.sqlite_help_text') }} ({{ __('installer.example') }}:
-                                    <code>mydb.sqlite</code>)
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card mb-4 shadow-lg border-0 database-config-card">
+                        <div class="card-body py-5">
+                            <!-- Header Section with Logo and Title -->
+                            <div class="text-center mb-5">
+                                <!-- Database Icon -->
+                                <div class="mb-4">
+                                    <i class="bi bi-database-gear display-1" style="color: var(--primary-color);"></i>
                                 </div>
+                                <!-- Title -->
+                                <h1 class="display-5 mb-3 database-title" style="color: var(--primary-color);">
+                                    {{ __('installer.database_title') }}
+                                </h1>
+                                <p class="lead mb-0 text-muted database-subtitle">
+                                    {{ __('installer.features.database.description') }}
+                                </p>
                             </div>
 
-                            <!-- MySQL specific fields -->
-                            <div class="mysql-only col-md-4 mb-3" id="database_host_container">
-                                <x-install-input label="{{ __('installer.database_host') }}" required="false"
-                                    name="database_hostname" type="text"
-                                    value="{{ old('database_hostname', '127.0.0.1') }}" />
-                                <x-install-error for="database_hostname" />
-                            </div>
+                            <!-- Alert Section -->
+                            @include('InstallerEragViews::includes.database-connection-error')
 
-                            <div class="mysql-only col-md-4 mb-3" id="database_port_container">
-                                <x-install-input label="{{ __('installer.database_port') }}" required="false"
-                                    name="database_port" type="text" value="{{ old('database_port', '3306') }}" />
-                                <x-install-error for="database_port" />
-                            </div>
+                            @if ($errors->any() && !$errors->has('database_connection') && !$errors->has('database_fields') && !$errors->has('save_error'))
+                                <div class="alert alert-danger mb-4">
+                                    <ul class="mb-0">
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
 
-                            <div class="mysql-only col-md-4 mb-3" id="database_user_container">
-                                <x-install-input label="{{ __('installer.database_username') }}" required="false"
-                                    name="database_username" type="text" value="{{ old('database_username') }}" />
-                                <x-install-error for="database_username" />
-                            </div>
+                            <!-- Tabbed Configuration Form -->
+                            <form action="{{ route('saveWizard') }}" method="post" id="database-form" novalidate>
+                                @csrf
 
-                            <div class="mysql-only col-md-4 mb-3" id="database_password_container">
-                                <x-install-input label="{{ __('installer.database_password') }}" name="database_password"
-                                    type="text" value="{{ old('database_password') }}" />
-                                <x-install-error for="database_password" />
-                            </div>
+                                <!-- Tab Navigation -->
+                                <div class="row justify-content-center mb-4">
+                                    <div class="col-md-10">
+                                        <ul class="nav nav-pills nav-justified config-tabs" id="configTabs" role="tablist">
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link active" id="environment-tab" data-bs-toggle="pill"
+                                                    data-bs-target="#environment-config" type="button" role="tab">
+                                                    <i class="bi bi-gear me-2"></i>Environment
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="database-tab" data-bs-toggle="pill"
+                                                    data-bs-target="#database-config" type="button" role="tab">
+                                                    <i class="bi bi-database me-2"></i>Database
+                                                </button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" id="email-tab" data-bs-toggle="pill"
+                                                    data-bs-target="#email-config" type="button" role="tab">
+                                                    <i class="bi bi-envelope me-2"></i>Email
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
 
-                        </div>
-                    </div>
-                </div>
+                                <!-- Tab Content -->
+                                <div class="tab-content" id="configTabContent">
+                                    <!-- Environment Configuration Tab -->
+                                    <div class="tab-pane fade show active" id="environment-config" role="tabpanel">
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-10">
+                                                <h5 class="mb-4 text-center">Environment Settings</h5>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <x-install-select label="{{ __('installer.database_connection') }}"
+                                                            class="form-control" name="environment" required="true">
+                                                            <option value="production" selected>Production</option>
+                                                            <option value="local">Local</option>
+                                                        </x-install-select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <x-install-select label="{{ __('installer.app_debug') }}"
+                                                            class="form-control" name="app_debug">
+                                                            <option value="true" {{ old('app_debug') == 'true' ? 'selected' : '' }}>
+                                                                True</option>
+                                                            <option value="false" {{ old('app_debug', 'false') == 'false' ? 'selected' : '' }}>
+                                                                False</option>
+                                                        </x-install-select>
+                                                        <x-install-error for="app_debug" />
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <x-install-input label="{{ __('installer.app_log_level') }}"
+                                                            name="app_log_level" type="text" value="debug" readonly>
+                                                        </x-install-input>
+                                                    </div>
 
-                <!-- Email Configuration Card -->
-                <div class="card mb-4" id="email-config-card">
-                    <div class="card-header">
-                        <h5 class="mb-0">{{ __('installer.email_configuration') }}</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 mb-3">
-                                <x-install-input label="{{ __('installer.mail_driver') }}" type="text" value="smtp"
-                                    name="mail_mailer" readonly>
-                                    </x-install-select>
-                                    <x-install-error for="mail_mailer" />
-                            </div>
+                                                    @php
+                                                        $isHttps = app('request')->isSecure();
+                                                        $protocol = $isHttps ? 'https://' : 'http://';
+                                                        $base_url = $protocol . app('request')->getHttpHost();
+                                                    @endphp
 
-                            <div class="col-md-4 mb-3" id="mail_host_container">
-                                <x-install-input label="{{ __('installer.mail_host') }}" required="false" name="mail_host"
-                                    type="text" value="{{ old('mail_host', 'smtp.gmail.com') }}" readonly />
-                                <x-install-error for="mail_host" />
-                            </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <x-install-input label="{{ __('installer.app_url') }}"
+                                                            name="app_url" type="url" required="true"
+                                                            value="{{ old('app_url', $base_url) }}" />
+                                                        <x-install-error for="app_url" />
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        @component('InstallerEragViews::components.timezone-select', [
+                                                            'label' => __('installer.app_timezone'),
+                                                            'required' => true,
+                                                            'name' => 'app_timezone'
+                                                        ])
+                                                        @endcomponent
+                                                        <x-install-error for="app_timezone" />
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <x-install-select label="{{ __('installer.app_locale') }}"
+                                                            class="form-control" name="app_locale" required="true">
+                                                            <option value="en" {{ old('app_locale') == 'en' ? 'selected' : '' }}>English
+                                                            </option>
+                                                            <option value="id" {{ old('app_locale', 'id') == 'id' ? 'selected' : '' }}>Indonesian
+                                                            </option>
+                                                        </x-install-select>
+                                                        <x-install-error for="app_locale" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
 
-                            <div class="col-md-4 mb-3" id="mail_port_container">
-                                <x-install-input label="{{ __('installer.mail_port') }}" required="false" name="mail_port"
-                                    type="number" value="{{ old('mail_port', '587') }}" readonly />
-                                <x-install-error for="mail_port" />
-                            </div>
+                                    <!-- Database Configuration Tab -->
+                                    <div class="tab-pane fade" id="database-config" role="tabpanel">
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-10">
+                                                <h5 class="mb-4 text-center">Database Connection</h5>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <x-install-select
+                                                            label="{{ __('installer.database_connection_type') }}"
+                                                            class="form-control" name="database_connection"
+                                                            id="database_connection" required="true">
+                                                            <option value="mysql" selected>MySQL</option>
+                                                            <option value="sqlite" {{ old('database_connection') == 'sqlite' ? 'selected' : '' }}>
+                                                                SQLite</option>
+                                                        </x-install-select>
+                                                    </div>
 
-                            <div class="col-md-4 mb-3" id="mail_username_container">
-                                <x-install-input label="{{ __('installer.mail_username') }}" required="false"
-                                    name="mail_username" type="text" value="{{ old('mail_username') }}" />
-                                <x-install-error for="mail_username" />
-                            </div>
+                                                    <!-- Database Name field (always shown) -->
+                                                    <div class="col-md-4 mb-3" id="database_name_container">
+                                                        <x-install-input label="{{ __('installer.database_name') }}"
+                                                            name="database_name" type="text" required="true"
+                                                            value="{{ old('database_name') }}" />
+                                                        <x-install-error for="database_name" />
+                                                        <div class="text-muted small mt-1" id="sqlite_help_text"
+                                                            style="display: none;">
+                                                            {{ __('installer.sqlite_help_text') }}
+                                                            ({{ __('installer.example') }}:
+                                                            <code>mydb.sqlite</code>)
+                                                        </div>
+                                                    </div>
 
-                            <div class="col-md-4 mb-3" id="mail_password_container">
-                                <label class="mb-1" for="mail_password">{{ __('installer.mail_password') }}</label>
-                                <div class="input-group">
-                                    <input type="password" name="mail_password" id="mail_password"
-                                        class="form-control @error('mail_password') is-invalid @enderror"
-                                        value="{{ old('mail_password') }}">
-                                    <button type="button" class="btn btn-outline-secondary toggle-password"
-                                        data-target="mail_password">
-                                        <i class="bi bi-eye"></i>
+                                                    <!-- MySQL specific fields -->
+                                                    <div class="mysql-only col-md-4 mb-3" id="database_host_container">
+                                                        <x-install-input label="{{ __('installer.database_host') }}"
+                                                            name="database_hostname" type="text" required="true"
+                                                            value="{{ old('database_hostname', '127.0.0.1') }}" />
+                                                        <x-install-error for="database_hostname" />
+                                                    </div>
+
+                                                    <div class="mysql-only col-md-4 mb-3" id="database_port_container">
+                                                        <x-install-input label="{{ __('installer.database_port') }}"
+                                                            name="database_port" type="text" required="true"
+                                                            value="{{ old('database_port', '3306') }}" />
+                                                        <x-install-error for="database_port" />
+                                                    </div>
+
+                                                    <div class="mysql-only col-md-4 mb-3" id="database_user_container">
+                                                        <x-install-input label="{{ __('installer.database_username') }}"
+                                                            name="database_username" type="text" required="true"
+                                                            value="{{ old('database_username') }}" />
+                                                        <x-install-error for="database_username" />
+                                                    </div>
+
+                                                    <div class="mysql-only col-md-4 mb-3" id="database_password_container">
+                                                        <x-install-input label="{{ __('installer.database_password') }}"
+                                                            name="database_password" type="text"
+                                                            value="{{ old('database_password') }}" />
+                                                        <x-install-error for="database_password" />
+                                                    </div>
+                                                </div>
+
+                                                <!-- Test Connection Button -->
+                                                <div class="text-center mt-4">
+                                                    <button type="button" id="test_connection_button"
+                                                        class="btn btn-secondary btn-lg px-4" disabled
+                                                        title="{{ __('installer.please_fill_required_fields') }}">
+                                                        <i class="bi bi-shield-check me-2"></i>
+                                                        {{ __('installer.test_connection') }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Email Configuration Tab -->
+                                    <div class="tab-pane fade" id="email-config" role="tabpanel">
+                                        <div class="row justify-content-center">
+                                            <div class="col-md-10">
+                                                <h5 class="mb-4 text-center">Email Settings</h5>
+                                                <div class="row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <x-install-input label="{{ __('installer.mail_driver') }}"
+                                                            type="text" value="smtp" name="mail_mailer" readonly>
+                                                        </x-install-input>
+                                                        <x-install-error for="mail_mailer" />
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-3" id="mail_host_container">
+                                                        <x-install-input label="{{ __('installer.mail_host') }}"
+                                                            name="mail_host" type="text" required="true"
+                                                            value="{{ old('mail_host', 'smtp.gmail.com') }}" />
+                                                        <x-install-error for="mail_host" />
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-3" id="mail_port_container">
+                                                        <x-install-input label="{{ __('installer.mail_port') }}"
+                                                            name="mail_port" type="number" required="true"
+                                                            value="{{ old('mail_port', '587') }}" />
+                                                        <x-install-error for="mail_port" />
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-3" id="mail_username_container">
+                                                        <x-install-input label="{{ __('installer.mail_username') }}"
+                                                            name="mail_username" type="text" required="true"
+                                                            value="{{ old('mail_username') }}" />
+                                                        <x-install-error for="mail_username" />
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-3" id="mail_password_container">
+                                                        <label class="mb-1"
+                                                            for="mail_password">{{ __('installer.mail_password') }} <span
+                                                                class="text-danger">*</span></label>
+                                                        <div class="input-group">
+                                                            <input type="password" name="mail_password" id="mail_password"
+                                                                class="form-control @error('mail_password') is-invalid @enderror"
+                                                                value="{{ old('mail_password') }}">
+                                                            <button type="button"
+                                                                class="btn btn-outline-secondary toggle-password"
+                                                                data-target="mail_password">
+                                                                <i class="bi bi-eye"></i>
+                                                            </button>
+                                                        </div>
+                                                        <x-install-error for="mail_password" />
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-3" id="mail_encryption_container">
+                                                        <x-install-select label="{{ __('installer.mail_encryption') }}"
+                                                            class="form-control" name="mail_encryption" required="true">
+                                                            <option value="">None</option>
+                                                            <option value="tls" {{ old('mail_encryption', 'tls') == 'tls' ? 'selected' : '' }}>TLS
+                                                            </option>
+                                                            <option value="ssl" {{ old('mail_encryption') == 'ssl' ? 'selected' : '' }}>SSL</option>
+                                                        </x-install-select>
+                                                        <x-install-error for="mail_encryption" />
+                                                    </div>
+
+                                                    <div class="col-md-6 mb-3" hidden>
+                                                        <x-install-input label="{{ __('installer.mail_from_address') }}"
+                                                            name="mail_from_address" type="email" required="true"
+                                                            value="{{ old('mail_from_address', 'noreply@example.com') }}"
+                                                            readonly />
+                                                        <x-install-error for="mail_from_address" />
+                                                        <div class="text-muted small mt-1">
+                                                            {{ __('installer.mail_from_name_description') }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Test Email Button -->
+                                                <div class="text-center mt-4">
+                                                    <button type="button" id="test_email_button"
+                                                        class="btn btn-info btn-lg px-4">
+                                                        <i class="bi bi-envelope-check me-2"></i>
+                                                        {{ __('installer.test_email') }}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Action Buttons -->
+                                <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-5">
+                                    <a href="{{ route('installs') }}" class="btn btn-outline-primary btn-lg px-5">
+                                        <i class="bi bi-arrow-left me-2"></i>
+                                        {{ __('installer.back') }}
+                                    </a>
+                                    <button type="submit" id="next_button" class="btn btn-primary btn-lg px-5 database-btn">
+                                        <i class="bi bi-check-circle me-2"></i>
+                                        {{ __('installer.next') }}
                                     </button>
                                 </div>
-                                <x-install-error for="mail_password" />
-                            </div>
-
-                            <div class="col-md-4 mb-3" id="mail_encryption_container">
-                                <x-install-select label="{{ __('installer.mail_encryption') }}" class="form-control"
-                                    required="false" name="mail_encryption">
-                                    <option value="">None</option>
-                                    <option value="tls" {{ old('mail_encryption', 'tls') == 'tls' ? 'selected' : '' }}>TLS
-                                    </option>
-                                    <option value="ssl" {{ old('mail_encryption') == 'ssl' ? 'selected' : '' }}>SSL</option>
-                                </x-install-select>
-                                <x-install-error for="mail_encryption" />
-                            </div>
-
-                            <div class="col-md-6 mb-3" hidden>
-                                <x-install-input label="{{ __('installer.mail_from_address') }}" required="true"
-                                    name="mail_from_address" type="email"
-                                    value="{{ old('mail_from_address', 'noreply@example.com') }}" readonly />
-                                <x-install-error for="mail_from_address" />
-                                <div class="text-muted small mt-1">
-                                    {{ __('installer.mail_from_name_description') }}
-                                </div>
-                            </div>
+                            </form>
                         </div>
                     </div>
                 </div>
-
-                <div class="card-footer footerHome text-end">
-                    <div class="d-flex">
-                        <a href="{{ route('installs') }}"
-                            class="btn btn-primary me-auto ms-3 px-4">{{ __('installer.back') }}</a>
-                        <button type="button" id="test_connection_button"
-                            class="btn btn-warning me-2">{{ __('installer.test_connection') }}</button>
-                        <button type="button" id="test_email_button"
-                            class="btn btn-info me-2">{{ __('installer.test_email') }}</button>
-                        <button type="submit" id="next_button"
-                            class="btn btn-primary px-4">{{ __('installer.next') }}</button>
-                    </div>
-                </div>
-            </form>
+            </div>
         </div>
     </section>
+
+    <style>
+        /* Database config page specific styles - matching finish page */
+        .database-config-card {
+            background: linear-gradient(135deg, #fff 0%, #f8f9ff 100%);
+            border-radius: 20px !important;
+            overflow: hidden;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        .database-title {
+            font-weight: 700;
+            animation: fadeInDown 1s ease-out 0.3s both;
+        }
+
+        .database-subtitle {
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .database-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #4338ca 100%);
+            border: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .database-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Tab styling */
+        .config-tabs {
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            padding: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .config-tabs .nav-link {
+            border: none;
+            border-radius: 10px;
+            color: #6b7280;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 4px;
+            cursor: pointer;
+            user-select: none;
+            pointer-events: auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        .config-tabs .nav-link.active {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #4338ca 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .config-tabs .nav-link:hover:not(.active) {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Tab error indicators */
+        .config-tabs .nav-link.has-error {
+            position: relative;
+        }
+
+        .config-tabs .nav-link.has-error::after {
+            content: '!';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(220, 53, 69, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(220, 53, 69, 0);
+            }
+        }
+
+        /* Tab content styling */
+        .tab-content {
+            min-height: 400px;
+            padding: 20px 0;
+        }
+
+        .tab-pane h5 {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Form styling improvements */
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .btn-outline-secondary {
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Test button improvements */
+        .btn-warning,
+        .btn-info {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-warning:hover,
+        .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Technical details styling */
+        .technical-details-toggle {
+            border-radius: 6px;
+            font-size: 0.875rem;
+            padding: 4px 12px;
+            transition: all 0.3s ease;
+        }
+
+        .technical-details-toggle:hover {
+            background-color: rgba(108, 117, 125, 0.1);
+        }
+
+        .technical-details-content {
+            border-left: 3px solid #dee2e6;
+            padding-left: 15px;
+        }
+
+        .technical-details-content code {
+            color: #e83e8c;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        /* Test button disabled state styling */
+        .btn-secondary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Tooltip styling for disabled button */
+        .btn[title]:disabled {
+            position: relative;
+        }
+
+        /* Required field indicators - Red asterisk for mandatory fields */
+        .required-field::after {
+            content: ' *';
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Validation error message styling */
+        .validation-error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 1px solid #fca5a5;
+            border-radius: 10px;
+            animation: fadeInDown 0.5s ease-out;
+        }
+
+        .missing-field {
+            display: inline-block;
+            background: #dc3545;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin: 2px;
+        }
+
+        /* Validation error styling */
+        .validation-error-message {
+            border-left: 4px solid #dc3545;
+            background: linear-gradient(90deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+        }
+
+        .validation-error-message .btn {
+            font-size: 0.875rem;
+            padding: 6px 12px;
+            margin: 2px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .validation-error-message .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .missing-field {
+            background: rgba(220, 53, 69, 0.1);
+            color: #721c24;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+            margin: 2px;
+            display: inline-block;
+        }
+    </style>
 
     <script>
         /**
@@ -238,16 +602,42 @@
          * 3. Handle form submission with AJAX for validation and error processing
          */
         document.addEventListener('DOMContentLoaded', function () {
+            // Manual tab switching
+            document.querySelectorAll('.config-tabs .nav-link').forEach(tabButton => {
+                tabButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Remove active class from all tabs and content
+                    document.querySelectorAll('.config-tabs .nav-link').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelectorAll('.tab-pane').forEach(pane => {
+                        pane.classList.remove('show', 'active');
+                    });
+
+                    // Add active class to clicked tab
+                    this.classList.add('active');
+
+                    // Show corresponding content
+                    const targetId = this.getAttribute('data-bs-target');
+                    const targetPane = document.querySelector(targetId);
+                    if (targetPane) {
+                        targetPane.classList.add('show', 'active');
+                    }
+                });
+            });
+
             // Get form element and important elements
             const form = document.getElementById('database-form');
             if (!form) {
-                console.error("Form with ID 'database-form' not found");
                 return;
             }
 
             const dbConnectionSelect = document.getElementById('database_connection');
             const mysqlOnlyFields = document.querySelectorAll('.mysql-only');
             const sqliteHelpText = document.getElementById('sqlite_help_text');
+            const testConnectionBtn = document.getElementById('test_connection_button');
 
             // Function to toggle form fields based on database selection
             function toggleDatabaseFields() {
@@ -304,29 +694,133 @@
                         }
                     }
                 }
-            }            // Add event listener to database connection dropdown
-            dbConnectionSelect.addEventListener('change', toggleDatabaseFields);
+            }
 
-            // Run toggle on page load
-            toggleDatabaseFields();
+            // Function to validate required database fields
+            function validateDatabaseFields() {
+                const selectedConnection = dbConnectionSelect.value;
+                let isValid = true;
+                let missingFields = [];
 
-            // Set initial required attributes based on selected connection
-            document.addEventListener('DOMContentLoaded', function () {
-                // Run once to set required attributes
+                // Always check database name
+                const databaseName = document.querySelector('input[name="database_name"]');
+                if (!databaseName || !databaseName.value.trim()) {
+                    isValid = false;
+                    missingFields.push('{{ __("installer.database_name") }}');
+                }
+
+                // Check MySQL specific fields if MySQL is selected
+                if (selectedConnection === 'mysql') {
+                    const hostname = document.querySelector('input[name="database_hostname"]');
+                    const port = document.querySelector('input[name="database_port"]');
+                    const username = document.querySelector('input[name="database_username"]');
+
+                    if (!hostname || !hostname.value.trim()) {
+                        isValid = false;
+                        missingFields.push('{{ __("installer.database_host") }}');
+                    }
+                    if (!port || !port.value.trim()) {
+                        isValid = false;
+                        missingFields.push('{{ __("installer.database_port") }}');
+                    }
+                    if (!username || !username.value.trim()) {
+                        isValid = false;
+                        missingFields.push('{{ __("installer.database_username") }}');
+                    }
+                }
+
+                return { isValid, missingFields };
+            }
+
+            // Function to update test connection button state
+            function updateTestConnectionButtonState() {
+                if (!testConnectionBtn) return;
+
+                const validation = validateDatabaseFields();
+
+                if (validation.isValid) {
+                    testConnectionBtn.disabled = false;
+                    testConnectionBtn.classList.remove('btn-secondary');
+                    testConnectionBtn.classList.add('btn-warning');
+                    testConnectionBtn.title = '';
+                } else {
+                    testConnectionBtn.disabled = true;
+                    testConnectionBtn.classList.remove('btn-warning');
+                    testConnectionBtn.classList.add('btn-secondary');
+                    testConnectionBtn.title = '{{ __("installer.please_fill_required_fields") }}: ' + validation.missingFields.join(', ');
+                }
+            }
+
+            // Add event listener to database connection dropdown
+            if (dbConnectionSelect) {
+                dbConnectionSelect.addEventListener('change', function () {
+                    toggleDatabaseFields();
+                    updateTestConnectionButtonState();
+                });
+                // Run toggle on page load
                 toggleDatabaseFields();
+            }
+
+            // Add event listeners to required fields to update button state
+            const requiredFields = [
+                'input[name="database_name"]',
+                'input[name="database_hostname"]',
+                'input[name="database_port"]',
+                'input[name="database_username"]'
+            ];
+
+            requiredFields.forEach(selector => {
+                const field = document.querySelector(selector);
+                if (field) {
+                    field.addEventListener('input', updateTestConnectionButtonState);
+                    field.addEventListener('blur', updateTestConnectionButtonState);
+                }
+            });
+
+            // Initialize button state after all event listeners are set
+            updateTestConnectionButtonState();
+
+            // Add input event listeners to all form fields to clear tab error indicators when user starts typing
+            const allFormFields = document.querySelectorAll('input, select, textarea');
+            allFormFields.forEach(field => {
+                field.addEventListener('input', clearTabErrorIndicators);
+                field.addEventListener('change', clearTabErrorIndicators);
             });
 
             // Add test connection functionality
-            const testConnectionBtn = document.getElementById('test_connection_button');
             if (testConnectionBtn) {
                 testConnectionBtn.addEventListener('click', function () {
+                    // Validate fields before proceeding
+                    const validation = validateDatabaseFields();
+                    if (!validation.isValid) {
+                        // Show validation error
+                        const validationAlert = document.createElement('div');
+                        validationAlert.className = 'alert alert-warning mb-4';
+                        validationAlert.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.validation_error") }}</strong> {{ __("installer.please_fill_required_fields") }}: ' + validation.missingFields.join(', ');
+
+                        // Add message at the top of the card body
+                        const cardBody = document.querySelector('.database-config-card .card-body');
+                        const headerSection = cardBody.querySelector('.text-center');
+                        if (headerSection) {
+                            headerSection.insertAdjacentElement('afterend', validationAlert);
+                        }
+
+                        // Remove alert after 5 seconds
+                        setTimeout(() => {
+                            validationAlert.remove();
+                        }, 5000);
+
+                        // Scroll to top to show validation error
+                        window.scrollTo(0, 0);
+                        return;
+                    }
                     // Clear any previous messages
                     const previousMessages = document.querySelectorAll('.alert');
                     previousMessages.forEach(msg => msg.remove());
 
                     // Disable test button
                     testConnectionBtn.disabled = true;
-                    testConnectionBtn.innerHTML = '{{ __("installer.testing") }}';
+                    testConnectionBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>{{ __("installer.testing") }}';
 
                     // Collect form data
                     const formData = new FormData(form);
@@ -341,62 +835,183 @@
                     })
                         .then(response => response.json())
                         .then(data => {
-                            // Enable the button again
-                            testConnectionBtn.disabled = false;
-                            testConnectionBtn.innerHTML = '{{ __("installer.test_connection") }}';
+                            // Re-enable the button and update state based on validation
+                            testConnectionBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>{{ __("installer.test_connection") }}';
+                            updateTestConnectionButtonState();
 
                             // Create message div
                             const messageDiv = document.createElement('div');
-                            messageDiv.className = data.success ? 'alert alert-success' : 'alert alert-danger';
-                            messageDiv.innerHTML = '<strong>' + (data.success ? '{{ __("installer.success") }}' : '{{ __("installer.error") }}') + '</strong> ' + data.message;
+                            messageDiv.className = data.success ? 'alert alert-success mb-4' : 'alert alert-danger mb-4';
 
-                            // Add message above Database Configuration card
-                            const dbCard = document.getElementById('db-config-card');
-                            if (dbCard) {
-                                dbCard.parentNode.insertBefore(messageDiv, dbCard);
+                            if (data.success) {
+                                messageDiv.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i><strong>{{ __("installer.success") }}</strong> ' + data.message;
                             } else {
-                                const container = document.querySelector('.container');
-                                const firstChild = container && container.firstChild;
-                                if (firstChild) container.insertBefore(messageDiv, firstChild);
-                                else if (container) container.appendChild(messageDiv);
+                                // Create user-friendly error message with expandable technical details
+                                let errorContent = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.error") }}</strong> ' + data.message;
+
+                                if (data.technical_details) {
+                                    const detailsId = 'technical-details-' + Date.now();
+                                    errorContent += '<div class="mt-3">';
+                                    errorContent += '<a href="#" class="btn btn-sm btn-outline-secondary technical-details-toggle" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false">';
+                                    errorContent += '<i class="bi bi-info-circle me-1"></i>{{ __("installer.database_error_details") }}';
+                                    errorContent += '</a>';
+                                    errorContent += '<div class="collapse mt-2" id="' + detailsId + '">';
+                                    errorContent += '<div class="alert alert-secondary small technical-details-content">';
+                                    errorContent += '<code>' + data.technical_details + '</code>';
+                                    errorContent += '</div>';
+                                    errorContent += '</div>';
+                                    errorContent += '</div>';
+                                }
+
+                                messageDiv.innerHTML = errorContent;
+
+                                // Initialize Bootstrap collapse for technical details
+                                if (data.technical_details) {
+                                    const detailsToggle = messageDiv.querySelector('.technical-details-toggle');
+                                    if (detailsToggle) {
+                                        detailsToggle.addEventListener('click', function (e) {
+                                            e.preventDefault();
+                                            const targetId = this.getAttribute('data-bs-target');
+                                            const targetElement = document.querySelector(targetId);
+                                            if (targetElement) {
+                                                if (targetElement.classList.contains('show')) {
+                                                    targetElement.classList.remove('show');
+                                                    this.setAttribute('aria-expanded', 'false');
+                                                } else {
+                                                    targetElement.classList.add('show');
+                                                    this.setAttribute('aria-expanded', 'true');
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+
+                            // Add message at the top of the card body
+                            const cardBody = document.querySelector('.database-config-card .card-body');
+                            const headerSection = cardBody.querySelector('.text-center');
+                            if (headerSection) {
+                                headerSection.insertAdjacentElement('afterend', messageDiv);
                             }
 
                             // Scroll to top to show message
                             window.scrollTo(0, 0);
                         })
                         .catch(error => {
-                            // Enable the button again
-                            testConnectionBtn.disabled = false;
-                            testConnectionBtn.innerHTML = '{{ __("installer.test_connection") }}';
+                            // Re-enable the button and update state based on validation
+                            testConnectionBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>{{ __("installer.test_connection") }}';
+                            updateTestConnectionButtonState();
 
                             // Create error message
                             const errorDiv = document.createElement('div');
-                            errorDiv.className = 'alert alert-danger';
-                            errorDiv.innerHTML = '<strong>{{ __("installer.connection_error") }}</strong> {{ __("installer.could_not_test_database") }}';
+                            errorDiv.className = 'alert alert-danger mb-4';
+                            errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.connection_error") }}</strong> {{ __("installer.could_not_test_database") }}';
 
-                            // Place error above Database Configuration card
-                            const dbCardErr = document.getElementById('db-config-card');
-                            if (dbCardErr) {
-                                dbCardErr.parentNode.insertBefore(errorDiv, dbCardErr);
-                            } else {
-                                const containerErr = document.querySelector('.container');
-                                const firstChildErr = containerErr && containerErr.firstChild;
-                                if (firstChildErr) containerErr.insertBefore(errorDiv, firstChildErr);
-                                else if (containerErr) containerErr.appendChild(errorDiv);
+                            // Add message at the top of the card body
+                            const cardBody = document.querySelector('.database-config-card .card-body');
+                            const headerSection = cardBody.querySelector('.text-center');
+                            if (headerSection) {
+                                headerSection.insertAdjacentElement('afterend', errorDiv);
                             }
 
                             // Scroll to top to show error
                             window.scrollTo(0, 0);
-
-                            console.error('Error testing connection:', error);
                         });
                 });
             }
+
+            // Function to validate required email fields
+            function validateEmailFields() {
+                let isValid = true;
+                let missingFields = [];
+
+                // Check required email fields
+                const mailHost = document.querySelector('input[name="mail_host"]');
+                const mailPort = document.querySelector('input[name="mail_port"]');
+                const mailUsername = document.querySelector('input[name="mail_username"]');
+
+                if (!mailHost || !mailHost.value.trim()) {
+                    isValid = false;
+                    missingFields.push('{{ __("installer.mail_host") }}');
+                }
+                if (!mailPort || !mailPort.value.trim()) {
+                    isValid = false;
+                    missingFields.push('{{ __("installer.mail_port") }}');
+                }
+                if (!mailUsername || !mailUsername.value.trim()) {
+                    isValid = false;
+                    missingFields.push('{{ __("installer.mail_username") }}');
+                }
+
+                return { isValid, missingFields };
+            }
+
+            // Function to update test email button state
+            function updateTestEmailButtonState() {
+                const testEmailBtn = document.getElementById('test_email_button');
+                if (!testEmailBtn) return;
+
+                const validation = validateEmailFields();
+
+                if (validation.isValid) {
+                    testEmailBtn.disabled = false;
+                    testEmailBtn.classList.remove('btn-secondary');
+                    testEmailBtn.classList.add('btn-info');
+                    testEmailBtn.title = '';
+                } else {
+                    testEmailBtn.disabled = true;
+                    testEmailBtn.classList.remove('btn-info');
+                    testEmailBtn.classList.add('btn-secondary');
+                    testEmailBtn.title = '{{ __("installer.please_fill_required_fields") }}: ' + validation.missingFields.join(', ');
+                }
+            }
+
+            // Add event listeners to required email fields to update button state
+            const requiredEmailFields = [
+                'input[name="mail_host"]',
+                'input[name="mail_port"]',
+                'input[name="mail_username"]'
+            ];
+
+            requiredEmailFields.forEach(selector => {
+                const field = document.querySelector(selector);
+                if (field) {
+                    field.addEventListener('input', updateTestEmailButtonState);
+                    field.addEventListener('blur', updateTestEmailButtonState);
+                }
+            });
+
+            // Initialize email button state
+            updateTestEmailButtonState();
 
             // Add test email functionality
             const testEmailBtn = document.getElementById('test_email_button');
             if (testEmailBtn) {
                 testEmailBtn.addEventListener('click', function () {
+                    // Validate fields before proceeding
+                    const validation = validateEmailFields();
+                    if (!validation.isValid) {
+                        // Show validation error
+                        const validationAlert = document.createElement('div');
+                        validationAlert.className = 'alert alert-warning mb-4';
+                        validationAlert.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.validation_error") }}</strong> {{ __("installer.please_fill_required_fields") }}: ' + validation.missingFields.join(', ');
+
+                        // Add message at the top of the card body
+                        const cardBody = document.querySelector('.database-config-card .card-body');
+                        const headerSection = cardBody.querySelector('.text-center');
+                        if (headerSection) {
+                            headerSection.insertAdjacentElement('afterend', validationAlert);
+                        }
+
+                        // Remove alert after 5 seconds
+                        setTimeout(() => {
+                            validationAlert.remove();
+                        }, 5000);
+
+                        // Scroll to top to show validation error
+                        window.scrollTo(0, 0);
+                        return;
+                    }
                     // Clear any previous email test messages
                     const previousEmailMessages = document.querySelectorAll('.alert');
                     previousEmailMessages.forEach(msg => {
@@ -409,18 +1024,29 @@
 
                     // Disable test button
                     testEmailBtn.disabled = true;
-                    testEmailBtn.innerHTML = '{{ __("installer.testing") }} Email...';
+                    testEmailBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>{{ __("installer.testing") }}';
 
-                    // Collect form data
+                    // Collect form data with null checks
                     const formData = new FormData();
                     formData.append('_token', document.querySelector('input[name="_token"]').value);
-                    formData.append('mail_mailer', document.querySelector('select[name="mail_mailer"]').value);
-                    formData.append('mail_host', document.querySelector('input[name="mail_host"]').value);
-                    formData.append('mail_port', document.querySelector('input[name="mail_port"]').value);
-                    formData.append('mail_username', document.querySelector('input[name="mail_username"]').value);
-                    formData.append('mail_password', document.querySelector('input[name="mail_password"]').value);
-                    formData.append('mail_encryption', document.querySelector('select[name="mail_encryption"]').value);
-                    formData.append('mail_from_address', document.querySelector('input[name="mail_from_address"]').value);
+
+                    // Get form elements with safety checks
+                    const mailMailer = document.querySelector('select[name="mail_mailer"]') || document.querySelector('input[name="mail_mailer"]');
+                    const mailHost = document.querySelector('input[name="mail_host"]');
+                    const mailPort = document.querySelector('input[name="mail_port"]');
+                    const mailUsername = document.querySelector('input[name="mail_username"]');
+                    const mailPassword = document.querySelector('input[name="mail_password"]');
+                    const mailEncryption = document.querySelector('select[name="mail_encryption"]');
+                    const mailFromAddress = document.querySelector('input[name="mail_from_address"]');
+
+                    // Add values only if elements exist
+                    if (mailMailer) formData.append('mail_mailer', mailMailer.value || 'smtp');
+                    if (mailHost) formData.append('mail_host', mailHost.value || 'smtp.gmail.com');
+                    if (mailPort) formData.append('mail_port', mailPort.value || '587');
+                    if (mailUsername) formData.append('mail_username', mailUsername.value || '');
+                    if (mailPassword) formData.append('mail_password', mailPassword.value || '');
+                    if (mailEncryption) formData.append('mail_encryption', mailEncryption.value || 'tls');
+                    if (mailFromAddress) formData.append('mail_from_address', mailFromAddress.value || 'noreply@example.com');
 
                     fetch('{{ route("test_email_connection") }}', {
                         method: 'POST',
@@ -433,62 +1059,267 @@
                         .then(data => {
                             // Enable the button again
                             testEmailBtn.disabled = false;
-                            testEmailBtn.innerHTML = '{{ __("installer.test_email") }}';
+                            testEmailBtn.innerHTML = '<i class="bi bi-envelope-check me-2"></i>{{ __("installer.test_email") }}';
 
                             // Create message div
                             const messageDiv = document.createElement('div');
-                            messageDiv.className = data.success ? 'alert alert-success' : 'alert alert-danger';
-                            messageDiv.innerHTML = '<strong>' + (data.success ? '{{ __("installer.email_test_success") }}' : '{{ __("installer.email_test_failed") }}') + '</strong> ' + data.message;
+                            messageDiv.className = data.success ? 'alert alert-success mb-4' : 'alert alert-danger mb-4';
 
-                            // Add message above Email Configuration card
-                            const emailCard = document.getElementById('email-config-card');
-                            if (emailCard) {
-                                emailCard.parentNode.insertBefore(messageDiv, emailCard);
+                            if (data.success) {
+                                messageDiv.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i><strong>{{ __("installer.email_test_success") }}</strong> ' + data.message;
                             } else {
-                                // Fallback to adding above form
-                                const container = document.querySelector('.container');
-                                const firstChild = container && container.firstChild;
-                                if (firstChild) container.insertBefore(messageDiv, firstChild);
-                                else if (container) container.appendChild(messageDiv);
+                                // Create user-friendly error message with expandable technical details
+                                let errorContent = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.error") }}</strong> ' + data.message;
+
+                                if (data.technical_details) {
+                                    const detailsId = 'email-technical-details-' + Date.now();
+                                    errorContent += '<div class="mt-3">';
+                                    errorContent += '<a href="#" class="btn btn-sm btn-outline-secondary technical-details-toggle" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false">';
+                                    errorContent += '<i class="bi bi-info-circle me-1"></i>{{ __("installer.database_error_details") }}';
+                                    errorContent += '</a>';
+                                    errorContent += '<div class="collapse mt-2" id="' + detailsId + '">';
+                                    errorContent += '<div class="alert alert-secondary small technical-details-content">';
+                                    errorContent += '<code>' + data.technical_details + '</code>';
+                                    errorContent += '</div>';
+                                    errorContent += '</div>';
+                                    errorContent += '</div>';
+                                }
+
+                                messageDiv.innerHTML = errorContent;
+
+                                // Initialize Bootstrap collapse for technical details
+                                if (data.technical_details) {
+                                    const detailsToggle = messageDiv.querySelector('.technical-details-toggle');
+                                    if (detailsToggle) {
+                                        detailsToggle.addEventListener('click', function (e) {
+                                            e.preventDefault();
+                                            const targetId = this.getAttribute('data-bs-target');
+                                            const targetElement = document.querySelector(targetId);
+                                            if (targetElement) {
+                                                if (targetElement.classList.contains('show')) {
+                                                    targetElement.classList.remove('show');
+                                                    this.setAttribute('aria-expanded', 'false');
+                                                } else {
+                                                    targetElement.classList.add('show');
+                                                    this.setAttribute('aria-expanded', 'true');
+                                                }
+                                            }
+                                        });
+                                    }
+                                }
                             }
 
-                            // Scroll to the email card to show message
-                            if (emailCard) {
-                                emailCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            // Add message at the top of the card body
+                            const cardBody = document.querySelector('.database-config-card .card-body');
+                            const headerSection = cardBody.querySelector('.text-center');
+                            if (headerSection) {
+                                headerSection.insertAdjacentElement('afterend', messageDiv);
                             }
+
+                            // Scroll to top to show message
+                            window.scrollTo(0, 0);
                         })
                         .catch(error => {
                             // Enable the button again
                             testEmailBtn.disabled = false;
-                            testEmailBtn.innerHTML = '{{ __("installer.test_email") }}';
+                            testEmailBtn.innerHTML = '<i class="bi bi-envelope-check me-2"></i>{{ __("installer.test_email") }}';
 
                             // Create error message
                             const errorDiv = document.createElement('div');
-                            errorDiv.className = 'alert alert-danger';
-                            errorDiv.innerHTML = '<strong>{{ __("installer.email_test_error") }}</strong> {{ __("installer.could_not_test_email") }}';
+                            errorDiv.className = 'alert alert-danger mb-4';
+                            errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.email_test_error") }}</strong> {{ __("installer.could_not_test_email") }}';
 
-                            // Place error above Email Configuration card
-                            const emailCard = document.getElementById('email-config-card');
-                            if (emailCard) {
-                                emailCard.parentNode.insertBefore(errorDiv, emailCard);
-                                emailCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                            } else {
-                                // Fallback to adding above form
-                                const container = document.querySelector('.container');
-                                const firstChild = container && container.firstChild;
-                                if (firstChild) container.insertBefore(errorDiv, firstChild);
-                                else if (container) container.appendChild(errorDiv);
+                            // Add message at the top of the card body
+                            const cardBody = document.querySelector('.database-config-card .card-body');
+                            const headerSection = cardBody.querySelector('.text-center');
+                            if (headerSection) {
+                                headerSection.insertAdjacentElement('afterend', errorDiv);
                             }
 
-                            console.error('Error testing email:', error);
+                            // Scroll to top to show error
+                            window.scrollTo(0, 0);
                         });
                 });
             }
 
-            // Function to clear previous errors
+            // Function to clear previous errors and tab indicators
             function clearPreviousErrors() {
-                const previousErrors = document.querySelectorAll('.alert.alert-danger');
+                const previousErrors = document.querySelectorAll('.alert.alert-danger, .validation-error-message');
                 previousErrors.forEach(error => error.remove());
+
+                // Remove error indicators from all tabs
+                document.querySelectorAll('.config-tabs .nav-link').forEach(tab => {
+                    tab.classList.remove('has-error');
+                });
+            }
+
+            // Function to clear tab error indicators only (when user is typing)
+            function clearTabErrorIndicators() {
+                document.querySelectorAll('.config-tabs .nav-link').forEach(tab => {
+                    tab.classList.remove('has-error');
+                });
+            }
+
+            // Function to validate all form fields across all tabs
+            function validateAllFormFields(showTabErrors = false) {
+                const validation = {
+                    isValid: true,
+                    errors: {
+                        environment: [],
+                        database: [],
+                        email: []
+                    }
+                };
+
+                // Environment tab validation
+                const appUrl = document.querySelector('input[name="app_url"]');
+                const appTimezone = document.querySelector('select[name="app_timezone"]');
+                const appLocale = document.querySelector('select[name="app_locale"]');
+
+                if (!appUrl || !appUrl.value.trim()) {
+                    validation.isValid = false;
+                    validation.errors.environment.push('{{ __("installer.app_url") }}');
+                }
+                if (!appTimezone || !appTimezone.value.trim()) {
+                    validation.isValid = false;
+                    validation.errors.environment.push('{{ __("installer.app_timezone") }}');
+                }
+                if (!appLocale || !appLocale.value.trim()) {
+                    validation.isValid = false;
+                    validation.errors.environment.push('{{ __("installer.app_locale") }}');
+                }
+
+                // Database tab validation
+                const databaseName = document.querySelector('input[name="database_name"]');
+                if (!databaseName || !databaseName.value.trim()) {
+                    validation.isValid = false;
+                    validation.errors.database.push('{{ __("installer.database_name") }}');
+                }
+
+                // MySQL specific validation
+                if (dbConnectionSelect.value === 'mysql') {
+                    const hostname = document.querySelector('input[name="database_hostname"]');
+                    const port = document.querySelector('input[name="database_port"]');
+                    const username = document.querySelector('input[name="database_username"]');
+
+                    if (!hostname || !hostname.value.trim()) {
+                        validation.isValid = false;
+                        validation.errors.database.push('{{ __("installer.database_host") }}');
+                    }
+                    if (!port || !port.value.trim()) {
+                        validation.isValid = false;
+                        validation.errors.database.push('{{ __("installer.database_port") }}');
+                    }
+                    if (!username || !username.value.trim()) {
+                        validation.isValid = false;
+                        validation.errors.database.push('{{ __("installer.database_username") }}');
+                    }
+                }
+
+                // Email tab validation
+                const mailHost = document.querySelector('input[name="mail_host"]');
+                const mailPort = document.querySelector('input[name="mail_port"]');
+                const mailUsername = document.querySelector('input[name="mail_username"]');
+
+                if (!mailHost || !mailHost.value.trim()) {
+                    validation.isValid = false;
+                    validation.errors.email.push('{{ __("installer.mail_host") }}');
+                }
+                if (!mailPort || !mailPort.value.trim()) {
+                    validation.isValid = false;
+                    validation.errors.email.push('{{ __("installer.mail_port") }}');
+                }
+                if (!mailUsername || !mailUsername.value.trim()) {
+                    validation.isValid = false;
+                    validation.errors.email.push('{{ __("installer.mail_username") }}');
+                }
+
+                return validation;
+            }
+
+            // Function to switch to a specific tab
+            function switchToTab(tabId) {
+                // Remove active from all tabs
+                document.querySelectorAll('.config-tabs .nav-link').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    pane.classList.remove('show', 'active');
+                });
+
+                // Activate target tab
+                const targetTab = document.getElementById(tabId);
+                const targetPane = document.querySelector(targetTab.getAttribute('data-bs-target'));
+
+                if (targetTab && targetPane) {
+                    targetTab.classList.add('active');
+                    targetPane.classList.add('show', 'active');
+                }
+            }
+
+            // Function to show comprehensive validation error
+            function showValidationError(validation, showTabErrors = false) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-danger validation-error-message mb-4';
+
+                let errorContent = '<i class="bi bi-exclamation-triangle-fill me-2"></i>';
+                errorContent += '<strong>{{ __("installer.validation_error") }}</strong><br>';
+                errorContent += '{{ __("installer.form_validation_failed") }} {{ __("installer.check_all_tabs") }}<br><br>';
+
+                // Add tab-specific errors with navigation buttons
+                if (validation.errors.environment.length > 0) {
+                    errorContent += '<div class="mb-3">';
+                    errorContent += '<strong><i class="bi bi-gear me-1"></i>Environment:</strong> ';
+                    validation.errors.environment.forEach(field => {
+                        errorContent += `<span class="missing-field">${field}</span> `;
+                    });
+                    errorContent += '</div>';
+
+                    // Mark environment tab as having errors only if requested
+                    if (showTabErrors) {
+                        document.getElementById('environment-tab').classList.add('has-error');
+                    }
+                }
+
+                if (validation.errors.database.length > 0) {
+                    errorContent += '<div class="mb-3">';
+                    errorContent += '<strong><i class="bi bi-database me-1"></i>Database:</strong> ';
+                    validation.errors.database.forEach(field => {
+                        errorContent += `<span class="missing-field">${field}</span> `;
+                    });
+                    errorContent += '</div>';
+
+                    // Mark database tab as having errors only if requested
+                    if (showTabErrors) {
+                        document.getElementById('database-tab').classList.add('has-error');
+                    }
+                }
+
+                if (validation.errors.email.length > 0) {
+                    errorContent += '<div class="mb-3">';
+                    errorContent += '<strong><i class="bi bi-envelope me-1"></i>Email:</strong> ';
+                    validation.errors.email.forEach(field => {
+                        errorContent += `<span class="missing-field">${field}</span> `;
+                    });
+                    errorContent += '</div>';
+
+                    // Mark email tab as having errors only if requested
+                    if (showTabErrors) {
+                        document.getElementById('email-tab').classList.add('has-error');
+                    }
+                }
+
+                errorDiv.innerHTML = errorContent;
+
+                // Add error message at the top of the card body
+                const cardBody = document.querySelector('.database-config-card .card-body');
+                const headerSection = cardBody.querySelector('.text-center');
+                if (headerSection) {
+                    headerSection.insertAdjacentElement('afterend', errorDiv);
+                }
+
+                // Scroll to top to show error
+                window.scrollTo(0, 0);
             }
 
             // Function to prepare the form for submission - no longer need to touch required attributes
@@ -513,14 +1344,20 @@
             }
 
             form.addEventListener('submit', function (e) {
+                // Prevent default form submission immediately
+                e.preventDefault();
+
                 // Clear any previous error messages
                 clearPreviousErrors();
 
-                // Log form submission
-                console.log('Form is being submitted');
+                // Validate all form fields across all tabs
+                const validation = validateAllFormFields(true); // Show tab errors during form submission
 
-                // Prepare the form before submission
-                prepareFormForSubmission();
+                if (!validation.isValid) {
+                    // Show comprehensive validation error with tab indicators
+                    showValidationError(validation, true);
+                    return;
+                }
 
                 // Get submit button and disable it
                 const nextButton = document.getElementById('next_button');
@@ -528,6 +1365,9 @@
                     nextButton.disabled = true;
                     nextButton.innerHTML = '{{ __("installer.processing") }}';
                 }
+
+                // Prepare the form before submission
+                prepareFormForSubmission();
 
                 // Collect all form data
                 const formData = new FormData(form);
@@ -545,15 +1385,7 @@
                     }
                 }
 
-                const formDataObj = {};
-                formData.forEach((value, key) => {
-                    formDataObj[key] = value;
-                });
-                console.log('Form data:', formDataObj);
-
-                // Submit via fetch API instead of normal form submission
-                e.preventDefault();
-
+                // Submit via fetch API
                 fetch('{{ route('saveWizard') }}', {
                     method: 'POST',
                     body: formData,
@@ -562,7 +1394,6 @@
                     }
                 })
                     .then(response => {
-                        console.log('Response status:', response.status);
                         // Store the response status for later use
                         const responseStatus = response.status;
                         return response.text().then(text => {
@@ -570,36 +1401,57 @@
                         });
                     })
                     .then(({ text: data, status }) => {
-                        console.log('Response data:', data);
                         // Enable the submit button again
-                        document.getElementById('next_button').disabled = false;
+                        if (nextButton) {
+                            nextButton.disabled = false;
+                            nextButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>{{ __("installer.next") }}';
+                        }
 
                         try {
                             const jsonData = JSON.parse(data);
 
                             // Handle error responses
                             if (!jsonData.success && status >= 400) {
-                                console.error('Error response:', jsonData);
-
                                 // Display error messages
                                 if (jsonData.errors) {
                                     const errorDiv = document.createElement('div');
                                     errorDiv.className = 'alert alert-danger';
-                                    errorDiv.innerHTML = '<strong>{{ __("installer.database_connection_error") }}</strong><ul>';
+                                    errorDiv.innerHTML = '<strong>{{ __("installer.database_connection_error") }}</strong>';
 
                                     // Process each error
                                     Object.keys(jsonData.errors).forEach(key => {
                                         const errorMessages = jsonData.errors[key];
-                                        errorMessages.forEach(message => {
-                                            errorDiv.innerHTML += `<li>${message}</li>`;
-                                        });
+
+                                        if (Array.isArray(errorMessages)) {
+                                            // Handle simple array of error messages
+                                            errorMessages.forEach(message => {
+                                                errorDiv.innerHTML += `<p class="mb-2">${message}</p>`;
+                                            });
+                                        } else if (typeof errorMessages === 'object' && errorMessages.message) {
+                                            // Handle structured error with technical details
+                                            errorDiv.innerHTML += `<p class="mb-2">${errorMessages.message}</p>`;
+
+                                            if (errorMessages.technical_details) {
+                                                const detailsId = 'form-technical-details-' + Date.now();
+                                                errorDiv.innerHTML += '<div class="mt-3">';
+                                                errorDiv.innerHTML += '<a href="#" class="btn btn-sm btn-outline-secondary technical-details-toggle" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false">';
+                                                errorDiv.innerHTML += '<i class="bi bi-info-circle me-1"></i>{{ __("installer.database_error_details") }}';
+                                                errorDiv.innerHTML += '</a>';
+                                                errorDiv.innerHTML += '<div class="collapse mt-2" id="' + detailsId + '">';
+                                                errorDiv.innerHTML += '<div class="alert alert-secondary small technical-details-content">';
+                                                errorDiv.innerHTML += '<code>' + errorMessages.technical_details + '</code>';
+                                                errorDiv.innerHTML += '</div>';
+                                                errorDiv.innerHTML += '</div>';
+                                                errorDiv.innerHTML += '</div>';
+                                            }
+                                        }
                                     });
 
-                                    errorDiv.innerHTML += '</ul><p>Please make sure:</p><ul>' +
-                                        '<li>Your database server is running</li>' +
-                                        '<li>The database exists</li>' +
-                                        '<li>Your username and password are correct</li>' +
-                                        '<li>The user has proper permissions on the database</li></ul>';
+                                    errorDiv.innerHTML += '<p class="mt-3 mb-2">{{ __("installer.please_make_sure") }}:</p><ul>' +
+                                        '<li>{{ __("installer.database_server_running") }}</li>' +
+                                        '<li>{{ __("installer.database_exists") }}</li>' +
+                                        '<li>{{ __("installer.credentials_correct") }}</li>' +
+                                        '<li>{{ __("installer.user_has_permissions") }}</li></ul>';
 
                                     // Add error div at the top of the form content
                                     const formCard = form.querySelector('.card-body');
@@ -607,6 +1459,25 @@
                                         formCard.insertAdjacentElement('afterbegin', errorDiv);
                                     } else {
                                         form.insertAdjacentElement('afterbegin', errorDiv);
+                                    }
+
+                                    // Initialize Bootstrap collapse for technical details in form errors
+                                    const formDetailsToggle = errorDiv.querySelector('.technical-details-toggle');
+                                    if (formDetailsToggle) {
+                                        formDetailsToggle.addEventListener('click', function (e) {
+                                            e.preventDefault();
+                                            const targetId = this.getAttribute('data-bs-target');
+                                            const targetElement = document.querySelector(targetId);
+                                            if (targetElement) {
+                                                if (targetElement.classList.contains('show')) {
+                                                    targetElement.classList.remove('show');
+                                                    this.setAttribute('aria-expanded', 'false');
+                                                } else {
+                                                    targetElement.classList.add('show');
+                                                    this.setAttribute('aria-expanded', 'true');
+                                                }
+                                            }
+                                        });
                                     }
 
                                     // Scroll to top to show error
@@ -622,8 +1493,6 @@
                                 window.location.href = '{{ route('profil_perusahaan') }}';
                             }
                         } catch (e) {
-                            console.log('Not a JSON response', e);
-
                             // If response is not JSON, check if it contains a redirect URL
                             if (data.includes('window.location') || data.includes('redirect')) {
                                 // Try to extract URL
@@ -645,10 +1514,9 @@
                         console.error('Error:', error);
 
                         // Re-enable submit button
-                        const nextButton = document.getElementById('next_button');
                         if (nextButton) {
                             nextButton.disabled = false;
-                            nextButton.innerHTML = '{{ __("installer.next") }}';
+                            nextButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>{{ __("installer.next") }}';
                         }
 
                         // Create error message
@@ -742,5 +1610,27 @@
                 setAppDebugBasedOnEnvironment();
             }
         });
+
+        // Global function to switch tabs - accessible from validation error buttons
+        function switchToTab(tabId) {
+            // Remove active classes from all tabs
+            const allTabs = document.querySelectorAll('.nav-link');
+            const allTabPanes = document.querySelectorAll('.tab-pane');
+
+            allTabs.forEach(tab => tab.classList.remove('active'));
+            allTabPanes.forEach(pane => pane.classList.remove('active', 'show'));
+
+            // Activate the target tab
+            const targetTab = document.getElementById(tabId);
+            const targetTabButton = document.querySelector(`[data-bs-target="#${tabId}"]`);
+
+            if (targetTab && targetTabButton) {
+                targetTabButton.classList.add('active');
+                targetTab.classList.add('active', 'show');
+
+                // Scroll to the target tab
+                targetTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
     </script>
 @endsection
