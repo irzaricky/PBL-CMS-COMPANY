@@ -26,6 +26,7 @@ class ProfilPerusahaanViewResource extends JsonResource
             'misi_perusahaan' => $this->misi_perusahaan,
             'alamat_perusahaan' => $this->alamat_perusahaan,
             'link_alamat_perusahaan' => $this->link_alamat_perusahaan,
+            'map_embed_perusahaan' => $this->map_embed_perusahaan,
             'email_perusahaan' => $this->email_perusahaan,
             'telepon_perusahaan' => $this->telepon_perusahaan,
         ];

@@ -35,6 +35,7 @@ class ProfilPerusahaan extends Model
         'deskripsi_perusahaan',
         'alamat_perusahaan',
         'link_alamat_perusahaan',
+        'map_embed_perusahaan',
         'email_perusahaan',
         'telepon_perusahaan',
         'sejarah_perusahaan',

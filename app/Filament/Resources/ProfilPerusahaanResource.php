@@ -85,6 +85,12 @@ class ProfilPerusahaanResource extends Resource
                                     ->visible(fn($get) => filled($get('link_alamat_perusahaan')))
                             ),
 
+                        Forms\Components\TextInput::make('map_embed_perusahaan')
+                            ->label('URL Embed Google Maps')
+                            ->placeholder('https://www.google.com/maps/embed?pb=...')
+                            ->helperText('Salin URL embed dari Google Maps')
+                            ->columnSpan(2),
+
                         Forms\Components\TextInput::make('email_perusahaan')
                             ->label('Email')
                             ->email()

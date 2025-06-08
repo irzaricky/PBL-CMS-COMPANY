@@ -18,6 +18,7 @@ return new class extends Migration {
             $table->text('deskripsi_perusahaan')->nullable();
             $table->string('alamat_perusahaan', 200);
             $table->string('link_alamat_perusahaan')->nullable();
+            $table->text('map_embed_perusahaan')->nullable();
             $table->string('email_perusahaan', 50);
             $table->string('telepon_perusahaan', 50);
             $table->json('sejarah_perusahaan')->nullable();

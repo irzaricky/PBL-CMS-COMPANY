@@ -195,10 +195,23 @@ function lihatSelengkapnya() {
                     <!-- Kolom 4: Google Maps -->
                     <div class="flex flex-col justify-center h-full">
                         <div class="w-full aspect-video rounded-lg overflow-hidden">
-                            <iframe class="w-full h-full"
-                                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7910.17971246413!2d110.8504919!3d-7.565182!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a14234667a3fd%3A0xbda63b32997616ad!2sUniversitas%20Sebelas%20Maret%20(UNS)!5e0!3m2!1sid!2sid!4v1746990931583!5m2!1sid!2sid"
-                                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <iframe 
+                                v-if="profil_perusahaan?.maps_embed_url" 
+                                class="w-full h-full"
+                                :src="profil_perusahaan.maps_embed_url"
+                                width="600" 
+                                height="450" 
+                                style="border:0;" 
+                                allowfullscreen="" 
+                                loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                            <div 
+                                v-else 
+                                class="w-full h-full bg-gray-700 flex items-center justify-center text-gray-400"
+                            >
+                                <span>Peta lokasi belum tersedia</span>
+                            </div>
                         </div>
                     </div>
                 </div>
