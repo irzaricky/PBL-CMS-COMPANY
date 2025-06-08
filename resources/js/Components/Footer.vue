@@ -14,13 +14,13 @@ const maxKalimat = 1
 const truncatedDeskripsi = computed(() => {
     if (!profil_perusahaan.value?.deskripsi_perusahaan) return 'Sejarah perusahaan belum tersedia.'
 
-    const kalimat = profil_perusahaan.value.deskripsi_perusahaan.split(`/(?<=[.!?])\s+/`)
+    const kalimat = profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/)
     return kalimat.slice(0, maxKalimat).join(' ')
 })
 
 const showReadMore = computed(() => {
     if (!profil_perusahaan.value?.deskripsi_perusahaan) return false
-    return profil_perusahaan.value.deskripsi_perusahaan.split(`/(?<=[.!?])\s+/`).length > maxKalimat
+    return profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
 })
 
 onMounted(() => {

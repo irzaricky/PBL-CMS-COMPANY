@@ -2,7 +2,11 @@
 import { ChevronDown, Menu } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import UserMenu from "./MegaMenu/UserMenu.vue";
+<<<<<<< Updated upstream
 import { ref, onMounted, onUnmounted, computed } from "vue";
+=======
+import { ref, onMounted, computed } from "vue";
+>>>>>>> Stashed changes
 import axios from "axios";
 import { Link, usePage } from "@inertiajs/vue3";
 
@@ -44,7 +48,7 @@ const closeOnClickOutside = (event) => {
 async function fetchProfilPerusahaan() {
     try {
         loading.value = true;
-        const response = await axios.get(`/api/profil-perusahaan/navbar`);
+        const response = await axios.get('/api/profil-perusahaan/navbar');
         profil_perusahaan.value = response.data.data;
         loading.value = false;
     } catch (err) {
@@ -90,6 +94,10 @@ onMounted(() => {
 onUnmounted(() => {
     document.removeEventListener("click", closeOnClickOutside);
 });
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 </script>
 
 <template>
