@@ -42,7 +42,9 @@ class ProdukResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $set('slug', str($state)->slug());
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug', $baseSlug . '-' . $dateSlug);
                                 } else {
                                     $set('slug', null);
                                 }
@@ -54,6 +56,7 @@ class ProdukResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->native(false)
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('nama_kategori_produk')
                                     ->label('Nama Kategori')
@@ -84,16 +87,23 @@ class ProdukResource extends Resource
 
                         Forms\Components\TextInput::make('harga_produk')
                             ->label('Harga Produk')
+                            ->numeric()
+                            ->prefix('Rp')
+                            ->suffix(',00')
                             ->required()
                             ->maxLength(50)
+                            ->helperText('Masukkan harga produk dalam format angka tanpa titik')
                             ->placeholder('0'),
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true)
+                            ->unique(Produk::class, 'slug', ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan nama produk'),
+                            ->helperText('Akan terisi otomatis berdasarkan nama produk')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\Select::make('status_produk')
                             ->label('Status Produk')
@@ -102,6 +112,7 @@ class ProdukResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
 
@@ -122,12 +133,33 @@ class ProdukResource extends Resource
                             ->imageResizeTargetHeight(720)
                             ->optimize('webp'),
 
-                        Forms\Components\RichEditor::make('deskripsi_produk')
+                        Forms\Components\TextInput::make('deskripsi_produk')
                             ->label('Deskripsi Produk')
                             ->required()
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('produk-attachments')
                             ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Tautan & Informasi Tambahan')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('link_produk')
+                                    ->label('Tautan Produk')
+                                    ->url()
+                                    ->maxLength(255)
+                                    ->helperText('Masukkan tautan produk')
+                                    ->required()
+                                    ->columnSpan(1),
+                                Forms\Components\Actions::make([
+                                    Forms\Components\Actions\Action::make('openLink')
+                                        ->label('Buka Tautan')
+                                        ->icon('heroicon-s-arrow-top-right-on-square')
+                                        ->url(fn($get) => $get('link_produk'), true)
+                                        ->visible(fn($get) => filled($get('link_produk')))
+                                        ->button()
+                                ])
+                                    ->verticallyAlignCenter()
+                                    ->columnSpan(1),
+                            ]),
                     ]),
             ]);
     }
@@ -166,6 +198,13 @@ class ProdukResource extends Resource
                     ])
                     ->rules(['required']),
 
+                Tables\Columns\TextColumn::make('link_produk')
+                    ->label('Tautan Produk')
+                    ->url(fn($record) => $record->link_produk)
+                    ->openUrlInNewTab()
+                    ->searchable()
+                    ->limit(50),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
@@ -197,13 +236,16 @@ class ProdukResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Produk')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Produk berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Produk')
                     ->successNotificationTitle('Produk berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Produk')
                     ->successNotificationTitle('Produk berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_produk');
@@ -212,10 +254,7 @@ class ProdukResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Produk berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_produk');
-                        }),
+                        ->successNotificationTitle('Produk berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Produk berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()

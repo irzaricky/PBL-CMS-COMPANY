@@ -42,6 +42,8 @@ class DatabaseSeeder extends Seeder
             StrukturOrganisasiSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
+            TestimoniArtikelSeeder::class,
+            TestimoniEventSeeder::class,
         ]);
     }
 

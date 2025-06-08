@@ -9,11 +9,9 @@ return [
     */
 
     'colors' => [
-        'primary' => '#EB4432',
-        'secondary' => '#f85c58',
+        'primary' => '#344D95',
+        'secondary' => '#3B82F6',
     ],
-
-    'install_title' => 'CMS Company Installation',
 
     //
     'core' => [
@@ -37,6 +35,11 @@ return [
             'session',
             'zip',
             'intl',
+            'exif',
+            'sqlite3',
+            'pcre',
+            'hash',
+            'iconv',
         ],
         'apache' => [
             'mod_rewrite',
@@ -54,8 +57,15 @@ return [
     */
     'permissions' => [
         'storage/framework/' => '775',
+        'storage/framework/cache/' => '775',
+        'storage/framework/sessions/' => '775',
+        'storage/framework/views/' => '775',
+        'storage/app/' => '775',
+        'storage/app/public/' => '775',
         'storage/logs/' => '775',
         'bootstrap/cache/' => '775',
+        'public/storage/' => '755',
+
     ],
 
     // environment
@@ -75,28 +85,33 @@ return [
                 'database_name' => 'required|string|max:50',
                 'database_username' => 'nullable|string|max:50',
                 'database_password' => 'nullable|string|max:50',
+                // Email configuration validation rules
+                'mail_mailer' => 'required|string|in:smtp',
+                'mail_host' => 'nullable|string|max:100',
+                'mail_port' => 'nullable|numeric|min:1|max:65535',
+                'mail_username' => 'nullable|string|max:100',
+                'mail_password' => 'nullable|string|max:100',
+                'mail_encryption' => 'nullable|string|in:tls,ssl',
+                'mail_from_address' => 'email|max:100',
             ],
         ],
     ],
 
-    'env' => 'BROADCAST_DRIVER=log' . "\n" .
-        'CACHE_DRIVER=file' . "\n" .
+    'env' => 'BROADCAST_CONNECTION=log' . "\n" .
+        'CACHE_STORE=database' . "\n" .
+        'CACHE_PREFIX=' . "\n" .
         'FILESYSTEM_DISK=local' . "\n" .
         'QUEUE_CONNECTION=sync' . "\n" .
-        'SESSION_DRIVER=file' . "\n" .
-        'SESSION_LIFETIME=120' . "\n\n" .
+        'SESSION_DRIVER=database' . "\n" .
+        'SESSION_LIFETIME=120' . "\n" .
+        'SESSION_ENCRYPT=false' . "\n" .
+        'SESSION_PATH=/' . "\n" .
+        'SESSION_DOMAIN=null' . "\n\n" .
         'MEMCACHED_HOST=127.0.0.1' . "\n\n" .
+        'REDIS_CLIENT=phpredis' . "\n" .
         'REDIS_HOST=127.0.0.1' . "\n" .
         'REDIS_PASSWORD=null' . "\n" .
         'REDIS_PORT=6379' . "\n\n" .
-        'MAIL_MAILER=smtp' . "\n" .
-        'MAIL_HOST=mailpit' . "\n" .
-        'MAIL_PORT=1025' . "\n" .
-        'MAIL_USERNAME=null' . "\n" .
-        'MAIL_PASSWORD=null' . "\n" .
-        'MAIL_ENCRYPTION=null' . "\n" .
-        'MAIL_FROM_ADDRESS="hello@example.com"' . "\n" .
-        'MAIL_FROM_NAME="${APP_NAME}"' . "\n\n" .
         'AWS_ACCESS_KEY_ID=' . "\n" .
         'AWS_SECRET_ACCESS_KEY=' . "\n" .
         'AWS_DEFAULT_REGION=us-east-1' . "\n" .

@@ -29,6 +29,9 @@ class CheckStatusUser
         $allowedRoutes = [
             'filament.admin.auth.login',
             'filament.admin.auth.profile',
+            'filament.admin.auth.register',
+            'filament.admin.auth.email-verification.prompt',
+            'filament.admin.auth.email-verification.verify'
         ];
 
         if (

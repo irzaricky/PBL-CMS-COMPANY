@@ -26,7 +26,7 @@ class GaleriController extends Controller
                 ->where('status_galeri', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
-            $galeri = $query->paginate(10);
+            $galeri = $query->paginate(5);
 
             return GaleriListResource::collection($galeri);
         } catch (\Exception $e) {

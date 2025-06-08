@@ -34,8 +34,8 @@ class DummyUser extends Seeder
 
         // Buat user pertama manual (bisa pakai foto profil juga jika ingin)
         User::create([
-            'name' => 'Test User',
-            'email' => 'testuser@example.com',
+            'name' => 'Irza User',
+            'email' => 'irzaricky35@gmail.com',
             'password' => Hash::make('password123'),
             'email_verified_at' => now(),
             'foto_profil' => $getRandomProfilePicture(), // tambahkan foto profil random

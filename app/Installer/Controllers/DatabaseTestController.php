@@ -25,7 +25,7 @@ class DatabaseTestController extends Controller
         // SQLite configuration
         if ($connection == 'sqlite') {
             // Set SQLite database path to storage root directory
-            $database = storage_path($database ?: 'database.sqlite');
+            $database = storage_path($database ?: 'database-test.sqlite');
 
             // Create empty SQLite file if it doesn't exist
             if (!file_exists(dirname($database))) {
@@ -40,7 +40,8 @@ class DatabaseTestController extends Controller
                     // Log::error('Error creating SQLite database file: ' . $e->getMessage());
                     return response()->json([
                         'success' => false,
-                        'message' => 'Could not create SQLite database file: ' . $e->getMessage()
+                        'message' => __('installer.sqlite_file_creation_failed_friendly'),
+                        'technical_details' => $e->getMessage()
                     ]);
                 }
             }
@@ -106,23 +107,30 @@ class DatabaseTestController extends Controller
         DB::purge();
 
         try {
-            $pdo = DB::connection('testing')->getPdo();
+            DB::connection('testing')->getPdo();
 
             // Try to run a simple query
             DB::connection('testing')->select('SELECT 1 as connection_test');
+            DB::disconnect('testing');
 
             // Log::info('Database connection test successful');
 
+            if ($connection == 'sqlite') {
+                // If SQLite, unlink the database file after testing
+                unlink($database);
+            }
+
             return response()->json([
                 'success' => true,
-                'message' => 'Database connection successful!',
+                'message' => __('installer.database_connection_successful'),
             ]);
         } catch (Exception $e) {
             // Log::error('Database connection test failed: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Database connection failed: ' . $e->getMessage(),
+                'message' => __('installer.database_connection_failed_friendly'),
+                'technical_details' => $e->getMessage(),
             ]);
         }
     }

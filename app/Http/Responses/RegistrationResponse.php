@@ -1,9 +1,10 @@
 <?php
- 
+
 namespace App\Http\Responses;
- 
+
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse as RegistrationResponseContract;
- 
+use App\Notifications\WelcomeNotification;
+
 class RegistrationResponse implements RegistrationResponseContract
 {
     /**
@@ -14,9 +15,14 @@ class RegistrationResponse implements RegistrationResponseContract
      */
     public function toResponse($request)
     {
-        // return whatever you want as url
-        $url = '/';
- 
-        return redirect()->intended($url);
+        // Get the authenticated user
+        $user = $request->user();
+
+        // Send welcome notification
+        if ($user) {
+            $user->notify(new WelcomeNotification());
+        }
+
+        return redirect()->intended('/');
     }
 }

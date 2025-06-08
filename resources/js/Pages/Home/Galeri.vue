@@ -21,13 +21,61 @@ const fetchGaleri = async () => {
 		const response = await axios.get('/api/galeri')
 		galleries.value = response.data.data || []
 
+		if (galleries.value.length === 0) {
+			const placeholders = [
+				{
+					id_galeri: 'placeholder-1',
+					judul_galeri: 'Galeri akan segera hadir',
+					deskripsi_galeri: 'Tim kami sedang mempersiapkan konten galeri yang menarik untuk Anda.',
+					thumbnail_galeri: null,
+					slug: '#'
+				},
+				{
+					id_galeri: 'placeholder-2',
+					judul_galeri: 'Galeri akan segera hadir',
+					deskripsi_galeri: 'Tim kami sedang mempersiapkan konten galeri yang menarik untuk Anda.',
+					thumbnail_galeri: null,
+					slug: '#'
+				}
+			]
+			galleries.value = placeholders
+		}
+
 		leftColumn.value = galleries.value.filter((_, i) => i % 2 === 0)
 		rightColumn.value = galleries.value.filter((_, i) => i % 2 !== 0)
+
+		// Ensure at least one item in each column
+		if (leftColumn.value.length === 0) leftColumn.value = [galleries.value[0]]
+		if (rightColumn.value.length === 0) rightColumn.value = [galleries.value[0]]
 
 		isLoaded.value = true
 	} catch (err) {
 		console.error('Gagal mengambil data galeri:', err)
+		// Add fallback on error
+		handleEmptyGallery()
 	}
+}
+function handleEmptyGallery() {
+    const placeholders = [
+        {
+            id_galeri: 'error-1',
+            judul_galeri: 'Konten galeri tidak tersedia',
+            deskripsi_galeri: 'Silakan coba lagi nanti.',
+            thumbnail_galeri: null,
+            slug: '#'
+        },
+        {
+            id_galeri: 'error-2',
+            judul_galeri: 'Konten galeri tidak tersedia',
+            deskripsi_galeri: 'Silakan coba lagi nanti.',
+            thumbnail_galeri: null,
+            slug: '#'
+        }
+    ]
+    galleries.value = placeholders
+    leftColumn.value = [placeholders[0]]
+    rightColumn.value = [placeholders[1]]
+    isLoaded.value = true
 }
 
 onMounted(() => {
@@ -58,11 +106,13 @@ onBeforeUnmount(() => {
 })
 
 function getImage(image) {
-	if (!image) return "/image/placeholder.webp"
-	if (typeof image === "object" && image !== null) {
-		return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp"
-	}
-	return `/storage/${image}`
+    if (!image) {
+        return "/image/placeholder.webp"
+    }
+    if (typeof image === "object" && image !== null) {
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp"
+    }
+    return `/storage/${image}`
 }
 </script>
 
@@ -73,7 +123,8 @@ function getImage(image) {
 		<!-- Judul -->
 		<div class="w-full max-w-[768px] flex flex-col items-center gap-6 text-center">
 			<h2 class="text-Color-Scheme-1-Text text-4xl lg:text-5xl font-normal leading-tight">Cerita dalam galeri</h2>
-			<p class="text-Color-Scheme-1-Text text-base lg:text-lg leading-relaxed">Setiap foto punya cerita. Yuk, lihat keseruan dan kebersamaan tim kami dari balik lensa.</p>
+			<p class="text-Color-Scheme-1-Text text-base lg:text-lg leading-relaxed">Setiap foto punya cerita. Yuk,
+				lihat keseruan dan kebersamaan tim kami dari balik lensa.</p>
 		</div>
 
 		<!-- Kontainer Galeri -->
@@ -100,7 +151,7 @@ function getImage(image) {
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
 								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
 								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								}}</div>
 								<a :href="`/galeri/${item.slug}`"
 									class="flex items-center gap-2 text-white hover:underline">
 									Lihat Selengkapnya
@@ -129,7 +180,7 @@ function getImage(image) {
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
 								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
 								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								}}</div>
 								<a :href="`/galeri/${item.slug}`"
 									class="flex items-center gap-2 text-white hover:underline">
 									Lihat Selengkapnya
@@ -162,7 +213,7 @@ function getImage(image) {
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
 								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
 								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								}}</div>
 								<a :href="`/galeri/${item.slug}`"
 									class="flex items-center gap-2 text-white hover:underline">
 									Lihat Selengkapnya
@@ -191,7 +242,7 @@ function getImage(image) {
 								class="absolute bottom-4 left-4 right-4 z-20 text-white flex flex-col gap-1 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
 								<div class="text-4xl lg:text-4xl font-thin pb-1">{{ item.judul_galeri }}</div>
 								<div class="text-sm font-light pb-1 leading-snug line-clamp-2">{{ item.deskripsi_galeri
-									}}</div>
+								}}</div>
 								<a :href="`/galeri/${item.slug}`"
 									class="flex items-center gap-2 text-white hover:underline">
 									Lihat Selengkapnya

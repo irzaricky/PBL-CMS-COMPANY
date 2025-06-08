@@ -18,6 +18,7 @@ class ContentGrowthPerFiturTrend extends ApexChartWidget
     protected static ?string $heading = 'Tren Pertumbuhan Konten Per Fitur';
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
+    protected static ?string $pollingInterval = '180s'; // 3 minutes
 
     public ?string $filter = '6_months';
     public ?string $contentType = 'all';

@@ -23,11 +23,13 @@ async function fetchProduk() {
     } finally {
         loading.value = false;
     }
-    function getRandomProduk(array, count) {
-        const shuffled = array.sort(() => 0.5 - Math.random());
-        return shuffled.slice(0, count);
-    }
 }
+
+function getRandomProduk(array, count) {
+    const shuffled = array.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+}
+
 function getImageUrl(image) {
     if (!image) return "/image/placeholder.webp";
 
@@ -41,39 +43,75 @@ function getImageUrl(image) {
 
 <template>
     <div
-        class="w-full px-6 lg:px-16 py-28 bg-Color-Scheme-1-Background flex flex-col items-center gap-20 overflow-hidden font-custom">
+        class="w-full px-6 lg:px-16 py-28 bg-white flex flex-col text-black items-center gap-20 overflow-hidden font-custom">
         <!-- Wrapper untuk membatasi lebar -->
         <div class="w-full max-w-screen-xl mx-auto">
             <!-- Judul Section -->
             <div class="text-center max-w-[768px] flex flex-col items-center gap-4 mx-auto">
-                <div class="text-base font-semibold text-Color-Scheme-1-Text">Mau lihat lebih jauh?</div>
-                <div class="text-5xl font-normal text-Color-Scheme-1-Text">Jelajahi produk kami</div>
-                <div class="text-lg font-normal text-Color-Scheme-1-Text">Lihat list lengkap produk, atau sekadar Window
+                <div class="text-base font-semibold ">Mau lihat lebih jauh?</div>
+                <div class="text-5xl font-normal ">Jelajahi produk kami</div>
+                <div class="text-lg font-normal ">Lihat list lengkap produk, atau sekadar Window
                     Shopping.</div>
+
+                <!-- Tombol Link ke /produk -->
+                <a href="/produk"
+                    class="mt-4 inline-flex items-center gap-2 px-6 text-white py-3 bg-secondary font-medium rounded-full hover:bg-black transition duration-200">
+                    Lihat Semua Produk
+                </a>
             </div>
 
-            <!-- Grid Produk -->
+            <!-- Grid Produk atau Skeleton Loading -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-12">
-                <div v-for="item in produk" :key="item.id_produk"
-                    class="group rounded-2xl bg-secondary shadow-md hover:shadow-lg hover:bg-typography-hover1 transition-all duration-300 overflow-hidden flex flex-col">
-                    <img :src="getImageUrl(item.thumbnail_produk)" alt="Thumbnail Produk"
-                        class="w-full h-48 object-cover" />
+                <!-- Skeleton Loading -->
+                <div v-if="loading" v-for="n in 4" :key="n"
+                    class="relative group p-6 rounded-2xl bg-gray-200 animate-pulse flex flex-col h-96 overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-300 to-gray-200 rounded-2xl"></div>
+                    <div class="relative z-20 mt-auto flex flex-col gap-2">
+                        <div class="h-6 bg-gray-300 rounded w-3/4"></div>
+                        <div class="h-4 bg-gray-300 rounded w-full"></div>
+                        <div class="h-4 bg-gray-300 rounded w-1/2"></div>
+                    </div>
+                </div>
 
-                    <!-- Konten -->
-                    <div class="p-4 flex flex-col gap-2">
-                        <div class="text-xl font-semibold text-third">{{ item.nama_produk }}</div>
-                        <div class="text-sm font-normal text-primary line-clamp-3">{{ item.deskripsi_produk }}</div>
+                <!-- Error State -->
+                <div v-else-if="error" class="col-span-full text-center py-12">
+                    <div class="text-red-500 text-lg">{{ error }}</div>
+                </div>
 
-                        <!-- Button Lihat Selengkapnya -->
-                        <div class="pt-3">
+                <!-- Produk Cards -->
+                <template v-else>
+                    <!-- Loop produk yang ada -->
+                    <div v-for="item in produk" :key="item.id_produk"
+                        class="relative group p-6 rounded-2xl bg-cover bg-center bg-no-repeat flex flex-col h-96 overflow-hidden"
+                        :style="item.thumbnail_produk && item.thumbnail_produk.length > 0
+                            ? `background-image: url('${getImageUrl(item.thumbnail_produk)}')`
+                            : 'background-color: #ccc'">
+
+                        <!-- Overlay -->
+                        <div
+                            class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                        <!-- Konten -->
+                        <div
+                            class="relative z-20 mt-auto text-white flex flex-col gap-2 opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+                            <div class="text-2xl font-normal">{{ item.nama_produk }}</div>
+                            <div class="text-sm font-normal leading-snug truncate">{{ item.deskripsi_produk }}</div>
                             <a :href="`/produk/${item.slug}`"
-                                class="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary text-sm font-semibold rounded-lg hover:bg-typography-dark/40 transition">
+                                class="flex items-center gap-2 text-white font-medium hover:underline">
                                 Lihat Selengkapnya
-                                <ChevronsRight class="w-5 h-5" />
+                                <ChevronRight class="w-3" />
                             </a>
                         </div>
                     </div>
-                </div>
+
+                    <!-- Card tambahan jika produk kurang dari 4 -->
+                    <div v-if="produk.length > 0 && produk.length < 4"
+                        class="p-6 rounded-2xl border bg-gray-100 flex items-center justify-center h-96 text-center col-span-1">
+                        <div class="text-black text-lg font-normal">
+                            Produk lainnya akan segera hadir!
+                        </div>
+                    </div>
+                </template>
             </div>
         </div>
     </div>

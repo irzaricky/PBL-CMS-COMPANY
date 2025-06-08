@@ -16,6 +16,13 @@ class ContentCountsChart extends ApexChartWidget
     protected static ?string $heading = 'Jumlah Konten per Fitur';
     protected static ?int $sort = 1;
     protected static ?string $pollingInterval = '30s';
+    protected string|int|array $columnSpan = [
+        'default' => 2,
+        'sm' => 2,
+        'md' => 1,
+        // layar kecil bakal full, layar medium dan besar bakal 1 kolom
+    ];
+
     protected static bool $deferLoading = true;
     protected function getOptions(): array
     {

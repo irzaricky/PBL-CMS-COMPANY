@@ -4,6 +4,7 @@ namespace App\Http\Resources\Events;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth as Auth;
 
 class EventViewResource extends JsonResource
 {
@@ -27,6 +28,9 @@ class EventViewResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'slug' => $this->slug,
+            // Total registrations and current user's registration status
+            'jumlah_pendaftar' => $this->jumlah_pendaftar,
+            'is_registered' => $this->isUserRegistered(),
         ];
     }
 }

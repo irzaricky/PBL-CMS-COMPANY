@@ -15,6 +15,7 @@ class CustomerServiceActivityTrend extends ApexChartWidget
     protected static ?string $heading = 'Tren Data Customer Service';
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
+    protected static ?string $pollingInterval = '180s'; // 3 minutes
 
     public ?string $filter = '6_months';
     public ?string $activityType = 'all';

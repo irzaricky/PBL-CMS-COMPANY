@@ -84,30 +84,15 @@ class EnvironmentManager
                 'DB_PASSWORD=' . ($request->database_password ?? '') . "\n\n";
         }
 
-        // Add session configuration
-        $envFileData .= 'SESSION_DRIVER=database' . "\n" .
-            'SESSION_LIFETIME=120' . "\n" .
-            'SESSION_ENCRYPT=false' . "\n" .
-            'SESSION_PATH=/' . "\n" .
-            'SESSION_DOMAIN=null' . "\n\n" .
-            'BROADCAST_CONNECTION=log' . "\n" .
-            'FILESYSTEM_DISK=local' . "\n" .
-            'QUEUE_CONNECTION=database' . "\n\n" .
-            'CACHE_STORE=database' . "\n" .
-            'CACHE_PREFIX=' . "\n\n" .
-            'MEMCACHED_HOST=127.0.0.1' . "\n\n" .
-            'REDIS_CLIENT=phpredis' . "\n" .
-            'REDIS_HOST=127.0.0.1' . "\n" .
-            'REDIS_PASSWORD=null' . "\n" .
-            'REDIS_PORT=6379' . "\n\n" .
-            'MAIL_MAILER=log' . "\n" .
-            'MAIL_SCHEME=null' . "\n" .
-            'MAIL_HOST=127.0.0.1' . "\n" .
-            'MAIL_PORT=2525' . "\n" .
-            'MAIL_USERNAME=null' . "\n" .
-            'MAIL_PASSWORD=null' . "\n" .
-            'MAIL_FROM_ADDRESS="hello@example.com"' . "\n" .
-            'MAIL_FROM_NAME="${APP_NAME}"' . "\n\n";
+        // Add email configuration
+        $envFileData .= 'MAIL_MAILER=' . $request->mail_mailer . "\n" .
+            'MAIL_HOST=' . ($request->mail_host ?? '') . "\n" .
+            'MAIL_PORT=' . ($request->mail_port ?? '587') . "\n" .
+            'MAIL_USERNAME="' . ($request->mail_username ?? '') . '"' . "\n" .
+            'MAIL_PASSWORD="' . ($request->mail_password ?? '') . '"' . "\n" .
+            'MAIL_ENCRYPTION=' . ($request->mail_encryption ?? '') . "\n" .
+            'MAIL_FROM_ADDRESS="' . $request->mail_from_address . '"' . "\n" .
+            'MAIL_FROM_NAME="${COMPANY_NAME}"' . "\n\n";
 
         // Add the rest of the environment configuration
         $envFileData .= $env;

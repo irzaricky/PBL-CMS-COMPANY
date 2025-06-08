@@ -42,13 +42,34 @@ class LowonganResource extends Resource
                             ->label('Judul Lowongan')
                             ->required()
                             ->maxLength(200)
-                            ->placeholder('Masukkan judul lowongan pekerjaan'),
+                            ->placeholder('Masukkan judul lowongan pekerjaan')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if (!empty($state)) {
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug', $baseSlug . '-' . $dateSlug);
+                                } else {
+                                    $set('slug', null);
+                                }
+                            }),
+
+                        Forms\Components\TextInput::make('slug')
+                            ->required()
+                            ->maxLength(100)
+                            ->unique(Lowongan::class, 'slug', ignoreRecord: true)
+                            ->dehydrated()
+                            ->helperText('Akan terisi otomatis berdasarkan judul')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\Select::make('id_user')
                             ->label('Pembuat')
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->default(fn() => Auth::id())
                             ->required(),
 
@@ -60,6 +81,7 @@ class LowonganResource extends Resource
                                 'Freelance' => 'Freelance',
                                 'Internship' => 'Internship',
                             ])
+                            ->native(false)
                             ->required(),
 
                         Forms\Components\TextInput::make('gaji')
@@ -114,9 +136,9 @@ class LowonganResource extends Resource
                                     ->default(now())
                                     ->displayFormat('d F Y')
                                     ->native(false)
-                                    ->minDate(fn($record) => $record ? null : now())
+                                    ->minDate(fn($record) => $record ? null : today())
                                     ->validationMessages([
-                                        'after_or_equal' => 'Tanggal dibuka harus sebelum tanggal ditutup.',
+                                        'after_or_equal' => 'Tanggal dibuka tidak boleh sebelum hari ini.',
                                     ]),
 
                                 Forms\Components\DatePicker::make('tanggal_ditutup')
@@ -127,6 +149,7 @@ class LowonganResource extends Resource
                                     ->afterOrEqual('tanggal_dibuka')
                                     ->validationMessages([
                                         'after_or_equal' => 'Tanggal ditutup tidak boleh sebelum tanggal dibuka.',
+                                        'required' => 'Tanggal ditutup harus diisi.',
                                     ]),
                             ]),
 
@@ -270,16 +293,16 @@ class LowonganResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Lowongan')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
-                    ->successNotificationTitle('Lowongan berhasil diarsipkan')
-                    ->before(function ($record) {
-                        MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');
-                    }),
+                    ->successNotificationTitle('Lowongan berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Lowongan')
                     ->successNotificationTitle('Lowongan berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Lowongan')
                     ->successNotificationTitle('Lowongan berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_lowongan');
@@ -288,10 +311,7 @@ class LowonganResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Lowongan berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_lowongan');
-                        }),
+                        ->successNotificationTitle('Lowongan berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Lowongan berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()

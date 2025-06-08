@@ -10,9 +10,10 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class TrendArticlesChart extends ApexChartWidget
 {
     protected static ?string $heading = 'Trend Artikel (Views & Publikasi)';
-    protected static ?int $sort = 2;
+    protected static ?int $sort = 4;
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 2;
+    protected static ?string $pollingInterval = '120s'; // 2 minutes
 
     protected function getOptions(): array
     {
@@ -76,7 +77,7 @@ class TrendArticlesChart extends ApexChartWidget
                     // First y-axis for Total Views
                     'seriesName' => 'Total Views',
                     'title' => [
-                        'text' => 'Total Views',
+                        // 'text' => 'Total Views',
                         'style' => [
                             'color' => '#3b82f6',
                             'fontFamily' => 'inherit',
@@ -98,7 +99,7 @@ class TrendArticlesChart extends ApexChartWidget
                     'opposite' => true,
                     'seriesName' => 'New Articles',
                     'title' => [
-                        'text' => 'New Articles',
+                        // 'text' => 'New Articles',
                         'style' => [
                             'color' => '#22c55e',
                             'fontFamily' => 'inherit',
@@ -184,5 +185,22 @@ class TrendArticlesChart extends ApexChartWidget
             'last_6_months' => 'Last 6 Months',
             'last_year' => 'Last Year',
         ];
+    }
+
+    protected function extraJsOptions(): ?RawJs
+    {
+        return RawJs::make(<<<'JS'
+    {
+        yaxis: [
+            {
+                labels: {
+                    formatter: function (val) {
+                        return val.toLocaleString('id-ID');
+                    }
+                }
+            },
+        ]
+    }
+    JS);
     }
 }

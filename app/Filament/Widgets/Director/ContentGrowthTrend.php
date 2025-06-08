@@ -18,6 +18,7 @@ class ContentGrowthTrend extends ApexChartWidget
     protected static ?string $heading = 'Tren Pertumbuhan Konten';
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
+    protected static ?string $pollingInterval = '300s'; // 3 minutes
 
     public ?string $filter = '6_months';
 

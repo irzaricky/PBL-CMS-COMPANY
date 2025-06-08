@@ -9,7 +9,7 @@ class GaleriCluster extends Cluster
 {
     protected static ?string $navigationIcon = 'heroicon-s-photo';
 
-    protected static ?string $navigationLabel = 'Galeri Management';
+    protected static ?string $navigationLabel = 'Galeri';
 
     protected static ?string $slug = 'Galeri-Management';
 

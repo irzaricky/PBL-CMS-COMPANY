@@ -9,7 +9,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class TopProducts extends BaseWidget
 {
     protected ?string $heading = 'Latest Products';
-    protected static ?int $sort = 6;
+    protected static ?int $sort = 14;
+    protected string|int|array $columnSpan = 2;
     protected static bool $isLazy = true;
 
     protected function getStats(): array

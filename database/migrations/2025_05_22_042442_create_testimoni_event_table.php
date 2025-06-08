@@ -12,7 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('testimoni_event', function (Blueprint $table) {
-            $table->id();
+            $table->id('id_testimoni_event');
+            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
+            $table->foreignId('id_event')->constrained('event', 'id_event')->onDelete('cascade');
+            $table->text('isi_testimoni');
+            $table->tinyInteger('rating')->unsigned()->comment('Rating dari 1-5');
+            $table->string('status')->default('tidak terpublikasi');
             $table->timestamps();
         });
     }

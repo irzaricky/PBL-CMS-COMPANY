@@ -9,7 +9,7 @@ use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class FeedbackStats extends BaseWidget
 {
-    protected static ?string $pollingInterval = '5s';
+    protected static ?string $pollingInterval = '15s';
 
     protected function getStats(): array
     {

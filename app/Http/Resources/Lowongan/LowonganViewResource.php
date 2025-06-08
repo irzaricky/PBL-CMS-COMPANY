@@ -22,12 +22,12 @@ class LowonganViewResource extends JsonResource
             'deskripsi_pekerjaan' => $this->deskripsi_pekerjaan,
             'jenis_lowongan' => $this->jenis_lowongan,
             'gaji' => $this->gaji,
-            'tanggal_dibuka' => $this->tanggal_dibuka->format('Y-m-d'),
-            'tanggal_ditutup' => $this->tanggal_ditutup->format('Y-m-d'),
+            'tanggal_dibuka' => $this->tanggal_dibuka ? $this->tanggal_dibuka->format('Y-m-d') : null,
+            'tanggal_ditutup' => $this->tanggal_ditutup ? $this->tanggal_ditutup->format('Y-m-d') : null,
             'tenaga_dibutuhkan' => $this->tenaga_dibutuhkan,
-            'status' => now()->between($this->tanggal_dibuka, $this->tanggal_ditutup) ? 'Aktif' : 'Tidak Aktif',
-            'created_at' => $this->created_at->format('Y-m-d'),
-            'updated_at' => $this->updated_at->format('Y-m-d'),
+            'status' => $this->tanggal_dibuka && $this->tanggal_ditutup && now()->between($this->tanggal_dibuka, $this->tanggal_ditutup) ? 'Aktif' : 'Tidak Aktif',
+            'created_at' => $this->created_at ? $this->created_at->format('Y-m-d') : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->format('Y-m-d') : null,
             'slug' => $this->slug,
         ];
     }

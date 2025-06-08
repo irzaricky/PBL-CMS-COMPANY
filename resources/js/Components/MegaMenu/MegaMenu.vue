@@ -27,8 +27,10 @@ const otherSections = [
         title: "Informasi",
         links: [
             { href: "/artikel", icon: "FileText", label: "Artikel", toggleKey: "artikel_module" },
+            { href: "/case-study", icon: "BookOpenCheck", label: "Case Study", toggleKey: "case_study_module" },
             { href: "/galeri", icon: "Image", label: "Galeri", toggleKey: "galeri_module" },
             { href: "/unduhan", icon: "Download", label: "Unduhan", toggleKey: "unduhan_module" },
+
         ],
     },
     {

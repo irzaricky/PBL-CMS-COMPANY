@@ -5,25 +5,22 @@ namespace App\Providers\Filament;
 
 use Filament\Pages;
 use Filament\Panel;
-use App\Models\User;
 use Filament\PanelProvider;
+use App\Filament\Pages\ViewEnv;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
-use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Auth;
 use App\Filament\Pages\Auth\Register;
-use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
-use Filament\Navigation\NavigationBuilder;
-use App\Filament\Resources\UnduhanResource;
-use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Widgets\Admin\TotalUsersWidget;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Widgets\Admin\StorageUsageChart;
 use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use Filament\Http\Middleware\AuthenticateSession;
+use App\Filament\Widgets\Admin\FeatureTooglesWidget;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
 use App\Filament\Widgets\Director\ContentGrowthTrend;
 use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
@@ -61,6 +58,7 @@ use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
 use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackStatsCard;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganStatsCard;
+use App\Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use App\Filament\Widgets\ContentManager\Galeri\TopGaleriesStatsWidget;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
@@ -91,11 +89,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
             ->profile(EditProfile::class)
             ->unsavedChangesAlerts()
             ->globalSearch(false)
             ->font('Plus jakarta Sans')
             ->registration(Register::class)
+            ->emailVerification(EmailVerificationPrompt::class)
             ->colors([
                 'primary' => '#3b82f6',
             ])
@@ -112,6 +112,7 @@ class AdminPanelProvider extends PanelProvider
                 StorageUsageChart::class,
                 RemainingStorageWidget::class,
                 StorageUsageByFeatureChart::class,
+                FeatureTooglesWidget::class,
 
                     // Content Manager widgets
                 ContentCountsChart::class,
@@ -184,9 +185,13 @@ class AdminPanelProvider extends PanelProvider
                     ->formPanelWidth('40%'),
                 FilamentApexChartsPlugin::make(),
                 FilamentEnvEditorPlugin::make()
-                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS')
+                    ->navigationGroup('System')
+                    ->navigationLabel('Environment Editor')
+                    ->navigationIcon('heroicon-o-cog')
+                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS', 'APP_NAME')
+                    ->viewPage(ViewEnv::class)
                     ->authorize(
-                        fn() => auth()->user()?->can('page_ViewEnv')
+                        fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')
                     ),
                 EnvironmentIndicatorPlugin::make(),
             ])

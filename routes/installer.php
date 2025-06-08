@@ -5,14 +5,19 @@ use App\Installer\Controllers\InstallerController;
 use App\Installer\Controllers\DatabaseController;
 use App\Installer\Controllers\DatabaseTestController;
 use App\Installer\Middleware\CheckDatabaseConnectionMiddleware;
+use App\Installer\Middleware\SetInstallerLocale;
 
 Route::get('install-app', function () {
-    return redirect(route('installs'));
+    return redirect(route('welcome'));
 });
 
+Route::group(['middleware' => ['installCheck', SetInstallerLocale::class], 'prefix' => 'install-app'], function () {
 
+    // Language switching route
+    Route::get('language/{locale}', [InstallerController::class, 'switchLanguage'])->name('installer.language');
 
-Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], function () {
+    Route::get('welcome', [InstallerController::class, 'welcome'])->name('welcome');
+    Route::post('welcome-continue', [InstallerController::class, 'welcomeContinue'])->name('welcome_continue');
 
     Route::get('requirements-permissions', [InstallerController::class, 'index'])->name('installs');
     Route::post('install-check', [InstallerController::class, 'install_check'])->name('install_check');
@@ -20,6 +25,7 @@ Route::group(['middleware' => ['installCheck'], 'prefix' => 'install-app'], func
     Route::get('database-import', [DatabaseController::class, 'databaseImport'])->name('database_import');
     Route::post('save-wizard', [DatabaseController::class, 'saveWizard'])->name('saveWizard');
     Route::post('test-database-connection', [DatabaseTestController::class, 'testConnection'])->name('test_database_connection');
+    Route::post('test-email-connection', [DatabaseController::class, 'testEmailConnection'])->name('test_email_connection');
 
     Route::middleware([CheckDatabaseConnectionMiddleware::class])->group(function () {
         Route::get('profil-perusahaan', [InstallerController::class, 'profilPerusahaan'])->name('profil_perusahaan');

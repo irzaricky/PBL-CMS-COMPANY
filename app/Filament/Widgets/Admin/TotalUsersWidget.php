@@ -11,6 +11,7 @@ class TotalUsersWidget extends BaseWidget
     protected static ?int $sort = 1;
     protected static bool $isLazy = true;
     protected int|string|array $columnSpan = 'sm';
+    protected static ?string $pollingInterval = '300s'; 
     protected static string $view = 'filament.widgets.total-users-stats';
 
 

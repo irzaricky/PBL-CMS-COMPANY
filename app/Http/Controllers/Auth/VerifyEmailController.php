@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 
 class VerifyEmailController extends Controller
 {
@@ -14,14 +15,18 @@ class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): RedirectResponse
     {
+        Log::info('VerifyEmailController hit', ['user' => $request->user()]);
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+            return redirect()->route('home', ['verified' => 1]);
         }
 
         if ($request->user()->markEmailAsVerified()) {
             event(new Verified($request->user()));
+            // Send exactly one database notification
+            $request->user()->notify(new \App\Notifications\EmailVerifiedNotification());
         }
 
-        return redirect()->intended(route('dashboard', absolute: false).'?verified=1');
+        // Redirect to home so Inertia share middleware will fetch notifications
+        return redirect()->route('home', ['verified' => 1]);
     }
 }

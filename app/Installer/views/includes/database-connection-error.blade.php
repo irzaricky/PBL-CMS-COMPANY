@@ -1,6 +1,6 @@
 @if(session('db_connection_error') || session('database_error') || $errors->has('database_connection') || $errors->has('database_fields') || $errors->has('save_error'))
     <div class="alert alert-danger">
-        <strong>Database Connection Error!</strong>
+        <strong>{{ __('installer.database_connection_error') }}</strong>
         <ul>
             @if(session('db_connection_error'))
                 <li>{{ session('db_connection_error') }}</li>
@@ -18,12 +18,12 @@
                 <li>{{ $errors->first('save_error') }}</li>
             @endif
         </ul>
-        <p>Please make sure:</p>
+        <p>{{ __('installer.please_make_sure') }}:</p>
         <ul>
-            <li>Your database server is running</li>
-            <li>The database exists</li>
-            <li>Your username and password are correct</li>
-            <li>The user has proper permissions on the database</li>
+            <li>{{ __('installer.database_server_running') }}</li>
+            <li>{{ __('installer.database_exists') }}</li>
+            <li>{{ __('installer.credentials_correct') }}</li>
+            <li>{{ __('installer.user_has_permissions') }}</li>
         </ul>
     </div>
 @endif

@@ -17,10 +17,17 @@ class LamaranResource extends JsonResource
     {
         return [
             'id_lamaran' => $this->id_lamaran,
-            'nama_asli' => $this->nama_asli,
+            'surat_lamaran' => $this->surat_lamaran ? url('storage/' . $this->surat_lamaran) : null,
+            'user' => [
+                'id_user' => $this->user->id_user,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+            ],
+            'pesan_pelamar' => $this->pesan_pelamar,
             'lowongan' => [
                 'id_lowongan' => $this->lowongan->id_lowongan,
                 'judul_lowongan' => $this->lowongan->judul_lowongan,
+                'slug' => $this->lowongan->slug,
             ],
             'status_lamaran' => $this->status_lamaran,
             'cv' => $this->cv ? url('storage/' . $this->cv) : null,

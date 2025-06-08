@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lamaran;
+use App\Models\Lowongan;
+use App\Models\User;
 use App\Http\Resources\LamaranResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\LamaranSubmissionNotification; // Add this import
 
 class LamaranController extends Controller
 {
@@ -23,9 +26,10 @@ class LamaranController extends Controller
             $validator = Validator::make($request->all(), [
                 'id_user' => 'required|exists:users,id_user|integer',
                 'id_lowongan' => 'required|exists:lowongan,id_lowongan|integer',
-                'nama_asli' => 'required|string|max:100',
-                'cv' => 'file|mimes:pdf,doc,docx|max:2048',
-                'portfolio' => 'file|mimes:pdf,doc,docx,zip|max:5120',
+                'surat_lamaran' => 'required|file|mimes:pdf,doc,docx|max:5120',
+                'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
+                'portfolio' => 'nullable|file|mimes:pdf,doc,docx,zip|max:5120',
+                'pesan_pelamar' => 'nullable|string|max:500',
             ]);
 
             if ($validator->fails()) {
@@ -39,9 +43,15 @@ class LamaranController extends Controller
             $data = [
                 'id_user' => $request->id_user,
                 'id_lowongan' => $request->id_lowongan,
-                'nama_asli' => $request->nama_asli,
+                'pesan_pelamar' => $request->pesan_pelamar, 
                 'status_lamaran' => 'Diproses'
             ];
+
+            // Upload surat lamaran
+            if ($request->hasFile('surat_lamaran')) {
+                $suratPath = $request->file('surat_lamaran')->store('lamaran/surat-lamaran', 'public');
+                $data['surat_lamaran'] = $suratPath;
+            }
 
             // Upload CV jika ada
             if ($request->hasFile('cv')) {
@@ -54,7 +64,13 @@ class LamaranController extends Controller
                 $portfolioPath = $request->file('portfolio')->store('lamaran/portfolio', 'public');
                 $data['portfolio'] = $portfolioPath;
             }
+            
             $lamaran = Lamaran::create($data);
+            
+            // Send notification to user
+            $lowongan = Lowongan::find($request->id_lowongan);
+            $user = User::find($request->id_user);
+            $user->notify(new LamaranSubmissionNotification($lamaran, $lowongan));
 
             return (new LamaranResource($lamaran))
                 ->additional([
@@ -81,17 +97,50 @@ class LamaranController extends Controller
         try {
             $lamaran = Lamaran::with('lowongan')
                 ->where('id_user', $userId)
-                ->orderBy('created_at', 'desc')
                 ->get();
 
             return LamaranResource::collection($lamaran)
                 ->additional([
-                    'status' => 'success'
+                    'status' => 'success',
+                    'message' => 'Lamaran berhasil diambil'
                 ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Gagal memuat lamaran',
+                'message' => 'Gagal mengambil data lamaran',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mengambil detail lamaran berdasarkan ID
+     * 
+     * @param int $id
+     * @return \Illuminate\Http\Resources\Json\JsonResource|\Illuminate\Http\JsonResponse
+     */
+    public function show($id)
+    {
+        try {
+            $lamaran = Lamaran::with('lowongan', 'user')
+                ->findOrFail($id);
+
+            // if (auth()->check() && auth()->user()->id_user != $lamaran->id_user) {
+            //     return response()->json([
+            //         'status' => 'error',
+            //         'message' => 'Anda tidak memiliki akses untuk melihat lamaran ini'
+            //     ], 403);
+            // }
+
+            return (new LamaranResource($lamaran))
+                ->additional([
+                    'status' => 'success',
+                    'message' => 'Detail lamaran berhasil diambil'
+                ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil detail lamaran',
                 'error' => $e->getMessage()
             ], 500);
         }

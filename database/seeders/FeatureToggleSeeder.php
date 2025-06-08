@@ -12,6 +12,7 @@ class FeatureToggleSeeder extends Seeder
         // Data modul yang akan dimasukkan ke dalam tabel feature_toggles
         $modules = [
             ['key' => 'artikel_module', 'label' => 'Modul Artikel', 'status_aktif' => true],
+            ['key' => 'case_study_module', 'label' => 'Modul Case Study', 'status_aktif' => true],
             ['key' => 'event_module', 'label' => 'Modul Event', 'status_aktif' => true],
             ['key' => 'feedback_module', 'label' => 'Modul Feedback', 'status_aktif' => true],
             ['key' => 'galeri_module', 'label' => 'Modul Galeri', 'status_aktif' => true],

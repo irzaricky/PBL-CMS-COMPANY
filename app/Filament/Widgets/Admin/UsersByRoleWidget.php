@@ -14,6 +14,7 @@ class UsersByRoleWidget extends ApexChartWidget
     protected static ?int $sort = 2;
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'sm';
+    protected static ?string $pollingInterval = '150s';
 
 
     public static function canView(): bool

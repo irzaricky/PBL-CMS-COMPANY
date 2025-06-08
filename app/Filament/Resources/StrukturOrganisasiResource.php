@@ -50,6 +50,7 @@ class StrukturOrganisasiResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
+                            ->native(false)
                             ->helperText('Pilih pengguna yang menempati posisi ini. Status posisi akan mengikuti status pengguna'),
 
                         Forms\Components\TextInput::make('jabatan')
@@ -181,13 +182,16 @@ class StrukturOrganisasiResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Struktur Organisasi')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Struktur organisasi berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Struktur Organisasi')
                     ->successNotificationTitle('Struktur organisasi berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Struktur Organisasi')
                     ->successNotificationTitle('Struktur organisasi berhasil dihapus permanen'),
             ])
             ->bulkActions([
