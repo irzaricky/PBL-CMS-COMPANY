@@ -21,7 +21,7 @@ class EventListResource extends JsonResource
             'deskripsi_event' => substr($this->deskripsi_event, 0, 100) . '...',
             'thumbnail_event' => $this->thumbnail_event,
             'lokasi_event' => $this->lokasi_event,
-            // 'link_lokasi_event' => $this->link_lokasi_event,
+            'link_lokasi_event' => $this->link_lokasi_event,
             'waktu_start_event' => $this->waktu_start_event,
             'waktu_end_event' => $this->waktu_end_event,
             'created_at' => $this->created_at,

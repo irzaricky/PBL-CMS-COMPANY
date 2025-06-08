@@ -15,6 +15,7 @@ use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Tables\Actions\RestoreBulkAction;
 use App\Filament\Resources\EventResource\Pages;
+use App\Helpers\FilamentGroupingHelper;
 use App\Services\FileHandlers\MultipleFileHandler;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -24,8 +25,12 @@ use App\Filament\Resources\EventResource\Widgets\EventStats;
 class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
-    protected static ?string $navigationGroup = 'Content Management';
     protected static ?string $navigationIcon = 'heroicon-s-calendar';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return FilamentGroupingHelper::getNavigationGroup('Content Management');
+    }
 
     public static function form(Form $form): Form
     {
@@ -231,7 +236,7 @@ class EventResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                    ->label('arsipkan')
+                    ->label('Arsipkan')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Event berhasil diarsipkan'),

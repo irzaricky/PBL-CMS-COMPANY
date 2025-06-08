@@ -2,24 +2,25 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 import { computed } from "vue";
+import { Link } from "@inertiajs/vue3";
+import { Phone, Mail, MapPin } from "lucide-vue-next";
 
-// Reactive variables
 const profil_perusahaan = ref(null);
 const loading = ref(false);
 const error = ref(null);
 
 const maxKalimat = 1
 
-const truncatedSejarah = computed(() => {
-    if (!profil_perusahaan.value?.sejarah_perusahaan) return 'Sejarah perusahaan belum tersedia.'
+const truncatedDeskripsi = computed(() => {
+    if (!profil_perusahaan.value?.deskripsi_perusahaan) return 'Sejarah perusahaan belum tersedia.'
 
-    const kalimat = profil_perusahaan.value.sejarah_perusahaan.split(/(?<=[.!?])\s+/)
+    const kalimat = profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/)
     return kalimat.slice(0, maxKalimat).join(' ')
 })
 
 const showReadMore = computed(() => {
-    if (!profil_perusahaan.value?.sejarah_perusahaan) return false
-    return profil_perusahaan.value.sejarah_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
+    if (!profil_perusahaan.value?.deskripsi_perusahaan) return false
+    return profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
 })
 
 onMounted(() => {
@@ -68,64 +69,66 @@ function lihatSelengkapnya() {
                                 class="w-20 object-contain" />
                         </div>
                         <h4 class="font-bold text-center text-lg">{{ profil_perusahaan?.nama_perusahaan }}</h4>
-                        <p class="mt-4 text-left font-semibold text-sm">
-                            {{ truncatedSejarah }}
-                            <span v-if="showReadMore" class="text-blue-400 cursor-pointer" @click="lihatSelengkapnya">
+                        <p class="mt-4 text-left">
+                            {{ truncatedDeskripsi }}
+                            <Link v-if="showReadMore" href="/profil-perusahaan" class="text-blue-400 cursor-pointer">
                                 ... Baca selengkapnya
-                            </span>
+                            </Link>
                         </p>
 
-                    <div class="mt-6">
-                        <h4 class="font-bold text-2xl pb-1">Contact Us</h4>
-                        <div class="flex items-center gap-2 font-semibold text-base">
-                            <Phone class="w-5" />
-                            <span>(031) 33101059</span>
-                        </div>
-                        <div class="flex items-center gap-2 font-semibold text-base">
-                            <Mail class="w-5" />
-                            <span>marketing@biiscorp.com</span>
+                        <div class="mt-6">
+                            <h4 class="font-bold pb-1">Contact Us</h4>
+                            <div class="flex items-center gap-2">
+                                <Phone class="w-4" />
+                                <span>(031) 33101059</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <Mail class="w-4" />
+                                <span>marketing@biiscorp.com</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Kolom 2 -->
-                <div class="flex flex-col justify-center h-full lg:col-span-2 lg:pl-20">
-                    <h4 class="font-bold mb-4 text-2xl">Quick Links</h4>
-                    <ul class="grid grid-cols-2 gap-y-2 font-semibold text-base">
-                        <li><a href="#" class="hover:underline">Beranda</a></li>
-                        <li><a href="#" class="hover:underline">Galeri</a></li>
-                        <li><a href="#" class="hover:underline">Tentang Kami</a></li>
-                        <li><a href="#" class="hover:underline">Unduhan</a></li>
-                        <li><a href="#" class="hover:underline">Produk</a></li>
-                        <li><a href="#" class="hover:underline">Event</a></li>
-                        <li><a href="#" class="hover:underline">Artikel</a></li>
-                        <li><a href="#" class="hover:underline">Lowongan</a></li>
-                    </ul>
-                </div>
+                    <!-- Kolom 2 -->
+                    <div class="flex flex-col justify-center h-full lg:col-span-2 lg:pl-20">
+                        <h4 class="font-bold mb-4">Quick Links</h4>
+                        <ul class="grid grid-cols-2 gap-y-2">
+                            <li><a href="#" class="hover:underline">Beranda</a></li>
+                            <li><a href="#" class="hover:underline">Galeri</a></li>
+                            <li><a href="#" class="hover:underline">Tentang Kami</a></li>
+                            <li><a href="#" class="hover:underline">Unduhan</a></li>
+                            <li><a href="#" class="hover:underline">Produk</a></li>
+                            <li><a href="#" class="hover:underline">Event</a></li>
+                            <li><a href="#" class="hover:underline">Artikel</a></li>
+                            <li><a href="#" class="hover:underline">Lowongan</a></li>
+                        </ul>
+                    </div>
 
-                <!-- Kolom 3 -->
-                <div class="space-y-6 flex flex-col justify-center h-full">
-                    <div>
-                        <h4 class="font-bold text-2xl mb-4">Our Location</h4>
-                        <div class="flex items-start gap-2 font-semibold text-sm">
-                            <MapPin class="w-10 lg:w-20 self-center" />
-                            <span class="leading-relaxed">
-                                {{ profil_perusahaan?.alamat_perusahaan || 'Alamat perusahaan belum tersedia.' }}
-                            </span>
+                    <!-- Kolom 3 -->
+                    <div class="space-y-6 flex flex-col justify-center h-full">
+                        <div>
+                            <h4 class="font-bold mb-4">Our Location</h4>
+                            <div class="flex items-start gap-2">
+                                <MapPin class="w-10 lg:w-20 self-center" />
+                                <span class="leading-relaxed">
+                                    {{ profil_perusahaan?.alamat_perusahaan || 'Alamat perusahaan belum tersedia.' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-4">Follow Us</h4>
+                            <div class="flex flex-wrap gap-4">
+                                <a href="#" target="_blank" rel="noopener noreferrer"><i
+                                        class="bi bi-instagram"></i></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-tiktok"></i></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><i
+                                        class="bi bi-twitter-x"></i></a>
+                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-telegram"></i></a>
+                            </div>
                         </div>
                     </div>
-                    <div>
-                        <h4 class="font-bold mb-4 text-2xl">Follow Us</h4>
-                        <div class="flex flex-wrap gap-4">
-                            <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-instagram"></i></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-tiktok"></i></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-twitter-x"></i></a>
-                            <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-telegram"></i></a>
-                        </div>
-                    </div>
-                </div>
 
                     <!-- Kolom 4: Google Maps -->
                     <div class="flex flex-col justify-center h-full">
@@ -142,7 +145,7 @@ function lihatSelengkapnya() {
 
         <!-- Copyright -->
         <div class="bg-white text-black h-10 mt-10">
-            <p class="text-center font-semibold text-base leading-10">
+            <p class="text-center leading-10">
                 © 2025 {{ profil_perusahaan?.nama_perusahaan }}.
             </p>
         </div>

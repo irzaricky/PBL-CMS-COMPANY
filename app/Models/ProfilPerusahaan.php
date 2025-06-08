@@ -49,5 +49,6 @@ class ProfilPerusahaan extends Model
      */
     protected $casts = [
         'thumbnail_perusahaan' => 'array',
+        'sejarah_perusahaan' => 'array',
     ];
 }

@@ -36,5 +36,5 @@ class FeatureToggle extends Model
         'status_aktif',
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 }

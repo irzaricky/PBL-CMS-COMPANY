@@ -1,249 +1,172 @@
 <script setup>
+import AppLayout from "@/Layouts/AppLayout.vue";
 import axios from "axios";
-import { ref, onMounted, computed } from "vue";
-import Navbar from "@/Components/Navbar.vue";
+import { ref, onMounted } from "vue";
+import { MapPin, Clock } from "lucide-vue-next";
+import { Link } from "@inertiajs/vue3";
 
 const events = ref([]);
+const featuredEvent = ref(null);
 const loading = ref(true);
 
-// fungsi yang dijalankan saat view di muat
 onMounted(() => {
     fetchEvents();
 });
 
-// Fungsi untuk mengambil event dari API
+// Ambil semua event
 async function fetchEvents() {
     try {
-        const response = await axios.get("/api/event");
-        events.value = response.data.data;
-        loading.value = false;
+        const [all, newest] = await Promise.all([
+            axios.get("/api/event"),
+            axios.get("/api/event/newest"),
+        ]);
+
+        events.value = all.data.data;
+        featuredEvent.value = newest.data.data;
+
+        // Filter featured dari daftar lainnya
+        events.value = events.value.filter(e => e.id_event !== featuredEvent.value?.id_event);
+
     } catch (error) {
         console.error("Error fetching events:", error);
+    } finally {
         loading.value = false;
     }
 }
 
-// Fungsi untuk mendapatkan URL gambar
 function getImageUrl(image) {
     if (!image) return "/image/placeholder.webp";
-
     if (typeof image === "object" && image !== null) {
         return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
     }
-
     return `/storage/${image}`;
 }
 
-// Fungsi untuk memformat tanggal
 function formatDate(date) {
     if (!date) return "";
-    const eventDate = new Date(date);
-    return eventDate.toLocaleDateString("id-ID", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-    });
+    const d = new Date(date);
+    return d.toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" });
 }
 
-// Fungsi untuk memformat waktu (jam)
-function formatTime(date) {
-    if (!date) return "";
-    const eventTime = new Date(date);
-    return eventTime.toLocaleTimeString("id-ID", {
+function getDay(date) {
+    return new Date(date).toLocaleDateString("id-ID", { weekday: "short" });
+}
+
+function getDate(date) {
+    return new Date(date).getDate();
+}
+
+function getMonthYear(date) {
+    return new Date(date).toLocaleDateString("id-ID", { month: "short", year: "numeric" });
+}
+
+function formatTimeRange(start, end) {
+    const startTime = new Date(start);
+    const endTime = new Date(end);
+
+    const startStr = startTime.toLocaleTimeString("id-ID", {
         hour: "2-digit",
         minute: "2-digit",
+        hour12: false,
     });
-}
 
-// Mengelompokkan event (hanya yang akan datang)
-const upcomingEvents = computed(() => {
-    return events.value;
-});
+    const endStr = endTime.toLocaleTimeString("id-ID", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    });
+
+    return `${startStr} - ${endStr}`;
+}
 </script>
 
 <template>
-    <Navbar />
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 font-custom">
-        <h1 class="text-3xl font-bold text-blue-900 mb-8">Events</h1>
-
-        <!-- Loading state -->
-        <div v-if="loading" class="flex justify-center items-center py-12">
-            <div
-                class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"
-            ></div>
-        </div>
-
-        <div v-else>
-            <!-- Upcoming Events Section -->
-            <div>
-                <!--<h2>
-                    class="text-2xl font-semibold text-gray-800 mb-6 flex items-center"
-                >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 mr-2 text-blue-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                    >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                    </svg>
-                    Upcoming Events
-                </h2>-->
-
-                <div
-                    v-if="upcomingEvents.length === 0"
-                    class="text-gray-500 text-center py-10 bg-gray-50 rounded-lg"
-                >
-                    No upcoming events scheduled
+    <AppLayout>
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-28 bg-background text-black font-custom">
+            <div class="flex flex-col gap-20 overflow-hidden">
+                <!-- Header -->
+                <div class="flex flex-col gap-4">
+                    <div class="text-base font-semibold">Datangi</div>
+                    <div class="flex flex-col gap-6 text-left">
+                        <h1 class="text-5xl leading-[1.2] font-normal">Event kami!</h1>
+                        <p class="text-lg leading-relaxed text-gray-700">Jangan sampai ketinggalan event seru dari kami!
+                        </p>
+                    </div>
                 </div>
 
-                <div
-                    v-else
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                    <div
-                        v-for="event in upcomingEvents"
-                        :key="event.id_event"
-                        class="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
-                    >
-                    
-                        <!-- Event image -->
-                        <div class=" w-full flex justify-center px-3 py-3 h-48 overflow-hidden">
-                            <img
-                                :src="getImageUrl(event.thumbnail_event)"
-                                :alt="event.nama_event"
-                                class="w-full h-full object-cover rounded-2xl"
-                            />
-                        </div>
-
-                        <!-- Event tag -->
-                        <div class="px-6 pt-4">
-                            <span
-                                class="inline-block bg-blue-500 text-white text-xs px-3 py-1 rounded-full uppercase font-semibold tracking-wide"
-                            >
-                                Upcoming Event
-                            </span>
-                        </div>
-
-                        <!-- Event content -->
-                        <div class="p-6">
-                            <h3
-                                class="text-xl font-semibold text-gray-800 mb-3 line-clamp-2"
-                            >
-                                {{ event.nama_event }}
-                            </h3>
-
+                <!-- Featured Event -->
+                <div v-if="featuredEvent" class="flex flex-col gap-8">
+                    <h2 class="text-4xl font-normal">Event Terbaru</h2>
+                    <div class="flex flex-col lg:flex-row gap-12">
+                        <div class="relative flex-1">
+                            <img class="w-full h-96 object-cover rounded-2xl"
+                                :src="getImageUrl(featuredEvent.thumbnail_event)" alt="Event Image" />
                             <div
-                                class="flex items-center mb-4 text-sm text-gray-600"
-                            >
-                                <span class="flex items-center">
-                                    <svg
-                                        class="h-4 w-4 mr-1"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                                        />
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                                        />
-                                    </svg>
+                                class="absolute left-4 top-4 bg-white text-black rounded-2xl px-3 py-2 text-center shadow-lg">
+                                <div class="text-sm">{{ getDay(featuredEvent.waktu_start_event) }}</div>
+                                <div class="text-3xl font-semibold">{{ getDate(featuredEvent.waktu_start_event) }}</div>
+                                <div class="text-sm">{{ getMonthYear(featuredEvent.waktu_start_event) }}</div>
+                            </div>
+                        </div>
+                        <div class="flex-1 flex flex-col gap-6">
+                            <div class="flex flex-col gap-2">
+                                <h3 class="text-3xl font-normal">{{ featuredEvent.nama_event }}</h3>
+                                <p class="text-base text-gray-700 flex items-center gap-2">
+                                    <MapPin class="w-5 h-5 text-secondary" />
+                                    {{ featuredEvent.lokasi_event }}
+                                </p>
+                                <p class="text-base text-gray-700 flex items-center gap-2">
+                                    <Clock class="w-5 h-5 text-secondary" />
+                                    {{ formatTimeRange(featuredEvent.waktu_start_event, featuredEvent.waktu_end_event)
+                                    }}
+                                </p>
+                                <p class="text-base text-gray-600">{{ featuredEvent.deskripsi_event }}</p>
+                            </div>
+                            <a :href="`/event/${featuredEvent.slug}`"
+                                class="bg-secondary text-white px-6 py-2.5 rounded-full font-medium text-center w-max hover:bg-black transition">
+                                Lihat Detail
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Events -->
+                <div v-if="events.length" class="flex flex-col gap-10">
+                    <h2 class="text-4xl font-normal">Event Lainnya</h2>
+                    <div class="flex flex-col divide-y divide-gray-200">
+                        <div v-for="(event, index) in events" :key="index" class="flex flex-col lg:flex-row gap-8 py-8">
+                            <div class="relative w-full h-72 lg:w-64 lg:h-48 flex-shrink-0">
+                                <img class="w-full h-full object-cover rounded-2xl"
+                                    :src="getImageUrl(event.thumbnail_event)" alt="Event Thumbnail" />
+                                <div
+                                    class="absolute left-4 top-4 bg-white text-black rounded-2xl px-2 py-3 text-center shadow-md">
+                                    <div class="text-xs">{{ getDay(event.waktu_start_event) }}</div>
+                                    <div class="text-2xl font-bold">{{ getDate(event.waktu_start_event) }}</div>
+                                    <div class="text-xs">{{ getMonthYear(event.waktu_start_event) }}</div>
+                                </div>
+                            </div>
+                            <div class="flex-1 flex flex-col gap-4">
+                                <h3 class="text-2xl font-semibold">{{ event.nama_event }}</h3>
+                                <p class="text-sm text-gray-700 flex items-center gap-1.5">
+                                    <MapPin class="w-4 h-4 text-secondary" />
                                     {{ event.lokasi_event }}
-                                </span>
+                                </p>
+                                <p class="text-sm text-gray-700 flex items-center gap-1.5">
+                                    <Clock class="w-4 h-4 text-secondary" />
+                                    {{ formatTimeRange(event.waktu_start_event, event.waktu_end_event) }} WIB
+                                </p>
+                                <p class="text-base text-gray-600">{{ event.deskripsi_event }}</p>
                             </div>
-
-                            <div
-                                class="mb-4 text-sm text-gray-500 line-clamp-3"
-                            >
-                                {{ event.deskripsi_event }}
-                            </div>
-
-                            <div class="flex flex-col space-y-2 mb-5">
-                                <div class="flex items-center text-sm">
-                                    <svg
-                                        class="w-4 h-4 mr-1 text-blue-500"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                        />
-                                    </svg>
-                                    <span class="text-gray-700">{{
-                                        formatDate(event.waktu_start_event)
-                                    }}</span>
-                                </div>
-                                <div class="flex items-center text-sm">
-                                    <svg
-                                        class="w-4 h-4 mr-1 text-blue-500"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
-                                    </svg>
-                                    <span class="text-gray-700"
-                                        >{{
-                                            formatTime(event.waktu_start_event)
-                                        }}
-                                        -
-                                        {{
-                                            formatTime(event.waktu_end_event)
-                                        }}</span
-                                    >
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between">
-                                <a
-                                    :href="`/event/${event.slug}`"
-                                    class="inline-block px-4 py-2 bg-blue-500 text-white font-medium text-sm rounded hover:bg-blue-600 transition-colors duration-300"
-                                >
-                                    View Details
-                                </a>
-                                <a
-                                    href="#"
-                                    target="_blank"
-                                    class="inline-block px-4 py-2 bg-green-500 text-white font-medium text-sm rounded hover:bg-green-600 transition-colors duration-300"
-                                >
-                                    Register
-                                </a>
+                            <div class="flex lg:items-start">
+                                <Link :href="`/event/${event.slug}`"
+                                    class="bg-secondary text-white px-5 py-2 h-10 rounded-full text-base font-medium hover:bg-black hover:text-white transition">
+                                Lihat Detail
+                                </Link>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- No events message -->
-            <div
-                v-if="!loading && events.length === 0"
-                class="text-center py-12"
-            >
-                <p class="text-gray-500 text-lg">No events found</p>
-            </div>
         </div>
-    </div>
+    </AppLayout>
 </template>

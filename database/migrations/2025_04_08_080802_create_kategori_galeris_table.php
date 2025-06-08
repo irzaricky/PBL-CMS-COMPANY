@@ -1,4 +1,3 @@
-_table.php
 <?php
 
 use Illuminate\Database\Migrations\Migration;

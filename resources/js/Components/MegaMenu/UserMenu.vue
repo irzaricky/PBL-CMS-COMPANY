@@ -14,8 +14,10 @@ const greeting = computed(() => {
 });
 
 const canAccessPanel = computed(() => {
-    return !!user.value?.status_kepegawaian;
+    const allowedStatuses = ['Tetap', 'Kontrak', 'Magang'];
+    return allowedStatuses.includes(user.value?.status_kepegawaian ?? '');
 });
+
 </script>
 
 <template>

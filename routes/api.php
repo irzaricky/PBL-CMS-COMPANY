@@ -26,7 +26,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // Post feedback (AUTENTIKASI BELUM DITAMBAHKAN)
-Route::post('/feedback', [FeedbackController::class, 'store']);
+
+Route::prefix('feedback')->group(function () {
+
+    Route::get('/', [FeedbackController::class, 'index']);
+
+    Route::post('/', [FeedbackController::class, 'store']);
+
+});
 
 // Lamaran routes (AUTENTIKASI BELUM DITAMBAHKAN)
 Route::post('/lamaran', [LamaranController::class, 'store']);
@@ -48,6 +55,9 @@ Route::prefix('artikel')->group(function () {
     // untuk mengambil artikel dengan view terbanyak
     Route::get('/most-viewed', [ArtikelController::class, 'getArticleByMostView']);
 
+    // untuk mengambil artikel terbaru
+    Route::get('/featured', [ArtikelController::class, 'getFeaturedArticles']);
+
     // untuk mengambil artikel berdasarkan id
     Route::get('/id/{id}', [ArtikelController::class, 'getArticleById']);
 
@@ -63,6 +73,9 @@ Route::prefix('event')->group(function () {
 
     // untuk mengambil event yang baru saja dibuat
     Route::get('/newest', [EventController::class, 'getMostRecentEvent']);
+
+    // untuk mengambil event terbaru untuk navbar
+    Route::get('/navbar', [EventController::class, 'getNavbarRecentEvent']);
 
     // untuk search event berdasarkan nama atau lokasi
     Route::get('/search', [EventController::class, 'search']);
@@ -103,7 +116,6 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 
 // Testimoni
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
-
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
 
