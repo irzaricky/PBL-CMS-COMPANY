@@ -188,7 +188,7 @@ function lihatSelengkapnya() {
                                     />
                                 </a>
                             </div>
-                            <p v-else class="text-sm italic">No active social media platforms</p>
+                            <p v-else class="text-sm italic">Belum ada media sosial yang aktif.</p>
                         </div>
                     </div>
 
