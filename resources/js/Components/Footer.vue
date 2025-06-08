@@ -196,9 +196,9 @@ function lihatSelengkapnya() {
                     <div class="flex flex-col justify-center h-full">
                         <div class="w-full aspect-video rounded-lg overflow-hidden">
                             <iframe 
-                                v-if="profil_perusahaan?.maps_embed_url" 
+                                v-if="profil_perusahaan?.map_embed_perusahaan" 
                                 class="w-full h-full"
-                                :src="profil_perusahaan.maps_embed_url"
+                                :src="profil_perusahaan.map_embed_perusahaan"
                                 width="600" 
                                 height="450" 
                                 style="border:0;" 
