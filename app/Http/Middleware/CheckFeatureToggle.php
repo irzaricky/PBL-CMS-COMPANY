@@ -22,10 +22,10 @@ class CheckFeatureToggle
             $feature = FeatureToggle::where('key', $featureKey)->first();
 
             if (!$feature || !$feature->status_aktif) {
-                abort(404); // Seolah-olah route tidak pernah ada
+                abort(404); 
             }
         } catch (\Throwable $e) {
-            abort(404); // Jika DB belum ada atau error lain
+            abort(404); 
         }
 
         return $next($request);

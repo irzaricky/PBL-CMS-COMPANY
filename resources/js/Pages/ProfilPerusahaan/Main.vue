@@ -98,9 +98,8 @@ onUnmounted(() => {
 
 <template>
     <AppLayout>
-        <!-- Section 1: Mission Statement -->
-        <div class="w-full px-4 sm:px-8 lg:px-16 py-20 bg-secondary text-white">
-            <div class="w-full max-w-screen-xl mx-auto flex flex-col justify-start items-center gap-16 overflow-hidden">
+        <div class="w-full px-4 sm:px-8 lg:px-16 py-20 bg-secondary text-white relative overflow-hidden">
+            <div class="w-full max-w-screen-xl mx-auto flex flex-col justify-start items-center gap-16 overflow-hidden relative z-10">
                 <div class="w-full max-w-3xl flex flex-col justify-start items-center gap-6">
                     <div class="w-full flex flex-col justify-start items-center gap-4 text-center">
                         <h1 class="text-4xl lg:text-6xl font-normal font-custom leading-tight">
@@ -112,46 +111,55 @@ onUnmounted(() => {
                     </div>
                 </div>
             </div>
+            
+            <!-- Modern background elements -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-bl-full"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-tr-full"></div>
         </div>
 
-        <!-- Section 2: Company Story -->
+        <!-- Section 2: Company Story with Enhanced Design -->
         <div class="w-full px-4 sm:px-8 lg:px-16 pb-20 bg-secondary text-white">
             <div class="w-full max-w-screen-xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-20">
                 <!-- KOLOM LOGO + TAGLINE -->
                 <div class="flex-1 flex flex-col justify-center items-center text-center gap-4 overflow-hidden">
-                    <!-- LOGO PERUSAHAAN -->
-                    <div class="mb-2">
+                    <!-- LOGO PERUSAHAAN with enhanced presentation -->
+                    <div class="mb-2 relative group">
+                        <div class="absolute inset-0 bg-white/10 rounded-full scale-90 group-hover:scale-100 transition-all duration-300"></div>
                         <img :src="getImageUrl(profil_perusahaan?.logo_perusahaan)" alt="Logo Perusahaan"
-                            class="w-80 h-80 object-contain" />
+                            class="w-80 h-80 object-contain relative z-10" />
                     </div>
 
-                    <!-- TAGLINE -->
-                    <div class="text-sm lg:text-base font-semibold font-custom leading-normal">Profil Perusahaan</div>
+                    <!-- TAGLINE with modern styling -->
+                    <div class="text-sm lg:text-base font-semibold font-custom leading-normal px-4 py-1 bg-white/10 backdrop-blur-sm rounded-full">
+                        Profil Perusahaan
+                    </div>
 
-                    <!-- TITLE -->
+                    <!-- TITLE with enhanced typography -->
                     <h2 class="text-3xl lg:text-5xl font-normal font-custom leading-tight">
                         {{ profil_perusahaan?.nama_perusahaan }}
                     </h2>
                 </div>
 
-                <!-- KOLOM TEKS -->
-                <div class="flex-1 flex flex-col justify-center items-center text-center gap-6">
-                    <p class="text-base lg:text-lg font-normal font-custom leading-relaxed">
-                        {{ profil_perusahaan?.deskripsi_perusahaan
-                            ? profil_perusahaan.deskripsi_perusahaan
-                            : 'Sejarah perusahaan belum tersedia.' }}
-                    </p>
+                <!-- KOLOM TEKS with modern card styling -->
+                <div class="flex-1 flex flex-col justify-center items-center gap-6">
+                    <div class="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
+                        <p class="text-base lg:text-lg font-normal font-custom leading-relaxed">
+                            {{ profil_perusahaan?.deskripsi_perusahaan
+                                ? profil_perusahaan.deskripsi_perusahaan
+                                : 'Sejarah perusahaan belum tersedia.' }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
 
-
-        <!-- Section 3: Visi & Misi Grid -->
+        <!-- Section 3: Visi & Misi Grid with Petal Design -->
         <div class="w-full px-4 sm:px-8 lg:px-16 py-20 bg-white text-white">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 max-w-screen-xl mx-auto">
-                <!-- Visi - kiri atas -->
-                <div
-                    class="order-1 flex flex-col justify-center items-start lg:items-end gap-4 lg:rounded-tl-[100px] lg:justify-right bg-secondary py-6 px-10 shadow">
+                <!-- Visi - top-left petal -->
+                <div class="order-1 flex flex-col justify-center items-start lg:items-end gap-4 bg-secondary py-8 px-10 
+                     rounded-lg lg:rounded-tl-[100px] lg:rounded-bl-[100px] lg:rounded-tr-[100px] lg:rounded-br-[20px]
+                     transform hover:translate-y-[-5px] transition-all duration-300">
                     <h3 class="text-2xl lg:text-4xl font-semibold font-custom lg:text-right">
                         Visi Kami
                     </h3>
@@ -159,14 +167,14 @@ onUnmounted(() => {
                         {{ profil_perusahaan?.visi_perusahaan
                             ? truncatedVisi
                             : 'Visi perusahaan belum tersedia.' }}
-                        <Link v-if="showReadMoreVisi" href="/visi-misi" class="text-blue-400 cursor-pointer">
+                        <Link v-if="showReadMoreVisi" href="/visi-misi" class="text-blue-400 cursor-pointer hover:underline">
                         ... Baca selengkapnya
                         </Link>
                     </p>
                 </div>
 
-                <!-- Gambar atas - kanan atas (Slider 1) -->
-                <div class="order-2 lg:rounded-tr-[100px] overflow-hidden shadow h-64">
+                <!-- Gambar atas - top-right petal (Slider 1) -->
+                <div class="order-2 overflow-hidden rounded-lg lg:rounded-tr-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-bl-[20px] h-96">
                     <div v-if="thumbnailTop.length" class="flex h-full transition-transform duration-700 ease-in-out"
                         :style="{ transform: `translateX(-${topIndex * 100}%)` }">
                         <div v-for="(img, i) in thumbnailTop" :key="'top-slide-' + i"
@@ -179,8 +187,8 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-                <!-- Gambar bawah - kiri bawah (Slider 2) -->
-                <div class="order-3 lg:rounded-bl-[100px] overflow-hidden shadow h-64">
+                <!-- Gambar bawah - bottom-left petal (Slider 2) -->
+                <div class="order-3 overflow-hidden rounded-lg lg:rounded-bl-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-tr-[20px] h-96">
                     <div v-if="thumbnailBottom.length" class="flex h-full transition-transform duration-700 ease-in-out"
                         :style="{ transform: `translateX(-${bottomIndex * 100}%)` }">
                         <div v-for="(img, i) in thumbnailBottom" :key="'bottom-slide-' + i"
@@ -193,16 +201,17 @@ onUnmounted(() => {
                     </div>
                 </div>
 
-                <!-- Misi - kanan bawah -->
-                <div
-                    class="order-4 flex flex-col justify-center items-start gap-4 lg:rounded-br-[100px] bg-secondary py-6 px-10 shadow">
+                <!-- Misi - bottom-right petal -->
+                <div class="order-4 flex flex-col justify-center items-start gap-4 bg-secondary py-8 px-10
+                     rounded-lg lg:rounded-br-[100px] lg:rounded-tr-[100px] lg:rounded-bl-[100px] lg:rounded-tl-[20px]
+                     transform hover:translate-y-[-5px] transition-all duration-300">
                     <h3 class="text-2xl lg:text-4xl font-semibold font-custom">Misi Kami</h3>
                     <div class="text-base lg:text-lg font-normal font-custom leading-relaxed">
                         <div v-if="profil_perusahaan?.misi_perusahaan" v-html="truncatedMisi"
                             class="prose prose-invert"></div>
                         <p v-else>Misi perusahaan belum tersedia.</p>
 
-                        <Link v-if="showReadMoreMisi" href="/visi-misi" class="text-blue-400 cursor-pointer">
+                        <Link v-if="showReadMoreMisi" href="/visi-misi" class="text-blue-400 cursor-pointer hover:underline">
                         ... Baca selengkapnya
                         </Link>
                     </div>
@@ -210,6 +219,12 @@ onUnmounted(() => {
             </div>
         </div>
 
+        <!-- Additional decorative element at the bottom -->
+        <div class="w-full px-4 sm:px-8 lg:px-16 py-10 bg-secondary">
+            <div class="max-w-screen-xl mx-auto flex justify-center">
+                <div class="w-24 h-1 bg-white/20 rounded-full"></div>
+            </div>
+        </div>
 
     </AppLayout>
 </template>

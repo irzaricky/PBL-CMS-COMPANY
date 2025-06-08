@@ -43,7 +43,9 @@ class GaleriResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $set('slug', str($state)->slug());
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug', $baseSlug . '-' . $dateSlug);
                                 } else {
                                     $set('slug', null);
                                 }
@@ -54,6 +56,7 @@ class GaleriResource extends Resource
                             ->relationship('kategoriGaleri', 'nama_kategori_galeri')
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->required()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('nama_kategori_galeri')
@@ -89,15 +92,21 @@ class GaleriResource extends Resource
                             ->relationship('user', 'name')
                             ->default(fn() => Auth::id())
                             ->searchable()
+                            ->disabled()
+                            ->dehydrated(true)
+                            ->native(false)
                             ->preload()
                             ->required(),
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true)
+                            ->unique(Galeri::class, 'slug', ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan judul'),
+                            ->helperText('Akan terisi otomatis berdasarkan judul')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\Select::make('status_galeri')
                             ->label('Status Galeri')
@@ -106,6 +115,7 @@ class GaleriResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
 
@@ -130,8 +140,19 @@ class GaleriResource extends Resource
                         Forms\Components\RichEditor::make('deskripsi_galeri')
                             ->label('Deskripsi Galeri')
                             ->required()
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('galeri-attachments')
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'h1',
+                                'h2',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'redo',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -182,6 +203,7 @@ class GaleriResource extends Resource
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
+                    ->disabled(fn() => !auth()->user()->can('update_galeri', Galeri::class))
                     ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -218,13 +240,16 @@ class GaleriResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Galeri')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Galeri berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Galeri')
                     ->successNotificationTitle('Galeri berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Galeri')
                     ->successNotificationTitle('Galeri berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_galeri');
@@ -233,10 +258,7 @@ class GaleriResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Galeri berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_galeri');
-                        }),
+                        ->successNotificationTitle('Galeri berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Galeri berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()

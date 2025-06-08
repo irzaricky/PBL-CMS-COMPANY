@@ -10,11 +10,11 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class EventStatusChart extends ApexChartWidget
 {
     protected static ?string $heading = 'Event berdasarkan Status';
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 9;
+    protected string|int|array $columnSpan = 2;
     protected static bool $deferLoading = true;
 
-    // Set column span to make it appear on the right side
-    protected string|int|array $columnSpan = 1;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
 
     protected function getOptions(): array
     {

@@ -9,7 +9,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class TopDownloads extends BaseWidget
 {
     protected ?string $heading = 'Widget Unduhan';
-    protected static ?int $sort = 7;
+    protected static ?int $sort = 16;
+    protected string|int|array $columnSpan = 2;
     protected static bool $isLazy = true;
 
     protected function getStats(): array

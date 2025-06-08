@@ -10,8 +10,10 @@ class RemainingStorageWidget extends ApexChartWidget
 {
     protected static ?string $chartId = 'remainingStorage';
     protected static ?string $heading = 'Sisa Storage';
-    protected static ?int $sort = 4;
+    protected static ?int $sort = 5;
     protected static bool $deferLoading = true;
+
+    protected static ?string $pollingInterval = '900s'; // 15 minutes
 
     public static function canView(): bool
     {

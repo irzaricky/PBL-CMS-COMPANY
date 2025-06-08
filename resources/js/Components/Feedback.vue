@@ -1,6 +1,5 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
-import { ChevronRight } from "lucide-vue-next";
 </script>
 
 <template>
@@ -19,7 +18,6 @@ import { ChevronRight } from "lucide-vue-next";
                 <Link href="/feedback"
                     class="relative flex items-center gap-1 bg-secondary text-primary text-lg md:text-xl font-semibold px-6 py-3 rounded-lg">
                 Feedback
-                <ChevronRight class="w-5 h-5 text-white" />
                 </Link>
             </div>
         </div>

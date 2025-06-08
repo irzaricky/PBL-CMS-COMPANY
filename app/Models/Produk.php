@@ -36,6 +36,7 @@ class Produk extends Model
         'harga_produk',
         'slug',
         'deskripsi_produk',
+        'link_produk',
         'status_produk',
     ];
 

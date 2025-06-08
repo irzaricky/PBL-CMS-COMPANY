@@ -2,164 +2,103 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\ContentStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Lowongan;
 use Illuminate\Http\Request;
-use App\Http\Resources\Lowongan\LowonganListResource;
-use App\Http\Resources\Lowongan\LowonganViewResource;
-use Illuminate\Support\Facades\DB;
 
 class LowonganController extends Controller
 {
     /**
      * Mengambil daftar lowongan
      * 
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                ->where('tanggal_dibuka', '<=', now())
-                ->where('tanggal_ditutup', '>=', now())
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-
-            return LowonganListResource::collection($lowongan);
+            $perPage = $request->query('per_page', 6);
+            $lowongan = Lowongan::orderBy('tanggal_dibuka', 'desc')->paginate($perPage);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data lowongan berhasil diambil',
+                'data' => $lowongan->items(),
+                'meta' => [
+                    'current_page' => $lowongan->currentPage(),
+                    'last_page' => $lowongan->lastPage(),
+                    'per_page' => $lowongan->perPage(),
+                    'total' => $lowongan->total(),
+                ],
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Gagal Memuat Lowongan',
+                'message' => 'Gagal mengambil data lowongan',
                 'error' => $e->getMessage()
             ], 500);
         }
     }
-
+    
     /**
-     * Mengambil lowongan terbaru
+     * Mencari lowongan berdasarkan query
+     * Implementasi sederhana untuk menghindari error
      * 
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
-    public function getMostRecentLowongan()
-    {
-        try {
-            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                ->where('tanggal_dibuka', '<=', now())
-                ->where('tanggal_ditutup', '>=', now())
-                ->orderBy('created_at', 'desc')
-                ->take(1)
-                ->get();
-
-            return LowonganListResource::collection($lowongan);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Gagal Memuat Lowongan',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-
-    }
-
-    /**
-     * Mengambil lowongan berdasarkan slug
-     * 
-     * @param string $slug
-     * @return \App\Http\Resources\Lowongan\LowonganViewResource|\Illuminate\Http\JsonResponse
-     */
-    public function getLowonganBySlug($slug)
-    {
-        try {
-            $lowongan = Lowongan::with(['user:id_user,name'])
-                ->where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                ->where('slug', $slug)
-                ->firstOrFail();
-
-            return new LowonganViewResource($lowongan);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Lowongan Tidak Ditemukan',
-                'error' => $e->getMessage()
-            ], 404);
-        }
-    }
-
-    /**
-     * Mengambil lowongan berdasarkan ID
-     * 
-     * @param int $id
-     * @return \App\Http\Resources\Lowongan\LowonganViewResource|\Illuminate\Http\JsonResponse
-     */
-    public function getLowonganById($id)
-    {
-        try {
-            $lowongan = Lowongan::with(['user:id_user,name'])
-                ->where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                ->findOrFail($id);
-
-            return new LowonganViewResource($lowongan);
-        } catch (\Exception $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Lowongan Tidak Ditemukan',
-                'error' => $e->getMessage()
-            ], 404);
-        }
-    }
-
-    /**
-     * Mencari lowongan berdasarkan judul atau jenis
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function search(Request $request)
     {
         try {
             $query = $request->input('query');
-            $jenisLowongan = $request->input('jenis_lowongan');
-
-            // validasi input, jika tidak ada query dan jenis_lowongan maka kembalikan semua lowongan
-            if (empty($query) && empty($jenisLowongan)) {
-                return $this->index();
-            }
-
-            $lowonganQuery = Lowongan::with(['user:id_user,name'])
-                ->where('status_lowongan', ContentStatus::TERPUBLIKASI->value)
-                ->where('tanggal_dibuka', '<=', now())
-                ->where('tanggal_ditutup', '>=', now());
-
-            // Jika ada query pencarian, lowongan akan dicari berdasarkan judul
-            if (!empty($query)) {
-                $lowonganQuery->where(function ($q) use ($query) {
-                    $q->where('judul_lowongan', 'LIKE', '%' . $query . '%')
-                        ->orWhere('deskripsi_pekerjaan', 'LIKE', '%' . $query . '%');
-                });
-            }
-
-            // Jika ada jenis_lowongan, lowongan akan dicari berdasarkan jenis
-            if (!empty($jenisLowongan)) {
-                $lowonganQuery->where('jenis_lowongan', $jenisLowongan);
-            }
-
-            $lowongan = $lowonganQuery->orderBy('created_at', 'desc')->paginate(10);
-
-            // Check if no lowongan were found
-            if ($lowongan->isEmpty()) {
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Tidak ada lowongan yang sesuai dengan pencarian',
-                    'data' => []
-                ], 200);
-            }
-
-            return LowonganListResource::collection($lowongan);
+            
+            $lowonganQuery = Lowongan::where(function($q) use ($query) {
+                $q->where('judul_lowongan', 'LIKE', "%{$query}%")
+                  ->orWhere('deskripsi_pekerjaan', 'LIKE', "%{$query}%");
+                  // Hapus bagian lokasi jika kolom tidak ada
+                  // ->orWhere('lokasi', 'LIKE', "%{$query}%");
+            });
+            
+            $lowongan = $lowonganQuery->paginate(10);
+            
+            // Return response yang sama seperti endpoint lain
+            return response()->json($lowongan);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mencari lowongan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mengambil detail lowongan berdasarkan slug
+     * 
+     * @param  string  $slug
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLowonganBySlug($slug)
+    {
+        try {
+            $lowongan = Lowongan::where('slug', $slug)->first();
+            
+            if (!$lowongan) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Lowongan tidak ditemukan'
+                ], 404);
+            }
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Detail lowongan berhasil diambil',
+                'data' => $lowongan
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil detail lowongan',
                 'error' => $e->getMessage()
             ], 500);
         }

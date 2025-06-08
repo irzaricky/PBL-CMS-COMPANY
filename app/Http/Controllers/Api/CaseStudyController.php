@@ -112,4 +112,32 @@ class CaseStudyController extends Controller
 
         return CaseStudyListResource::collection($caseStudies);
     }
+
+    /**
+     * Mengambil case study terbaru
+     */
+    public function latest()
+    {
+        try {
+            $latestCaseStudy = CaseStudy::with(['mitra'])
+                ->where('status_case_study', ContentStatus::TERPUBLIKASI)
+                ->latest()
+                ->first();
+
+            if (!$latestCaseStudy) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tidak ada case study terbaru'
+                ], 404);
+            }
+
+            return new CaseStudyViewResource($latestCaseStudy);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memuat case study terbaru',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

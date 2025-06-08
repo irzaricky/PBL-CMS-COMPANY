@@ -18,7 +18,7 @@ class FeedbackResource extends JsonResource
         return [
             'id_feedback' => $this->id_feedback,
             'user' => [
-                'id_user' => $this->user->id_user,
+                //'id_user' => $this->user->id_user,
                 'name' => $this->user->name,
                 'email' => $this->user->email,
                 'foto_profil' => $this->user->foto_profil,

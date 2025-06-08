@@ -68,6 +68,7 @@ class MediaSosialResource extends Resource
                                 ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
                             ])
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->native(false)
                             ->required(),
                     ]),
             ]);
@@ -123,7 +124,7 @@ class MediaSosialResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->before(function (MediaSosial $record) {
-                        SingleFileHandler::deleteFile($record, 'icon');
+                        SingleFileHandler::deleteFile($record->icon, 'icon');
                     }),
             ])
             ->bulkActions([
@@ -145,6 +146,7 @@ class MediaSosialResource extends Resource
                                     'aktif' => 'Aktif',
                                     'nonaktif' => 'Nonaktif',
                                 ])
+                                ->native(false)
                                 ->required(),
                         ]),
                     Tables\Actions\DeleteBulkAction::make()

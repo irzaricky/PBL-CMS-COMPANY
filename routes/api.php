@@ -14,10 +14,15 @@ use App\Http\Controllers\Api\LowonganController;
 use App\Http\Controllers\Api\CaseStudyController;
 use App\Http\Controllers\Api\TestimoniController;
 use App\Http\Controllers\Api\MediaSosialController;
+use App\Http\Controllers\Api\KontenSliderController;
 use App\Http\Controllers\Api\FeatureToggleController;
 use App\Http\Controllers\Api\TestimoniProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
+use App\Http\Controllers\Api\TestimoniArtikelController;
+use App\Http\Controllers\Api\TestimoniEventController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
+use App\Http\Controllers\Api\CacheController;
+use App\Http\Controllers\ImageMetaController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -38,6 +43,7 @@ Route::prefix('feedback')->group(function () {
 // Lamaran routes (AUTENTIKASI BELUM DITAMBAHKAN)
 Route::post('/lamaran', [LamaranController::class, 'store']);
 Route::get('/lamaran/user/{userId}', [LamaranController::class, 'getByUserId']);
+Route::get('/lamaran/{id}', [LamaranController::class, 'show']);
 
 
 // Artikel
@@ -65,6 +71,25 @@ Route::prefix('artikel')->group(function () {
     Route::get('/{slug}', [ArtikelController::class, 'getArticleBySlug']);
 });
 
+// Case Study
+Route::prefix('case-study')->group(function () {
+
+    // Untuk mengambil semua case study
+    Route::get('/', [CaseStudyController::class, 'index']);
+
+    // Untuk mengambil case study berdasarkan id
+    Route::get('/id/{id}', [CaseStudyController::class, 'getCaseStudyById']);
+
+     // Untuk mengambil case study terbaru
+    Route::get('/latest', [CaseStudyController::class, 'latest']);
+
+    // Untuk mencari case study
+    Route::get('/search', [CaseStudyController::class, 'search']);
+
+    // Untuk mengambil case study berdasarkan slug
+    Route::get('/{slug}', [CaseStudyController::class, 'getCaseStudyBySlug']);
+});
+
 // Event
 Route::prefix('event')->group(function () {
 
@@ -83,7 +108,13 @@ Route::prefix('event')->group(function () {
     // untuk mengambil event berdasarkan id
     Route::get('/id/{id}', [EventController::class, 'getEventById']);
 
-    // Untuk mengambil event berdasarkan slug
+    // Event registration routes (require authentication) - MUST come before /{slug} route
+    Route::middleware(['web', 'auth'])->group(function () {
+        Route::post('/{slug}/register', [EventController::class, 'register']);
+        Route::delete('/{slug}/register', [EventController::class, 'unregister']);
+        Route::get('/{slug}/check-registration', [EventController::class, 'checkRegistration']);
+    });
+
     Route::get('/{slug}', [EventController::class, 'getEventBySlug']);
 });
 
@@ -118,7 +149,10 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 // Route::get('/testimoni', [TestimoniController::class, 'index']);
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
-
+Route::get('/testimoni/artikel/{artikelId}', [TestimoniArtikelController::class, 'index']);
+Route::post('/testimoni/artikel/{artikel}', [TestimoniArtikelController::class, 'store']);
+Route::get('/testimoni/event/{eventId}', [TestimoniEventController::class, 'index']);
+Route::post('/testimoni/event/{event}', [TestimoniEventController::class, 'store']);
 
 // Mitra
 Route::prefix('mitra')->group(function () {
@@ -144,6 +178,9 @@ Route::prefix('profil-perusahaan')->group(function () {
     // Untuk mengambil profil perusahaan untuk navbar
     Route::get('/navbar', [ProfilPerusahaanController::class, 'getDataNavbar']);
 });
+
+// Konten Slider
+Route::get('/konten-slider', [KontenSliderController::class, 'index']);
 
 // Produk
 Route::prefix('produk')->group(function () {
@@ -225,4 +262,22 @@ Route::prefix('unduhan')->group(function () {
 
     // Untuk mengambil unduhan berdasarkan slug
     Route::get('/{slug}', [UnduhanController::class, 'getUnduhanBySlug']);
+});
+
+// Cache Management (for admin use)
+Route::prefix('cache')->group(function () {
+    Route::get('/stats', [CacheController::class, 'stats']);
+    Route::post('/clear', [CacheController::class, 'clearAll']);
+    Route::post('/clear-endpoint', [CacheController::class, 'clearEndpoint']);
+    Route::post('/warmup', [CacheController::class, 'warmup']);
+});
+
+// Image Metadata
+Route::prefix('image-meta')->group(function () {
+    // Get metadata for a single image
+    Route::get('/{imagePath}', [ImageMetaController::class, 'getImageMeta'])
+        ->where('imagePath', '.*'); // Allow paths with slashes and special characters
+
+    // Get metadata for multiple images (bulk)
+    Route::post('/bulk', [ImageMetaController::class, 'getBulkImageMeta']);
 });

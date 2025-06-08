@@ -52,6 +52,7 @@ class UserResource extends Resource
                             ->relationship('roles', 'name')
                             ->multiple()
                             ->preload()
+                            ->native(false)
                             ->searchable(),
                     ]),
 
@@ -104,6 +105,7 @@ class UserResource extends Resource
                                 'Percobaan' => 'Masa Percobaan',
                                 'Non Pegawai' => 'Non Pegawai',
                             ])
+                            ->native(false)
                             ->nullable(),
 
                         Forms\Components\Select::make('status')
@@ -113,6 +115,7 @@ class UserResource extends Resource
                                 'nonaktif' => 'Nonaktif',
                             ])
                             ->default('aktif')
+                            ->native(false)
                             ->required(),
                     ]),
             ]);
@@ -218,6 +221,7 @@ class UserResource extends Resource
                                     'aktif' => 'Aktif',
                                     'nonaktif' => 'Nonaktif',
                                 ])
+                                ->native(false)
                                 ->required(),
                         ]),
                 ]),
@@ -230,6 +234,11 @@ class UserResource extends Resource
         return [
             //
         ];
+    }
+
+     public static function canCreate(): bool
+    {
+        return false;
     }
 
     public static function getPages(): array

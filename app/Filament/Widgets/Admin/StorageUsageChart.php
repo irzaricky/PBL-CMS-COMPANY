@@ -14,10 +14,11 @@ class StorageUsageChart extends ApexChartWidget
 {
     protected static ?string $chartId = 'storageUsageChart';
     protected static ?string $heading = 'Arus Penggunaan Storage';
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 4;
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 'full';
     public ?string $filter = 'week';
+    protected static ?string $pollingInterval = '900s'; // 15 minutes
 
     public static function canView(): bool
     {

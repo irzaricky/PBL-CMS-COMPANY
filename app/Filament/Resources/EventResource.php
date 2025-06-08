@@ -45,7 +45,9 @@ class EventResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $set('slug', str($state)->slug());
+                                    $baseSlug = str($state)->slug();
+                                    $dateSlug = now()->format('Y-m-d');
+                                    $set('slug', $baseSlug . '-' . $dateSlug);
                                 } else {
                                     $set('slug', null);
                                 }
@@ -54,9 +56,12 @@ class EventResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(ignoreRecord: true)
+                            ->unique(Event::class, 'slug', ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan nama event'),
+                            ->helperText('Akan terisi otomatis berdasarkan nama event')
+                            ->validationMessages([
+                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
+                            ]),
 
                         Forms\Components\RichEditor::make('deskripsi_event')
                             ->label('Deskripsi Event')
@@ -120,7 +125,7 @@ class EventResource extends Resource
                                     ->seconds(false)
                                     ->displayFormat('d F Y - H:i')
                                     ->native(false)
-                                    ->minDate(fn($record) => $record ? null : now()),
+                                    ->minDate(fn($record) => $record ? null : today()),
 
                                 Forms\Components\DateTimePicker::make('waktu_end_event')
                                     ->label('Waktu Selesai')
@@ -131,6 +136,7 @@ class EventResource extends Resource
                                     ->afterOrEqual('waktu_start_event')
                                     ->validationMessages([
                                         'after_or_equal' => 'waktu selesai event tidak boleh sebelum tanggal mulai event.',
+                                        'required' => '\waktu selesai event harus diisi.',
                                     ]),
                             ]),
                     ]),
@@ -237,13 +243,16 @@ class EventResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
+                    ->modalHeading('Arsipkan Event')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Event berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
+                    ->modalHeading('Pulihkan Event')
                     ->successNotificationTitle('Event berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
+                    ->modalHeading('Hapus Permanen Event')
                     ->successNotificationTitle('Event berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_event');
@@ -252,10 +261,7 @@ class EventResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Event berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_event');
-                        }),
+                        ->successNotificationTitle('Event berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Event berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()

@@ -12,7 +12,7 @@ class CheckStatusUser
     public function handle(Request $request, Closure $next): Response
     {
         if (!Auth::check()) {
-            return $next($request); 
+            return $next($request);
         }
 
         $user = Auth::user();
@@ -29,6 +29,9 @@ class CheckStatusUser
         $allowedRoutes = [
             'filament.admin.auth.login',
             'filament.admin.auth.profile',
+            'filament.admin.auth.register',
+            'filament.admin.auth.email-verification.prompt',
+            'filament.admin.auth.email-verification.verify'
         ];
 
         if (

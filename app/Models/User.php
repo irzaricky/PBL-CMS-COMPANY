@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, SoftDeletes;
@@ -68,5 +69,11 @@ class User extends Authenticatable
         return $this->foto_profil
             ? asset('storage/' . $this->foto_profil)
             : null;
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        // Izinkan akses berdasarkan status aktif dan status kepegawaian saja
+        return $this->status === 'aktif' && $this->status_kepegawaian !== 'Non Pegawai' || $this->status_kepegawaian !== null;
     }
 }

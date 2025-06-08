@@ -12,13 +12,11 @@ return new class extends Migration {
     {
         Schema::create('konten_slider', function (Blueprint $table) {
             $table->id('id_konten_slider');
-            $table->foreignId('id_user')->nullable()->constrained('users', 'id_user')->onDelete('set null');
+            $table->integer('durasi_slider')->nullable();
             $table->foreignId('id_galeri')->nullable()->constrained('galeri', 'id_galeri')->onDelete('set null');
             $table->foreignId('id_produk')->nullable()->constrained('produk', 'id_produk')->onDelete('set null');
-            $table->foreignId('id_lowongan')->nullable()->constrained('lowongan', 'id_lowongan')->onDelete('set null');
             $table->foreignId('id_event')->nullable()->constrained('event', 'id_event')->onDelete('set null');
             $table->foreignId('id_artikel')->nullable()->constrained('artikel', 'id_artikel')->onDelete('set null');
-            $table->string('judul_header', 100);
             $table->timestamps();
         });
     }

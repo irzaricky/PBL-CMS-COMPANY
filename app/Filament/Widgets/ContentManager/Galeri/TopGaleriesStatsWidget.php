@@ -10,7 +10,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class TopGaleriesStatsWidget extends BaseWidget
 {
     protected ?string $heading = 'Widget Galeri';
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 10;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
     protected string|int|array $columnSpan = 2;
 
     protected function getStats(): array

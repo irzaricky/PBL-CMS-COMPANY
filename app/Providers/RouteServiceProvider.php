@@ -28,6 +28,11 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->namespace($this->namespace)
                 ->group(base_path('routes/web.php'));
+
+            // Load installer routes from routes/installer.php
+            Route::middleware(['installCheck'])
+                ->namespace($this->namespace)
+                ->group(base_path('routes/installer.php'));
         });
     }
 

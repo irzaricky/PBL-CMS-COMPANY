@@ -14,7 +14,7 @@ class ArtikelStats extends BaseWidget
 {
     use InteractsWithPageTable;
 
-    protected static ?string $pollingInterval = '5s';
+    protected static ?string $pollingInterval = '15s';
 
     protected function getTablePage(): string
     {

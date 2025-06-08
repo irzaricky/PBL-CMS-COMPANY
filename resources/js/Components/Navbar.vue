@@ -1,5 +1,5 @@
 <script setup>
-import { ChevronDown, Menu } from "lucide-vue-next";
+import { ChevronDown, Menu, UserCog, LayoutDashboard } from "lucide-vue-next";
 import MegaMenu from "./MegaMenu/MegaMenu.vue";
 import UserMenu from "./MegaMenu/UserMenu.vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";
@@ -13,14 +13,14 @@ const isMobileMenuOpen = ref(false);
 const loading = ref(false);
 const error = ref(null);
 const isMobile = ref(false);
-const featureToggles = ref({}); 
+const featureToggles = ref({});
 
 const greeting = computed(() => {
     const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return 'Selamat pagi';
-    if (hour >= 12 && hour < 17) return 'Selamat siang';
-    if (hour >= 17 && hour < 21) return 'Selamat sore';
-    return 'Selamat malam';
+    if (hour >= 5 && hour < 12) return "Selamat pagi";
+    if (hour >= 12 && hour < 17) return "Selamat siang";
+    if (hour >= 17 && hour < 21) return "Selamat sore";
+    return "Selamat malam";
 });
 
 const toggleMegaMenu = () => {
@@ -56,10 +56,10 @@ async function fetchProfilPerusahaan() {
 
 async function fetchFeatureToggles() {
     try {
-        const res = await axios.get('/api/feature-toggles');
+        const res = await axios.get("/api/feature-toggles");
         featureToggles.value = res.data.data || {};
     } catch (err) {
-        console.error('Error fetching feature toggles:', err);
+        console.error("Error fetching feature toggles:", err);
     }
 }
 
@@ -74,9 +74,10 @@ function getImageUrl(image) {
 }
 
 const user = computed(() => usePage().props.auth?.user ?? null);
+const unreadCount = computed(() => usePage().props.auth?.unreadNotifications || 0);
 
 function getImageUser(imagePath) {
-    return imagePath ? `/storage/${imagePath}` : '/image/placeholder.webp';
+    return imagePath ? `/storage/${imagePath}` : "/image/placeholder.webp";
 }
 
 onMounted(() => {
@@ -103,7 +104,7 @@ onUnmounted(() => {
                         class="h-full w-full object-contain" />
                 </div>
                 <Link href="/" class="text-h4-bold text-typography-dark px-2">
-                {{ profil_perusahaan?.nama_perusahaan || "Loading..." }}
+                {{ profil_perusahaan?.nama_perusahaan || "CMS" }}
                 </Link>
             </div>
 
@@ -134,13 +135,31 @@ onUnmounted(() => {
             <!-- Desktop Login / Foto Profil -->
             <div class="hidden lg:flex items-center space-x-3 relative user-menu-container">
                 <template v-if="user">
+                    <!-- User Profile -->
                     <div @click="showUserMenu = !showUserMenu" class="cursor-pointer flex items-center space-x-2 group">
                         <div class="flex flex-col items-end text-right">
-                            <span class="text-black text-sm font-semibold group-hover:underline">{{ user.name }}</span>
-                            <span class="text-gray-600 text-xs">{{ user.email }}</span>
+                            <span
+                                class="text-black text-sm font-semibold group-hover:underline"
+                                >{{ user.name }}</span
+                            >
+                            <span class="text-gray-600 text-xs">{{
+                                user.email
+                            }}</span>
                         </div>
-                        <img :src="getImageUser(user.foto_profil)" alt="Foto Profil"
-                            class="w-10 h-10 rounded-full object-cover border border-gray-300" />
+                        <div class="relative">
+                            <img
+                                :src="getImageUser(user.foto_profil)"
+                                alt="Foto Profil"
+                                class="w-10 h-10 rounded-full object-cover border border-gray-300"
+                            />
+                            <!-- Unread Badge -->
+                            <span
+                                v-if="unreadCount > 0"
+                                class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1 py-0.5 text-[10px] font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full"
+                            >
+                                {{ unreadCount > 99 ? "99+" : unreadCount }}
+                            </span>
+                        </div>
                     </div>
 
                     <UserMenu v-if="showUserMenu" />
@@ -180,7 +199,9 @@ onUnmounted(() => {
                         <div class="flex items-center gap-2">
                             <span class="font-semibold text-base text-black">{{ greeting }}, {{ user.name }}</span>
                         </div>
-                        <span class="text-sm text-gray-500">{{ user.email }}</span>
+                        <span class="text-sm text-gray-500">{{
+                            user.email
+                            }}</span>
                     </div>
                 </a>
 
@@ -195,6 +216,18 @@ onUnmounted(() => {
                         class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
                         <UserCog class="w-5 h-5 text-gray-700" />
                         <span class="text-sm font-medium text-gray-800">Edit Profil</span>
+                    </a>
+
+                    <a href="/notifications"
+                        class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
+                        <Bell class="w-5 h-5 text-gray-700" />
+                        <span class="text-sm font-medium text-gray-800">Notifikasi</span>
+                        <span
+                            v-if="unreadCount > 0"
+                            class="inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-600 rounded-full ml-auto"
+                        >
+                            {{ unreadCount > 99 ? "99+" : unreadCount }}
+                        </span>
                     </a>
                 </div>
             </template>

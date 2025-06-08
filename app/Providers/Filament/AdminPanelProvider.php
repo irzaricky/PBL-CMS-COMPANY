@@ -5,32 +5,29 @@ namespace App\Providers\Filament;
 
 use Filament\Pages;
 use Filament\Panel;
-use App\Models\User;
 use Filament\PanelProvider;
+use App\Filament\Pages\ViewEnv;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
-use Filament\Support\Colors\Color;
+use Illuminate\Support\Facades\Auth;
 use App\Filament\Pages\Auth\Register;
-use Filament\Navigation\NavigationItem;
 use App\Filament\Pages\Auth\EditProfile;
 use \App\Http\Middleware\CheckStatusUser;
 use Filament\Http\Middleware\Authenticate;
-use Filament\Navigation\NavigationBuilder;
-use App\Filament\Resources\UnduhanResource;
-use Intervention\Image\ImageServiceProvider;
 use Illuminate\Session\Middleware\StartSession;
 use App\Filament\Widgets\Admin\TotalUsersWidget;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use App\Filament\Widgets\Admin\StorageUsageChart;
 use App\Filament\Widgets\Admin\UsersByRoleWidget;
 use Filament\Http\Middleware\AuthenticateSession;
-use App\Filament\Widgets\Director\ContentGrowthTrend;
+use App\Filament\Widgets\Admin\FeatureTooglesWidget;
 use DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin;
+use App\Filament\Widgets\Director\ContentGrowthTrend;
+use GeoSot\FilamentEnvEditor\FilamentEnvEditorPlugin;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use App\Filament\Widgets\Admin\RemainingStorageWidget;
 use App\Filament\Widgets\Director\ContentManagerStats;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use Swis\Filament\Backgrounds\ImageProviders\MyImages;
 use App\Filament\Widgets\Director\CustomerServiceStats;
 use App\Filament\Widgets\Director\CustomerServiceGrowth;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -55,11 +52,13 @@ use App\Filament\Widgets\ContentManager\General\ContentCountsChart;
 use App\Filament\Widgets\ContentManager\General\ContentTrendsChart;
 use App\Filament\Widgets\ContentManager\Unduhan\UnduhanStatusChart;
 use App\Filament\Widgets\CustomerServices\Lamaran\LamaranStatsCard;
+use pxlrbt\FilamentEnvironmentIndicator\EnvironmentIndicatorPlugin;
 use App\Filament\Widgets\ContentManager\Galeri\GaleriDownloadsChart;
 use App\Filament\Widgets\CustomerServices\Lamaran\LamaranTrendChart;
 use App\Filament\Widgets\ContentManager\Produk\ProductsByStatusChart;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackStatsCard;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganStatsCard;
+use App\Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use App\Filament\Widgets\ContentManager\Galeri\TopGaleriesStatsWidget;
 use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
@@ -90,11 +89,13 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->passwordReset()
             ->profile(EditProfile::class)
             ->unsavedChangesAlerts()
             ->globalSearch(false)
             ->font('Plus jakarta Sans')
             ->registration(Register::class)
+            ->emailVerification(EmailVerificationPrompt::class)
             ->colors([
                 'primary' => '#3b82f6',
             ])
@@ -111,6 +112,7 @@ class AdminPanelProvider extends PanelProvider
                 StorageUsageChart::class,
                 RemainingStorageWidget::class,
                 StorageUsageByFeatureChart::class,
+                FeatureTooglesWidget::class,
 
                     // Content Manager widgets
                 ContentCountsChart::class,
@@ -181,7 +183,17 @@ class AdminPanelProvider extends PanelProvider
                     ->mobileFormPanelPosition('bottom')
                     ->emptyPanelBackgroundImageUrl('https://images.pexels.com/photos/466685/pexels-photo-466685.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2')
                     ->formPanelWidth('40%'),
-                FilamentApexChartsPlugin::make()
+                FilamentApexChartsPlugin::make(),
+                FilamentEnvEditorPlugin::make()
+                    ->navigationGroup('System')
+                    ->navigationLabel('Environment Editor')
+                    ->navigationIcon('heroicon-o-cog')
+                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS', 'APP_NAME')
+                    ->viewPage(ViewEnv::class)
+                    ->authorize(
+                        fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')
+                    ),
+                EnvironmentIndicatorPlugin::make(),
             ])
             ->userMenuItems([
                 'heroicon-o-home' => MenuItem::make()

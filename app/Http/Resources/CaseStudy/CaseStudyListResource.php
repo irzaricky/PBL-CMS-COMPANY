@@ -23,6 +23,7 @@ class CaseStudyListResource extends JsonResource
             'mitra' => [
                 'id_mitra' => $this->mitra->id_mitra,
                 'nama_mitra' => $this->mitra->nama,
+                'logo' => $this->mitra->logo,
             ],
             'slug_case_study' => $this->slug_case_study,
         ];

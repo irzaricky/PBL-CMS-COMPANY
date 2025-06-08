@@ -13,6 +13,7 @@ class FeedbackTrendChart extends ApexChartWidget
     protected static ?int $sort = 1;
     protected static bool $deferLoading = true;
     protected string|int|array $columnSpan = 2;
+    protected static ?string $pollingInterval = '180s'; // 3 minutes
 
     public ?string $filter = 'last_6_months';
 

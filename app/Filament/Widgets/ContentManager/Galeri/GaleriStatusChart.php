@@ -10,9 +10,10 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 class GaleriStatusChart extends ApexChartWidget
 {
     protected static ?string $heading = 'Gallery Items by Status';
-    protected static ?int $sort = 5;
+    protected static ?int $sort = 13;
     protected static bool $deferLoading = true;
     protected string|int|array $columnSpan = 2;
+    protected static ?string $pollingInterval = '300s'; // 5 minutes
 
     protected function getOptions(): array
     {

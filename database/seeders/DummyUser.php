@@ -34,8 +34,8 @@ class DummyUser extends Seeder
 
         // Buat user pertama manual (bisa pakai foto profil juga jika ingin)
         User::create([
-            'name' => 'Test User',
-            'email' => 'testuser@example.com',
+            'name' => 'Irza User',
+            'email' => 'irzaricky35@gmail.com',
             'password' => Hash::make('password123'),
             'email_verified_at' => now(),
             'foto_profil' => $getRandomProfilePicture(), // tambahkan foto profil random
@@ -45,9 +45,17 @@ class DummyUser extends Seeder
 
         // Buat 20 user dummy dengan foto profil random
         for ($i = 0; $i < 20; $i++) {
+            // Generate unique email
+            $email = $faker->unique()->safeEmail();
+
+            // Skip if this email already exists in the database
+            if (User::where('email', $email)->exists()) {
+                continue;
+            }
+
             User::create([
                 'name' => $faker->name(),
-                'email' => $faker->unique()->safeEmail(),
+                'email' => $email,
                 'password' => Hash::make('password123'),
                 'status_kepegawaian' => $faker->randomElement(['Kontrak', 'Magang']),
                 'email_verified_at' => now(),

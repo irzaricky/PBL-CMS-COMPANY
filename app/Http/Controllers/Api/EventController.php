@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 use App\Http\Resources\Events\EventListResource;
 use App\Http\Resources\Events\EventViewResource;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use App\Notifications\EventRegistrationNotification;
+use App\Notifications\EventCancellationNotification;
+use App\Notifications\EventReminderNotification;
 
 class EventController extends Controller
 {
@@ -19,7 +23,8 @@ class EventController extends Controller
     public function index()
     {
         try {
-            $events = Event::where('waktu_start_event', '>', Carbon::now())
+            $events = Event::with('users')
+                ->where('waktu_start_event', '>', Carbon::now())
                 ->orderBy('waktu_start_event', 'asc')
                 ->paginate(10);
 
@@ -42,7 +47,9 @@ class EventController extends Controller
     public function getEventBySlug($slug)
     {
         try {
-            $event = Event::where('slug', $slug)
+            // Load users to determine registration status
+            $event = Event::with('users')
+                ->where('slug', $slug)
                 ->firstOrFail();
             return new EventViewResource($event);
         } catch (\Exception $e) {
@@ -63,7 +70,8 @@ class EventController extends Controller
     public function getEventById($id)
     {
         try {
-            $event = Event::findOrFail($id);
+            // Load users to determine registration status
+            $event = Event::with('users')->findOrFail($id);
             return new EventViewResource($event);
         } catch (\Exception $e) {
             return response()->json([
@@ -77,12 +85,19 @@ class EventController extends Controller
     /**
      * Mengambil event terbaru
      * 
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @return \App\Http\Resources\Events\EventListResource|\Illuminate\Http\JsonResponse
      */
     public function getMostRecentEvent()
     {
         try {
-            $event = Event::orderBy('waktu_start_event', 'desc')->first();
+            $event = Event::with('users')->orderBy('waktu_start_event', 'desc')->first();
+
+            if (!$event) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tidak ada event tersedia'
+                ], 404);
+            }
 
             return new EventListResource($event);
         } catch (\Exception $e) {
@@ -94,10 +109,17 @@ class EventController extends Controller
         }
     }
 
-     public function getNavbarRecentEvent()
+    public function getNavbarRecentEvent()
     {
         try {
-            $event = Event::orderBy('waktu_start_event', 'desc')->first();
+            $event = Event::with('users')->orderBy('waktu_start_event', 'desc')->first();
+
+            if (!$event) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Tidak ada event tersedia'
+                ], 404);
+            }
 
             return new EventListResource($event);
         } catch (\Exception $e) {
@@ -125,7 +147,7 @@ class EventController extends Controller
                 return $this->index();
             }
 
-            $eventsQuery = Event::where(function ($q) use ($query) {
+            $eventsQuery = Event::with('users')->where(function ($q) use ($query) {
                 $q->where('nama_event', 'LIKE', '%' . $query . '%')
                     ->orWhere('lokasi_event', 'LIKE', '%' . $query . '%')
                     ->orWhere('deskripsi_event', 'LIKE', '%' . $query . '%');
@@ -149,6 +171,102 @@ class EventController extends Controller
                 'message' => 'Gagal mencari event',
                 'error' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    /**
+     * Register the authenticated user for an event.
+     */
+    public function register(Request $request, $slug)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $event = Event::where('slug', $slug)->firstOrFail();
+
+        if ($event->isUserRegistered($user->id_user)) {
+            return response()->json(['status' => 'error', 'message' => 'Sudah terdaftar'], 400);
+        }
+
+        $event->users()->attach($user->id_user);
+        $event->increment('jumlah_pendaftar');
+        $user->notify(new EventRegistrationNotification($event));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Berhasil mendaftar event',
+            'jumlah_pendaftar' => $event->fresh()->jumlah_pendaftar,
+            'is_registered' => true,
+        ]);
+    }
+
+    /**
+     * Unregister the authenticated user from an event.
+     */
+    public function unregister(Request $request, $slug)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $event = Event::where('slug', $slug)->firstOrFail();
+
+        if (!$event->isUserRegistered($user->id_user)) {
+            return response()->json(['status' => 'error', 'message' => 'Belum terdaftar'], 400);
+        }
+
+        $event->users()->detach($user->id_user);
+        $event->decrement('jumlah_pendaftar');
+        $user->notify(new EventCancellationNotification($event));
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Pendaftaran dibatalkan',
+            'jumlah_pendaftar' => $event->fresh()->jumlah_pendaftar,
+            'is_registered' => false,
+        ]);
+    }
+
+    /**
+     * Check if the authenticated user is registered for an event.
+     */
+    public function checkRegistration($slug)
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized',
+                'is_registered' => false
+            ], 401);
+        }
+
+        try {
+            $event = Event::where('slug', $slug)->firstOrFail();
+            $isRegistered = $event->isUserRegistered($user->id_user);
+
+            return response()->json([
+                'status' => 'success',
+                'is_registered' => $isRegistered
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Event not found',
+                'is_registered' => false
+            ], 404);
         }
     }
 }
