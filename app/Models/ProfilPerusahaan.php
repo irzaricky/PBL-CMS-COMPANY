@@ -36,6 +36,7 @@ class ProfilPerusahaan extends Model
         'alamat_perusahaan',
         'link_alamat_perusahaan',
         'email_perusahaan',
+        'telepon_perusahaan',
         'sejarah_perusahaan',
         'visi_perusahaan',
         'misi_perusahaan',

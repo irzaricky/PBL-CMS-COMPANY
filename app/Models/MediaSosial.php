@@ -30,9 +30,8 @@ class MediaSosial extends Model
      */
     protected $fillable = [
         'nama_media_sosial',
-        'icon',
         'link',
-        'status'
+        'status_aktif'
     ];
 
     protected $casts = [

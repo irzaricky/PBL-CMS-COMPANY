@@ -3,9 +3,23 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { computed } from "vue";
 import { Link } from "@inertiajs/vue3";
-import { Phone, Mail, MapPin } from "lucide-vue-next";
+import { 
+    Phone, 
+    Mail, 
+    MapPin, 
+    Facebook, 
+    Instagram, 
+    Linkedin, 
+    Twitter, 
+    Youtube, 
+    Github,
+    MessageCircle, // For WhatsApp
+    Send, // For Telegram
+    Music // For TikTok (closest match)
+} from "lucide-vue-next";
 
 const profil_perusahaan = ref(null);
+const mediaSosial = ref([]);
 const loading = ref(false);
 const error = ref(null);
 
@@ -25,6 +39,7 @@ const showReadMore = computed(() => {
 
 onMounted(() => {
     fetchProfilPerusahaan();
+    fetchMediaSosial();
 });
 
 async function fetchProfilPerusahaan() {
@@ -40,6 +55,48 @@ async function fetchProfilPerusahaan() {
     }
 }
 
+async function fetchMediaSosial() {
+    try {
+        const response = await axios.get('/api/media-sosial');
+        mediaSosial.value = [];
+        
+        // Process the updated response format
+        for (const [platform, data] of Object.entries(response.data.data)) {
+            if (data.active) {
+                mediaSosial.value.push({
+                    name: platform,
+                    link: data.link
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error fetching social media:", err);
+    }
+}
+
+function getMediaSosialLink(platform) {
+    // This function will be populated with real data from your API
+    // For now, it returns placeholder URLs
+    return "#"; // In reality, this would return the actual link from your API
+}
+
+function getMediaSosialComponent(platform) {
+    // Map platform names to Lucide components
+    const iconMap = {
+        'Facebook': Facebook,
+        'Instagram': Instagram,
+        'LinkedIn': Linkedin,
+        'Twitter': Twitter,
+        'YouTube': Youtube,
+        'TikTok': Music,
+        'WhatsApp Business': MessageCircle,
+        'Telegram': Send,
+        'GitHub': Github
+    };
+    
+    return iconMap[platform] || null;
+}
+
 function getImageUrl(image) {
     if (!image) return "/image/placeholder.webp";
 
@@ -52,8 +109,6 @@ function getImageUrl(image) {
 function lihatSelengkapnya() {
     alert(profil_perusahaan.value.sejarah_perusahaan)
 }
-
-
 </script>
 
 <template>
@@ -77,14 +132,14 @@ function lihatSelengkapnya() {
                         </p>
 
                         <div class="mt-6">
-                            <h4 class="font-bold pb-1">Contact Us</h4>
+                            <h4 class="font-bold pb-1">Hubungi Kami</h4>
                             <div class="flex items-center gap-2">
                                 <Phone class="w-4" />
-                                <span>(031) 33101059</span>
+                                <span>{{ profil_perusahaan?.telepon_perusahaan || 'Telepon perusahaan belum tersedia.' }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <Mail class="w-4" />
-                                <span>marketing@biiscorp.com</span>
+                                <span>{{ profil_perusahaan?.email_perusahaan || 'Email perusahaan belum tersedia.' }}</span>
                             </div>
                         </div>
                     </div>
@@ -93,14 +148,14 @@ function lihatSelengkapnya() {
                     <div class="flex flex-col justify-center h-full lg:col-span-2 lg:pl-20">
                         <h4 class="font-bold mb-4">Quick Links</h4>
                         <ul class="grid grid-cols-2 gap-y-2">
-                            <li><a href="#" class="hover:underline">Beranda</a></li>
-                            <li><a href="#" class="hover:underline">Galeri</a></li>
-                            <li><a href="#" class="hover:underline">Tentang Kami</a></li>
-                            <li><a href="#" class="hover:underline">Unduhan</a></li>
-                            <li><a href="#" class="hover:underline">Produk</a></li>
-                            <li><a href="#" class="hover:underline">Event</a></li>
-                            <li><a href="#" class="hover:underline">Artikel</a></li>
-                            <li><a href="#" class="hover:underline">Lowongan</a></li>
+                            <li><Link href="/" class="hover:underline">Beranda</Link></li>
+                            <li><Link href="/galeri" class="hover:underline">Galeri</Link></li>
+                            <li><Link href="/tentang-kami" class="hover:underline">Tentang Kami</Link></li>
+                            <li><Link href="/unduhan" class="hover:underline">Unduhan</Link></li>
+                            <li><Link href="/produk" class="hover:underline">Produk</Link></li>
+                            <li><Link href="/event" class="hover:underline">Event</Link></li>
+                            <li><Link href="/artikel" class="hover:underline">Artikel</Link></li>
+                            <li><Link href="/lowongan" class="hover:underline">Lowongan</Link></li>
                         </ul>
                     </div>
 
@@ -117,16 +172,23 @@ function lihatSelengkapnya() {
                         </div>
                         <div>
                             <h4 class="font-bold mb-4">Follow Us</h4>
-                            <div class="flex flex-wrap gap-4">
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i
-                                        class="bi bi-instagram"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-tiktok"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i
-                                        class="bi bi-twitter-x"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-telegram"></i></a>
+                            <div v-if="mediaSosial.length > 0" class="flex flex-wrap gap-4">
+                                <a 
+                                    v-for="(platform, index) in mediaSosial" 
+                                    :key="index"
+                                    :href="platform.link" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer"
+                                    class="hover:text-primary transition-colors"
+                                    :title="platform.name"
+                                >
+                                    <component 
+                                        :is="getMediaSosialComponent(platform.name)" 
+                                        class="w-5 h-5" 
+                                    />
+                                </a>
                             </div>
+                            <p v-else class="text-sm italic">No active social media platforms</p>
                         </div>
                     </div>
 

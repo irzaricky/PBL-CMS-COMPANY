@@ -96,7 +96,7 @@ onMounted(() => {
                         >
                             <div class="border-b border-secondary/20 pb-3">
                                 <h3
-                                    class="font-bold text-h4-bold text-secondary uppercase tracking-wide"
+                                    class="font-bold text-lg text-secondary uppercase tracking-wide"
                                 >
                                     {{ section.title }}
                                 </h3>
@@ -138,7 +138,7 @@ onMounted(() => {
                             class="border-b border-secondary/20 pb-3 lg:border-b-0 lg:pb-0"
                         >
                             <h3
-                                class="font-bold text-h4-bold text-secondary uppercase tracking-wide lg:mb-6"
+                                class="font-bold text-lg text-secondary uppercase tracking-wide lg:mb-6"
                             >
                                 Konten Terbaru
                             </h3>

@@ -27,6 +27,7 @@ class ProfilPerusahaanViewResource extends JsonResource
             'alamat_perusahaan' => $this->alamat_perusahaan,
             'link_alamat_perusahaan' => $this->link_alamat_perusahaan,
             'email_perusahaan' => $this->email_perusahaan,
+            'telepon_perusahaan' => $this->telepon_perusahaan,
         ];
     }
 }
