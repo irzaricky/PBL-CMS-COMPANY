@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lowongan;
+use App\Http\Resources\Lowongan\LowonganListResource;
+use App\Http\Resources\Lowongan\LowonganViewResource;
 use Illuminate\Http\Request;
 
 class LowonganController extends Controller
@@ -19,11 +21,11 @@ class LowonganController extends Controller
         try {
             $perPage = $request->query('per_page', 6);
             $lowongan = Lowongan::orderBy('tanggal_dibuka', 'desc')->paginate($perPage);
-            
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Data lowongan berhasil diambil',
-                'data' => $lowongan->items(),
+                'data' => LowonganListResource::collection($lowongan->items()),
                 'meta' => [
                     'current_page' => $lowongan->currentPage(),
                     'last_page' => $lowongan->lastPage(),
@@ -39,7 +41,7 @@ class LowonganController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Mencari lowongan berdasarkan query
      * Implementasi sederhana untuk menghindari error
@@ -51,18 +53,28 @@ class LowonganController extends Controller
     {
         try {
             $query = $request->input('query');
-            
-            $lowonganQuery = Lowongan::where(function($q) use ($query) {
+
+            $lowonganQuery = Lowongan::where(function ($q) use ($query) {
                 $q->where('judul_lowongan', 'LIKE', "%{$query}%")
-                  ->orWhere('deskripsi_pekerjaan', 'LIKE', "%{$query}%");
-                  // Hapus bagian lokasi jika kolom tidak ada
-                  // ->orWhere('lokasi', 'LIKE', "%{$query}%");
+                    ->orWhere('deskripsi_pekerjaan', 'LIKE', "%{$query}%");
+                // Hapus bagian lokasi jika kolom tidak ada
+                // ->orWhere('lokasi', 'LIKE', "%{$query}%");
             });
-            
+
             $lowongan = $lowonganQuery->paginate(10);
-            
-            // Return response yang sama seperti endpoint lain
-            return response()->json($lowongan);
+
+            // Return response dengan menggunakan resource
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Hasil pencarian lowongan',
+                'data' => LowonganListResource::collection($lowongan->items()),
+                'meta' => [
+                    'current_page' => $lowongan->currentPage(),
+                    'last_page' => $lowongan->lastPage(),
+                    'per_page' => $lowongan->perPage(),
+                    'total' => $lowongan->total(),
+                ],
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
@@ -82,23 +94,84 @@ class LowonganController extends Controller
     {
         try {
             $lowongan = Lowongan::where('slug', $slug)->first();
-            
+
             if (!$lowongan) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Lowongan tidak ditemukan'
                 ], 404);
             }
-            
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Detail lowongan berhasil diambil',
-                'data' => $lowongan
+                'data' => new LowonganViewResource($lowongan)
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil detail lowongan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mengambil detail lowongan berdasarkan ID
+     * 
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLowonganById($id)
+    {
+        try {
+            $lowongan = Lowongan::find($id);
+
+            if (!$lowongan) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Lowongan tidak ditemukan'
+                ], 404);
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Detail lowongan berhasil diambil',
+                'data' => new LowonganViewResource($lowongan)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil detail lowongan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mengambil lowongan terbaru
+     * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getMostRecentLowongan(Request $request)
+    {
+        try {
+            $limit = $request->query('limit', 1);
+            $lowongan = Lowongan::orderBy('tanggal_dibuka', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Data lowongan terbaru berhasil diambil',
+                'data' => LowonganListResource::collection($lowongan)
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengambil data lowongan terbaru',
                 'error' => $e->getMessage()
             ], 500);
         }
