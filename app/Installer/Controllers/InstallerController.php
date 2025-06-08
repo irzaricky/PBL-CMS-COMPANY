@@ -303,6 +303,7 @@ class InstallerController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'status_kepegawaian' => 'Tetap', // Set status kepegawaian to Tetap
+                'email_verified_at' => now(), // Set email verified at to now
             ]);
 
             // Assign super admin role (menggunakan shield package)
