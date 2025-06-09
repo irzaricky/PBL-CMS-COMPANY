@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeederDev extends Seeder
 {
@@ -26,6 +27,10 @@ class DatabaseSeederDev extends Seeder
         foreach (array_reverse($directories) as $directory) {
             Storage::disk('public')->deleteDirectory($directory);
         }
+
+        Artisan::call('migrate:fresh', [
+            '--force' => true,
+        ]);
 
         $this->call([
             ShieldSeeder::class,
