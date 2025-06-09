@@ -86,10 +86,20 @@ class ProfilPerusahaanResource extends Resource
                             ),
 
                         Forms\Components\TextInput::make('map_embed_perusahaan')
-                            ->label('URL Embed Google Maps')
-                            ->placeholder('https://www.google.com/maps/embed?pb=...')
-                            ->helperText('Salin URL embed dari Google Maps')
-                            ->columnSpan(2),
+                            ->label('Kode Embed Google Maps')
+                            ->placeholder('Salin seluruh kode iframe dari Google Maps di sini...')
+                            ->helperText('Salin seluruh kode iframe dari Google Maps. Sistem akan otomatis mengambil URL embed-nya.')
+                            ->columnSpan(2)
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state) {
+                                    // Extract src URL from iframe
+                                    if (preg_match('/src=["\']([^"\']+)["\']/', $state, $matches)) {
+                                        $embedUrl = $matches[1];
+                                        $set('map_embed_perusahaan', $embedUrl);
+                                    }
+                                }
+                            })
+                            ->reactive(),
 
                         Forms\Components\TextInput::make('email_perusahaan')
                             ->label('Email')
@@ -202,6 +212,22 @@ class ProfilPerusahaanResource extends Resource
                             ->height(150)
                             ->width(150),
                     ]),
+
+                Infolists\Components\Section::make('Peta Lokasi')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('map_embed_perusahaan')
+                            ->label('')
+                            ->formatStateUsing(function ($state) {
+                                if ($state) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<iframe src="' . $state . '" width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>'
+                                    );
+                                }
+                                return '';
+                            })
+                            ->html(),
+                    ])
+                    ->visible(fn($record) => !empty($record->map_embed_perusahaan)),
 
                 Infolists\Components\Section::make('Galeri Perusahaan')
                     ->schema([
