@@ -2,8 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\CacheController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MitraController;
+use App\Http\Controllers\ImageMetaController;
 use App\Http\Controllers\Api\GaleriController;
 use App\Http\Controllers\Api\ProdukController;
 use App\Http\Controllers\Api\ArtikelController;
@@ -16,13 +18,12 @@ use App\Http\Controllers\Api\TestimoniController;
 use App\Http\Controllers\Api\MediaSosialController;
 use App\Http\Controllers\Api\KontenSliderController;
 use App\Http\Controllers\Api\FeatureToggleController;
+use App\Http\Controllers\Api\TestimoniEventController;
 use App\Http\Controllers\Api\TestimoniProdukController;
 use App\Http\Controllers\Api\ProfilPerusahaanController;
 use App\Http\Controllers\Api\TestimoniArtikelController;
-use App\Http\Controllers\Api\TestimoniEventController;
+use App\Http\Controllers\Api\TestimoniLowonganController;
 use App\Http\Controllers\Api\StrukturOrganisasiController;
-use App\Http\Controllers\Api\CacheController;
-use App\Http\Controllers\ImageMetaController;
 
 Route::middleware('auth')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -153,6 +154,9 @@ Route::get('/testimoni/artikel/{artikelId}', [TestimoniArtikelController::class,
 Route::post('/testimoni/artikel/{artikel}', [TestimoniArtikelController::class, 'store']);
 Route::get('/testimoni/event/{eventId}', [TestimoniEventController::class, 'index']);
 Route::post('/testimoni/event/{event}', [TestimoniEventController::class, 'store']);
+Route::get('/testimoni/lowongan/{lowonganId}', [TestimoniLowonganController::class, 'index']);
+Route::post('/testimoni/lowongan/{lowonganId}', [TestimoniLowonganController::class, 'store']);
+
 
 // Mitra
 Route::prefix('mitra')->group(function () {

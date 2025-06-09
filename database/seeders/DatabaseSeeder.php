@@ -44,6 +44,7 @@ class DatabaseSeeder extends Seeder
             TestimoniProdukSeeder::class,
             TestimoniArtikelSeeder::class,
             TestimoniEventSeeder::class,
+            TestimoniLowonganSeeder::class,
         ]);
     }
 
