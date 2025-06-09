@@ -11,7 +11,8 @@
     <meta name="app-name" content="{{ $titlePerusahaan }}">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="{{ asset('storage/' . $logoPerusahaan) }}" />
+    <link rel="icon" type="image/png"
+        href="{{ $logoPerusahaan === 'favicon.ico' ? asset('favicon.ico') : asset('storage/' . $logoPerusahaan) }}" />
 
 
     <!-- Fonts -->

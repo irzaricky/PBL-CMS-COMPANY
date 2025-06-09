@@ -85,6 +85,18 @@ class AdminPanelProvider extends PanelProvider
                 }
                 return 'Admin Panel';
             })
+            ->favicon(function () {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')) {
+                        $company = ProfilPerusahaan::first();
+                        if ($company && $company->logo_perusahaan) {
+                            return asset('storage/' . $company->logo_perusahaan);
+                        }
+                    }
+                } catch (\Exception $e) {
+                }
+                return asset('favicon.ico');
+            })
             ->globalSearch(false)
             ->id('admin')
             ->path('admin')
