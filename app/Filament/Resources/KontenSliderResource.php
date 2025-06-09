@@ -53,10 +53,10 @@ class KontenSliderResource extends Resource
                                 modifyQueryUsing: fn($query) => $query->where('status_artikel', ContentStatus::TERPUBLIKASI)
                             )
                             ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                $thumbnail = is_array($record->thumbnail_artikel) && !empty($record->thumbnail_artikel) 
-                                    ? $record->thumbnail_artikel[0] 
+                                $thumbnail = is_array($record->thumbnail_artikel) && !empty($record->thumbnail_artikel)
+                                    ? $record->thumbnail_artikel[0]
                                     : null;
-                                
+
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
@@ -65,7 +65,7 @@ class KontenSliderResource extends Resource
                                         '</div>'
                                     );
                                 }
-                                
+
                                 return $record->judul_artikel;
                             })
                             ->allowHtml()
@@ -81,10 +81,10 @@ class KontenSliderResource extends Resource
                                 modifyQueryUsing: fn($query) => $query->where('status_galeri', ContentStatus::TERPUBLIKASI)
                             )
                             ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                $thumbnail = is_array($record->thumbnail_galeri) && !empty($record->thumbnail_galeri) 
-                                    ? $record->thumbnail_galeri[0] 
+                                $thumbnail = is_array($record->thumbnail_galeri) && !empty($record->thumbnail_galeri)
+                                    ? $record->thumbnail_galeri[0]
                                     : null;
-                                
+
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
@@ -93,7 +93,7 @@ class KontenSliderResource extends Resource
                                         '</div>'
                                     );
                                 }
-                                
+
                                 return $record->judul_galeri;
                             })
                             ->allowHtml()
@@ -106,10 +106,10 @@ class KontenSliderResource extends Resource
                             ->label('Event')
                             ->relationship('event', 'nama_event')
                             ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                $thumbnail = is_array($record->thumbnail_event) && !empty($record->thumbnail_event) 
-                                    ? $record->thumbnail_event[0] 
+                                $thumbnail = is_array($record->thumbnail_event) && !empty($record->thumbnail_event)
+                                    ? $record->thumbnail_event[0]
                                     : null;
-                                
+
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
@@ -118,7 +118,7 @@ class KontenSliderResource extends Resource
                                         '</div>'
                                     );
                                 }
-                                
+
                                 return $record->nama_event;
                             })
                             ->allowHtml()
@@ -135,10 +135,10 @@ class KontenSliderResource extends Resource
                                 modifyQueryUsing: fn($query) => $query->where('status_produk', ContentStatus::TERPUBLIKASI)
                             )
                             ->getOptionLabelFromRecordUsing(function (Model $record) {
-                                $thumbnail = is_array($record->thumbnail_produk) && !empty($record->thumbnail_produk) 
-                                    ? $record->thumbnail_produk[0] 
+                                $thumbnail = is_array($record->thumbnail_produk) && !empty($record->thumbnail_produk)
+                                    ? $record->thumbnail_produk[0]
                                     : null;
-                                
+
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
@@ -147,7 +147,7 @@ class KontenSliderResource extends Resource
                                         '</div>'
                                     );
                                 }
-                                
+
                                 return $record->nama_produk;
                             })
                             ->allowHtml()
@@ -174,42 +174,42 @@ class KontenSliderResource extends Resource
                                     'sm' => 1,
                                     'md' => 3,
                                 ])
-                                ->schema([
-                                    Components\ImageEntry::make('artikel.thumbnail_artikel')
-                                        ->label('')
-                                        ->square()
-                                        ->size(200)
-                                        ->disk('public')
-                                        ->getStateUsing(function ($record) {
-                                            if ($record->artikel && $record->artikel->thumbnail_artikel) {
-                                                $thumbnail = is_array($record->artikel->thumbnail_artikel) 
-                                                    ? $record->artikel->thumbnail_artikel[0] 
-                                                    : $record->artikel->thumbnail_artikel;
-                                                return $thumbnail;
-                                            }
-                                            return null;
-                                        })
-                                        ->columnSpan(1),
-                                    
-                                    Components\Grid::make(1)
-                                        ->schema([
-                                            Components\TextEntry::make('artikel.judul_artikel')
-                                                ->label('Artikel')
-                                                ->weight('bold')
-                                                ->size('lg')
-                                                ->color('primary'),
-                                            
-                                            Components\TextEntry::make('artikel.konten_artikel')
-                                                ->label('Konten')
-                                                ->html()
-                                                ->limit(150)
-                                                ->extraAttributes(['style' => 'line-height: 1.4;'])
-                                                ->tooltip(function ($record) {
-                                                    return $record->artikel ? strip_tags($record->artikel->konten_artikel) : null;
-                                                }),
-                                        ])
-                                        ->columnSpan(2),
-                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('artikel.thumbnail_artikel')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->artikel && $record->artikel->thumbnail_artikel) {
+                                                    $thumbnail = is_array($record->artikel->thumbnail_artikel)
+                                                        ? $record->artikel->thumbnail_artikel[0]
+                                                        : $record->artikel->thumbnail_artikel;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('artikel.judul_artikel')
+                                                    ->label('Artikel')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('primary'),
+
+                                                Components\TextEntry::make('artikel.konten_artikel')
+                                                    ->label('Konten')
+                                                    ->html()
+                                                    ->limit(150)
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;'])
+                                                    ->tooltip(function ($record) {
+                                                        return $record->artikel ? strip_tags($record->artikel->konten_artikel) : null;
+                                                    }),
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
                             ])
                             ->visible(fn($record) => $record->id_artikel !== null),
 
@@ -220,38 +220,38 @@ class KontenSliderResource extends Resource
                                     'sm' => 1,
                                     'md' => 3,
                                 ])
-                                ->schema([
-                                    Components\ImageEntry::make('galeri.thumbnail_galeri')
-                                        ->label('')
-                                        ->square()
-                                        ->size(200)
-                                        ->disk('public')
-                                        ->getStateUsing(function ($record) {
-                                            if ($record->galeri && $record->galeri->thumbnail_galeri) {
-                                                $thumbnail = is_array($record->galeri->thumbnail_galeri) 
-                                                    ? $record->galeri->thumbnail_galeri[0] 
-                                                    : $record->galeri->thumbnail_galeri;
-                                                return $thumbnail;
-                                            }
-                                            return null;
-                                        })
-                                        ->columnSpan(1),
-                                    
-                                    Components\Grid::make(1)
-                                        ->schema([
-                                            Components\TextEntry::make('galeri.judul_galeri')
-                                                ->label('Galeri')
-                                                ->weight('bold')
-                                                ->size('lg')
-                                                ->color('success'),
-                                            
-                                            Components\TextEntry::make('galeri.deskripsi_galeri')
-                                                ->label('Deskripsi')
-                                                ->limit(150)
-                                                ->extraAttributes(['style' => 'line-height: 1.4;']),
-                                        ])
-                                        ->columnSpan(2),
-                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('galeri.thumbnail_galeri')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->galeri && $record->galeri->thumbnail_galeri) {
+                                                    $thumbnail = is_array($record->galeri->thumbnail_galeri)
+                                                        ? $record->galeri->thumbnail_galeri[0]
+                                                        : $record->galeri->thumbnail_galeri;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('galeri.judul_galeri')
+                                                    ->label('Galeri')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('success'),
+
+                                                Components\TextEntry::make('galeri.deskripsi_galeri')
+                                                    ->label('Deskripsi')
+                                                    ->limit(150)
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;']),
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
                             ])
                             ->visible(fn($record) => $record->id_galeri !== null),
 
@@ -262,44 +262,44 @@ class KontenSliderResource extends Resource
                                     'sm' => 1,
                                     'md' => 3,
                                 ])
-                                ->schema([
-                                    Components\ImageEntry::make('event.thumbnail_event')
-                                        ->label('')
-                                        ->square()
-                                        ->size(200)
-                                        ->disk('public')
-                                        ->getStateUsing(function ($record) {
-                                            if ($record->event && $record->event->thumbnail_event) {
-                                                $thumbnail = is_array($record->event->thumbnail_event) 
-                                                    ? $record->event->thumbnail_event[0] 
-                                                    : $record->event->thumbnail_event;
-                                                return $thumbnail;
-                                            }
-                                            return null;
-                                        })
-                                        ->columnSpan(1),
-                                    
-                                    Components\Grid::make(1)
-                                        ->schema([
-                                            Components\TextEntry::make('event.nama_event')
-                                                ->label('Event')
-                                                ->weight('bold')
-                                                ->size('lg')
-                                                ->color('warning'),
-                                            
-                                            Components\TextEntry::make('event.deskripsi_event')
-                                                ->label('Deskripsi')
-                                                ->limit(120)
-                                                ->extraAttributes(['style' => 'line-height: 1.4;']),
-                                            
-                                            Components\TextEntry::make('event.waktu_start_event')
-                                                ->label('Waktu Mulai')
-                                                ->dateTime('d M Y H:i')
-                                                ->badge()
-                                                ->color('gray'),
-                                        ])
-                                        ->columnSpan(2),
-                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('event.thumbnail_event')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->event && $record->event->thumbnail_event) {
+                                                    $thumbnail = is_array($record->event->thumbnail_event)
+                                                        ? $record->event->thumbnail_event[0]
+                                                        : $record->event->thumbnail_event;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('event.nama_event')
+                                                    ->label('Event')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('warning'),
+
+                                                Components\TextEntry::make('event.deskripsi_event')
+                                                    ->label('Deskripsi')
+                                                    ->limit(120)
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;']),
+
+                                                Components\TextEntry::make('event.waktu_start_event')
+                                                    ->label('Waktu Mulai')
+                                                    ->dateTime('d M Y H:i')
+                                                    ->badge()
+                                                    ->color('gray'),
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
                             ])
                             ->visible(fn($record) => $record->id_event !== null),
 
@@ -310,44 +310,44 @@ class KontenSliderResource extends Resource
                                     'sm' => 1,
                                     'md' => 3,
                                 ])
-                                ->schema([
-                                    Components\ImageEntry::make('produk.thumbnail_produk')
-                                        ->label('')
-                                        ->square()
-                                        ->size(200)
-                                        ->disk('public')
-                                        ->getStateUsing(function ($record) {
-                                            if ($record->produk && $record->produk->thumbnail_produk) {
-                                                $thumbnail = is_array($record->produk->thumbnail_produk) 
-                                                    ? $record->produk->thumbnail_produk[0] 
-                                                    : $record->produk->thumbnail_produk;
-                                                return $thumbnail;
-                                            }
-                                            return null;
-                                        })
-                                        ->columnSpan(1),
-                                    
-                                    Components\Grid::make(1)
-                                        ->schema([
-                                            Components\TextEntry::make('produk.nama_produk')
-                                                ->label('Produk')
-                                                ->weight('bold')
-                                                ->size('lg')
-                                                ->color('danger'),
-                                            
-                                            Components\TextEntry::make('produk.deskripsi_produk')
-                                                ->label('Deskripsi')
-                                                ->limit(120)
-                                                ->extraAttributes(['style' => 'line-height: 1.4;']),
-                                            
-                                            Components\TextEntry::make('produk.harga_produk')
-                                                ->label('Harga')
-                                                ->money('IDR')
-                                                ->badge()
-                                                ->color('success'),
-                                        ])
-                                        ->columnSpan(2),
-                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('produk.thumbnail_produk')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->produk && $record->produk->thumbnail_produk) {
+                                                    $thumbnail = is_array($record->produk->thumbnail_produk)
+                                                        ? $record->produk->thumbnail_produk[0]
+                                                        : $record->produk->thumbnail_produk;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('produk.nama_produk')
+                                                    ->label('Produk')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('danger'),
+
+                                                Components\TextEntry::make('produk.deskripsi_produk')
+                                                    ->label('Deskripsi')
+                                                    ->limit(120)
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;']),
+
+                                                Components\TextEntry::make('produk.harga_produk')
+                                                    ->label('Harga')
+                                                    ->money('IDR')
+                                                    ->badge()
+                                                    ->color('success'),
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
                             ])
                             ->visible(fn($record) => $record->id_produk !== null),
                     ])
@@ -384,43 +384,43 @@ class KontenSliderResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail')
+                Tables\Columns\TextColumn::make('thumbnail')
                     ->label('Thumbnail')
-                    ->disk('public')
-                    ->getStateUsing(function ($record) {
+                    ->formatStateUsing(function ($record) {
+                        $imagePath = null;
+
                         // Prioritas: artikel -> galeri -> event -> produk
                         if ($record->artikel && $record->artikel->thumbnail_artikel) {
-                            $thumbnail = is_array($record->artikel->thumbnail_artikel) 
-                                ? $record->artikel->thumbnail_artikel[0] 
+                            $imagePath = is_array($record->artikel->thumbnail_artikel)
+                                ? $record->artikel->thumbnail_artikel[0]
                                 : $record->artikel->thumbnail_artikel;
-                            return $thumbnail;
-                        }
-                        
-                        if ($record->galeri && $record->galeri->thumbnail_galeri) {
-                            $thumbnail = is_array($record->galeri->thumbnail_galeri) 
-                                ? $record->galeri->thumbnail_galeri[0] 
+                        } elseif ($record->galeri && $record->galeri->thumbnail_galeri) {
+                            $imagePath = is_array($record->galeri->thumbnail_galeri)
+                                ? $record->galeri->thumbnail_galeri[0]
                                 : $record->galeri->thumbnail_galeri;
-                            return $thumbnail;
-                        }
-                        
-                        if ($record->event && $record->event->thumbnail_event) {
-                            $thumbnail = is_array($record->event->thumbnail_event) 
-                                ? $record->event->thumbnail_event[0] 
+                        } elseif ($record->event && $record->event->thumbnail_event) {
+                            $imagePath = is_array($record->event->thumbnail_event)
+                                ? $record->event->thumbnail_event[0]
                                 : $record->event->thumbnail_event;
-                            return $thumbnail;
-                        }
-                        
-                        if ($record->produk && $record->produk->thumbnail_produk) {
-                            $thumbnail = is_array($record->produk->thumbnail_produk) 
-                                ? $record->produk->thumbnail_produk[0] 
+                        } elseif ($record->produk && $record->produk->thumbnail_produk) {
+                            $imagePath = is_array($record->produk->thumbnail_produk)
+                                ? $record->produk->thumbnail_produk[0]
                                 : $record->produk->thumbnail_produk;
-                            return $thumbnail;
                         }
-                        
-                        return null;
+
+                        if ($imagePath) {
+                            $thumbnailUrl = route('thumbnail', [
+                                'path' => base64_encode($imagePath),
+                                'w' => 60,
+                                'h' => 60,
+                                'q' => 80
+                            ]);
+                            return '<img src="' . $thumbnailUrl . '" class="w-15 h-15 object-cover rounded-lg" loading="lazy" decoding="async" />';
+                        }
+
+                        return '<div class="w-15 h-15 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-xs">No Image</div>';
                     })
-                    ->square()
-                    ->size(60),
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('konten_info')
                     ->label('Konten')
@@ -451,14 +451,18 @@ class KontenSliderResource extends Resource
                 Tables\Columns\TextColumn::make('tipe_konten')
                     ->label('Tipe')
                     ->getStateUsing(function ($record) {
-                        if ($record->artikel) return 'Artikel';
-                        if ($record->galeri) return 'Galeri';
-                        if ($record->event) return 'Event';
-                        if ($record->produk) return 'Produk';
+                        if ($record->artikel)
+                            return 'Artikel';
+                        if ($record->galeri)
+                            return 'Galeri';
+                        if ($record->event)
+                            return 'Event';
+                        if ($record->produk)
+                            return 'Produk';
                         return 'Kosong';
                     })
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'Artikel' => 'info',
                         'Galeri' => 'success',
                         'Event' => 'warning',

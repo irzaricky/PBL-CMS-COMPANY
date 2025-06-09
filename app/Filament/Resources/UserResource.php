@@ -125,9 +125,22 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('foto_profil')
+                Tables\Columns\TextColumn::make('foto_profil')
                     ->label('Foto')
-                    ->circular(),
+                    ->formatStateUsing(function ($record) {
+                        if ($record->foto_profil) {
+                            $thumbnailUrl = route('thumbnail', [
+                                'path' => base64_encode($record->foto_profil),
+                                'w' => 50,
+                                'h' => 50,
+                                'q' => 80
+                            ]);
+                            return '<img src="' . $thumbnailUrl . '" class="w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async" />';
+                        }
+
+                        return '<div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xs">No Photo</div>';
+                    })
+                    ->html(),
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
                     ->searchable(),
@@ -236,7 +249,7 @@ class UserResource extends Resource
         ];
     }
 
-     public static function canCreate(): bool
+    public static function canCreate(): bool
     {
         return false;
     }

@@ -158,11 +158,12 @@ class ArtikelResource extends Resource
                                     ->label('Preview Konten')
                                     ->slideOver()
                                     ->form([
-                                        Forms\Components\ViewField::make('preview')
-                                            ->view('forms.preview-konten-artikel')
-                                            ->viewData([
-                                                'konten' => $get('konten_artikel'),
-                                            ])
+                                        Forms\Components\Placeholder::make('preview')
+                                            ->content(fn(Get $get) => new \Illuminate\Support\HtmlString(
+                                                view('forms.preview-konten-artikel', [
+                                                    'konten' => $get('konten_artikel'),
+                                                ])->render()
+                                            ))
                                             ->columnSpanFull(),
                                     ])
                             )
@@ -174,13 +175,35 @@ class ArtikelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_artikel')
+                Tables\Columns\TextColumn::make('thumbnail_artikel')
                     ->label('Thumbnail')
-                    ->circular()
-                    ->stacked()
-                    ->limit(1)
-                    ->limitedRemainingText()
-                    ->extraImgAttributes(['class' => 'object-cover']),
+                    ->formatStateUsing(function ($record) {
+                        $images = [];
+                        $totalImages = 0;
+
+                        if (is_array($record->thumbnail_artikel) && !empty($record->thumbnail_artikel)) {
+                            $totalImages = count($record->thumbnail_artikel);
+
+                            // Ambil maksimal 3 gambar untuk stack effect
+                            $imagesToShow = array_slice($record->thumbnail_artikel, 0, 3);
+
+                            foreach ($imagesToShow as $imagePath) {
+                                $images[] = route('thumbnail', [
+                                    'path' => base64_encode($imagePath),
+                                    'w' => 80,
+                                    'h' => 80,
+                                    'q' => 80
+                                ]);
+                            }
+                        }
+
+                        return view('filament.tables.columns.image-stack-advanced', [
+                            'images' => $images,
+                            'total_images' => $totalImages,
+                            'remaining_count' => max(0, $totalImages - 1)
+                        ])->render();
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('judul_artikel')
                     ->label('Judul')
