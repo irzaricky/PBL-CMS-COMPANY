@@ -14,6 +14,7 @@ class TrendArticlesChart extends ApexChartWidget
     protected static bool $deferLoading = true;
     protected int|string|array $columnSpan = 2;
     protected static ?string $pollingInterval = '120s'; // 2 minutes
+    public ?string $filter = 'last_6_months';
 
     protected function getOptions(): array
     {
