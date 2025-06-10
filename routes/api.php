@@ -81,8 +81,11 @@ Route::prefix('case-study')->group(function () {
     // Untuk mengambil case study berdasarkan id
     Route::get('/id/{id}', [CaseStudyController::class, 'getCaseStudyById']);
 
-     // Untuk mengambil case study terbaru
+    // Untuk mengambil case study terbaru
     Route::get('/latest', [CaseStudyController::class, 'latest']);
+
+    // Untuk mengambil semua mitra aktif
+    Route::get('/mitra', [CaseStudyController::class, 'getAllMitra']);
 
     // Untuk mencari case study
     Route::get('/search', [CaseStudyController::class, 'search']);
