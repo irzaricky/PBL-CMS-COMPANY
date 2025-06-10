@@ -210,7 +210,7 @@ class TestimoniResource extends Resource
                                 Infolists\Components\TextEntry::make('testimoniProduk.produk.harga_produk')
                                     ->label('Harga Produk')
                                     ->money('IDR')
-                                    ->icon('heroicon-o-currency-dollar'),
+                                    ->icon('heroicon-o-ticket'),
                             ]),
                     ])
                     ->visible(fn(Testimoni $record): bool => !is_null($record->id_testimoni_produk)),
@@ -257,6 +257,9 @@ class TestimoniResource extends Resource
                                 Infolists\Components\TextEntry::make('testimoniLowongan.lowongan.judul_lowongan')
                                     ->label('Posisi Lowongan')
                                     ->icon('heroicon-o-briefcase'),
+                                Infolists\Components\TextEntry::make('testimoniLowongan.lowongan.jenis_lowongan')
+                                    ->label('Jenis Lowongan')
+                                    ->icon('heroicon-o-tag'),
                             ]),
                     ])
                     ->visible(fn(Testimoni $record): bool => !is_null($record->id_testimoni_lowongan)),
