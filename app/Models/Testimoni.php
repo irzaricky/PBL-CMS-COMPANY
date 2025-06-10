@@ -63,28 +63,27 @@ class Testimoni extends Model
         return $this->belongsTo(TestimoniArtikel::class, 'id_testimoni_artikel', 'id_testimoni_artikel');
     }
 
-    // Helper method to get the actual testimonial data
-    public function getTestimonialData()
-    {
-        if ($this->id_testimoni_produk) {
-            return $this->testimoniProduk;
-        } elseif ($this->id_testimoni_lowongan) {
-            return $this->testimoniLowongan;
-        } elseif ($this->id_testimoni_event) {
-            return $this->testimoniEvent;
-        } elseif ($this->id_testimoni_artikel) {
-            return $this->testimoniArtikel;
-        }
-        return null;
-    }
-
-    // Helper method to get testimonial type
-    public function getTestimonialType()
+    /**
+     * Get the type of testimonial
+     */
+    public function getTestimonialType(): string
     {
         if ($this->id_testimoni_produk) return 'Produk';
         if ($this->id_testimoni_lowongan) return 'Lowongan';
         if ($this->id_testimoni_event) return 'Event';
         if ($this->id_testimoni_artikel) return 'Artikel';
         return 'Unknown';
+    }
+
+    /**
+     * Get the testimonial data based on type
+     */
+    public function getTestimonialData()
+    {
+        if ($this->testimoniProduk) return $this->testimoniProduk;
+        if ($this->testimoniLowongan) return $this->testimoniLowongan;
+        if ($this->testimoniEvent) return $this->testimoniEvent;
+        if ($this->testimoniArtikel) return $this->testimoniArtikel;
+        return null;
     }
 }

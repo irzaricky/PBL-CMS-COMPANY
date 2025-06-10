@@ -150,7 +150,6 @@ Route::get('/feature-toggles', [FeatureToggleController::class, 'index']);
 Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 
 // Testimoni
-// Route::get('/testimoni', [TestimoniController::class, 'index']);
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
 Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
 Route::get('/testimoni/artikel/{artikelId}', [TestimoniArtikelController::class, 'index']);
@@ -159,6 +158,10 @@ Route::get('/testimoni/event/{eventId}', [TestimoniEventController::class, 'inde
 Route::post('/testimoni/event/{event}', [TestimoniEventController::class, 'store']);
 Route::get('/testimoni/lowongan/{lowonganId}', [TestimoniLowonganController::class, 'index']);
 Route::post('/testimoni/lowongan/{lowonganId}', [TestimoniLowonganController::class, 'store']);
+
+// Testimoni unified endpoint
+Route::get('/testimoni', [TestimoniController::class, 'index']);
+Route::get('/testimoni/show', [TestimoniController::class, 'show']);
 
 
 // Mitra
@@ -188,6 +191,7 @@ Route::prefix('profil-perusahaan')->group(function () {
 
 // Konten Slider
 Route::get('/konten-slider', [KontenSliderController::class, 'index']);
+
 
 // Produk
 Route::prefix('produk')->group(function () {
