@@ -1,6 +1,5 @@
 <script setup>
 import { Link } from '@inertiajs/vue3'
-import { UserPlus } from 'lucide-vue-next'
 </script>
 
 <template>
@@ -16,18 +15,17 @@ import { UserPlus } from 'lucide-vue-next'
                 <div class="h-12 bg-secondary rounded-full"></div>
             </div>
         </div>
-        
+
         <!-- Login Required Message -->
-        <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-white bg-opacity-95 rounded-xl">
-            <UserPlus class="w-36 h-36 mb-4 text-secondary" />
+        <div
+            class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 bg-white bg-opacity-95 rounded-xl">
+            <img src="/image/login.svg" alt="Login Illustration" class="w-36 h-36 mb-4 object-contain" />
             <h4 class="text-lg font-semibold text-gray-800 mb-2">Mau Mendaftar?</h4>
             <p class="text-gray-600 mb-4">Silakan login terlebih dahulu untuk mengirim lamaran Anda</p>
-            <Link 
-                href="/login"
-                class="px-6 py-2 bg-secondary hover:bg-black transition-colors duration-300 text-white rounded-full font-medium"
-            >
+            <a href="/login"
+                class="px-6 py-2 bg-secondary hover:bg-black transition-colors duration-300 text-white rounded-full font-medium">
                 Login Sekarang
-            </Link>
+            </a>
         </div>
     </div>
 </template>

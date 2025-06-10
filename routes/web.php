@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckFeatureToggle;
 use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\ThumbnailController;
 
+Route::get('/thumbnail/{path}', [ThumbnailController::class, 'generate'])->name('thumbnail');
 
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');

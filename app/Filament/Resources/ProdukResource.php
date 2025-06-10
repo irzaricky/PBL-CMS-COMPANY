@@ -168,14 +168,35 @@ class ProdukResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_produk')
-                    ->label('Gambar')
-                    ->disk('public')
-                    ->circular()
-                    ->stacked()
-                    ->limit(1)
-                    ->limitedRemainingText()
-                    ->extraImgAttributes(['class' => 'object-cover']),
+                Tables\Columns\TextColumn::make('thumbnail_produk')
+                    ->label('Thumbnail')
+                    ->formatStateUsing(function ($record) {
+                        $images = [];
+                        $totalImages = 0;
+
+                        if (is_array($record->thumbnail_produk) && !empty($record->thumbnail_produk)) {
+                            $totalImages = count($record->thumbnail_produk);
+
+                            // Ambil maksimal 3 gambar untuk stack effect
+                            $imagesToShow = array_slice($record->thumbnail_produk, 0, 3);
+
+                            foreach ($imagesToShow as $imagePath) {
+                                $images[] = route('thumbnail', [
+                                    'path' => base64_encode($imagePath),
+                                    'w' => 80,
+                                    'h' => 80,
+                                    'q' => 80
+                                ]);
+                            }
+                        }
+
+                        return view('filament.tables.columns.image-stack-advanced', [
+                            'images' => $images,
+                            'total_images' => $totalImages,
+                            'remaining_count' => max(0, $totalImages - 1)
+                        ])->render();
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('nama_produk')
                     ->label('Nama Produk')

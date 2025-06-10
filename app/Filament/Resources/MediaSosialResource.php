@@ -7,16 +7,12 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use App\Models\MediaSosial;
-use App\Enums\ContentStatus;
 use Filament\Resources\Resource;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use App\Services\FileHandlers\SingleFileHandler;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\MediaSosialResource\Pages;
-use App\Filament\Resources\MediaSosialResource\RelationManagers;
 use App\Helpers\FilamentGroupingHelper;
+use Illuminate\Database\Eloquent\Model;
 
 class MediaSosialResource extends Resource
 {
@@ -34,25 +30,6 @@ class MediaSosialResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Informasi Media Sosial')
                     ->schema([
-                        Forms\Components\TextInput::make('nama_media_sosial')
-                            ->label('Nama Media Sosial')
-                            ->required()
-                            ->maxLength(50)
-                            ->placeholder('Contoh: Instagram, Facebook, Twitter, dll'),
-
-                        Forms\Components\FileUpload::make('icon')
-                            ->label('Icon')
-                            ->image()
-                            ->directory('media-sosial-icons')
-                            ->disk('public')
-                            ->required()
-
-                            ->helperText('Upload icon media sosial (format: png, jpg, svg). Disarankan ukuran 64x64px.')
-                            ->imageResizeMode('cover')
-                            ->imageResizeTargetWidth(64)
-                            ->imageResizeTargetHeight(64)
-                            ->optimize('webp'),
-
                         Forms\Components\TextInput::make('link')
                             ->label('Link')
                             ->required()
@@ -61,14 +38,10 @@ class MediaSosialResource extends Resource
                             ->placeholder('https://www.example.com/username')
                             ->helperText('Masukkan URL lengkap termasuk https://'),
 
-                        Forms\Components\Select::make('status')
-                            ->label('Status Media Sosial')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
-                            ])
-                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
-                            ->native(false)
+                        Forms\Components\Toggle::make('status_aktif')
+                            ->label('Status')
+                            ->onColor('success')
+                            ->offColor('danger')
                             ->required(),
                     ]),
             ]);
@@ -79,13 +52,8 @@ class MediaSosialResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nama_media_sosial')
-                    ->label('Nama Media Sosial')
-                    ->searchable()
-                ,
-
-                Tables\Columns\ImageColumn::make('icon')
-                    ->label('Icon')
-                    ->disk('public'),
+                    ->label('Platform Media Sosial')
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('link')
                     ->label('Link')
@@ -95,65 +63,38 @@ class MediaSosialResource extends Resource
                     ->limit(30)
                     ->tooltip(fn(MediaSosial $record): string => $record->link),
 
-                Tables\Columns\SelectColumn::make('status')
+                Tables\Columns\TextColumn::make('status_aktif')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
-                    ->rules(['required']),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->toggleable(),
-
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Diperbarui Pada')
-                    ->dateTime('d M Y H:i')
-                    ->toggleable(),
+                    ->badge()
+                    ->formatStateUsing(fn(bool $state): string => $state ? 'Aktif' : 'Nonaktif')
+                    ->color(fn(bool $state): string => $state ? 'success' : 'danger')
+                    ->icon(fn(bool $state): string => $state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle'),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('status')
+                Tables\Filters\SelectFilter::make('status_aktif')
                     ->options([
-                        'aktif' => 'Aktif',
-                        'nonaktif' => 'Nonaktif',
+                        '1' => 'Aktif',
+                        '0' => 'Nonaktif',
                     ]),
             ])
             ->actions([
+                Tables\Actions\Action::make('show')
+                    ->label('Perlihatkan')
+                    ->icon('heroicon-s-eye')
+                    ->color('success')
+                    ->action(fn(MediaSosial $record) => $record->update(['status_aktif' => true]))
+                    ->visible(fn(MediaSosial $record) => !$record->status_aktif),
+
+                Tables\Actions\Action::make('hide')
+                    ->label('Sembunyikan')
+                    ->icon('heroicon-s-eye-slash')
+                    ->color('danger')
+                    ->action(fn(MediaSosial $record) => $record->update(['status_aktif' => false]))
+                    ->visible(fn(MediaSosial $record) => $record->status_aktif),
+
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->before(function (MediaSosial $record) {
-                        SingleFileHandler::deleteFile($record->icon, 'icon');
-                    }),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('updateStatus')
-                        ->label('Update Status')
-                        ->icon('heroicon-o-check-circle')
-                        ->action(function (Collection $records, array $data): void {
-                            foreach ($records as $record) {
-                                $record->update([
-                                    'status' => $data['status'],
-                                ]);
-                            }
-                        })
-                        ->form([
-                            Forms\Components\Select::make('status')
-                                ->label('Status')
-                                ->options([
-                                    'aktif' => 'Aktif',
-                                    'nonaktif' => 'Nonaktif',
-                                ])
-                                ->native(false)
-                                ->required(),
-                        ]),
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->before(function (Collection $records) {
-                            SingleFileHandler::deleteBulkFiles($records, 'icon');
-                        }),
-                ]),
             ]);
     }
 
@@ -164,12 +105,25 @@ class MediaSosialResource extends Resource
         ];
     }
 
+    public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
+    {
+        return false;
+    }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListMediaSosials::route('/'),
-            'create' => Pages\CreateMediaSosial::route('/create'),
-            // ada tambahan validasi pada edit event
             'edit' => Pages\EditMediaSosial::route('/{record}/edit'),
         ];
     }

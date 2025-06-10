@@ -14,9 +14,8 @@ return new class extends Migration {
         Schema::create('media_sosial', function (Blueprint $table) {
             $table->id('id_media_sosial');
             $table->string('nama_media_sosial', 50);
-            $table->string('icon', 200)->nullable();
             $table->string('link', 100);
-            $table->string('status')->default(ContentStatus::TIDAK_TERPUBLIKASI->value);
+            $table->boolean('status_aktif')->default(true);
             $table->timestamps();
         });
     }

@@ -64,8 +64,6 @@ use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
 use App\Filament\Widgets\ContentManager\CaseStudy\CaseStudyStatusChart;
 use App\Filament\Widgets\ContentManager\Unduhan\DocumentDownloadsChart;
-use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniStatsCard;
-use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniTrendChart;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -84,6 +82,18 @@ class AdminPanelProvider extends PanelProvider
                 } catch (\Exception $e) {
                 }
                 return 'Admin Panel';
+            })
+            ->favicon(function () {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')) {
+                        $company = ProfilPerusahaan::first();
+                        if ($company && $company->logo_perusahaan) {
+                            return asset('storage/' . $company->logo_perusahaan);
+                        }
+                    }
+                } catch (\Exception $e) {
+                }
+                return asset('favicon.ico');
             })
             ->globalSearch(false)
             ->id('admin')
@@ -149,8 +159,6 @@ class AdminPanelProvider extends PanelProvider
                 LamaranTrendChart::class,
                 LowonganStatsCard::class,
                 LowonganTrendChart::class,
-                TestimoniStatsCard::class,
-                TestimoniTrendChart::class,
 
 
                     // Director widgets

@@ -18,7 +18,6 @@ class MediaSosialResource extends JsonResource
         return [
             // 'id_media_sosial' => $this->id_media_sosial,
             'nama_media_sosial' => $this->nama_media_sosial,
-            'icon' => $this->icon,
             'link' => $this->link,
         ];
     }

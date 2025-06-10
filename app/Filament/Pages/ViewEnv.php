@@ -51,7 +51,7 @@ class ViewEnv extends BaseViewEnvEditor
         // since we're just filtering and searching existing env data
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static ?string $navigationIcon = 'heroicon-o-command-line';
     protected static ?string $navigationLabel = 'Environment Variables';
     protected static ?int $navigationSort = 5;
 

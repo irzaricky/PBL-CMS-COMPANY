@@ -100,10 +100,22 @@ class MitraResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('logo')
+                Tables\Columns\TextColumn::make('logo')
                     ->label('Logo')
-                    ->circular()
-                    ->disk('public'),
+                    ->formatStateUsing(function ($record) {
+                        if ($record->logo) {
+                            $thumbnailUrl = route('thumbnail', [
+                                'path' => base64_encode($record->logo),
+                                'w' => 50,
+                                'h' => 50,
+                                'q' => 80
+                            ]);
+                            return '<img src="' . $thumbnailUrl . '" class="w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async" />';
+                        }
+
+                        return '<div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xs">No Logo</div>';
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('nama')
                     ->label('Nama Mitra')

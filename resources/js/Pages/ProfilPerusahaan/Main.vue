@@ -3,11 +3,24 @@ import AppLayout from '@/Layouts/AppLayout.vue'
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import axios from 'axios'
 import { Link } from '@inertiajs/vue3'
+// Import Lucide icons
+import { 
+    Facebook, 
+    Instagram, 
+    Linkedin, 
+    Twitter, 
+    Youtube, 
+    Github,
+    MessageCircle, // For WhatsApp
+    Send, // For Telegram
+    Music // For TikTok (closest match)
+} from "lucide-vue-next";
 
 // Data
 const profil_perusahaan = ref(null)
 const loading = ref(false)
 const error = ref(null)
+const mediaSosial = ref([])
 
 // Jumlah kalimat
 const maxKalimat = 1
@@ -48,6 +61,26 @@ async function fetchProfilPerusahaan() {
     }
 }
 
+// Fetch media sosial
+async function fetchMediaSosial() {
+    try {
+        const response = await axios.get('/api/media-sosial');
+        mediaSosial.value = [];
+        
+        // Process the response data
+        for (const [platform, data] of Object.entries(response.data.data)) {
+            if ((data as any).active === 1) {  // Check if active is 1 (true)
+                mediaSosial.value.push({
+                    name: platform,
+                    link: (data as any).link
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error fetching social media:", err);
+    }
+}
+
 // Utility
 function getImageUrl(image: string | string[] | null): string {
     if (!image) return "/image/placeholder.webp"
@@ -75,6 +108,7 @@ let intervalBottom: any
 
 onMounted(() => {
     fetchProfilPerusahaan()
+    fetchMediaSosial()
 
     intervalTop = setInterval(() => {
         if (thumbnailTop.value.length > 1) {
@@ -93,6 +127,24 @@ onUnmounted(() => {
     clearInterval(intervalTop)
     clearInterval(intervalBottom)
 })
+
+// Social media icons
+function getMediaSosialComponent(platform) {
+    // Map platform names to Lucide components
+    const iconMap = {
+        'Facebook': Facebook,
+        'Instagram': Instagram,
+        'LinkedIn': Linkedin,
+        'Twitter': Twitter,
+        'YouTube': Youtube,
+        'TikTok': Music,
+        'WhatsApp Business': MessageCircle,
+        'Telegram': Send,
+        'GitHub': Github
+    };
+    
+    return iconMap[platform] || null;
+}
 </script>
 
 
@@ -111,10 +163,6 @@ onUnmounted(() => {
                     </div>
                 </div>
             </div>
-            
-            <!-- Modern background elements -->
-            <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-bl-full"></div>
-            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-tr-full"></div>
         </div>
 
         <!-- Section 2: Company Story with Enhanced Design -->
@@ -219,10 +267,45 @@ onUnmounted(() => {
             </div>
         </div>
 
-        <!-- Additional decorative element at the bottom -->
-        <div class="w-full px-4 sm:px-8 lg:px-16 py-10 bg-secondary">
-            <div class="max-w-screen-xl mx-auto flex justify-center">
-                <div class="w-24 h-1 bg-white/20 rounded-full"></div>
+        <!-- Social Media Section -->
+        <div class="w-full px-4 sm:px-8 lg:px-16 py-16 bg-secondary text-white relative overflow-hidden">
+            <!-- Decorative elements -->
+            <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-bl-full"></div>
+            <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-tr-full"></div>
+            
+            <div class="max-w-screen-xl mx-auto flex flex-col justify-center items-center gap-10 relative z-10">
+                <!-- Modern heading with accent line -->
+                <div class="text-center">
+                    <h2 class="text-2xl lg:text-4xl font-semibold font-custom">
+                        Ikuti Kami di Media Sosial
+                    </h2>
+                    <div class="w-16 h-1 bg-primary mx-auto mt-3"></div>
+                </div>
+
+                <!-- Social media icons - modern grid layout -->
+                <div v-if="mediaSosial.length > 0" class="flex flex-wrap justify-center gap-6">
+                    <a 
+                        v-for="(platform, index) in mediaSosial" 
+                        :key="index"
+                        :href="platform.link" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        class="group flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/20 
+                               hover:bg-white hover:text-secondary hover:border-primary transition-all duration-300"
+                        :title="platform.name"
+                    >
+                        <component 
+                            :is="getMediaSosialComponent(platform.name)" 
+                            class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" 
+                        />
+                    </a>
+                </div>
+
+                <!-- Call to action text -->
+                <p class="text-sm lg:text-base font-normal font-custom leading-relaxed text-center max-w-2xl px-4 
+                          bg-white/5 backdrop-blur-sm py-4 rounded-xl border border-white/10">
+                    Bergabunglah dengan kami dan dapatkan update terbaru tentang perusahaan, produk, dan penawaran menarik lainnya.
+                </p>
             </div>
         </div>
 

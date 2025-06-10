@@ -96,6 +96,7 @@ class ProfilPerusahaanSeeder extends Seeder
                 'alamat_perusahaan' => $faker->address,
                 'link_alamat_perusahaan' => 'https://maps.app.goo.gl/EAs3t7yqP9LotHiK6',
                 'email_perusahaan' => strtolower($companyName) . '@' . $faker->freeEmailDomain,
+                'telepon_perusahaan' => $faker->phoneNumber,
                 'sejarah_perusahaan' => json_encode($sejarahPerusahaan),
                 'visi_perusahaan' => $visiPerusahaan,
                 'misi_perusahaan' => $misiPerusahaan,

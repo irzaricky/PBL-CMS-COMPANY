@@ -85,6 +85,22 @@ class ProfilPerusahaanResource extends Resource
                                     ->visible(fn($get) => filled($get('link_alamat_perusahaan')))
                             ),
 
+                        Forms\Components\TextInput::make('map_embed_perusahaan')
+                            ->label('Kode Embed Google Maps')
+                            ->placeholder('Salin seluruh kode iframe dari Google Maps di sini...')
+                            ->helperText('Salin seluruh kode iframe dari Google Maps. Sistem akan otomatis mengambil URL embed-nya.')
+                            ->columnSpan(2)
+                            ->afterStateUpdated(function ($state, callable $set) {
+                                if ($state) {
+                                    // Extract src URL from iframe
+                                    if (preg_match('/src=["\']([^"\']+)["\']/', $state, $matches)) {
+                                        $embedUrl = $matches[1];
+                                        $set('map_embed_perusahaan', $embedUrl);
+                                    }
+                                }
+                            })
+                            ->reactive(),
+
                         Forms\Components\TextInput::make('email_perusahaan')
                             ->label('Email')
                             ->email()
@@ -102,24 +118,64 @@ class ProfilPerusahaanResource extends Resource
                 Forms\Components\Section::make('Sejarah, Visi dan Misi')
                     ->schema([
                         Forms\Components\Repeater::make('sejarah_perusahaan')
-                            ->label('Sejarah Perusahaan Per Tahun')
+                            ->label('📅 Timeline Sejarah Perusahaan')
                             ->schema([
-                                Forms\Components\TextInput::make('tahun')
-                                    ->label('Tahun')
-                                    ->numeric()
-                                    ->required(),
-                                Forms\Components\TextInput::make('judul')
-                                    ->label('Judul')
-                                    ->required(),
-                                Forms\Components\TextInput::make('deskripsi')
-                                    ->label('Deskripsi')
-                                    ->required(),
+                                Forms\Components\Grid::make(3)
+                                    ->schema([
+                                        Forms\Components\TextInput::make('tahun')
+                                            ->label('Tahun')
+                                            ->numeric()
+                                            ->required()
+                                            ->minValue(1900)
+                                            ->maxValue(date('Y') + 10)
+                                            ->placeholder('2024')
+                                            ->helperText('Masukkan tahun kejadian')
+                                            ->prefixIcon('heroicon-o-calendar-days'),
+
+                                        Forms\Components\TextInput::make('judul')
+                                            ->label('Pencapaian/Milestone')
+                                            ->required()
+                                            ->maxLength(100)
+                                            ->placeholder('Contoh: Pendirian Perusahaan')
+                                            ->helperText('Judul pencapaian atau milestone')
+                                            ->prefixIcon('heroicon-o-trophy')
+                                            ->columnSpan(2),
+                                    ]),
+
+                                Forms\Components\Textarea::make('deskripsi')
+                                    ->label('Deskripsi Detail')
+                                    ->required()
+                                    ->rows(3)
+                                    ->maxLength(500)
+                                    ->placeholder('Jelaskan detail pencapaian atau peristiwa penting yang terjadi pada tahun tersebut...')
+                                    ->helperText('Deskripsi lengkap tentang pencapaian atau peristiwa')
+                                    ->columnSpanFull(),
                             ])
                             ->columnSpanFull()
-                            ->orderColumn()
-                            ->collapsed(true)
+                            ->orderColumn('tahun')
+                            ->reorderableWithButtons()
+                            ->collapsed()
+                            ->itemLabel(
+                                fn(array $state): ?string =>
+                                isset($state['tahun'], $state['judul'])
+                                ? "{$state['tahun']} - {$state['judul']}"
+                                : 'Timeline Item'
+                            )
                             ->minItems(1)
-                            ->addActionLabel('Tambah Tahun Baru'),
+                            ->maxItems(20)
+                            ->addActionLabel('+ Tambah Timeline Baru')
+                            ->deleteAction(
+                                fn(Forms\Components\Actions\Action $action) => $action
+                                    ->requiresConfirmation()
+                                    ->modalHeading('Hapus Timeline')
+                                    ->modalDescription('Apakah Anda yakin ingin menghapus timeline ini?')
+                                    ->modalSubmitActionLabel('Ya, Hapus')
+                            )
+                            ->cloneable()
+                            ->extraAttributes([
+                                'class' => 'timeline-form-section'
+                            ])
+                            ->helperText('Urutkan berdasarkan tahun untuk tampilan timeline yang rapi'),
 
                         Forms\Components\RichEditor::make('visi_perusahaan')
                             ->label('Visi Perusahaan')
@@ -164,121 +220,248 @@ class ProfilPerusahaanResource extends Resource
         return $infolist
             ->schema([
                 Infolists\Components\Section::make('Informasi Utama')
+                    ->description('Detail informasi perusahaan')
+                    ->icon('heroicon-o-building-office')
+                    ->columns(3)
                     ->schema([
-                        Infolists\Components\TextEntry::make('nama_perusahaan')
-                            ->label('Nama Perusahaan')
-                            ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
-                            ->weight('bold')
-                            ->color('primary'),
+                        Infolists\Components\Group::make([
+                            Infolists\Components\ImageEntry::make('logo_perusahaan')
+                                ->label('Logo Perusahaan')
+                                ->disk('public')
+                                ->height(120)
+                                ->width(120)
+                                ->circular()
+                                ->extraAttributes(['class' => 'mx-auto']),
+                        ])->columnSpan(1),
 
-                        Infolists\Components\TextEntry::make('email_perusahaan')
-                            ->label('Email')
-                            ->icon('heroicon-o-envelope')
-                            ->copyable()
-                            ->copyMessage('Email disalin!')
-                            ->url(fn($record) => 'mailto:' . $record->email_perusahaan),
+                        Infolists\Components\Group::make([
+                            Infolists\Components\TextEntry::make('nama_perusahaan')
+                                ->label('Nama Perusahaan')
+                                ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                ->weight('bold')
+                                ->color('primary')
+                                ->icon('heroicon-o-building-office-2'),
 
-                        Infolists\Components\TextEntry::make('alamat_perusahaan')
-                            ->label('Alamat')
-                            ->icon('heroicon-o-map-pin'),
+                            Infolists\Components\TextEntry::make('email_perusahaan')
+                                ->label('Email Perusahaan')
+                                ->icon('heroicon-o-envelope')
+                                ->copyable()
+                                ->copyMessage('Email berhasil disalin!')
+                                ->url(fn($record) => 'mailto:' . $record->email_perusahaan)
+                                ->color('blue')
+                                ->badge(),
 
-                        Infolists\Components\TextEntry::make('link_alamat_perusahaan')
-                            ->label('Lokasi di Google Maps')
-                            ->icon('heroicon-o-globe-alt')
-                            ->url(fn($record) => $record->link_alamat_perusahaan)
-                            ->openUrlInNewTab()
-                            ->color('primary')
-                            ->formatStateUsing(fn() => 'Lihat di Google Maps'),
+                            Infolists\Components\TextEntry::make('alamat_perusahaan')
+                                ->label('Alamat Lengkap')
+                                ->icon('heroicon-o-map-pin')
+                                ->html()
+                                ->formatStateUsing(fn($state) => nl2br(e($state))),
 
-                        Infolists\Components\ImageEntry::make('logo_perusahaan')
-                            ->label('Logo Perusahaan')
-                            ->disk('public')
-                            ->height(150)
-                            ->width(150),
+                            Infolists\Components\TextEntry::make('link_alamat_perusahaan')
+                                ->label('Google Maps')
+                                ->icon('heroicon-o-globe-alt')
+                                ->url(fn($record) => $record->link_alamat_perusahaan)
+                                ->openUrlInNewTab()
+                                ->color('primary')
+                                ->badge()
+                                ->formatStateUsing(fn() => 'Buka di Google Maps')
+                                ->visible(fn($record) => !empty($record->link_alamat_perusahaan)),
+                        ])->columnSpan(2),
                     ]),
 
                 Infolists\Components\Section::make('Galeri Perusahaan')
+                    ->description('Koleksi foto dan gambar perusahaan')
+                    ->icon('heroicon-o-photo')
                     ->schema([
                         Infolists\Components\ImageEntry::make('thumbnail_perusahaan')
                             ->label('')
                             ->disk('public')
-                            ->height(200)
-                            ->width(300)
-                            ->extraAttributes(['class' => 'rounded-lg']),
+                            ->height(250)
+                            ->width(400)
+                            ->extraAttributes(['class' => 'rounded-xl shadow-md']),
                     ])
+                    ->collapsible()
                     ->visible(fn($record) => !empty($record->thumbnail_perusahaan)),
 
-                Infolists\Components\Section::make('Deskripsi Perusahaan')
+                Infolists\Components\Section::make('Tentang Perusahaan')
+                    ->description('Deskripsi lengkap mengenai perusahaan')
+                    ->icon('heroicon-o-document-text')
                     ->schema([
                         Infolists\Components\TextEntry::make('deskripsi_perusahaan')
                             ->label('')
-                            ->html(),
+                            ->html()
+                            ->prose(),
                     ])
+                    ->collapsible()
                     ->visible(fn($record) => !empty($record->deskripsi_perusahaan)),
 
-                Infolists\Components\Section::make('Sejarah Perusahaan')
+                Infolists\Components\Section::make('Perjalanan Sejarah Perusahaan')
+                    ->description('Timeline pencapaian dan milestone penting dalam perkembangan perusahaan')
+                    ->icon('heroicon-o-clock')
                     ->schema([
                         Infolists\Components\RepeatableEntry::make('sejarah_perusahaan')
                             ->label('')
                             ->schema([
-                                Infolists\Components\TextEntry::make('tahun')
-                                    ->label('Tahun')
-                                    ->badge()
-                                    ->color('primary')
-                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Large),
+                                Infolists\Components\Grid::make([
+                                    'default' => 1,
+                                    'sm' => 1,
+                                    'md' => 12,
+                                ])
+                                    ->schema([
+                                        // Year Badge Section 
+                                        Infolists\Components\Group::make([
+                                            Infolists\Components\TextEntry::make('tahun')
+                                                ->label('')
+                                                ->formatStateUsing(fn($state) => $state)
+                                                ->badge()
+                                                ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                                ->weight('bold')
+                                                ->color(function ($state) {
+                                                    $currentYear = date('Y');
+                                                    $yearDiff = $currentYear - $state;
 
-                                Infolists\Components\TextEntry::make('judul')
-                                    ->label('')
-                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Medium)
-                                    ->weight('bold')
-                                    ->color('gray'),
+                                                    return match (true) {
+                                                        $yearDiff <= 2 => 'success',
+                                                        $yearDiff <= 5 => 'info',
+                                                        $yearDiff <= 10 => 'warning',
+                                                        $yearDiff <= 20 => 'gray',
+                                                        default => 'danger'
+                                                    };
+                                                })
+                                                ->icon('heroicon-o-calendar-days')
+                                                ->extraAttributes([
+                                                    'class' => 'timeline-year-badge flex justify-center items-center text-center min-h-[60px] md:min-h-[80px] text-lg md:text-2xl font-black mb-4 md:mb-0'
+                                                ])
+                                                ->tooltip(function ($state) {
+                                                    if (!$state || !is_numeric($state)) {
+                                                        return null;
+                                                    }
 
-                                Infolists\Components\TextEntry::make('deskripsi')
-                                    ->label('')
-                                    ->html(),
+                                                    $currentYear = (int) date('Y');
+                                                    $yearDiff = $currentYear - (int) $state;
+
+                                                    if ($yearDiff < 1) {
+                                                        return 'Tahun ini';
+                                                    }
+
+                                                    if ($yearDiff == 1) {
+                                                        return 'Tahun lalu';
+                                                    }
+
+                                                    return match (true) {
+                                                        // Mulai dari 2 tahun
+                                                        $yearDiff <= 5 => "Baru ({$yearDiff} tahun lalu)",
+                                                        $yearDiff <= 10 => "Cukup lama ({$yearDiff} tahun lalu)",
+                                                        $yearDiff <= 20 => "Lama ({$yearDiff} tahun lalu)",
+                                                        default => "Sangat lama ({$yearDiff} tahun lalu)"
+                                                    };
+                                                }),
+                                        ])->columnSpan([
+                                                    'default' => 1,    // Mobile: full width
+                                                    'md' => 2,         // Desktop: 2/12 kolom
+                                                ]),
+
+                                        // Content Section - Responsive  
+                                        Infolists\Components\Group::make([
+                                            // Achievement Title
+                                            Infolists\Components\TextEntry::make('judul')
+                                                ->label('')
+                                                ->formatStateUsing(fn($state) => "🏆 " . $state)
+                                                ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                                ->weight('bold')
+                                                ->color('primary')
+                                                ->extraAttributes([
+                                                    'class' => 'timeline-title mb-3 text-base md:text-lg'
+                                                ]),
+
+                                            // Description
+                                            Infolists\Components\TextEntry::make('deskripsi')
+                                                ->label('')
+                                                ->prose()
+                                                ->color('gray')
+                                                ->extraAttributes([
+                                                    'class' => 'timeline-description leading-relaxed text-sm md:text-base'
+                                                ]),
+                                        ])->columnSpan([
+                                                    'default' => 1,    // Mobile: full width
+                                                    'md' => 10,        // Desktop: 10/12 kolom
+                                                ]),
+                                    ])
+                                    ->extraAttributes([
+                                        'class' => 'timeline-item bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary-300 transition-all duration-300 mb-4'
+                                    ]),
+                            ])
+                            ->contained(false)
+                            ->extraAttributes([
+                                'class' => 'timeline-container space-y-4'
                             ]),
                     ])
+                    ->collapsible()
                     ->visible(fn($record) => !empty($record->sejarah_perusahaan)),
 
-                Infolists\Components\Section::make('Visi & Misi')
+                Infolists\Components\Section::make('Visi & Misi Perusahaan')
+                    ->description('Pandangan masa depan dan tujuan perusahaan')
+                    ->icon('heroicon-o-eye')
+                    ->columns(2)
                     ->schema([
-                        Infolists\Components\TextEntry::make('visi_perusahaan')
-                            ->label('Visi Perusahaan')
-                            ->html(),
+                        Infolists\Components\Group::make([
+                            Infolists\Components\TextEntry::make('visi_perusahaan')
+                                ->label('Visi Perusahaan')
+                                ->html()
+                                ->prose()
+                                ->color('primary'),
+                        ])->columnSpan(1),
 
-                        Infolists\Components\TextEntry::make('misi_perusahaan')
-                            ->label('Misi Perusahaan')
-                            ->html(),
+                        Infolists\Components\Group::make([
+                            Infolists\Components\TextEntry::make('misi_perusahaan')
+                                ->label('Misi Perusahaan')
+                                ->html()
+                                ->prose()
+                                ->color('success'),
+                        ])->columnSpan(1),
                     ])
+                    ->collapsible()
                     ->visible(fn($record) => !empty($record->visi_perusahaan) || !empty($record->misi_perusahaan)),
 
-                Infolists\Components\Section::make('Pengaturan Tema')
+                Infolists\Components\Section::make('Pengaturan Tampilan')
+                    ->description('Konfigurasi tema dan warna website perusahaan')
+                    ->icon('heroicon-o-paint-brush')
+                    ->columns(2)
                     ->schema([
-                        Infolists\Components\TextEntry::make('tema_perusahaan')
-                            ->label('Tema Warna')
-                            ->formatStateUsing(function ($state) {
-                                $themes = [
-                                    '#31487A' => 'YlnMn Blue',
-                                    '#793354' => 'Quinacridone Magenta',
-                                    '#796C2F' => 'Field Drab',
-                                    '#1B4332' => 'Brunswick Green',
-                                    '#3E1F47' => 'Purple Taupe',
-                                ];
-                                return $themes[$state] ?? $state;
-                            })
-                            ->badge()
-                            ->color(fn($state) => match ($state) {
-                                '#31487A' => 'blue',
-                                '#793354' => 'pink',
-                                '#796C2F' => 'yellow',
-                                '#1B4332' => 'green',
-                                '#3E1F47' => 'purple',
-                                default => 'gray',
-                            }),
+                        Infolists\Components\Group::make([
+                            Infolists\Components\TextEntry::make('tema_perusahaan')
+                                ->label('Nama Tema')
+                                ->formatStateUsing(function ($state) {
+                                    $themes = [
+                                        '#31487A' => 'YlnMn Blue',
+                                        '#793354' => 'Quinacridone Magenta',
+                                        '#796C2F' => 'Field Drab',
+                                        '#1B4332' => 'Brunswick Green',
+                                        '#3E1F47' => 'Purple Taupe',
+                                    ];
+                                    return $themes[$state] ?? $state;
+                                })
+                                ->badge()
+                                ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                ->color(fn($state) => match ($state) {
+                                    '#31487A' => 'blue',
+                                    '#793354' => 'pink',
+                                    '#796C2F' => 'yellow',
+                                    '#1B4332' => 'green',
+                                    '#3E1F47' => 'purple',
+                                    default => 'gray',
+                                })
+                                ->icon('heroicon-o-swatch'),
+                        ])->columnSpan(1),
 
-                        Infolists\Components\ColorEntry::make('tema_perusahaan')
-                            ->label('Preview Warna'),
-                    ]),
+                        Infolists\Components\Group::make([
+                            Infolists\Components\ColorEntry::make('tema_perusahaan')
+                                ->label('Kode Warna')
+                                ->copyable()
+                                ->copyMessage('Kode warna berhasil disalin!'),
+                        ])->columnSpan(1),
+                    ])
+                    ->collapsible(),
             ]);
     }
 
@@ -287,10 +470,22 @@ class ProfilPerusahaanResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('logo_perusahaan')
+                Tables\Columns\TextColumn::make('logo_perusahaan')
                     ->label('Logo')
-                    ->circular()
-                    ->disk('public'),
+                    ->formatStateUsing(function ($record) {
+                        if ($record->logo_perusahaan) {
+                            $thumbnailUrl = route('thumbnail', [
+                                'path' => base64_encode($record->logo_perusahaan),
+                                'w' => 50,
+                                'h' => 50,
+                                'q' => 80
+                            ]);
+                            return '<img src="' . $thumbnailUrl . '" class="w-12 h-12 rounded-full object-cover" loading="lazy" decoding="async" />';
+                        }
+
+                        return '<div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-xs">No Logo</div>';
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('nama_perusahaan')
                     ->label('Nama Perusahaan')

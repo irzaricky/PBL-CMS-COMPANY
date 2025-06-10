@@ -10,7 +10,8 @@
     <title>404 - Page Not Found</title>
 
     {{-- Favicon --}}
-    <link rel="icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="icon" type="image/x-icon"
+        href="{{ $logoPerusahaan === 'favicon.ico' ? asset('favicon.ico') : asset('storage/' . $logoPerusahaan) }}" />
 
     {{-- Menggunakan Vite untuk build assets (Tailwind CSS) --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -57,10 +57,20 @@ class FeedbackController extends Controller
 
     public function index()
     {
-        $feedback = Feedback::with('user:id_user,name,foto_profil,email')
-            ->orderBy('created_at', 'desc')
-            ->get();
 
-        return FeedbackResource::collection($feedback);
+        try {
+            $query = Feedback::with('user:id_user,name,foto_profil,email')
+                ->orderBy('created_at', 'desc');
+
+            $feedback = $query->paginate(10);
+
+            return FeedbackResource::collection($feedback);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memuat feedback',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }
