@@ -64,8 +64,6 @@ use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
 use App\Filament\Widgets\ContentManager\CaseStudy\CaseStudyStatusChart;
 use App\Filament\Widgets\ContentManager\Unduhan\DocumentDownloadsChart;
-use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniStatsCard;
-use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniTrendChart;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -161,8 +159,6 @@ class AdminPanelProvider extends PanelProvider
                 LamaranTrendChart::class,
                 LowonganStatsCard::class,
                 LowonganTrendChart::class,
-                TestimoniStatsCard::class,
-                TestimoniTrendChart::class,
 
 
                     // Director widgets
