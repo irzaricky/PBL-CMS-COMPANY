@@ -2,7 +2,7 @@
     <!-- Full Screen Image Modal -->
     <div
         v-if="show"
-        class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+        class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 font-custom"
         @click="handleClose"
     >
         <div class="relative w-full h-full flex items-center justify-center">
@@ -11,8 +11,10 @@
                 @click="handleClose"
                 class="absolute top-4 right-4 z-10 p-2 bg-white/10 rounded-full text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
             >
-                <X class="w-6 h-6" /></button
-            ><!-- Navigation Buttons -->
+                <X class="w-6 h-6" />
+            </button>
+
+            <!-- Navigation Buttons -->
             <div
                 v-if="images && images.length > 1"
                 class="absolute inset-0 flex items-center justify-between px-4 z-20"
@@ -32,18 +34,15 @@
                     <ChevronRight class="w-6 h-6" />
                 </button>
             </div>
+
             <!-- Image Container with proper aspect ratio preservation -->
-            <div
-                class="relative w-full h-full flex items-center justify-center"
-            >
+            <div class="relative w-full h-full flex items-center justify-center">
                 <!-- Loading Indicator -->
                 <div
                     v-if="imageLoading"
                     class="absolute inset-0 flex items-center justify-center z-10"
                 >
-                    <div
-                        class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"
-                    ></div>
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
                 </div>
 
                 <!-- Error State -->
@@ -72,15 +71,23 @@
                 />
             </div>
 
-            <!-- Image Counter -->
+            <!-- Image Counter - Updated dengan reactive currentIndex -->
             <div
                 v-if="images && images.length > 1"
-                class="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+                class="absolute bottom-4 left-1/2 transform -translate-x-1/2 font-custom"
             >
-                <div
-                    class="px-3 py-1 bg-white/10 rounded-full text-white text-sm backdrop-blur-sm"
-                >
-                    {{ activeIndex + 1 }} / {{ images.length }}
+                <div class="px-3 py-1 bg-white/10 rounded-full text-white text-sm backdrop-blur-sm">
+                    {{ currentIndex + 1 }} / {{ images.length }}
+                </div>
+            </div>
+
+            <!-- Gallery Title (Optional) -->
+            <div
+                v-if="galleryTitle"
+                class="absolute top-16 left-1/2 transform -translate-x-1/2 font-custom"
+            >
+                <div class="px-4 py-2 bg-white/10 rounded-lg text-white text-center backdrop-blur-sm">
+                    <h3 class="text-lg font-semibold">{{ galleryTitle }}</h3>
                 </div>
             </div>
         </div>
@@ -114,22 +121,41 @@ const props = defineProps({
     },
 });
 
-const emit = defineEmits(["close", "next", "prev"]);
+const emit = defineEmits(["close", "next", "prev", "update:activeIndex"]);
 
-// Navigation methods with debugging
+// Track current index internally untuk reactive counter
+const currentIndex = ref(props.activeIndex);
+
+// Watch untuk sync dengan prop activeIndex dari parent
+watch(
+    () => props.activeIndex,
+    (newIndex) => {
+        currentIndex.value = newIndex;
+    },
+    { immediate: true }
+);
+
+// Navigation methods dengan update internal index
 const handlePrev = () => {
-    console.log("Prev button clicked");
+    const newIndex =
+        currentIndex.value > 0
+            ? currentIndex.value - 1
+            : props.images.length - 1;
+    currentIndex.value = newIndex;
     emit("prev");
+    emit("update:activeIndex", newIndex);
 };
 
 const handleNext = () => {
-    console.log("Next button clicked");
+    const newIndex =
+        currentIndex.value < props.images.length - 1 ? currentIndex.value + 1 : 0;
+    currentIndex.value = newIndex;
     emit("next");
+    emit("update:activeIndex", newIndex);
 };
 
 const handleClose = () => {
-    console.log("Close button clicked");
-    emit("close");
+        emit("close");
 };
 
 // Image loading states
@@ -216,11 +242,11 @@ const handleKeyPress = (event) => {
             break;
         case "ArrowLeft":
             event.preventDefault();
-            emit("prev");
+            handlePrev();
             break;
         case "ArrowRight":
             event.preventDefault();
-            emit("next");
+            handleNext();
             break;
     }
 };
@@ -242,6 +268,17 @@ watch(
             document.body.style.overflow = "hidden";
         } else {
             document.body.style.overflow = "";
+        }
+    }
+);
+
+// Reset current index when modal is closed
+watch(
+    () => props.show,
+    (newValue) => {
+        if (!newValue) {
+            // Reset to initial state when modal closes
+            currentIndex.value = props.activeIndex;
         }
     }
 );
