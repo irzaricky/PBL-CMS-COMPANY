@@ -1,7 +1,6 @@
 @section('title', __('installer.company_title'))
 @extends('InstallerEragViews::app-layout')
-@section('content')
-    <section class="mt-4 installer-content bg-radial-gradient">
+@section('content')    <section class="mt-4 installer-content bg-radial-gradient">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-10">
