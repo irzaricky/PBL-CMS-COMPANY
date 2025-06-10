@@ -5,10 +5,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckFeatureToggle;
-use App\Http\Controllers\Api\FeedbackController;
 use App\Http\Controllers\ThumbnailController;
+use App\Http\Controllers\SEO\RobotsController;
+use App\Http\Controllers\SEO\SitemapController;
 
-Route::get('/thumbnail/{path}', [ThumbnailController::class, 'generate'])->name('thumbnail');
+
+
 
 // Route::get('/dashboard', function () {
 //     return Inertia::render('Dashboard');
@@ -229,5 +231,11 @@ Route::middleware('auth')->group(function () {
 //     })->name('error.custom');
 // });
 
+Route::get('/thumbnail/{path}', [ThumbnailController::class, 'generate'])->name('thumbnail');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+Route::post('/sitemap/clear-cache', [SitemapController::class, 'clearCache'])->middleware('auth');
+
+Route::get('/robots.txt', [RobotsController::class, 'index']);
 
 require __DIR__ . '/auth.php';
