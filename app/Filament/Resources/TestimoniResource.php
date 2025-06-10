@@ -192,6 +192,16 @@ class TestimoniResource extends Resource
                                     ->columnSpan(2),
                             ]),
 
+                        Infolists\Components\TextEntry::make('testimonial_user_name')
+                            ->label('Nama User')
+                            ->getStateUsing(function (Testimoni $record): string {
+                                return $record->testimoniProduk && $record->testimoniProduk->user 
+                                    ? $record->testimoniProduk->user->name 
+                                    : 'Tidak ada nama user';
+                            })
+                            ->icon('heroicon-o-user')
+                            ->color('primary'),
+
                         Infolists\Components\TextEntry::make('testimonial_rating')
                             ->label('Rating')
                             ->getStateUsing(function (Testimoni $record): string {
@@ -243,6 +253,16 @@ class TestimoniResource extends Resource
                                     ->columnSpan(2),
                             ]),
 
+                        Infolists\Components\TextEntry::make('testimonial_user_name')
+                            ->label('Nama User')
+                            ->getStateUsing(function (Testimoni $record): string {
+                                return $record->testimoniLowongan && $record->testimoniLowongan->user 
+                                    ? $record->testimoniLowongan->user->name 
+                                    : 'Tidak ada nama user';
+                            })
+                            ->icon('heroicon-o-user')
+                            ->color('primary'),
+
                         Infolists\Components\TextEntry::make('testimonial_rating')
                             ->label('Rating')
                             ->getStateUsing(function (Testimoni $record): string {
@@ -292,6 +312,16 @@ class TestimoniResource extends Resource
                                     ->columnSpan(2),
                             ]),
 
+                        Infolists\Components\TextEntry::make('testimonial_user_name')
+                            ->label('Nama User')
+                            ->getStateUsing(function (Testimoni $record): string {
+                                return $record->testimoniEvent && $record->testimoniEvent->user 
+                                    ? $record->testimoniEvent->user->name 
+                                    : 'Tidak ada nama user';
+                            })
+                            ->icon('heroicon-o-user')
+                            ->color('primary'),
+
                         Infolists\Components\TextEntry::make('testimonial_rating')
                             ->label('Rating')
                             ->getStateUsing(function (Testimoni $record): string {
@@ -337,6 +367,16 @@ class TestimoniResource extends Resource
                                     ->html()
                                     ->columnSpan(2),
                             ]),
+
+                        Infolists\Components\TextEntry::make('testimonial_user_name')
+                            ->label('Nama User')
+                            ->getStateUsing(function (Testimoni $record): string {
+                                return $record->testimoniArtikel && $record->testimoniArtikel->user 
+                                    ? $record->testimoniArtikel->user->name 
+                                    : 'Tidak ada nama user';
+                            })
+                            ->icon('heroicon-o-user')
+                            ->color('primary'),
 
                         Infolists\Components\TextEntry::make('testimonial_rating')
                             ->label('Rating')

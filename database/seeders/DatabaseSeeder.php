@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
 
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
-            // TestimoniSeeder::class,
+            TestimoniSeeder::class,
             LowonganSeeder::class,
             EventSeeder::class,
             ArtikelSeeder::class,
