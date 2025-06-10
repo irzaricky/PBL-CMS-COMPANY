@@ -20,18 +20,4 @@ class ListTestimonis extends ListRecords
             Actions\CreateAction::make(),
         ];
     }
-
-    public function getTabs(): array
-    {
-        return [
-            'Semua' => Tab::make()
-                ->query(fn($query) => $query->orderBy('created_at', 'desc')),
-            'Terpublikasi' => Tab::make()
-                ->query(fn($query) => $query->where('status', ContentStatus::TERPUBLIKASI->value)
-                    ->orderBy('created_at', 'desc')),
-            'Tidak Terpublikasi' => Tab::make()
-                ->query(fn($query) => $query->where('status', ContentStatus::TIDAK_TERPUBLIKASI->value)
-                    ->orderBy('created_at', 'desc')),
-        ];
-    }
 }

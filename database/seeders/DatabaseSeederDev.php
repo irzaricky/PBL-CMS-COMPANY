@@ -51,7 +51,6 @@ class DatabaseSeederDev extends Seeder
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
             TestimoniSeeder::class,
-            LowonganSeeder::class,
             EventSeeder::class,
             ArtikelSeeder::class,
 
@@ -63,6 +62,7 @@ class DatabaseSeederDev extends Seeder
             FeatureToggleSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
+            TestimoniSeeder::class,
         ]);
     }
 }
