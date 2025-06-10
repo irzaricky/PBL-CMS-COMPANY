@@ -456,7 +456,7 @@ class ProfilPerusahaanResource extends Resource
                                 ->label('Misi Perusahaan')
                                 ->html()
                                 ->prose()
-                                ->color('success'),
+                                ->color('primary'),
                         ])->columnSpan(1),
                     ])
                     ->collapsible()
@@ -554,6 +554,10 @@ class ProfilPerusahaanResource extends Resource
     }
 
     public static function canCreate(): bool
+    {
+        return false;
+    }
+    public static function canDelete($record): bool
     {
         return false;
     }
