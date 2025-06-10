@@ -108,7 +108,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Plus jakarta Sans')
             ->registration(Register::class)
             ->emailVerification(EmailVerificationPrompt::class)
-           ->colors([
+            ->colors([
                 'primary' => ThemeHelper::getFilamentTheme()['primary'],
                 'gray' => Color::Slate,
             ])
@@ -199,7 +199,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup('System')
                     ->navigationLabel('Environment Editor')
                     ->navigationIcon('heroicon-o-cog')
-                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS', 'APP_NAME')
+                    ->hideKeys('APP_NAME')
                     ->viewPage(ViewEnv::class)
                     ->authorize(
                         fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')
