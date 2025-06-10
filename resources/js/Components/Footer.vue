@@ -3,15 +3,15 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { computed } from "vue";
 import { Link } from "@inertiajs/vue3";
-import { 
-    Phone, 
-    Mail, 
-    MapPin, 
-    Facebook, 
-    Instagram, 
-    Linkedin, 
-    Twitter, 
-    Youtube, 
+import {
+    Phone,
+    Mail,
+    MapPin,
+    Facebook,
+    Instagram,
+    Linkedin,
+    Twitter,
+    Youtube,
     Github,
     MessageCircle, // For WhatsApp
     Send, // For Telegram
@@ -25,16 +25,25 @@ const error = ref(null);
 
 const maxKalimat = 1
 
-const truncatedDeskripsi = computed(() => {
-    if (!profil_perusahaan.value?.deskripsi_perusahaan) return 'Sejarah perusahaan belum tersedia.'
+// Function to strip HTML tags
+function stripHtml(html) {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '');
+}
 
-    const kalimat = profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/)
-    return kalimat.slice(0, maxKalimat).join(' ')
+const truncatedDeskripsi = computed(() => {
+    if (!profil_perusahaan.value?.deskripsi_perusahaan) return 'Deskripsi perusahaan belum tersedia.'
+
+    // Strip HTML tags first, then split into sentences
+    const cleanText = stripHtml(profil_perusahaan.value.deskripsi_perusahaan);
+    const kalimat = cleanText.split(/(?<=[.!?])\s+/);
+    return kalimat.slice(0, maxKalimat).join(' ');
 })
 
 const showReadMore = computed(() => {
     if (!profil_perusahaan.value?.deskripsi_perusahaan) return false
-    return profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
+    const cleanText = stripHtml(profil_perusahaan.value.deskripsi_perusahaan);
+    return cleanText.split(/(?<=[.!?])\s+/).length > maxKalimat
 })
 
 onMounted(() => {
@@ -59,7 +68,7 @@ async function fetchMediaSosial() {
     try {
         const response = await axios.get('/api/media-sosial');
         mediaSosial.value = [];
-        
+
         // Process the updated response format
         for (const [platform, data] of Object.entries(response.data.data)) {
             if (data.active) {
@@ -93,7 +102,7 @@ function getMediaSosialComponent(platform) {
         'Telegram': Send,
         'GitHub': Github
     };
-    
+
     return iconMap[platform] || null;
 }
 
@@ -106,6 +115,7 @@ function getImageUrl(image) {
 
     return `/storage/${image}`;
 }
+
 function lihatSelengkapnya() {
     alert(profil_perusahaan.value.sejarah_perusahaan)
 }
@@ -127,7 +137,7 @@ function lihatSelengkapnya() {
                         <p class="mt-4 text-left">
                             {{ truncatedDeskripsi }}
                             <Link v-if="showReadMore" href="/profil-perusahaan" class="text-blue-400 cursor-pointer">
-                                ... Baca selengkapnya
+                            ... Baca selengkapnya
                             </Link>
                         </p>
 
@@ -135,11 +145,13 @@ function lihatSelengkapnya() {
                             <h4 class="font-bold pb-1">Hubungi Kami</h4>
                             <div class="flex items-center gap-2">
                                 <Phone class="w-4" />
-                                <span>{{ profil_perusahaan?.telepon_perusahaan || 'Telepon perusahaan belum tersedia.' }}</span>
+                                <span>{{ profil_perusahaan?.telepon_perusahaan || 'Telepon perusahaan belum tersedia.'
+                                    }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <Mail class="w-4" />
-                                <span>{{ profil_perusahaan?.email_perusahaan || 'Email perusahaan belum tersedia.' }}</span>
+                                <span>{{ profil_perusahaan?.email_perusahaan || 'Email perusahaan belum tersedia.'
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -148,14 +160,30 @@ function lihatSelengkapnya() {
                     <div class="flex flex-col justify-center h-full lg:col-span-2 lg:pl-20">
                         <h4 class="font-bold mb-4">Quick Links</h4>
                         <ul class="grid grid-cols-2 gap-y-2">
-                            <li><Link href="/" class="hover:underline">Beranda</Link></li>
-                            <li><Link href="/galeri" class="hover:underline">Galeri</Link></li>
-                            <li><Link href="/tentang-kami" class="hover:underline">Tentang Kami</Link></li>
-                            <li><Link href="/unduhan" class="hover:underline">Unduhan</Link></li>
-                            <li><Link href="/produk" class="hover:underline">Produk</Link></li>
-                            <li><Link href="/event" class="hover:underline">Event</Link></li>
-                            <li><Link href="/artikel" class="hover:underline">Artikel</Link></li>
-                            <li><Link href="/lowongan" class="hover:underline">Lowongan</Link></li>
+                            <li>
+                                <Link href="/" class="hover:underline">Beranda</Link>
+                            </li>
+                            <li>
+                                <Link href="/galeri" class="hover:underline">Galeri</Link>
+                            </li>
+                            <li>
+                                <Link href="/tentang-kami" class="hover:underline">Tentang Kami</Link>
+                            </li>
+                            <li>
+                                <Link href="/unduhan" class="hover:underline">Unduhan</Link>
+                            </li>
+                            <li>
+                                <Link href="/produk" class="hover:underline">Produk</Link>
+                            </li>
+                            <li>
+                                <Link href="/event" class="hover:underline">Event</Link>
+                            </li>
+                            <li>
+                                <Link href="/artikel" class="hover:underline">Artikel</Link>
+                            </li>
+                            <li>
+                                <Link href="/lowongan" class="hover:underline">Lowongan</Link>
+                            </li>
                         </ul>
                     </div>
 
@@ -173,19 +201,10 @@ function lihatSelengkapnya() {
                         <div>
                             <h4 class="font-bold mb-4">Follow Us</h4>
                             <div v-if="mediaSosial.length > 0" class="flex flex-wrap gap-4">
-                                <a 
-                                    v-for="(platform, index) in mediaSosial" 
-                                    :key="index"
-                                    :href="platform.link" 
-                                    target="_blank" 
-                                    rel="noopener noreferrer"
-                                    class="hover:text-primary transition-colors"
-                                    :title="platform.name"
-                                >
-                                    <component 
-                                        :is="getMediaSosialComponent(platform.name)" 
-                                        class="w-5 h-5" 
-                                    />
+                                <a v-for="(platform, index) in mediaSosial" :key="index" :href="platform.link"
+                                    target="_blank" rel="noopener noreferrer"
+                                    class="hover:text-primary transition-colors" :title="platform.name">
+                                    <component :is="getMediaSosialComponent(platform.name)" class="w-5 h-5" />
                                 </a>
                             </div>
                             <p v-else class="text-sm italic">Belum ada media sosial yang aktif.</p>
@@ -195,21 +214,12 @@ function lihatSelengkapnya() {
                     <!-- Kolom 4: Google Maps -->
                     <div class="flex flex-col justify-center h-full">
                         <div class="w-full aspect-video rounded-lg overflow-hidden">
-                            <iframe 
-                                v-if="profil_perusahaan?.map_embed_perusahaan" 
-                                class="w-full h-full"
-                                :src="profil_perusahaan.map_embed_perusahaan"
-                                width="600" 
-                                height="450" 
-                                style="border:0;" 
-                                allowfullscreen="" 
-                                loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade">
+                            <iframe v-if="profil_perusahaan?.map_embed_perusahaan" class="w-full h-full"
+                                :src="profil_perusahaan.map_embed_perusahaan" width="600" height="450" style="border:0;"
+                                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
                             </iframe>
-                            <div 
-                                v-else 
-                                class="w-full h-full bg-gray-700 flex items-center justify-center text-gray-400"
-                            >
+                            <div v-else
+                                class="w-full h-full bg-gray-700 flex items-center justify-center text-gray-400">
                                 <span>Peta lokasi belum tersedia</span>
                             </div>
                         </div>
