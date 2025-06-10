@@ -6,9 +6,11 @@ namespace App\Providers\Filament;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use App\Helpers\ThemeHelper;
 use App\Filament\Pages\ViewEnv;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
+use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\EditProfile;
@@ -106,8 +108,9 @@ class AdminPanelProvider extends PanelProvider
             ->font('Plus jakarta Sans')
             ->registration(Register::class)
             ->emailVerification(EmailVerificationPrompt::class)
-            ->colors([
-                'primary' => '#3b82f6',
+           ->colors([
+                'primary' => ThemeHelper::getFilamentTheme()['primary'],
+                'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
