@@ -7,7 +7,6 @@ use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use App\Filament\Resources\TestimoniResource;
-use App\Filament\Resources\TestimoniResource\Widgets\TestimoniStats;
 use Filament\Pages\Concerns\ExposesTableToWidgets;
 
 class ListTestimonis extends ListRecords
@@ -22,13 +21,6 @@ class ListTestimonis extends ListRecords
         ];
     }
 
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            TestimoniStats::class,
-        ];
-    }
-
     public function getTabs(): array
     {
         return [
@@ -40,10 +32,6 @@ class ListTestimonis extends ListRecords
             'Tidak Terpublikasi' => Tab::make()
                 ->query(fn($query) => $query->where('status', ContentStatus::TIDAK_TERPUBLIKASI->value)
                     ->orderBy('created_at', 'desc')),
-            'Rating Tertinggi' => Tab::make()
-                ->query(fn($query) => $query->orderBy('rating', 'desc')),
-            'Rating Terendah' => Tab::make()
-                ->query(fn($query) => $query->orderBy('rating', 'asc')),
         ];
     }
 }

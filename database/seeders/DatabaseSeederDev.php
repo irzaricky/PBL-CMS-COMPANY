@@ -50,7 +50,7 @@ class DatabaseSeederDev extends Seeder
             ProfilPerusahaanSeeder::class,
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
-            TestimoniSeeder::class,
+            //TestimoniSeeder::class,
             LowonganSeeder::class,
             EventSeeder::class,
             ArtikelSeeder::class,

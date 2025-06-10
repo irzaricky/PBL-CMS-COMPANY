@@ -119,6 +119,12 @@ function formatTimeRange(start, end) {
 
     return `${startStr} - ${endStr}`;
 }
+
+function stripHtmlTags(html) {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+}
 </script>
 
 <template>
@@ -188,7 +194,7 @@ function formatTimeRange(start, end) {
                                     {{ formatTimeRange(featuredEvent.waktu_start_event, featuredEvent.waktu_end_event)
                                     }}
                                 </p>
-                                <p class="text-base text-gray-600">{{ featuredEvent.deskripsi_event }}</p>
+                                <p class="text-base text-gray-600">{{ stripHtmlTags(featuredEvent.deskripsi_event) }}</p>
                             </div>
                             <a :href="`/event/${featuredEvent.slug}`"
                                 class="bg-secondary text-white px-6 py-2.5 rounded-full font-medium text-center w-max hover:bg-black transition">
@@ -295,7 +301,7 @@ function formatTimeRange(start, end) {
                                     <Clock class="w-4 h-4 text-secondary" />
                                     {{ formatTimeRange(event.waktu_start_event, event.waktu_end_event) }} WIB
                                 </p>
-                                <p class="text-base text-gray-600">{{ event.deskripsi_event }}</p>
+                                <p class="text-base text-gray-600">{{ stripHtmlTags(event.deskripsi_event) }}</p>
                             </div>
                             <div class="flex lg:items-start">
                                 <Link :href="`/event/${event.slug}`"

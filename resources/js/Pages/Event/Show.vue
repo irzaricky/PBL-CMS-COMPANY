@@ -540,10 +540,8 @@ const user = computed(() => page.props.auth?.user);
                     <div class="space-y-3">
                         <h2 class="text-xl font-semibold">Deskripsi Event</h2>
                         <div class="bg-gray-50 rounded-xl p-6 border border-gray-100">
-                            <div class="prose prose-lg max-w-none text-black">
-                                <p class="whitespace-pre-line text-left leading-relaxed">
-                                    {{ event.deskripsi_event }}
-                                </p>
+                            <div class="prose max-w-none text-black prose-headings:text-black prose-p:text-black prose-strong:text-black prose-ul:text-black prose-ol:text-black prose-li:text-black prose-a:text-secondary prose-a:hover:text-secondary/80">
+                                <div v-html="event.deskripsi_event"></div>
                             </div>
                         </div>
                     </div>
