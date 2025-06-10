@@ -34,6 +34,20 @@ function getImageUrl(image) {
     }
     return `/storage/${image}`;
 }
+
+// Function to strip HTML tags
+function stripHtml(html) {
+    if (!html) return '';
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+// Function to truncate text
+function truncateText(text, length = 80) {
+    if (!text) return '';
+    return text.length > length ? text.substring(0, length) + '...' : text;
+}
 </script>
 
 <template>
@@ -45,7 +59,7 @@ function getImageUrl(image) {
         <!-- Loading skeleton -->
         <div
             v-if="isLoading"
-            class="flex gap-3 bg-white rounded-lg shadow transition p-3 items-center animate-pulse"
+            class="flex gap-3 bg-white rounded-lg transition p-3 items-center animate-pulse"
         >
             <div class="w-12 h-12 bg-gray-300 rounded-lg flex-shrink-0"></div>
             <div class="flex flex-col gap-2 overflow-hidden w-full">
@@ -57,7 +71,7 @@ function getImageUrl(image) {
         <!-- Real Data: Event pertama -->
         <div
             v-else-if="event"
-            class="flex gap-3 bg-white rounded-lg shadow hover:shadow-lg transition p-3 items-center"
+            class="flex gap-3 bg-white rounded-lg border border-gray-200 hover:scale-105 transition-transform duration-200 p-3 items-center"
         >
             <img
                 :src="getImageUrl(event.thumbnail_event)"
@@ -71,9 +85,9 @@ function getImageUrl(image) {
                 >
                     {{ event.nama_event }}
                 </a>
-                <span class="text-xs text-typography-dark line-clamp-2 mt-1">{{
-                    event.deskripsi_event
-                }}</span>
+                <span class="text-xs text-typography-dark line-clamp-2 mt-1">
+                    {{ truncateText(stripHtml(event.deskripsi_event)) }}
+                </span>
             </div>
         </div>
 

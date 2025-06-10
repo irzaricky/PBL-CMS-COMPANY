@@ -35,6 +35,20 @@ function getImageUrl(image) {
     }
     return `/storage/${image}`;
 }
+
+// Function to strip HTML tags
+function stripHtml(html) {
+    if (!html) return '';
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+// Function to truncate text
+function truncateText(text, length = 80) {
+    if (!text) return '';
+    return text.length > length ? text.substring(0, length) + '...' : text;
+}
 </script>
 
 <template>
@@ -48,7 +62,7 @@ function getImageUrl(image) {
                 v-if="isLoading"
                 v-for="n in 1"
                 :key="n"
-                class="flex gap-3 bg-white rounded-lg shadow transition p-3 items-center animate-pulse"
+                class="flex gap-3 bg-white rounded-lg border border-gray-200 transition p-3 items-center animate-pulse"
             >
                 <div
                     class="w-12 h-12 bg-gray-300 rounded-lg flex-shrink-0"
@@ -64,7 +78,7 @@ function getImageUrl(image) {
                 v-else-if="lowongans.length"
                 v-for="lowongan in lowongans"
                 :key="lowongan.id_lowongan"
-                class="flex gap-3 bg-white rounded-lg shadow hover:shadow-lg transition p-3 items-center"
+                class="flex gap-3 bg-white rounded-lg border border-gray-200 hover:scale-105 transition-transform duration-200 p-3 items-center"
             >
                 <img
                     :src="getImageUrl(lowongan.thumbnail_lowongan)"
@@ -78,10 +92,9 @@ function getImageUrl(image) {
                     >
                         {{ lowongan.judul_lowongan }}
                     </a>
-                    <span
-                        class="text-xs text-typography-dark line-clamp-2 mt-1"
-                        >{{ lowongan.deskripsi_pekerjaan }}</span
-                    >
+                    <span class="text-xs text-typography-dark line-clamp-2 mt-1">
+                        {{ truncateText(stripHtml(lowongan.deskripsi_pekerjaan)) }}
+                    </span>
                 </div>
             </div>
 
