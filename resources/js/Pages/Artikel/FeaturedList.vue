@@ -55,7 +55,7 @@ function stripHtmlTags(html) {
 
         <!-- Featured Blog Section -->
         <div class="flex flex-col gap-10" v-if="!loading">
-            <h2 class="text-4xl font-normal leading-loose">Artikel terpopuler</h2>
+            <h2 v-if="featuredArticles.length"class="text-4xl font-normal leading-loose">Artikel terpopuler</h2>
             <div class="flex flex-col lg:flex-row gap-8" v-if="featuredArticles.length">
                 <!-- Large Featured Blog -->
                 <div class="flex-1 flex flex-col gap-6" v-if="featuredArticles[0]">
