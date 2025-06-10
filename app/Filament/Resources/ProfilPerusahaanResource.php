@@ -89,7 +89,6 @@ class ProfilPerusahaanResource extends Resource
                             ->label('Kode Embed Google Maps')
                             ->placeholder('Salin seluruh kode iframe dari Google Maps di sini...')
                             ->helperText('Salin seluruh kode iframe dari Google Maps. Sistem akan otomatis mengambil URL embed-nya.')
-                            ->columnSpan(2)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if ($state) {
                                     // Extract src URL from iframe
@@ -112,6 +111,18 @@ class ProfilPerusahaanResource extends Resource
                             ->label('Deskripsi Perusahaan')
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('perusahaan-attachments')
+                             ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'h1',
+                                'h2',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'redo',
+                                'undo',
+                            ])
                             ->columnSpanFull(),
                     ]),
 
@@ -179,15 +190,35 @@ class ProfilPerusahaanResource extends Resource
 
                         Forms\Components\RichEditor::make('visi_perusahaan')
                             ->label('Visi Perusahaan')
-                            ->disableToolbarButtons([
-                                'attachFiles'
+                            ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'h1',
+                                'h2',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'redo',
+                                'undo',
                             ])
                             ->columnSpanFull(),
 
                         Forms\Components\RichEditor::make('misi_perusahaan')
                             ->label('Misi Perusahaan')
-                            ->disableToolbarButtons([
-                                'attachFiles'
+                             ->toolbarButtons([
+                                'bold',
+                                'italic',
+                                'underline',
+                                'strike',
+                                'h1',
+                                'h2',
+                                'link',
+                                'bulletList',
+                                'orderedList',
+                                'redo',
+                                'undo',
                             ])
                             ->columnSpanFull(),
                     ]),
