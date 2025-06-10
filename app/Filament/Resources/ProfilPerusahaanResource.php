@@ -111,7 +111,7 @@ class ProfilPerusahaanResource extends Resource
                             ->label('Deskripsi Perusahaan')
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('perusahaan-attachments')
-                             ->toolbarButtons([
+                            ->toolbarButtons([
                                 'bold',
                                 'italic',
                                 'underline',
@@ -169,8 +169,8 @@ class ProfilPerusahaanResource extends Resource
                             ->itemLabel(
                                 fn(array $state): ?string =>
                                 isset($state['tahun'], $state['judul'])
-                                ? "{$state['tahun']} - {$state['judul']}"
-                                : 'Timeline Item'
+                                    ? "{$state['tahun']} - {$state['judul']}"
+                                    : 'Timeline Item'
                             )
                             ->minItems(1)
                             ->maxItems(20)
@@ -207,7 +207,7 @@ class ProfilPerusahaanResource extends Resource
 
                         Forms\Components\RichEditor::make('misi_perusahaan')
                             ->label('Misi Perusahaan')
-                             ->toolbarButtons([
+                            ->toolbarButtons([
                                 'bold',
                                 'italic',
                                 'underline',
@@ -228,17 +228,25 @@ class ProfilPerusahaanResource extends Resource
                         Forms\Components\Select::make('tema_perusahaan')
                             ->label('Tema Perusahaan')
                             ->helperText('Perlu refresh untuk mengambil perubahan')
-                            ->options([
-                                '#31487A' => 'YlnMn Blue',
-                                '#793354' => 'Quinacridone Magenta',
-                                '#796C2F' => 'Field Drab',
-                                '#1B4332' => 'Brunswick Green',
-                                '#3E1F47' => 'Purple Taupe',
-                            ])
+                            ->options(
+                                collect([
+                                    ['value' => '#31487A', 'name' => 'YlnMn Blue'],
+                                    ['value' => '#793354', 'name' => 'Quinacridone Magenta'],
+                                    ['value' => '#796C2F', 'name' => 'Field Drab'],
+                                    ['value' => '#1B4332', 'name' => 'Brunswick Green'],
+                                    ['value' => '#3E1F47', 'name' => 'Purple Taupe'],
+                                ])->mapWithKeys(static fn($theme) => [
+                                    $theme['value'] => "<span class='flex items-center gap-x-3'>
+                        <span class='rounded-full w-4 h-4 border border-gray-300 shadow-sm' style='background-color: {$theme['value']}'></span>
+                        <span class='font-medium'>{$theme['name']}</span>
+                    </span>",
+                                ])
+                            )
                             ->default('#31487A')
                             ->required()
                             ->reactive()
                             ->native(false)
+                            ->allowHtml()
                             ->afterStateUpdated(function ($state, callable $set) {
                                 $set('tema_perusahaan', $state);
                             }),
@@ -388,9 +396,9 @@ class ProfilPerusahaanResource extends Resource
                                                     };
                                                 }),
                                         ])->columnSpan([
-                                                    'default' => 1,    // Mobile: full width
-                                                    'md' => 2,         // Desktop: 2/12 kolom
-                                                ]),
+                                            'default' => 1,    // Mobile: full width
+                                            'md' => 2,         // Desktop: 2/12 kolom
+                                        ]),
 
                                         // Content Section - Responsive  
                                         Infolists\Components\Group::make([
@@ -414,9 +422,9 @@ class ProfilPerusahaanResource extends Resource
                                                     'class' => 'timeline-description leading-relaxed text-sm md:text-base'
                                                 ]),
                                         ])->columnSpan([
-                                                    'default' => 1,    // Mobile: full width
-                                                    'md' => 10,        // Desktop: 10/12 kolom
-                                                ]),
+                                            'default' => 1,    // Mobile: full width
+                                            'md' => 10,        // Desktop: 10/12 kolom
+                                        ]),
                                     ])
                                     ->extraAttributes([
                                         'class' => 'timeline-item bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary-300 transition-all duration-300 mb-4'
