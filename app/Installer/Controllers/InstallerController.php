@@ -138,7 +138,16 @@ class InstallerController extends Controller
             return $redirect->route('profil_perusahaan')->withInput()->withErrors($validator->errors());
         }
 
-        $data = $request->except(['_token', 'logo_perusahaan']);
+        // Initialize all fillable fields to null/empty to ensure they override existing seeded data
+        $fillableFields = (new \App\Models\ProfilPerusahaan())->getFillable();
+        $data = array_fill_keys($fillableFields, null);
+
+        // Set the default theme instead of null
+        $data['tema_perusahaan'] = '#31487A';
+
+        // Then override with submitted form data
+        $formData = $request->except(['_token', 'logo_perusahaan']);
+        $data = array_merge($data, $formData);
 
         try {
             DB::beginTransaction();
@@ -172,7 +181,7 @@ class InstallerController extends Controller
                     $data['logo_perusahaan'] = $path;
                 } else {
                     // Log error for debugging
-                    // Log::error('Logo upload failed: ' . $logo->getErrorMessage());
+                    Log::error('Logo upload failed: ' . $logo->getErrorMessage());
                     return $redirect->route('profil_perusahaan')
                         ->withInput()
                         ->withErrors(['logo_perusahaan' => 'File upload failed. Please try again.']);
@@ -189,7 +198,7 @@ class InstallerController extends Controller
             }
 
             DB::commit();
-            // Log::info('Company profile saved successfully');
+            Log::info('Company profile saved successfully');
 
             // Redirect to super admin configuration instead of feature toggles
             return redirect(route('super_admin_config'))
@@ -197,7 +206,7 @@ class InstallerController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            // Log::error('Error saving company profile: ' . $e->getMessage());
+            Log::error('Error saving company profile: ' . $e->getMessage());
             return $redirect->route('profil_perusahaan')
                 ->withInput()
                 ->withErrors(['general_error' => __('installer.company_profile_save_error') . ': ' . $e->getMessage()]);
@@ -303,7 +312,7 @@ class InstallerController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'status_kepegawaian' => 'Tetap', // Set status kepegawaian to Tetap
-                'email_verified_at' => now(), // Set email verified at to now
+                'email_verified_at' => now(),
             ]);
 
             // Assign super admin role (menggunakan shield package)

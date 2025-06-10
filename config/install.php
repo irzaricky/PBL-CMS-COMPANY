@@ -153,6 +153,7 @@ return [
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255',
         'password' => 'required|string|min:8|confirmed',
+        'email_verified_at' => 'nullable|datetime',
         'include_dummy_data' => 'nullable|boolean',
     ],
 ];
