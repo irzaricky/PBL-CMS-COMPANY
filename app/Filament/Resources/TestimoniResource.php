@@ -147,6 +147,7 @@ class TestimoniResource extends Resource
         ];
     }
 
+    // Tambahkan method ini untuk redirect langsung ke view
     public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?\Illuminate\Database\Eloquent\Model $tenant = null): string
     {
         // Jika mengakses index, redirect langsung ke view dengan record pertama

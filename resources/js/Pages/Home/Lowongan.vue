@@ -67,6 +67,20 @@ function formatTanggal(tanggal) {
 function formatGaji(angka) {
     return parseInt(angka).toLocaleString('id-ID')
 }
+
+// Function to strip HTML tags for preview
+function stripHtml(html) {
+    if (!html) return ''
+    const tmp = document.createElement('div')
+    tmp.innerHTML = html
+    return tmp.textContent || tmp.innerText || ''
+}
+
+// Function to truncate text
+function truncateText(text, length = 150) {
+    if (!text) return ''
+    return text.length > length ? text.substring(0, length) + '...' : text
+}
 </script>
 
 <template>
@@ -100,9 +114,9 @@ function formatGaji(angka) {
                             </span>
                         </div>
 
-                        <!-- Deskripsi -->
+                        <!-- Deskripsi (Strip HTML for preview) -->
                         <p class="text-base text-Color-Scheme-1-Text">
-                            {{ low.deskripsi_pekerjaan }}
+                            {{ truncateText(stripHtml(low.deskripsi_pekerjaan)) }}
                         </p>
 
                         <!-- Info -->
