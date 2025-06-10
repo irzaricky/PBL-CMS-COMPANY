@@ -7,6 +7,20 @@ const profil_perusahaan = ref(null);
 const loading = ref(false);
 const error = ref(null);
 
+// Function to strip HTML tags
+function stripHtml(html: string): string {
+    if (!html) return '';
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+// Function to truncate text
+function truncateText(text: string, length = 150): string {
+    if (!text) return '';
+    return text.length > length ? text.substring(0, length) + '...' : text;
+}
+
 onMounted(() => {
     fetchProfilPerusahaan();
 });
@@ -85,8 +99,17 @@ onUnmounted(() => {
                     <h2 class="text-3xl lg:text-5xl font-custom font-semibold text-secondary">
                         Visi Kami
                     </h2>
-                    <p class="text-base lg:text-lg font-custom font-normal leading-relaxed">
-                        {{ profil_perusahaan?.visi_perusahaan || 'Visi perusahaan belum tersedia.' }}
+                    <!-- Use v-html for rich content display -->
+                    <div 
+                        v-if="profil_perusahaan?.visi_perusahaan"
+                        v-html="profil_perusahaan.visi_perusahaan"
+                        class="text-base lg:text-lg font-custom font-normal leading-relaxed prose prose-gray max-w-none"
+                    ></div>
+                    <p 
+                        v-else
+                        class="text-base lg:text-lg font-custom font-normal leading-relaxed"
+                    >
+                        Visi perusahaan belum tersedia.
                     </p>
                 </div>
 
@@ -96,11 +119,11 @@ onUnmounted(() => {
                         :style="{ transform: `translateX(-${visiIndex * 100}%)` }">
                         <template v-if="profil_perusahaan?.thumbnail_perusahaan?.length">
                             <img v-for="(img, index) in profil_perusahaan.thumbnail_perusahaan"
-                                :key="'visi-img-' + index" :src="getImageUrl(img)" alt="Gambar Visi"
+                                :key="'visi-img-' + index" :src="getImageUrl(img)" :alt="`Gambar Visi ${index + 1}`"
                                 class="w-full flex-shrink-0 object-cover" style="height: 400px;" />
                         </template>
                         <template v-else>
-                            <img src="https://placehold.co/600x400" alt="Placeholder Visi" class="w-full object-cover"
+                            <img src="/image/placeholder.webp" alt="Placeholder Visi" class="w-full object-cover"
                                 style="height: 400px;" />
                         </template>
                     </div>
@@ -116,8 +139,17 @@ onUnmounted(() => {
                     <h2 class="text-3xl lg:text-5xl font-custom font-semibold">
                         Misi Kami
                     </h2>
-                    <p v-html="profil_perusahaan?.misi_perusahaan || 'Misi perusahaan belum tersedia.'"
-                        class="text-base text-white prose-white lg:text-lg font-custom font-normal leading-relaxed prose prose-invert">
+                    <!-- Use v-html for rich content display -->
+                    <div 
+                        v-if="profil_perusahaan?.misi_perusahaan"
+                        v-html="profil_perusahaan.misi_perusahaan"
+                        class="text-base lg:text-lg font-custom font-normal leading-relaxed prose prose-invert max-w-none"
+                    ></div>
+                    <p 
+                        v-else
+                        class="text-base lg:text-lg font-custom font-normal leading-relaxed"
+                    >
+                        Misi perusahaan belum tersedia.
                     </p>
                 </div>
 
@@ -127,11 +159,11 @@ onUnmounted(() => {
                         :style="{ transform: `translateX(-${misiIndex * 100}%)` }">
                         <template v-if="profil_perusahaan?.thumbnail_perusahaan?.length">
                             <img v-for="(img, index) in profil_perusahaan.thumbnail_perusahaan"
-                                :key="'misi-img-' + index" :src="getImageUrl(img)" alt="Gambar Misi"
+                                :key="'misi-img-' + index" :src="getImageUrl(img)" :alt="`Gambar Misi ${index + 1}`"
                                 class="w-full flex-shrink-0 object-cover" style="height: 400px;" />
                         </template>
                         <template v-else>
-                            <img src="https://placehold.co/600x400" alt="Placeholder Misi" class="w-full object-cover"
+                            <img src="/image/placeholder.webp" alt="Placeholder Misi" class="w-full object-cover"
                                 style="height: 400px;" />
                         </template>
                     </div>
@@ -140,3 +172,100 @@ onUnmounted(() => {
         </div>
     </AppLayout>
 </template>
+
+<style scoped>
+/* Ensure HTML content renders properly */
+:deep(.prose) {
+    max-width: none;
+}
+
+/* Prose styling for Visi section (dark text on white background) */
+:deep(.prose-gray h1) {
+    @apply text-2xl font-bold text-gray-900 mt-6 mb-4;
+}
+
+:deep(.prose-gray h2) {
+    @apply text-xl font-bold text-gray-900 mt-6 mb-3;
+}
+
+:deep(.prose-gray h3) {
+    @apply text-lg font-semibold text-gray-900 mt-4 mb-3;
+}
+
+:deep(.prose-gray p) {
+    @apply mb-4 leading-relaxed text-gray-800;
+}
+
+:deep(.prose-gray ul) {
+    @apply list-disc ml-6 mb-4;
+}
+
+:deep(.prose-gray ol) {
+    @apply list-decimal ml-6 mb-4;
+}
+
+:deep(.prose-gray li) {
+    @apply mb-2 text-gray-800;
+}
+
+:deep(.prose-gray blockquote) {
+    @apply border-l-4 border-gray-300 pl-4 italic my-4 bg-gray-50 py-2 text-gray-700;
+}
+
+:deep(.prose-gray strong) {
+    @apply font-semibold text-gray-900;
+}
+
+:deep(.prose-gray em) {
+    @apply italic text-gray-800;
+}
+
+:deep(.prose-gray a) {
+    @apply text-blue-600 hover:text-blue-800 underline;
+}
+
+/* Prose styling for Misi section (white text on dark background) */
+:deep(.prose-invert h1) {
+    @apply text-2xl font-bold text-white mt-6 mb-4;
+}
+
+:deep(.prose-invert h2) {
+    @apply text-xl font-bold text-white mt-6 mb-3;
+}
+
+:deep(.prose-invert h3) {
+    @apply text-lg font-semibold text-white mt-4 mb-3;
+}
+
+:deep(.prose-invert p) {
+    @apply mb-4 leading-relaxed text-white;
+}
+
+:deep(.prose-invert ul) {
+    @apply list-disc ml-6 mb-4;
+}
+
+:deep(.prose-invert ol) {
+    @apply list-decimal ml-6 mb-4;
+}
+
+:deep(.prose-invert li) {
+    @apply mb-2 text-white;
+}
+
+:deep(.prose-invert blockquote) {
+    @apply border-l-4 border-white/30 pl-4 italic my-4 bg-white/10 py-2 text-white;
+}
+
+:deep(.prose-invert strong) {
+    @apply font-semibold text-white;
+}
+
+:deep(.prose-invert em) {
+    @apply italic text-white;
+}
+
+:deep(.prose-invert a) {
+    @apply text-blue-300 hover:text-blue-100 underline;
+}
+</style>
