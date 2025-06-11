@@ -19,7 +19,7 @@ class ViewTestimoni extends ViewRecord
         ];
     }
 
-    public function mount(int|string $record = null): void
+    public function mount(int|string|null $record = null): void
     {
         // Ambil record pertama jika tidak ada ID yang diberikan
         if (!$record) {
