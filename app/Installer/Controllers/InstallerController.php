@@ -508,6 +508,38 @@ class InstallerController extends Controller
                     ->with('error', '.env file not found. Installation may be incomplete.');
             }
 
+            // Run optimization commands
+            try {
+                // Clear all optimization caches first
+                Artisan::call('optimize:clear');
+
+                // Create storage symbolic link (essential for file uploads)
+                Artisan::call('storage:link');
+
+                // Cache standard Laravel components
+                Artisan::call('config:cache');
+                Artisan::call('route:cache');
+                Artisan::call('view:cache');
+
+                // Try Filament-specific commands individually
+                try {
+                    Artisan::call('icons:cache');
+                } catch (\Exception $e) {
+                    // Log::warning('Icons cache command failed: ' . $e->getMessage());
+                }
+
+                try {
+                    Artisan::call('filament:cache-components');
+                } catch (\Exception $e) {
+                    // Log::warning('Filament cache components command failed: ' . $e->getMessage());
+                }
+
+                // Log::info('Optimization commands completed successfully');
+            } catch (\Exception $e) {
+                // Log::warning('Some optimization commands failed: ' . $e->getMessage());
+                // Don't fail the installation if optimization fails
+            }
+
             // Log::info('Installation completed successfully');
             return redirect(URL::to('/'))
                 ->with('success', 'Installation completed successfully!');
