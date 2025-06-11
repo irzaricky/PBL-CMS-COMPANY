@@ -40,7 +40,7 @@ async function fetchProfilPerusahaan() {
                         Sejarah Perusahaan
                     </div>
                     <h1 class="text-4xl sm:text-5xl font-normal leading-tight mb-6">
-                        {{ profil_perusahaan?.nama_perusahaan || 'Memuat...' }}
+                        {{ profil_perusahaan?.nama_perusahaan || 'CMS' }}
                     </h1>
                     <p class="text-lg max-w-3xl mx-auto leading-relaxed">
                         Ikuti perjalanan kami dari awal hingga saat ini. Kami telah melalui banyak tantangan dan

@@ -195,7 +195,7 @@
                                 :class="[
                                     'w-3 h-3 rounded-full transition-all duration-200',
                                     currentSlide === index
-                                        ? 'bg-blue-600 scale-110'
+                                        ? 'bg-secondary scale-110'
                                         : 'bg-gray-300 hover:bg-gray-400',
                                 ]"
                             />

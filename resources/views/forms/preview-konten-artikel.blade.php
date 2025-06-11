@@ -1,3 +1,3 @@
-<div class="prose dark:prose-invert max-w-none">
+<div class="prose dark:prose-invert text-black max-w-none">
     {!! $konten !!}
 </div>
