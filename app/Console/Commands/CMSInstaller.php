@@ -55,20 +55,20 @@ class CMSInstaller extends Command
         $this->info('Step 5: Generating application key...');
         $this->executeArtisanCommand('key:generate');
 
-        // 6. Create storage link
-        $this->info('Step 6: Creating storage link...');
-        $this->executeArtisanCommand('storage:link');
+        // // 6. Create storage link
+        // $this->info('Step 6: Creating storage link...');
+        // $this->executeArtisanCommand('storage:link');
 
         // 7. Clean up public storage
-        $this->info('Step 7: Cleaning up public storage...');
+        $this->info('Step 6: Cleaning up public storage...');
         $this->cleanupPublicStorage();
 
         // 8. Run specific migration
-        $this->info('Step 8: Running users table migration...');
+        $this->info('Step 7: Running users table migration...');
         $this->executeArtisanCommand('migrate --path=database/migrations/0001_01_01_000000_create_users_table.php');
 
         // 9. Set proper permissions for Ubuntu environments
-        $this->info('Step 9: Setting proper permissions for Ubuntu...');
+        $this->info('Step 8: Setting proper permissions for Ubuntu...');
         $this->setUbuntuPermissions();
 
         $this->info('Installation setup completed successfully!');
