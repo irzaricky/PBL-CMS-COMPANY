@@ -70,6 +70,8 @@ class InstallerController extends Controller
 
     public function index()
     {
+        // Create storage symbolic link (essential for file uploads)
+        Artisan::call('storage:link');
 
         $permissions = $this->permissions->check(
             config('install.permissions')
@@ -512,9 +514,6 @@ class InstallerController extends Controller
             try {
                 // Clear all optimization caches first
                 Artisan::call('optimize:clear');
-
-                // Create storage symbolic link (essential for file uploads)
-                Artisan::call('storage:link');
 
                 // Cache standard Laravel components
                 Artisan::call('config:cache');
