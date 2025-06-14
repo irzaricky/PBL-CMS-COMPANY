@@ -110,7 +110,7 @@ class DatabaseController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            // Log::error('Validation errors:', $validator->errors()->toArray());
+            Log::error('Validation errors:', $validator->errors()->toArray());
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -159,6 +159,7 @@ class DatabaseController extends Controller
             }
 
             // Only proceed to next step if database connection is established
+            // Log::info('Redirecting to company profile setup');
             return redirect(route('profil_perusahaan'));
         } catch (\Exception $e) {
             // Log::error('Error saving environment: ' . $e->getMessage());

@@ -26,7 +26,7 @@
                             <!-- Alert Section -->
                             @include('InstallerEragViews::includes.database-connection-error')
 
-                            @if ($errors->any() && !$errors->has('database_connection') && !$errors->has('database_fields') && !$errors->has('save_error'))
+                            @if ($errors->any() && !$errors->hasAny(['database_connection', 'database_fields', 'save_error']))
                                 <div class="alert alert-danger mb-4">
                                     <ul class="mb-0">
                                         @foreach ($errors->all() as $error)
@@ -187,9 +187,19 @@
                                                     </div>
 
                                                     <div class="mysql-only col-md-4 mb-3" id="database_password_container">
-                                                        <x-install-input label="{{ __('installer.database_password') }}"
-                                                            name="database_password" type="text"
-                                                            value="{{ old('database_password') }}" />
+                                                        <label class="mb-1"
+                                                            for="database_password">{{ __('installer.database_password') }}</label>
+                                                        <div class="input-group">
+                                                            <input type="password" name="database_password"
+                                                                id="database_password"
+                                                                class="form-control @error('database_password') is-invalid @enderror"
+                                                                value="{{ old('database_password') }}">
+                                                            <button type="button"
+                                                                class="btn btn-outline-secondary toggle-password"
+                                                                data-target="database_password">
+                                                                <i class="bi bi-eye"></i>
+                                                            </button>
+                                                        </div>
                                                         <x-install-error for="database_password" />
                                                     </div>
                                                 </div>
@@ -223,14 +233,14 @@
                                                     <div class="col-md-4 mb-3" id="mail_host_container">
                                                         <x-install-input label="{{ __('installer.mail_host') }}"
                                                             name="mail_host" type="text" required="true"
-                                                            value="{{ old('mail_host', 'smtp.gmail.com') }}" />
+                                                            value="{{ old('mail_host', 'smtp.gmail.com') }}" readonly />
                                                         <x-install-error for="mail_host" />
                                                     </div>
 
                                                     <div class="col-md-4 mb-3" id="mail_port_container">
                                                         <x-install-input label="{{ __('installer.mail_port') }}"
                                                             name="mail_port" type="number" required="true"
-                                                            value="{{ old('mail_port', '587') }}" />
+                                                            value="{{ old('mail_port', '587') }}" readonly />
                                                         <x-install-error for="mail_port" />
                                                     </div>
 
@@ -293,19 +303,43 @@
                                         </div>
                                     </div>
                                 </div>
+                            </form>
+                        </div>
 
-                                <!-- Action Buttons -->
-                                <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-5">
-                                    <a href="{{ route('installs') }}" class="btn btn-outline-primary btn-lg px-5">
-                                        <i class="bi bi-arrow-left me-2"></i>
-                                        {{ __('installer.back') }}
-                                    </a>
-                                    <button type="submit" id="next_button" class="btn btn-primary btn-lg px-5 database-btn">
-                                        <i class="bi bi-check-circle me-2"></i>
+                        <!-- Card Footer with Action Buttons -->
+                        <div class="card-footer bg-light border-top p-4">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ route('installs') }}" class="btn btn-outline-primary btn-lg px-5">
+                                    {{ __('installer.back') }}
+                                </a>
+                                <form action="{{ route('saveWizard') }}" method="post" class="mb-0">
+                                    @csrf
+                                    <!-- Include all form data as hidden inputs -->
+                                    <input type="hidden" name="environment" id="footer-environment">
+                                    <input type="hidden" name="app_debug" id="footer-app_debug">
+                                    <input type="hidden" name="app_log_level" id="footer-app_log_level">
+                                    <input type="hidden" name="database_connection" id="footer-database_connection">
+                                    <input type="hidden" name="database_name" id="footer-database_name">
+                                    <input type="hidden" name="database_hostname" id="footer-database_hostname">
+                                    <input type="hidden" name="database_port" id="footer-database_port">
+                                    <input type="hidden" name="database_username" id="footer-database_username">
+                                    <input type="hidden" name="database_password" id="footer-database_password">
+                                    <input type="hidden" name="app_url" id="footer-app_url">
+                                    <input type="hidden" name="app_timezone" id="footer-app_timezone">
+                                    <input type="hidden" name="app_locale" id="footer-app_locale">
+                                    <input type="hidden" name="mail_mailer" id="footer-mail_mailer">
+                                    <input type="hidden" name="mail_host" id="footer-mail_host">
+                                    <input type="hidden" name="mail_port" id="footer-mail_port">
+                                    <input type="hidden" name="mail_username" id="footer-mail_username">
+                                    <input type="hidden" name="mail_password" id="footer-mail_password">
+                                    <input type="hidden" name="mail_encryption" id="footer-mail_encryption">
+                                    <input type="hidden" name="mail_from_address" id="footer-mail_from_address">
+                                    <button type="submit" id="next_button" class="btn btn-primary btn-lg px-5 database-btn"
+                                        disabled title="{{ __('installer.please_test_database_connection_first') }}">
                                         {{ __('installer.next') }}
                                     </button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -602,6 +636,19 @@
          * 3. Handle form submission with AJAX for validation and error processing
          */
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize database connection test status
+            let isDatabaseTestSuccessful = false;
+            // Initialize email test status
+            let isEmailTestSuccessful = false;
+
+            // Helper function to remove existing alerts
+            function removeExistingAlerts() {
+                const existingAlerts = document.querySelectorAll('.alert-dismissible');
+                existingAlerts.forEach(alert => {
+                    alert.remove();
+                });
+            }
+
             // Manual tab switching
             document.querySelectorAll('.config-tabs .nav-link').forEach(tabButton => {
                 tabButton.addEventListener('click', function (e) {
@@ -751,11 +798,44 @@
                 }
             }
 
+            // Function to update Next button state based on both database and email test success
+            function updateNextButtonState() {
+                const nextButton = document.getElementById('next_button');
+                if (!nextButton) return;
+
+                // Both tests must be successful to enable the Next button
+                if (isDatabaseTestSuccessful && isEmailTestSuccessful) {
+                    nextButton.disabled = false;
+                    nextButton.title = '';
+                    nextButton.classList.remove('btn-secondary');
+                    nextButton.classList.add('btn-primary');
+                } else {
+                    nextButton.disabled = true;
+
+                    // Create appropriate tooltip message based on which tests are missing
+                    let tooltipMessage = '';
+                    if (!isDatabaseTestSuccessful && !isEmailTestSuccessful) {
+                        tooltipMessage = '{{ __("installer.please_test_database_and_email_first") }}';
+                    } else if (!isDatabaseTestSuccessful) {
+                        tooltipMessage = '{{ __("installer.please_test_database_connection_first") }}';
+                    } else if (!isEmailTestSuccessful) {
+                        tooltipMessage = '{{ __("installer.please_test_email_connection_first") }}';
+                    }
+
+                    nextButton.title = tooltipMessage;
+                    nextButton.classList.remove('btn-primary');
+                    nextButton.classList.add('btn-secondary');
+                }
+            }
+
             // Add event listener to database connection dropdown
             if (dbConnectionSelect) {
                 dbConnectionSelect.addEventListener('change', function () {
                     toggleDatabaseFields();
+                    // Reset database test status when connection type changes
+                    isDatabaseTestSuccessful = false;
                     updateTestConnectionButtonState();
+                    updateNextButtonState();
                 });
                 // Run toggle on page load
                 toggleDatabaseFields();
@@ -766,19 +846,31 @@
                 'input[name="database_name"]',
                 'input[name="database_hostname"]',
                 'input[name="database_port"]',
-                'input[name="database_username"]'
+                'input[name="database_username"]',
+                'input[name="database_password"]'
             ];
 
             requiredFields.forEach(selector => {
                 const field = document.querySelector(selector);
                 if (field) {
-                    field.addEventListener('input', updateTestConnectionButtonState);
-                    field.addEventListener('blur', updateTestConnectionButtonState);
+                    field.addEventListener('input', function () {
+                        // Reset database test status when fields change
+                        isDatabaseTestSuccessful = false;
+                        updateTestConnectionButtonState();
+                        updateNextButtonState();
+                    });
+                    field.addEventListener('blur', function () {
+                        // Reset database test status when fields change
+                        isDatabaseTestSuccessful = false;
+                        updateTestConnectionButtonState();
+                        updateNextButtonState();
+                    });
                 }
             });
 
-            // Initialize button state after all event listeners are set
+            // Initialize button states after all event listeners are set
             updateTestConnectionButtonState();
+            updateNextButtonState();
 
             // Add input event listeners to all form fields to clear tab error indicators when user starts typing
             const allFormFields = document.querySelectorAll('input, select, textarea');
@@ -820,6 +912,7 @@
 
                     // Disable test button
                     testConnectionBtn.disabled = true;
+                    testConnectionBtn.classList.add('test-button-loading');
                     testConnectionBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>{{ __("installer.testing") }}';
 
                     // Collect form data
@@ -836,15 +929,22 @@
                         .then(response => response.json())
                         .then(data => {
                             // Re-enable the button and update state based on validation
+                            testConnectionBtn.classList.remove('test-button-loading');
                             testConnectionBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>{{ __("installer.test_connection") }}';
                             updateTestConnectionButtonState();
 
+                            // Remove existing alerts before showing new one
+                            removeExistingAlerts();
+
                             // Create message div
                             const messageDiv = document.createElement('div');
-                            messageDiv.className = data.success ? 'alert alert-success mb-4' : 'alert alert-danger mb-4';
+                            messageDiv.className = data.success ? 'alert alert-success alert-dismissible mb-4' : 'alert alert-danger alert-dismissible mb-4';
 
                             if (data.success) {
-                                messageDiv.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i><strong>{{ __("installer.success") }}</strong> ' + data.message;
+                                messageDiv.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i><strong>{{ __("installer.success") }}</strong> ' + data.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+                                // Set database test as successful and enable Next button
+                                isDatabaseTestSuccessful = true;
+                                updateNextButtonState();
                             } else {
                                 // Create user-friendly error message with expandable technical details
                                 let errorContent = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.error") }}</strong> ' + data.message;
@@ -852,9 +952,9 @@
                                 if (data.technical_details) {
                                     const detailsId = 'technical-details-' + Date.now();
                                     errorContent += '<div class="mt-3">';
-                                    errorContent += '<a href="#" class="btn btn-sm btn-outline-secondary technical-details-toggle" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false">';
+                                    errorContent += '<button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false" aria-controls="' + detailsId + '">';
                                     errorContent += '<i class="bi bi-info-circle me-1"></i>{{ __("installer.database_error_details") }}';
-                                    errorContent += '</a>';
+                                    errorContent += '</button>';
                                     errorContent += '<div class="collapse mt-2" id="' + detailsId + '">';
                                     errorContent += '<div class="alert alert-secondary small technical-details-content">';
                                     errorContent += '<code>' + data.technical_details + '</code>';
@@ -863,28 +963,12 @@
                                     errorContent += '</div>';
                                 }
 
+                                errorContent += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
                                 messageDiv.innerHTML = errorContent;
 
-                                // Initialize Bootstrap collapse for technical details
-                                if (data.technical_details) {
-                                    const detailsToggle = messageDiv.querySelector('.technical-details-toggle');
-                                    if (detailsToggle) {
-                                        detailsToggle.addEventListener('click', function (e) {
-                                            e.preventDefault();
-                                            const targetId = this.getAttribute('data-bs-target');
-                                            const targetElement = document.querySelector(targetId);
-                                            if (targetElement) {
-                                                if (targetElement.classList.contains('show')) {
-                                                    targetElement.classList.remove('show');
-                                                    this.setAttribute('aria-expanded', 'false');
-                                                } else {
-                                                    targetElement.classList.add('show');
-                                                    this.setAttribute('aria-expanded', 'true');
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
+                                // Database test failed, keep Next button disabled
+                                isDatabaseTestSuccessful = false;
+                                updateNextButtonState();
                             }
 
                             // Add message at the top of the card body
@@ -899,13 +983,21 @@
                         })
                         .catch(error => {
                             // Re-enable the button and update state based on validation
+                            testConnectionBtn.classList.remove('test-button-loading');
                             testConnectionBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>{{ __("installer.test_connection") }}';
                             updateTestConnectionButtonState();
 
+                            // Remove existing alerts before showing new one
+                            removeExistingAlerts();
+
                             // Create error message
                             const errorDiv = document.createElement('div');
-                            errorDiv.className = 'alert alert-danger mb-4';
-                            errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.connection_error") }}</strong> {{ __("installer.could_not_test_database") }}';
+                            errorDiv.className = 'alert alert-danger alert-dismissible mb-4';
+                            errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.connection_error") }}</strong> {{ __("installer.could_not_test_database") }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+
+                            // Database test failed, keep Next button disabled
+                            isDatabaseTestSuccessful = false;
+                            updateNextButtonState();
 
                             // Add message at the top of the card body
                             const cardBody = document.querySelector('.database-config-card .card-body');
@@ -946,6 +1038,25 @@
                 return { isValid, missingFields };
             }
 
+            // Function to update email test status indicator
+            function updateEmailTestStatusIndicator(success) {
+                const statusIndicator = document.getElementById('email_test_status');
+                if (!statusIndicator) return;
+
+                if (success) {
+                    statusIndicator.className = 'mt-3';
+                    statusIndicator.innerHTML = `
+                                            <div class="alert alert-success d-flex align-items-center mb-0">
+                                                <i class="bi bi-check-circle-fill me-2"></i>
+                                                <span>{{ __('installer.email_test_success') }}</span>
+                                            </div>
+                                        `;
+                } else {
+                    statusIndicator.className = 'mt-3 d-none';
+                    statusIndicator.innerHTML = '';
+                }
+            }
+
             // Function to update test email button state
             function updateTestEmailButtonState() {
                 const testEmailBtn = document.getElementById('test_email_button');
@@ -976,8 +1087,40 @@
             requiredEmailFields.forEach(selector => {
                 const field = document.querySelector(selector);
                 if (field) {
-                    field.addEventListener('input', updateTestEmailButtonState);
+                    field.addEventListener('input', function () {
+                        // Reset email test status when any email field changes
+                        isEmailTestSuccessful = false;
+                        updateEmailTestStatusIndicator(false);
+                        updateNextButtonState(); // Update Next button state
+                        updateTestEmailButtonState();
+                    });
                     field.addEventListener('blur', updateTestEmailButtonState);
+                }
+            });
+
+            // Also add listeners to other email fields that might affect the configuration
+            const otherEmailFields = [
+                'input[name="mail_password"]',
+                'select[name="mail_encryption"]',
+                'input[name="mail_from_address"]',
+                'select[name="mail_mailer"]'
+            ];
+
+            otherEmailFields.forEach(selector => {
+                const field = document.querySelector(selector);
+                if (field) {
+                    field.addEventListener('input', function () {
+                        // Reset email test status when any email field changes
+                        isEmailTestSuccessful = false;
+                        updateEmailTestStatusIndicator(false);
+                        updateNextButtonState(); // Update Next button state
+                    });
+                    field.addEventListener('change', function () {
+                        // Reset email test status when any email field changes
+                        isEmailTestSuccessful = false;
+                        updateEmailTestStatusIndicator(false);
+                        updateNextButtonState(); // Update Next button state
+                    });
                 }
             });
 
@@ -985,7 +1128,7 @@
             updateTestEmailButtonState();
 
             // Add test email functionality
-            const testEmailBtn = document.getElementById('test_email_button');
+            testEmailBtn = document.getElementById('test_email_button');
             if (testEmailBtn) {
                 testEmailBtn.addEventListener('click', function () {
                     // Validate fields before proceeding
@@ -1024,7 +1167,7 @@
 
                     // Disable test button
                     testEmailBtn.disabled = true;
-                    testEmailBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>{{ __("installer.testing") }}';
+                    testEmailBtn.innerHTML = '<i class="bi bi-envelope-check me-2"></i>{{ __("installer.testing") }}';
 
                     // Collect form data with null checks
                     const formData = new FormData();
@@ -1061,22 +1204,33 @@
                             testEmailBtn.disabled = false;
                             testEmailBtn.innerHTML = '<i class="bi bi-envelope-check me-2"></i>{{ __("installer.test_email") }}';
 
+                            // Remove existing alerts before showing new one
+                            removeExistingAlerts();
+
                             // Create message div
                             const messageDiv = document.createElement('div');
-                            messageDiv.className = data.success ? 'alert alert-success mb-4' : 'alert alert-danger mb-4';
+                            messageDiv.className = data.success ? 'alert alert-success alert-dismissible mb-4' : 'alert alert-danger alert-dismissible mb-4';
 
                             if (data.success) {
-                                messageDiv.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i><strong>{{ __("installer.email_test_success") }}</strong> ' + data.message;
+                                // Update email test status
+                                isEmailTestSuccessful = true;
+                                updateEmailTestStatusIndicator(true);
+                                updateNextButtonState(); // Update Next button state
+                                messageDiv.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i><strong>{{ __("installer.email_test_success") }}</strong> ' + data.message + '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
                             } else {
+                                // Update email test status
+                                isEmailTestSuccessful = false;
+                                updateEmailTestStatusIndicator(false);
+                                updateNextButtonState(); // Update Next button state
                                 // Create user-friendly error message with expandable technical details
                                 let errorContent = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.error") }}</strong> ' + data.message;
 
                                 if (data.technical_details) {
                                     const detailsId = 'email-technical-details-' + Date.now();
                                     errorContent += '<div class="mt-3">';
-                                    errorContent += '<a href="#" class="btn btn-sm btn-outline-secondary technical-details-toggle" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false">';
+                                    errorContent += '<button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false" aria-controls="' + detailsId + '">';
                                     errorContent += '<i class="bi bi-info-circle me-1"></i>{{ __("installer.database_error_details") }}';
-                                    errorContent += '</a>';
+                                    errorContent += '</button>';
                                     errorContent += '<div class="collapse mt-2" id="' + detailsId + '">';
                                     errorContent += '<div class="alert alert-secondary small technical-details-content">';
                                     errorContent += '<code>' + data.technical_details + '</code>';
@@ -1085,28 +1239,8 @@
                                     errorContent += '</div>';
                                 }
 
+                                errorContent += '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
                                 messageDiv.innerHTML = errorContent;
-
-                                // Initialize Bootstrap collapse for technical details
-                                if (data.technical_details) {
-                                    const detailsToggle = messageDiv.querySelector('.technical-details-toggle');
-                                    if (detailsToggle) {
-                                        detailsToggle.addEventListener('click', function (e) {
-                                            e.preventDefault();
-                                            const targetId = this.getAttribute('data-bs-target');
-                                            const targetElement = document.querySelector(targetId);
-                                            if (targetElement) {
-                                                if (targetElement.classList.contains('show')) {
-                                                    targetElement.classList.remove('show');
-                                                    this.setAttribute('aria-expanded', 'false');
-                                                } else {
-                                                    targetElement.classList.add('show');
-                                                    this.setAttribute('aria-expanded', 'true');
-                                                }
-                                            }
-                                        });
-                                    }
-                                }
                             }
 
                             // Add message at the top of the card body
@@ -1118,16 +1252,23 @@
 
                             // Scroll to top to show message
                             window.scrollTo(0, 0);
-                        })
-                        .catch(error => {
+                        }).catch(error => {
+                            // Update email test status
+                            isEmailTestSuccessful = false;
+                            updateEmailTestStatusIndicator(false);
+                            updateNextButtonState(); // Update Next button state
+
                             // Enable the button again
                             testEmailBtn.disabled = false;
                             testEmailBtn.innerHTML = '<i class="bi bi-envelope-check me-2"></i>{{ __("installer.test_email") }}';
 
+                            // Remove existing alerts before showing new one
+                            removeExistingAlerts();
+
                             // Create error message
                             const errorDiv = document.createElement('div');
-                            errorDiv.className = 'alert alert-danger mb-4';
-                            errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.email_test_error") }}</strong> {{ __("installer.could_not_test_email") }}';
+                            errorDiv.className = 'alert alert-danger alert-dismissible mb-4';
+                            errorDiv.innerHTML = '<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.email_test_error") }}</strong> {{ __("installer.could_not_test_email") }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
 
                             // Add message at the top of the card body
                             const cardBody = document.querySelector('.database-config-card .card-body');
@@ -1216,6 +1357,12 @@
                     }
                 }
 
+                // Check if database test was successful
+                if (!isDatabaseTestSuccessful) {
+                    validation.isValid = false;
+                    validation.errors.database.push('{{ __("installer.database_test_required") }}');
+                }
+
                 // Email tab validation
                 const mailHost = document.querySelector('input[name="mail_host"]');
                 const mailPort = document.querySelector('input[name="mail_port"]');
@@ -1232,6 +1379,12 @@
                 if (!mailUsername || !mailUsername.value.trim()) {
                     validation.isValid = false;
                     validation.errors.email.push('{{ __("installer.mail_username") }}');
+                }
+
+                // Check if email test was successful
+                if (!isEmailTestSuccessful) {
+                    validation.isValid = false;
+                    validation.errors.email.push('{{ __("installer.email_test_required") }}');
                 }
 
                 return validation;
@@ -1322,25 +1475,99 @@
                 window.scrollTo(0, 0);
             }
 
-            // Function to prepare the form for submission - no longer need to touch required attributes
-            function prepareFormForSubmission() {
-                // Nothing special needed - the toggleDatabaseFields function handles required attributes
-                // Just add default values for hidden MySQL fields when SQLite is selected
-                if (dbConnectionSelect.value === 'sqlite') {
-                    const hostnameInput = document.querySelector('input[name="database_hostname"]');
-                    const portInput = document.querySelector('input[name="database_port"]');
-                    const usernameInput = document.querySelector('input[name="database_username"]');
-                    const databaseInput = document.querySelector('input[name="database_name"]');
+            // Function to collect all form data from all tabs
+            function collectAllFormData() {
+                const allFormData = {};
 
+                // Get all form inputs from the main form
+                const formInputs = document.querySelectorAll('#database-form input, #database-form select, #database-form textarea');
+
+                formInputs.forEach(input => {
+                    if (input.name) {
+                        // Handle different input types
+                        if (input.type === 'checkbox') {
+                            allFormData[input.name] = input.checked;
+                        } else if (input.type === 'radio') {
+                            if (input.checked) {
+                                allFormData[input.name] = input.value;
+                            }
+                        } else {
+                            allFormData[input.name] = input.value || '';
+                        }
+                    }
+                });
+
+                // Ensure all required fields have values with sensible defaults
+                const requiredDefaults = {
+                    'environment': 'production',
+                    'app_debug': 'false',
+                    'app_log_level': 'debug',
+                    'app_url': window.location.origin,
+                    'app_timezone': 'UTC',
+                    'app_locale': 'id',
+                    'database_connection': 'mysql',
+                    'database_name': '',
+                    'database_hostname': '127.0.0.1',
+                    'database_port': '3306',
+                    'database_username': '',
+                    'database_password': '',
+                    'mail_mailer': 'smtp',
+                    'mail_host': 'smtp.gmail.com',
+                    'mail_port': '587',
+                    'mail_username': '',
+                    'mail_password': '',
+                    'mail_encryption': 'tls',
+                    'mail_from_address': 'noreply@example.com'
+                };
+
+                // Apply defaults for any missing fields
+                Object.keys(requiredDefaults).forEach(key => {
+                    if (!allFormData.hasOwnProperty(key) || allFormData[key] === '') {
+                        allFormData[key] = requiredDefaults[key];
+                    }
+                });
+
+                return allFormData;
+            }
+
+            // Function to prepare the form for submission
+            function prepareFormForSubmission() {
+                // Get all form data
+                const allFormData = collectAllFormData();
+
+                // Handle SQLite specific adjustments
+                if (allFormData.database_connection === 'sqlite') {
                     // Make sure SQLite databases have .sqlite extension
-                    if (databaseInput && databaseInput.value && !databaseInput.value.toLowerCase().endsWith('.sqlite')) {
-                        databaseInput.value = databaseInput.value + '.sqlite';
+                    if (allFormData.database_name && !allFormData.database_name.toLowerCase().endsWith('.sqlite')) {
+                        allFormData.database_name = allFormData.database_name + '.sqlite';
                     }
 
-                    if (hostnameInput && !hostnameInput.value) hostnameInput.value = '127.0.0.1';
-                    if (portInput && !portInput.value) portInput.value = '3306';
-                    if (usernameInput && !usernameInput.value) usernameInput.value = 'sqlite';
+                    // Set MySQL fields to default values for SQLite
+                    allFormData.database_hostname = '127.0.0.1';
+                    allFormData.database_port = '3306';
+                    allFormData.database_username = 'sqlite';
                 }
+
+                // Update all form inputs with the collected data
+                Object.keys(allFormData).forEach(key => {
+                    const input = document.querySelector(`#database-form [name="${key}"]`);
+                    if (input) {
+                        if (input.type === 'checkbox') {
+                            input.checked = allFormData[key];
+                        } else if (input.type === 'radio') {
+                            if (input.value === allFormData[key]) {
+                                input.checked = true;
+                            }
+                        } else {
+                            input.value = allFormData[key];
+                        }
+                    }
+                });
+
+                // Sync to footer hidden inputs
+                syncFormDataToFooter();
+
+                return allFormData;
             }
 
             form.addEventListener('submit', function (e) {
@@ -1359,6 +1586,40 @@
                     return;
                 }
 
+                // Additional safety check: ensure both tests have been completed successfully
+                if (!isDatabaseTestSuccessful || !isEmailTestSuccessful) {
+                    console.error('Form submission blocked: Tests not completed', {
+                        isDatabaseTestSuccessful,
+                        isEmailTestSuccessful
+                    });
+
+                    // Create error message
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'alert alert-danger alert-dismissible mb-4';
+
+                    let errorMessage = '';
+                    if (!isDatabaseTestSuccessful && !isEmailTestSuccessful) {
+                        errorMessage = '{{ __("installer.please_test_database_and_email_first") }}';
+                    } else if (!isDatabaseTestSuccessful) {
+                        errorMessage = '{{ __("installer.please_test_database_connection_first") }}';
+                    } else if (!isEmailTestSuccessful) {
+                        errorMessage = '{{ __("installer.please_test_email_connection_first") }}';
+                    }
+
+                    errorDiv.innerHTML = `<i class="bi bi-exclamation-triangle-fill me-2"></i><strong>{{ __("installer.validation_error") }}</strong> ${errorMessage}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+
+                    // Add message at the top of the card body
+                    const cardBody = document.querySelector('.database-config-card .card-body');
+                    const headerSection = cardBody.querySelector('.text-center');
+                    if (headerSection) {
+                        headerSection.insertAdjacentElement('afterend', errorDiv);
+                    }
+
+                    // Scroll to top to show error
+                    window.scrollTo(0, 0);
+                    return;
+                }
+
                 // Get submit button and disable it
                 const nextButton = document.getElementById('next_button');
                 if (nextButton) {
@@ -1366,24 +1627,25 @@
                     nextButton.innerHTML = '{{ __("installer.processing") }}';
                 }
 
-                // Prepare the form before submission
-                prepareFormForSubmission();
+                // Prepare the form and collect all data before submission
+                const allFormData = prepareFormForSubmission();
 
-                // Collect all form data
-                const formData = new FormData(form);
+                // Create new FormData with all collected data
+                const formData = new FormData();
 
-                // If SQLite is selected, add default values for MySQL fields that are hidden
-                if (dbConnectionSelect.value === 'sqlite') {
-                    if (!formData.has('database_hostname') || formData.get('database_hostname') === '') {
-                        formData.set('database_hostname', '127.0.0.1');
-                    }
-                    if (!formData.has('database_port') || formData.get('database_port') === '') {
-                        formData.set('database_port', '3306');
-                    }
-                    if (!formData.has('database_username') || formData.get('database_username') === '') {
-                        formData.set('database_username', 'sqlite');
-                    }
+                // Add CSRF token
+                const csrfToken = document.querySelector('input[name="_token"]');
+                if (csrfToken) {
+                    formData.append('_token', csrfToken.value);
                 }
+
+                // Add all form data to FormData object
+                Object.keys(allFormData).forEach(key => {
+                    formData.append(key, allFormData[key]);
+                });
+
+                // Debug log to verify all required fields are present
+                console.log('Form data being submitted:', Object.fromEntries(formData.entries()));
 
                 // Submit via fetch API
                 fetch('{{ route('saveWizard') }}', {
@@ -1404,7 +1666,7 @@
                         // Enable the submit button again
                         if (nextButton) {
                             nextButton.disabled = false;
-                            nextButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>{{ __("installer.next") }}';
+                            nextButton.innerHTML = '{{ __("installer.next") }}';
                         }
 
                         try {
@@ -1434,9 +1696,9 @@
                                             if (errorMessages.technical_details) {
                                                 const detailsId = 'form-technical-details-' + Date.now();
                                                 errorDiv.innerHTML += '<div class="mt-3">';
-                                                errorDiv.innerHTML += '<a href="#" class="btn btn-sm btn-outline-secondary technical-details-toggle" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false">';
+                                                errorDiv.innerHTML += '<button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#' + detailsId + '" aria-expanded="false" aria-controls="' + detailsId + '">';
                                                 errorDiv.innerHTML += '<i class="bi bi-info-circle me-1"></i>{{ __("installer.database_error_details") }}';
-                                                errorDiv.innerHTML += '</a>';
+                                                errorDiv.innerHTML += '</button>';
                                                 errorDiv.innerHTML += '<div class="collapse mt-2" id="' + detailsId + '">';
                                                 errorDiv.innerHTML += '<div class="alert alert-secondary small technical-details-content">';
                                                 errorDiv.innerHTML += '<code>' + errorMessages.technical_details + '</code>';
@@ -1459,25 +1721,6 @@
                                         formCard.insertAdjacentElement('afterbegin', errorDiv);
                                     } else {
                                         form.insertAdjacentElement('afterbegin', errorDiv);
-                                    }
-
-                                    // Initialize Bootstrap collapse for technical details in form errors
-                                    const formDetailsToggle = errorDiv.querySelector('.technical-details-toggle');
-                                    if (formDetailsToggle) {
-                                        formDetailsToggle.addEventListener('click', function (e) {
-                                            e.preventDefault();
-                                            const targetId = this.getAttribute('data-bs-target');
-                                            const targetElement = document.querySelector(targetId);
-                                            if (targetElement) {
-                                                if (targetElement.classList.contains('show')) {
-                                                    targetElement.classList.remove('show');
-                                                    this.setAttribute('aria-expanded', 'false');
-                                                } else {
-                                                    targetElement.classList.add('show');
-                                                    this.setAttribute('aria-expanded', 'true');
-                                                }
-                                            }
-                                        });
                                     }
 
                                     // Scroll to top to show error
@@ -1516,7 +1759,7 @@
                         // Re-enable submit button
                         if (nextButton) {
                             nextButton.disabled = false;
-                            nextButton.innerHTML = '<i class="bi bi-check-circle me-2"></i>{{ __("installer.next") }}';
+                            nextButton.innerHTML = '{{ __("installer.next") }}';
                         }
 
                         // Create error message
@@ -1632,5 +1875,180 @@
                 targetTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
+
+        // Enhanced sync form data to footer hidden inputs
+        function syncFormDataToFooter() {
+            // Get all form data using the comprehensive collection function
+            const allFormData = collectAllFormData();
+
+            // Sync each field to footer hidden inputs
+            Object.keys(allFormData).forEach(key => {
+                const footerInput = document.getElementById('footer-' + key);
+                if (footerInput) {
+                    footerInput.value = allFormData[key];
+                }
+            });
+
+            // Also create any missing footer inputs dynamically
+            const footerForm = document.querySelector('.card-footer form');
+            if (footerForm) {
+                Object.keys(allFormData).forEach(key => {
+                    let footerInput = document.getElementById('footer-' + key);
+                    if (!footerInput) {
+                        // Create missing hidden input
+                        footerInput = document.createElement('input');
+                        footerInput.type = 'hidden';
+                        footerInput.name = key;
+                        footerInput.id = 'footer-' + key;
+                        footerInput.value = allFormData[key];
+                        footerForm.appendChild(footerInput);
+                    } else {
+                        footerInput.value = allFormData[key];
+                    }
+                });
+            }
+        }
+
+        // Make collectAllFormData available globally for sync function
+        function collectAllFormData() {
+            const allFormData = {};
+
+            // Get all form inputs from the main form
+            const formInputs = document.querySelectorAll('#database-form input, #database-form select, #database-form textarea');
+
+            formInputs.forEach(input => {
+                if (input.name) {
+                    // Handle different input types
+                    if (input.type === 'checkbox') {
+                        allFormData[input.name] = input.checked;
+                    } else if (input.type === 'radio') {
+                        if (input.checked) {
+                            allFormData[input.name] = input.value;
+                        }
+                    } else {
+                        allFormData[input.name] = input.value || '';
+                    }
+                }
+            });
+
+            // Ensure all required fields have values with sensible defaults
+            const requiredDefaults = {
+                'environment': 'production',
+                'app_debug': 'false',
+                'app_log_level': 'debug',
+                'app_url': window.location.origin,
+                'app_timezone': 'UTC',
+                'app_locale': 'id',
+                'database_connection': 'mysql',
+                'database_name': '',
+                'database_hostname': '127.0.0.1',
+                'database_port': '3306',
+                'database_username': '',
+                'database_password': '',
+                'mail_mailer': 'smtp',
+                'mail_host': 'smtp.gmail.com',
+                'mail_port': '587',
+                'mail_username': '',
+                'mail_password': '',
+                'mail_encryption': 'tls',
+                'mail_from_address': 'noreply@example.com'
+            };
+
+            // Apply defaults for any missing fields
+            Object.keys(requiredDefaults).forEach(key => {
+                if (!allFormData.hasOwnProperty(key) || allFormData[key] === '') {
+                    allFormData[key] = requiredDefaults[key];
+                }
+            });
+
+            return allFormData;
+        }
+
+        // Enhanced sync on form change with more comprehensive event handling
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('database-form');
+            if (form) {
+                // Add multiple event listeners for comprehensive sync
+                form.addEventListener('input', syncFormDataToFooter);
+                form.addEventListener('change', syncFormDataToFooter);
+                form.addEventListener('keyup', syncFormDataToFooter);
+                form.addEventListener('blur', syncFormDataToFooter, true); // Use capture phase
+
+                // Sync when tabs are switched
+                document.querySelectorAll('.config-tabs .nav-link').forEach(tabButton => {
+                    tabButton.addEventListener('click', function () {
+                        // Delay sync to ensure tab content is loaded
+                        setTimeout(syncFormDataToFooter, 100);
+                    });
+                });
+
+                // Initial sync after a short delay to ensure all form elements are loaded
+                setTimeout(syncFormDataToFooter, 500);
+
+                // Periodic sync every 2 seconds as backup
+                setInterval(syncFormDataToFooter, 2000);
+            }
+        });
     </script>
+
+    <style>
+        /* Card Footer Styling */
+        .card-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border-top: 1px solid #dee2e6 !important;
+            border-radius: 0 0 20px 20px !important;
+            margin-top: 0 !important;
+        }
+
+        .card-footer .btn {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card-footer .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-footer .btn-outline-primary {
+            border-width: 2px;
+            font-weight: 600;
+        }
+
+        .card-footer .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Next button disabled state styling */
+        .card-footer .btn-primary:disabled,
+        .card-footer .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .card-footer .btn-primary:disabled:hover,
+        .card-footer .btn-secondary:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Test button animation when testing */
+        .test-button-loading .bi-hourglass-split {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 @endsection

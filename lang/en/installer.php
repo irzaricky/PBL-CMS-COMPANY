@@ -77,6 +77,13 @@ return [
     'folder_permissions' => 'Folder Permissions',
     'folder' => 'Folder',
 
+    // Messages for disabled button
+    'requirements_not_met' => 'System requirements not met',
+    'requirements_not_met_message' => 'Please fix all system requirements before proceeding.',
+    'php_requirements_failed' => 'Some PHP requirements are not met.',
+    'php_version_not_supported' => 'PHP version is not supported.',
+    'folder_permissions_failed' => 'Some folders do not have proper permissions.',
+
     // Halaman: Database & Email
     'database_title' => 'Database & Email Configuration',
     'database_configuration' => 'Database Configuration',
@@ -114,7 +121,7 @@ return [
     'company_description' => 'Company Description',
     'company_location_link' => 'Company Location Link',
     'company_logo' => 'Company Logo',
-    'logo_requirements' => 'Logo requirements: PNG, JPG, or JPEG format, maximum 2MB',
+    'logo_requirements' => 'Format: JPEG, PNG, JPG, WebP, SVG | Maximum: 5MB | Minimum dimensions: 100x100px',
 
     // Halaman: Super Admin
     'super_admin_title' => 'Super Admin Configuration',
@@ -260,10 +267,29 @@ return [
     'form_validation_failed' => 'Please complete all required fields before continuing.',
     'check_all_tabs' => 'Please check all tabs and fill in the required information.',
 
-    // Pesan Khusus (Logika Super Admin)
+    // Super Admin Messages
     'super_admin_exists' => 'Super Admin with email :email already exists and has super admin access. You can continue.',
     'user_exists_role_assigned' => 'User with email :email already exists. Super Admin role has been assigned to that account.',
     'super_admin_created_msg' => 'Super Admin successfully created.',
     'failed_assign_role' => 'Failed to assign Super Admin role',
+
+    // Company Logo Validation Messages
+    'logo_upload_success' => 'Company logo uploaded successfully.',
+    'logo_upload_failed' => 'Failed to upload company logo.',
+    'logo_file_too_large' => 'Logo file size is too large. Maximum 5MB.',
+    'logo_invalid_format' => 'Logo file format is not supported. Use: JPEG, PNG, JPG, WebP, or SVG.',
+    'logo_invalid_dimensions' => 'Logo dimensions are invalid. Minimum 100x100px.',
+    'logo_file_corrupted' => 'Logo file is corrupted or cannot be read.',
+    'logo_svg_invalid' => 'SVG file is invalid or contains unsafe content.',
+    'logo_processing_failed' => 'Failed to process logo file.',
+    'logo_storage_failed' => 'Failed to save logo file to storage.',
+    'logo_validation_failed' => 'Logo validation failed. Please check the file and try again.',
+    'logo_ratio_warning' => 'Logo aspect ratio is not square. 1:1 ratio is recommended for best results.',
+
+    // Email Test Validation
+    'email_test_required' => 'Email test must be successful before continuing',
+    'database_test_required' => 'Database test must be successful before continuing',
+    'please_test_database_and_email_first' => 'Please test database and email connection first',
+    'please_test_email_connection_first' => 'Please test email connection first',
 
 ];

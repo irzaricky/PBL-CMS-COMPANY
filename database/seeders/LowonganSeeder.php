@@ -18,6 +18,33 @@ class LowonganSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $fakerEN = Faker::create('en_US');
 
+        // Ambil 5 user pertama dari tabel users menggunakan User model
+        try {
+            $users = \App\Models\User::orderBy('id_user')->limit(5)->pluck('id_user')->toArray();
+
+            // Jika tidak ada user, skip seeding
+            if (empty($users)) {
+                $this->command->warn('No users found in the database. Skipping lowongan seeding.');
+                return;
+            }
+
+            // Validasi bahwa semua user ID yang diambil valid
+            $validUsers = \App\Models\User::whereIn('id_user', $users)->pluck('id_user')->toArray();
+            if (count($validUsers) !== count($users)) {
+                $this->command->warn('Some users not found, using only valid users for lowongan seeding.');
+                $users = $validUsers;
+            }
+
+            if (empty($users)) {
+                $this->command->warn('No valid users found. Skipping lowongan seeding.');
+                return;
+            }
+
+        } catch (\Exception $e) {
+            $this->command->error('Error accessing users table: ' . $e->getMessage());
+            return;
+        }
+
         // Proses copy image
         $sourcePath = database_path('seeders/seeder_image/');
         $targetPath = 'lowongan-thumbnails';
@@ -69,7 +96,7 @@ class LowonganSeeder extends Seeder
 
         for ($i = 1; $i <= $totalJobs; $i++) {
             $jobTitle = $jobTitles[$i - 1];
-            
+
             // Generate slug and check for duplicates
             $baseSlug = Str::slug($jobTitle);
             $slug = $baseSlug;
@@ -85,7 +112,7 @@ class LowonganSeeder extends Seeder
             }
 
             $jobType = $jobTypes[array_rand($jobTypes)];
-            
+
             // Generate rich HTML description
             $description = $this->generateJobDescription($faker, $fakerEN, $jobTitle, $jobType);
 
@@ -96,7 +123,7 @@ class LowonganSeeder extends Seeder
 
             $lowonganData[] = [
                 'id_lowongan' => $i,
-                'id_user' => rand(1, 2),
+                'id_user' => $faker->randomElement($users), // Ambil random dari 5 user pertama
                 'judul_lowongan' => $jobTitle,
                 'slug' => $slug,
                 'deskripsi_pekerjaan' => $description,
@@ -136,7 +163,7 @@ class LowonganSeeder extends Seeder
         // Job Description Section
         $description .= '<h3>Deskripsi Pekerjaan</h3>';
         $description .= '<p>Sebagai <strong>' . $jobTitle . '</strong>, Anda akan bertanggung jawab untuk:</p>';
-        
+
         $responsibilities = $this->getJobResponsibilities($jobTitle);
         $description .= '<ul>';
         foreach ($responsibilities as $responsibility) {
@@ -168,7 +195,7 @@ class LowonganSeeder extends Seeder
         $description .= '<h3>Benefit & Fasilitas</h3>';
         $description .= '<div style="background-color: #f8f9fa; border-left: 4px solid #28a745; padding: 20px; margin: 20px 0;">';
         $description .= '<p style="margin-bottom: 15px;"><strong>Kami menawarkan paket kompensasi dan benefit yang menarik:</strong></p>';
-        
+
         $benefits = [
             '💰 Gaji kompetitif sesuai pengalaman dan kemampuan',
             '🏥 Asuransi kesehatan untuk karyawan dan keluarga',
@@ -183,7 +210,7 @@ class LowonganSeeder extends Seeder
             '🎯 Performance bonus dan career advancement',
             '🎪 Team building dan company outing'
         ];
-        
+
         $selectedBenefits = $faker->randomElements($benefits, rand(6, 9));
         $description .= '<ul style="margin-bottom: 0;">';
         foreach ($selectedBenefits as $benefit) {
@@ -202,7 +229,7 @@ class LowonganSeeder extends Seeder
                 'Open communication dengan management',
                 'Kesempatan untuk mengembangkan skill dan karir'
             ];
-            
+
             $description .= '<ul>';
             foreach ($faker->randomElements($workEnvs, rand(3, 5)) as $env) {
                 $description .= '<li>' . $env . '</li>';
@@ -215,7 +242,7 @@ class LowonganSeeder extends Seeder
             $description .= '<h3>Jenjang Karir</h3>';
             $description .= '<p>Kami berkomitmen untuk mengembangkan karir karyawan dengan jalur yang jelas:</p>';
             $description .= '<div style="background-color: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 8px; padding: 15px; margin: 15px 0;">';
-            
+
             $careerPaths = $this->getCareerPath($jobTitle);
             $description .= '<p style="margin-bottom: 10px;"><strong>Possible Career Progression:</strong></p>';
             $description .= '<p style="margin-bottom: 0; color: #0066cc;">';

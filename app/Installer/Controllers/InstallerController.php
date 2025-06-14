@@ -94,9 +94,15 @@ class InstallerController extends Controller
 
     public function profilPerusahaan()
     {
+        // Log::info('Accessing profil perusahaan page');
         // Double-check database connection
         try {
             $dbConnection = DB::connection()->getPdo();
+            // Log::info('Database connection established successfully', [
+            //     'driver' => DB::getDriverName(),
+            //     'host' => config('database.connections.mysql.host'),
+            //     'database' => config('database.connections.mysql.database'),
+            // ]);
             if (!$dbConnection) {
                 return redirect()->route('database_import')
                     ->with('database_error', 'Database connection failed. Please check your configuration.');
@@ -117,6 +123,7 @@ class InstallerController extends Controller
 
             return view('InstallerEragViews::profil-perusahaan');
         } catch (\Exception $e) {
+            Log::error('Database connection error: ' . $e->getMessage());
             return redirect()->route('database_import')
                 ->with('database_error', 'Database error: ' . $e->getMessage())
                 ->withErrors(['database_connection' => 'Database connection failed: ' . $e->getMessage()]);
@@ -127,16 +134,37 @@ class InstallerController extends Controller
     {
         $rules = config('install.profil_perusahaan');
 
+        Log::info('Saving company profile', [
+            'has_file' => $request->hasFile('logo_perusahaan'),
+            'all_inputs' => $request->all(),
+        ]);
+
+        // Add custom validation for logo
+        $request->validate($rules, [
+            'logo_perusahaan.image' => __('installer.logo_invalid_format'),
+            'logo_perusahaan.mimes' => __('installer.logo_invalid_format'),
+            'logo_perusahaan.max' => __('installer.logo_file_too_large'),
+            'logo_perusahaan.dimensions' => 'Dimensi logo minimal 100x100px.',
+            'nama_perusahaan.required' => 'Nama perusahaan wajib diisi.',
+            'nama_perusahaan.min' => 'Nama perusahaan minimal 2 karakter.',
+            'alamat_perusahaan.required' => 'Alamat perusahaan wajib diisi.',
+            'alamat_perusahaan.min' => 'Alamat perusahaan minimal 10 karakter.',
+            'email_perusahaan.required' => 'Email perusahaan wajib diisi.',
+            'email_perusahaan.email' => 'Format email tidak valid.',
+            'link_alamat_perusahaan.url' => 'Link alamat harus berupa URL yang valid.',
+            'deskripsi_perusahaan.max' => 'Deskripsi perusahaan maksimal 1000 karakter.',
+        ]);
+
         // Debug information
-        // Log::info('Form submission received', [
-        //     'has_file' => $request->hasFile('logo_perusahaan'),
-        //     'all_inputs' => $request->all(),
-        // ]);
+        Log::info('Form submission received', [
+            'has_file' => $request->hasFile('logo_perusahaan'),
+            'all_inputs' => $request->all(),
+        ]);
 
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            // Log::warning('Validation failed', ['errors' => $validator->errors()]);
+            Log::warning('Validation failed', ['errors' => $validator->errors()]);
             return $redirect->route('profil_perusahaan')->withInput()->withErrors($validator->errors());
         }
 
@@ -161,6 +189,14 @@ class InstallerController extends Controller
             if ($request->hasFile('logo_perusahaan')) {
                 $logo = $request->file('logo_perusahaan');
 
+                // Additional server-side validation
+                $logoValidation = $this->validateLogoFile($logo);
+                if (!$logoValidation['valid']) {
+                    return $redirect->route('profil_perusahaan')
+                        ->withInput()
+                        ->withErrors(['logo_perusahaan' => $logoValidation['message']]);
+                }
+
                 // Validate the file
                 if ($logo->isValid()) {
                     // Delete old logo file if exists
@@ -171,16 +207,20 @@ class InstallerController extends Controller
                     // Check if directory exists and is writable
                     $storageDir = storage_path('app/public/logo-perusahaan');
 
+                    // Generate unique filename to prevent conflicts
+                    $originalName = pathinfo($logo->getClientOriginalName(), PATHINFO_FILENAME);
+                    $extension = $logo->getClientOriginalExtension();
+                    $filename = $originalName . '_' . time() . '.' . $extension;
 
-                    // Store the file with auto-generated name
-                    $path = Storage::disk('public')->putFile('logo-perusahaan', $logo);
-
+                    // Store the file with custom name
+                    $path = $logo->storeAs('logo-perusahaan', $filename, 'public');
 
                     if (!$path) {
                         throw new \Exception('Failed to store logo file');
                     }
 
                     $data['logo_perusahaan'] = $path;
+                    Log::info('Logo uploaded successfully', ['path' => $path, 'size' => $logo->getSize()]);
                 } else {
                     // Log error for debugging
                     Log::error('Logo upload failed: ' . $logo->getErrorMessage());
@@ -193,10 +233,12 @@ class InstallerController extends Controller
             if ($profilPerusahaan) {
                 // Update existing record
                 $profilPerusahaan->update($data);
+                Log::info('Company profile updated', ['id' => $profilPerusahaan->id_profil_perusahaan]);
             } else {
                 // Create new record with ID 1
                 $data['id_profil_perusahaan'] = 1;
                 \App\Models\ProfilPerusahaan::create($data);
+                Log::info('Company profile created', ['id' => 1]);
             }
 
             DB::commit();
@@ -227,7 +269,7 @@ class InstallerController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            // Log::warning('Validation failed', ['errors' => $validator->errors()]);
+            Log::warning('Validation failed', ['errors' => $validator->errors()]);
             return $redirect->route('super_admin_config')->withInput()->withErrors($validator->errors());
         }
 
@@ -240,18 +282,19 @@ class InstallerController extends Controller
                 $seedingResult = DatabaseManager::SeedOnly(true);
 
                 if ($seedingResult[0] === 'error') {
+                    Log::error('Database seeding failed: ' . ($seedingResult[1] ?? 'Unknown error'));
                     return $redirect->route('super_admin_config')
                         ->withInput()
                         ->with('database_error', 'Database seeding failed: ' . ($seedingResult[1] ?? 'Unknown error'))
                         ->withErrors(['general_error' => 'Database seeding failed. Please check your database configuration.']);
                 }
 
-                // Log::info('Database dummy data seeding completed', [
-                //     'result' => $seedingResult[1]
-                // ]);
+                Log::info('Database dummy data seeding completed', [
+                    'result' => $seedingResult[1]
+                ]);
 
             } catch (\Exception $e) {
-                // Log::error('Error during dummy data seeding: ' . $e->getMessage());
+                Log::error('Error during dummy data seeding: ' . $e->getMessage());
                 return $redirect->route('super_admin_config')
                     ->withInput()
                     ->withErrors(['general_error' => 'Database seeding failed: ' . $e->getMessage()]);
@@ -289,14 +332,14 @@ class InstallerController extends Controller
                     }
 
                     DB::commit();
-                    // Log::info('Super admin role assigned to existing user: ' . $existingUser->email);
+                    Log::info('Super admin role assigned to existing user: ' . $existingUser->email);
 
                     return $redirect->route('user_roles_list')
                         ->with('account_exists', __('installer.user_exists_role_assigned', ['email' => $request->email]));
 
                 } catch (\Exception $e) {
                     DB::rollBack();
-                    // Log::error('Error assigning super admin role: ' . $e->getMessage());
+                    Log::error('Error assigning super admin role: ' . $e->getMessage());
                     return $redirect->route('super_admin_config')
                         ->withInput()
                         ->withErrors(['general_error' => __('installer.failed_assign_role') . ': ' . $e->getMessage()]);
@@ -548,5 +591,143 @@ class InstallerController extends Controller
             return redirect()->route('finish')
                 ->with('error', 'Installation failed: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Validate logo file with enhanced checks
+     * 
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return array
+     */
+    private function validateLogoFile($file)
+    {
+        // Configuration
+        $maxSize = 5 * 1024 * 1024; // 5MB
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'image/svg+xml'];
+        $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
+        $minWidth = 100;
+        $minHeight = 100;
+
+        // Check if file is valid
+        if (!$file->isValid()) {
+            return [
+                'valid' => false,
+                'message' => __('installer.logo_file_corrupted')
+            ];
+        }
+
+        // Check file size
+        if ($file->getSize() > $maxSize) {
+            $fileSizeMB = round($file->getSize() / 1024 / 1024, 2);
+            $maxSizeMB = round($maxSize / 1024 / 1024, 1);
+            return [
+                'valid' => false,
+                'message' => __('installer.logo_file_too_large') . " ({$fileSizeMB}MB dari maksimal {$maxSizeMB}MB)"
+            ];
+        }
+
+        // Check MIME type
+        $mimeType = $file->getMimeType();
+        if (!in_array($mimeType, $allowedMimes)) {
+            return [
+                'valid' => false,
+                'message' => __('installer.logo_invalid_format')
+            ];
+        }
+
+        // Check file extension
+        $extension = strtolower($file->getClientOriginalExtension());
+        if (!in_array($extension, $allowedExtensions)) {
+            return [
+                'valid' => false,
+                'message' => __('installer.logo_invalid_format')
+            ];
+        }
+
+        // For SVG files, do basic validation
+        if ($extension === 'svg') {
+            $content = file_get_contents($file->getRealPath());
+            if (strpos($content, '<svg') === false || strpos($content, '</svg>') === false) {
+                return [
+                    'valid' => false,
+                    'message' => __('installer.logo_svg_invalid')
+                ];
+            }
+
+            // Check for potentially dangerous SVG content
+            $dangerousPatterns = ['<script', 'javascript:', 'onload=', 'onerror='];
+            foreach ($dangerousPatterns as $pattern) {
+                if (stripos($content, $pattern) !== false) {
+                    return [
+                        'valid' => false,
+                        'message' => __('installer.logo_svg_invalid')
+                    ];
+                }
+            }
+        } else {
+            // For bitmap images, check dimensions
+            try {
+                $imageInfo = getimagesize($file->getRealPath());
+                if ($imageInfo === false) {
+                    return [
+                        'valid' => false,
+                        'message' => __('installer.logo_file_corrupted')
+                    ];
+                }
+
+                list($width, $height) = $imageInfo;
+
+                if ($width < $minWidth || $height < $minHeight) {
+                    return [
+                        'valid' => false,
+                        'message' => "Dimensi logo terlalu kecil ({$width}x{$height}px). Minimal {$minWidth}x{$minHeight}px."
+                    ];
+                }
+
+                // Check aspect ratio (warn if not square, but don't fail)
+                $ratio = $width / $height;
+                if (abs($ratio - 1) > 0.3) {
+                    // This is just a warning, still valid
+                    Log::info(__('installer.logo_ratio_warning') . ": {$width}x{$height}px (ratio: " . round($ratio, 2) . ")");
+                }
+
+            } catch (\Exception $e) {
+                return [
+                    'valid' => false,
+                    'message' => __('installer.logo_processing_failed') . ': ' . $e->getMessage()
+                ];
+            }
+        }
+
+        // Check for file corruption by attempting to read a portion
+        try {
+            $handle = fopen($file->getRealPath(), 'rb');
+            if ($handle === false) {
+                return [
+                    'valid' => false,
+                    'message' => __('installer.logo_file_corrupted')
+                ];
+            }
+
+            $chunk = fread($handle, 1024); // Read first 1KB
+            fclose($handle);
+
+            if ($chunk === false || strlen($chunk) === 0) {
+                return [
+                    'valid' => false,
+                    'message' => __('installer.logo_file_corrupted')
+                ];
+            }
+        } catch (\Exception $e) {
+            return [
+                'valid' => false,
+                'message' => __('installer.logo_validation_failed')
+            ];
+        }
+
+        return [
+            'valid' => true,
+            'message' => __('installer.logo_upload_success')
+        ];
     }
 }

@@ -134,11 +134,17 @@ return [
     // profil perusahaan
 
     'profil_perusahaan' => [
-        'nama_perusahaan' => 'required|string|max:100',
-        'logo_perusahaan' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        'deskripsi_perusahaan' => 'nullable|string',
-        'alamat_perusahaan' => 'required|string|max:200',
-        'link_alamat_perusahaan' => 'nullable|string|max:255',
+        'nama_perusahaan' => 'required|string|min:2|max:100',
+        'logo_perusahaan' => [
+            'nullable',
+            'image',
+            'mimes:jpeg,png,jpg,webp,svg',
+            'max:5120', // Max 5MB
+            'dimensions:min_width=100,min_height=100'
+        ],
+        'deskripsi_perusahaan' => 'nullable|string|max:1000',
+        'alamat_perusahaan' => 'required|string|min:10|max:200',
+        'link_alamat_perusahaan' => 'nullable|url|max:255',
         'email_perusahaan' => 'required|email|max:50',
     ],
 

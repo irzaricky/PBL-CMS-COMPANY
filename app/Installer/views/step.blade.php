@@ -1,3 +1,26 @@
+@php
+    $currentRoute = Route::currentRouteName();
+    $steps = [
+        ['route' => 'welcome', 'icon' => 'bi-house', 'label' => 'step_welcome'],
+        ['route' => 'installs', 'icon' => 'bi-asterisk', 'label' => 'step_requirements'],
+        ['route' => 'database_import', 'icon' => 'bi-database', 'label' => 'step_database'],
+        ['route' => 'profil_perusahaan', 'icon' => 'bi-building', 'label' => 'step_company'],
+        ['route' => 'super_admin_config', 'icon' => 'bi-person', 'label' => 'step_admin'],
+        ['route' => 'user_roles_list', 'icon' => 'bi-people', 'label' => 'step_roles'],
+        ['route' => 'feature_toggles', 'icon' => 'bi-toggle-on', 'label' => 'step_features'],
+        ['route' => 'finish', 'icon' => 'bi-check-circle', 'label' => 'step_finish']
+    ];
+
+    $currentStepIndex = collect($steps)->search(function ($step) use ($currentRoute) {
+        return $step['route'] === $currentRoute;
+    });
+
+    function isStepActive($stepIndex, $currentStepIndex)
+    {
+        return $currentStepIndex !== false && $stepIndex <= $currentStepIndex;
+    }
+@endphp
+
 <div class="container-fluid installer-content">
     <div class="row justify-content-center">
         <div class="col-11 col-sm-10 col-md-10 col-lg-10 col-xl-9 text-center p-0 mt-3 mb-2">
@@ -5,90 +28,24 @@
                 <h2 id="heading">{{ __('installer.install_title') }}</h2>
                 <form id="msform" class="px-3">
                     <div class="d-flex justify-content-center align-items-center position-relative mb-5">
-                        <div class="col text-center position-relative">
-                            <div
-                                class="circle-icon {{ Route::currentRouteName() == 'welcome' ? 'active' : '' }}{{ Route::currentRouteName() == 'installs' ? 'active' : '' }}{{ Route::currentRouteName() == 'database_import' ? 'active' : '' }}{{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-house"></i>
+                        @foreach($steps as $index => $step)
+                            <div class="col text-center position-relative">
+                                <div class="circle-icon {{ isStepActive($index, $currentStepIndex) ? 'active' : '' }}">
+                                    <i class="bi {{ $step['icon'] }}"></i>
+                                </div>
+                                <div class="step-label">{{ __('installer.' . $step['label']) }}</div>
                             </div>
-                            <div class="step-label">{{ __('installer.step_welcome') }}</div>
-                        </div>
-                        <hr
-                            class="connector-line {{ Route::currentRouteName() == 'installs' ? 'active' : '' }} {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
-                        <div class="col text-center position-relative">
-                            <div
-                                class="circle-icon {{ Route::currentRouteName() == 'installs' ? 'active' : '' }} {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-asterisk"></i>
-                            </div>
-                            <div class="step-label">{{ __('installer.step_requirements') }}</div>
-                        </div>
-                        <hr
-                            class="connector-line {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
-                        <div class="col text-center position-relative">
-                            <div
-                                class="circle-icon {{ Route::currentRouteName() == 'database_import' ? 'active' : '' }} {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-database"></i>
-                            </div>
-                            <div class="step-label">{{ __('installer.step_database') }}</div>
-                        </div>
-                        <hr
-                            class="connector-line {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
-                        <div class="col text-center position-relative">
-                            <div
-                                class="circle-icon {{ Route::currentRouteName() == 'profil_perusahaan' ? 'active' : '' }}{{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-building"></i>
-                            </div>
-                            <div class="step-label">{{ __('installer.step_company') }}</div>
-                        </div>
-                        <hr
-                            class="connector-line {{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
-                        <div class="col text-center position-relative">
-                            <div
-                                class="circle-icon {{ Route::currentRouteName() == 'super_admin_config' ? 'active' : '' }}{{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-person"></i>
-                            </div>
-                            <div class="step-label">{{ __('installer.step_admin') }}</div>
-                        </div>
-                        <hr
-                            class="connector-line {{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
-                        <div class="col text-center position-relative">
-                            <div
-                                class="circle-icon {{ Route::currentRouteName() == 'user_roles_list' ? 'active' : '' }}{{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-people"></i>
-                            </div>
-                            <div class="step-label">{{ __('installer.step_roles') }}</div>
-                        </div>
-                        <hr
-                            class="connector-line {{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
-                        <div class="col text-center position-relative">
-                            <div
-                                class="circle-icon {{ Route::currentRouteName() == 'feature_toggles' ? 'active' : '' }}{{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-toggle-on"></i>
-                            </div>
-                            <div class="step-label">{{ __('installer.step_features') }}</div>
-                        </div>
-                        <hr class="connector-line {{ Route::currentRouteName() == 'finish' ? 'active' : '' }}" />
-                        <div class="col text-center position-relative">
-                            <div class="circle-icon {{ Route::currentRouteName() == 'finish' ? 'active' : '' }}">
-                                <i class="bi bi-check-circle"></i>
-                            </div>
-                            <div class="step-label">{{ __('installer.step_finish') }}</div>
-                        </div>
+                            @if($index < count($steps) - 1)
+                                <hr class="connector-line {{ isStepActive($index + 1, $currentStepIndex) ? 'active' : '' }}" />
+                            @endif
+                        @endforeach
                     </div>
                     @php
-                        $totalSteps = 8;
-                        $currentStep = array_search(Route::currentRouteName(), [
-                            'welcome',
-                            'installs',
-                            'database_import',
-                            'profil_perusahaan',
-                            'super_admin_config',
-                            'user_roles_list',
-                            'feature_toggles',
-                            'finish'
-                        ]) + 1;
+                        $totalSteps = count($steps);
+                        $currentStep = $currentStepIndex !== false ? $currentStepIndex + 1 : 1;
                         $progressPercentage = ($currentStep / $totalSteps) * 100;
                     @endphp
-                    <div class="progress" role="progressbar" aria-label="Default striped example"
+                    <div class="progress" role="progressbar" aria-label="Installation Progress"
                         aria-valuenow="{{ $progressPercentage }}" aria-valuemin="0" aria-valuemax="100">
                         <div class="progress-bar progress-bar-striped" style="width: {{ $progressPercentage }}%"></div>
                     </div>

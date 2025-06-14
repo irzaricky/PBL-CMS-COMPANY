@@ -107,22 +107,37 @@
                                         </table>
                                     </div>
                                 </div>
-
-                                <!-- Action Buttons -->
-                                @if (!isset($requirements['errors']) && $phpSupportInfo['supported'])
-                                    @if (!isset($permissions['errors']))
-                                        <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
-                                            <a href="{{ route('welcome') }}" class="btn btn-outline-primary btn-lg px-5 me-md-3">
-                                                <i class="bi bi-arrow-left me-2"></i>{{ __('installer.back') }}
-                                            </a>
-                                            <button type="submit" id="next_button"
-                                                class="btn btn-primary btn-lg px-5 requirements-btn">
-                                                <i class="bi bi-check-circle me-2"></i>{{ __('installer.next') }}
-                                            </button>
-                                        </div>
-                                    @endif
-                                @endif
                             </form>
+                        </div>
+
+                        <!-- Card Footer with Action Buttons -->
+                        <div class="card-footer bg-light border-top p-4">
+                            <div class="d-flex justify-content-between">
+                                <!-- Back button - always visible (left side) -->
+                                <a href="{{ route('welcome') }}" class="btn btn-outline-primary btn-lg px-5">
+                                    {{ __('installer.back') }}
+                                </a>
+
+                                <!-- Next button - always visible but disabled if requirements not met -->
+                                <form action="{{ route('install_check') }}" method="post" class="mb-0">
+                                    @csrf
+                                    @if (isset($requirements['errors']) || !$phpSupportInfo['supported'] || isset($permissions['errors']))
+                                        <!-- Wrapper for disabled button tooltip -->
+                                        <span class="d-inline-block" tabindex="0" data-bs-toggle="tooltip"
+                                            data-bs-placement="top" title="{{ __('installer.requirements_not_met') }}">
+                                            <button type="button" id="next_button"
+                                                class="btn btn-primary btn-lg px-5 requirements-btn" disabled>
+                                                {{ __('installer.next') }}
+                                            </button>
+                                        </span>
+                                    @else
+                                        <button type="submit" id="next_button"
+                                            class="btn btn-primary btn-lg px-5 requirements-btn">
+                                            {{ __('installer.next') }}
+                                        </button>
+                                    @endif
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -217,59 +232,87 @@
             box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
         }
 
-        /* Animations */
-        @keyframes slideInUp {
-            from {
-                transform: translateY(30px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        /* Card Footer Styling */
+        .card-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border-top: 1px solid #dee2e6 !important;
+            border-radius: 0 0 20px 20px !important;
+            margin-top: 0 !important;
         }
 
-        @keyframes fadeInDown {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .card-footer .btn {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
         }
 
-        @keyframes fadeInUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+        .card-footer .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
-        /* Section headers */
-        h4 {
+        .card-footer .btn-outline-primary {
+            border-width: 2px;
             font-weight: 600;
-            position: relative;
         }
 
-        h4::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, #4338ca 100%);
-            border-radius: 2px;
+        .card-footer .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Tooltip wrapper for disabled buttons */
+        .card-footer span[data-bs-toggle="tooltip"] {
+            display: inline-block;
+        }
+
+        /* Disabled button styling */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            const nextButton = document.getElementById('next_button');
+
+            if (nextButton && nextButton.disabled) {
+                nextButton.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    // Create alert message
+                    let alertMessage = '{{ __("installer.requirements_not_met_message") }}';
+
+                    // Check what's missing and provide specific feedback
+                    @if (isset($requirements['errors']))
+                        alertMessage += '\n\n{{ __("installer.php_requirements_failed") }}';
+                    @endif
+
+                    @if (!$phpSupportInfo['supported'])
+                        alertMessage += '\n\n{{ __("installer.php_version_not_supported") }}';
+                    @endif
+
+                    @if (isset($permissions['errors']))
+                        alertMessage += '\n\n{{ __("installer.folder_permissions_failed") }}';
+                    @endif
+
+                    alert(alertMessage);
+                });
+            }
+        });
+    </script>
 @endsection

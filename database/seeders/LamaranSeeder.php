@@ -14,6 +14,33 @@ class LamaranSeeder extends Seeder
         $statusOptions = ['Diproses', 'Diterima', 'Ditolak'];
         $lamaran = [];
 
+        // Ambil 5 user pertama dari tabel users menggunakan User model
+        try {
+            $users = \App\Models\User::orderBy('id_user')->limit(5)->pluck('id_user')->toArray();
+
+            // Jika tidak ada user, skip seeding
+            if (empty($users)) {
+                $this->command->warn('No users found in the database. Skipping lamaran seeding.');
+                return;
+            }
+
+            // Validasi bahwa semua user ID yang diambil valid
+            $validUsers = \App\Models\User::whereIn('id_user', $users)->pluck('id_user')->toArray();
+            if (count($validUsers) !== count($users)) {
+                $this->command->warn('Some users not found, using only valid users for lamaran seeding.');
+                $users = $validUsers;
+            }
+
+            if (empty($users)) {
+                $this->command->warn('No valid users found. Skipping lamaran seeding.');
+                return;
+            }
+
+        } catch (\Exception $e) {
+            $this->command->error('Error accessing users table: ' . $e->getMessage());
+            return;
+        }
+
         // Generate 30 applications
         for ($i = 1; $i <= 30; $i++) {
             $createdAt = $faker->dateTimeBetween('-3 months', '-1 month');
@@ -21,7 +48,7 @@ class LamaranSeeder extends Seeder
 
             $lamaran[] = [
                 'id_lamaran' => $i,
-                'id_user' => $faker->numberBetween(9, 13),
+                'id_user' => $faker->randomElement($users), // Ambil random dari 5 user pertama
                 'id_lowongan' => $faker->numberBetween(1, 3),
                 'pesan_pelamar' => $faker->sentence(10),
                 'status_lamaran' => $faker->randomElement($statusOptions),
