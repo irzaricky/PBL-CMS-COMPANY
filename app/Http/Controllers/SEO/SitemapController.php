@@ -18,9 +18,9 @@ class SitemapController extends Controller
 {
     public function index()
     {
-        // Check if we can use cached sitemap (cache for 1 hour)
+        // Check if we can use cached sitemap (cache for 30 minutes)
         $cacheKey = 'sitemap_xml_content';
-        $sitemap = cache()->remember($cacheKey, 3600, function () {
+        $sitemap = cache()->remember($cacheKey, 1800, function () {
             return $this->generateSitemap();
         });
 
@@ -53,7 +53,7 @@ class SitemapController extends Controller
             ->add(Url::create(route('produk.list'))->setPriority(0.9)->setChangeFrequency(Url::CHANGE_FREQUENCY_WEEKLY));
 
         // Menambahkan Artikel
-        Artikel::where('status_artikel', 'Terpublikasi')
+        Artikel::where('status_artikel', 'terpublikasi')
             ->whereNotNull('slug')
             ->where('slug', '!=', '')
             ->get()
@@ -69,7 +69,7 @@ class SitemapController extends Controller
             });
 
         // Menambahkan Produk
-        Produk::where('status_produk', 'Terpublikasi')
+        Produk::where('status_produk', 'terpublikasi')
             ->whereNotNull('slug')
             ->where('slug', '!=', '')
             ->get()
@@ -85,7 +85,7 @@ class SitemapController extends Controller
             });
 
         // Menambahkan Studi Kasus
-        CaseStudy::where('status_case_study', 'Terpublikasi')
+        CaseStudy::where('status_case_study', 'terpublikasi')
             ->whereNotNull('slug_case_study')
             ->where('slug_case_study', '!=', '')
             ->get()
@@ -100,9 +100,8 @@ class SitemapController extends Controller
                 }
             });
 
-        // Menambahkan Event
-        Event::where('waktu_start_event', '>', Carbon::now())
-            ->whereNotNull('slug')
+        // Menambahkan Event (semua event, tidak hanya yang akan datang)
+        Event::whereNotNull('slug')
             ->where('slug', '!=', '')
             ->get()
             ->each(function (Event $event) use ($sitemap) {
@@ -117,7 +116,7 @@ class SitemapController extends Controller
             });
 
         // Menambahkan Galeri
-        Galeri::where('status_galeri', 'Terpublikasi')
+        Galeri::where('status_galeri', 'terpublikasi')
             ->whereNotNull('slug')
             ->where('slug', '!=', '')
             ->get()
@@ -133,7 +132,7 @@ class SitemapController extends Controller
             });
 
         // Menambahkan Lowongan
-        Lowongan::where('status_lowongan', 'Terpublikasi')
+        Lowongan::where('status_lowongan', 'terpublikasi')
             ->whereNotNull('slug')
             ->where('slug', '!=', '')
             ->get()

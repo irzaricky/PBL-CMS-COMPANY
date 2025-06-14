@@ -13,9 +13,9 @@ import {
     Twitter,
     Youtube,
     Github,
-    MessageCircle, // For WhatsApp
-    Send, // For Telegram
-    Music // For TikTok (closest match)
+    MessageCircle,
+    Send, 
+    Music
 } from "lucide-vue-next";
 
 const profil_perusahaan = ref(null);
