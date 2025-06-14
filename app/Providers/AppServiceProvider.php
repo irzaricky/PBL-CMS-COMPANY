@@ -180,6 +180,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\StrukturOrganisasi::observe(\App\Observers\StrukturOrganisasiObserver::class);
         }
 
+        // Register User observer to handle profile changes that affect struktur organisasi
+        if (class_exists('\App\Models\User')) {
+            \App\Models\User::observe(\App\Observers\UserObserver::class);
+        }
+
         // Register additional observers for cache invalidation
         if (class_exists('\App\Models\Feedback')) {
             \App\Models\Feedback::observe(\App\Observers\FeedbackObserver::class);

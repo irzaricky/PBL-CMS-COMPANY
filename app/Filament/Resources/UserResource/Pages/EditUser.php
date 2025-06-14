@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource;
 use App\Services\FileHandlers\SingleFileHandler;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Hash;
 
 class EditUser extends EditRecord
 {
@@ -15,6 +16,7 @@ class EditUser extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -42,4 +44,19 @@ class EditUser extends EditRecord
         return SingleFileHandler::formatFileData($data, 'foto_profil');
     }
 
+    /**
+     * Menangani password update - hash jika ada password baru
+     */
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Hash password jika ada dan tidak kosong
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            // Jika password kosong, hapus dari data agar tidak diupdate
+            unset($data['password']);
+        }
+
+        return SingleFileHandler::formatFileData($data, 'foto_profil');
+    }
 }
