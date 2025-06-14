@@ -22,11 +22,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\FileHandlers\MultipleFileHandler;
-use App\Filament\Resources\TestimoniResource\Pages;
+use App\Filament\Resources\TestimoniSliderResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\TestimoniResource\RelationManagers;
+use App\Filament\Resources\TestimoniSliderResource\RelationManagers;
 
-class TestimoniResource extends Resource
+class TestimoniSliderResource extends Resource
 {
     protected static ?string $model = Testimoni::class;
     protected static ?string $navigationIcon = 'heroicon-s-chat-bubble-bottom-center-text';
@@ -94,10 +94,13 @@ class TestimoniResource extends Resource
     public static function infolist(Infolist $infolist): Infolist
     {
         return $infolist
+            ->columns(1)
             ->schema([
                 Infolists\Components\Section::make('Testimoni Slider')
                     ->description('Testimoni yang akan ditampilkan di homepage')
                     ->icon('heroicon-s-chat-bubble-bottom-center-text')
+                    ->compact()
+                    ->columns(1)
                     ->schema([
                         // Detail Testimoni Produk
                         Infolists\Components\Card::make()
@@ -411,7 +414,7 @@ class TestimoniResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ViewTestimoni::route('/'),
+            'index' => Pages\ViewTestimoni::route('/{record?}'),
             'edit' => Pages\EditTestimoni::route('/{record}/edit'),
         ];
     }

@@ -20,7 +20,7 @@ class TestimoniEventController extends Controller
     {
         $testimoni = TestimoniEvent::with('user:id_user,name,foto_profil,email')
             ->where('id_event', $eventId)
-            ->where('status', 'Terpublikasi')
+            ->where('status', 'terpublikasi')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -39,7 +39,7 @@ class TestimoniEventController extends Controller
         $testimoni->isi_testimoni = $request->isi_testimoni;
         $testimoni->rating = $request->rating;
         $testimoni->id_user = $request->id_user;
-        $testimoni->status = 'Terpublikasi';
+        $testimoni->status = 'terpublikasi';
         $testimoni->save();
 
         return response()->json(['message' => 'Testimoni berhasil dikirim!']);
