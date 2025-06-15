@@ -99,15 +99,15 @@ class TestimoniArtikelResource extends Resource
                     ->label('User')
                     ->sortable()
                     ->searchable(),
-
                 Tables\Columns\TextColumn::make('artikel.judul_artikel')
                     ->label('Artikel')
+                    ->limit(30)
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('isi_testimoni')
                     ->label('Testimoni')
-                    ->limit(50)
+                    ->limit(30)
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('rating')

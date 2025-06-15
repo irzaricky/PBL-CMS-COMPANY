@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\TestimoniSliderResource\Pages;
 
-use App\Models\Testimoni;
+use App\Models\TestimoniSlider;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use App\Filament\Resources\TestimoniSliderResource;
@@ -12,10 +12,9 @@ class ViewTestimoni extends ViewRecord
     protected static string $resource = TestimoniSliderResource::class;
 
     public function mount(int|string|null $record = null): void
-    {
-        // Jika tidak ada record ID, ambil record pertama
+    {        // Jika tidak ada record ID, ambil record pertama
         if (!$record) {
-            $firstRecord = Testimoni::first();
+            $firstRecord = TestimoniSlider::first();
             if ($firstRecord) {
                 $record = $firstRecord->getKey();
             } else {

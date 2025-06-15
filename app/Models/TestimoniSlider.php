@@ -6,7 +6,7 @@ use App\Enums\ContentStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Testimoni extends Model
+class TestimoniSlider extends Model
 {
     use HasFactory;
 
@@ -15,13 +15,13 @@ class Testimoni extends Model
      *
      * @var string
      */
-    protected $table = 'testimoni';
+    protected $table = 'testimoni_slider';
     /**
      * The primary key for the model.
      *
      * @var string
      */
-    protected $primaryKey = 'id_testimoni';
+    protected $primaryKey = 'id_testimoni_slider';
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +31,7 @@ class Testimoni extends Model
     protected $fillable = [
         'id_testimoni_produk',
         'id_testimoni_lowongan',
-        'id_testimoni_event',  
+        'id_testimoni_event',
         'id_testimoni_artikel',
     ];
 
@@ -68,10 +68,14 @@ class Testimoni extends Model
      */
     public function getTestimonialType(): string
     {
-        if ($this->id_testimoni_produk) return 'Produk';
-        if ($this->id_testimoni_lowongan) return 'Lowongan';
-        if ($this->id_testimoni_event) return 'Event';
-        if ($this->id_testimoni_artikel) return 'Artikel';
+        if ($this->id_testimoni_produk)
+            return 'Produk';
+        if ($this->id_testimoni_lowongan)
+            return 'Lowongan';
+        if ($this->id_testimoni_event)
+            return 'Event';
+        if ($this->id_testimoni_artikel)
+            return 'Artikel';
         return 'Unknown';
     }
 
@@ -80,10 +84,14 @@ class Testimoni extends Model
      */
     public function getTestimonialData()
     {
-        if ($this->testimoniProduk) return $this->testimoniProduk;
-        if ($this->testimoniLowongan) return $this->testimoniLowongan;
-        if ($this->testimoniEvent) return $this->testimoniEvent;
-        if ($this->testimoniArtikel) return $this->testimoniArtikel;
+        if ($this->testimoniProduk)
+            return $this->testimoniProduk;
+        if ($this->testimoniLowongan)
+            return $this->testimoniLowongan;
+        if ($this->testimoniEvent)
+            return $this->testimoniEvent;
+        if ($this->testimoniArtikel)
+            return $this->testimoniArtikel;
         return null;
     }
 }

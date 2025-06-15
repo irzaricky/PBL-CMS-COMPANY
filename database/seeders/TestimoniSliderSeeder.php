@@ -6,12 +6,12 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
-class TestimoniSeeder extends Seeder
+class TestimoniSliderSeeder extends Seeder
 {
     public function run(): void
     {
         $testimonials[] = [
-            'id_testimoni' => 1,
+            'id_testimoni_slider' => 1,
             'id_testimoni_produk' => null,
             'id_testimoni_lowongan' => null,
             'id_testimoni_event' => null,
@@ -20,6 +20,6 @@ class TestimoniSeeder extends Seeder
             'updated_at' => Carbon::now(),
         ];
 
-        DB::table('testimoni')->insert($testimonials);
+        DB::table('testimoni_slider')->insert($testimonials);
     }
 }

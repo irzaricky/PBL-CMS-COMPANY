@@ -3,9 +3,9 @@
 namespace App\Observers;
 
 use App\Services\ApiCacheService;
-use App\Models\Testimoni;
+use App\Models\TestimoniSlider;
 
-class TestimoniObserver
+class TestimoniSliderObserver
 {
     protected ApiCacheService $cacheService;
 
@@ -15,33 +15,33 @@ class TestimoniObserver
     }
 
     /**
-     * Handle the Testimoni "created" event.
+     * Handle the TestimoniSlider "created" event.
      */
-    public function created(Testimoni $testimoni): void
+    public function created(TestimoniSlider $testimoni): void
     {
         $this->clearRelatedCache();
     }
 
     /**
-     * Handle the Testimoni "updated" event.
+     * Handle the TestimoniSlider "updated" event.
      */
-    public function updated(Testimoni $testimoni): void
+    public function updated(TestimoniSlider $testimoni): void
     {
         $this->clearRelatedCache();
     }
 
     /**
-     * Handle the Testimoni "deleted" event.
+     * Handle the TestimoniSlider "deleted" event.
      */
-    public function deleted(Testimoni $testimoni): void
+    public function deleted(TestimoniSlider $testimoni): void
     {
         $this->clearRelatedCache();
     }
 
     /**
-     * Clear all testimoni-related cache
+     * Clear all testimoni related cache
      */
-    protected function clearRelatedCache(): void
+    private function clearRelatedCache(): void
     {
         // Clear general testimoni cache
         $this->cacheService->clearEndpointCache('testimoni');

@@ -25,7 +25,16 @@ class ManageTestimoni extends Page
 
     public static function canAccess(): bool
     {
-        return auth()->user()?->can('view_any_testimoni') ?? false;
+        $user = auth()->user();
+
+        return $user
+            ? (
+                $user->can('view_any_testimoni::artikel')
+                || $user->can('view_any_testimoni::event')
+                || $user->can('view_any_testimoni::lowongan')
+                || $user->can('view_any_testimoni::produk')
+            )
+            : false;
     }
 
     public function getStats(): array

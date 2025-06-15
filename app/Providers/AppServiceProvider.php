@@ -142,8 +142,8 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\ProfilPerusahaan::observe(\App\Observers\ProfilPerusahaanObserver::class);
         }
 
-        if (class_exists('\App\Models\Testimoni')) {
-            \App\Models\Testimoni::observe(\App\Observers\TestimoniObserver::class);
+        if (class_exists('\App\Models\TestimoniSlider')) {
+            \App\Models\TestimoniSlider::observe(\App\Observers\TestimoniSliderObserver::class);
         }
 
         // Register category observers

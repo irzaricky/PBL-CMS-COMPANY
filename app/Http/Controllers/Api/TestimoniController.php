@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Testimoni;
+use App\Models\TestimoniSlider;
 use Illuminate\Http\Request;
 
 class TestimoniController extends Controller
@@ -15,10 +15,10 @@ class TestimoniController extends Controller
     {
         try {
             // Get the single testimoni row with all relations
-            $testimoni = Testimoni::with([
+            $testimoni = TestimoniSlider::with([
                 'testimoniProduk.user:id_user,name,foto_profil,email',
                 'testimoniProduk.produk:id_produk,nama_produk,slug',
-                'testimoniLowongan.user:id_user,name,foto_profil,email', 
+                'testimoniLowongan.user:id_user,name,foto_profil,email',
                 'testimoniLowongan.lowongan:id_lowongan,judul_lowongan,slug',
                 'testimoniEvent.user:id_user,name,foto_profil,email',
                 'testimoniEvent.event:id_event,nama_event,slug',
@@ -35,7 +35,7 @@ class TestimoniController extends Controller
 
             // Prepare response data
             $responseData = [
-                'id_testimoni' => $testimoni->id_testimoni,
+                'id_testimoni_slider' => $testimoni->id_testimoni_slider,
                 'created_at' => $testimoni->created_at,
                 'updated_at' => $testimoni->updated_at
             ];
@@ -90,10 +90,14 @@ class TestimoniController extends Controller
 
             // Add type summary
             $responseData['available_types'] = [];
-            if ($testimoni->testimoniProduk) $responseData['available_types'][] = 'produk';
-            if ($testimoni->testimoniLowongan) $responseData['available_types'][] = 'lowongan';
-            if ($testimoni->testimoniEvent) $responseData['available_types'][] = 'event';
-            if ($testimoni->testimoniArtikel) $responseData['available_types'][] = 'artikel';
+            if ($testimoni->testimoniProduk)
+                $responseData['available_types'][] = 'produk';
+            if ($testimoni->testimoniLowongan)
+                $responseData['available_types'][] = 'lowongan';
+            if ($testimoni->testimoniEvent)
+                $responseData['available_types'][] = 'event';
+            if ($testimoni->testimoniArtikel)
+                $responseData['available_types'][] = 'artikel';
 
             return response()->json([
                 'status' => 'success',

@@ -555,6 +555,12 @@ class InstallerController extends Controller
 
             // Run optimization commands
             try {
+                try {
+                    Artisan::call('composer install --optimize-autoloader --no-dev');
+                } catch (\Exception $e) {
+                    Log::warning('Composer optimizer failed: ' . $e->getMessage());
+                }
+
                 // Clear all optimization caches first
                 Artisan::call('optimize:clear');
 
@@ -567,18 +573,18 @@ class InstallerController extends Controller
                 try {
                     Artisan::call('icons:cache');
                 } catch (\Exception $e) {
-                    // Log::warning('Icons cache command failed: ' . $e->getMessage());
+                    Log::warning('Icons cache command failed: ' . $e->getMessage());
                 }
 
                 try {
                     Artisan::call('filament:cache-components');
                 } catch (\Exception $e) {
-                    // Log::warning('Filament cache components command failed: ' . $e->getMessage());
+                    Log::warning('Filament cache components command failed: ' . $e->getMessage());
                 }
 
                 // Log::info('Optimization commands completed successfully');
             } catch (\Exception $e) {
-                // Log::warning('Some optimization commands failed: ' . $e->getMessage());
+                Log::warning('Some optimization commands failed: ' . $e->getMessage());
                 // Don't fail the installation if optimization fails
             }
 

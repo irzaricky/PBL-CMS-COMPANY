@@ -65,7 +65,7 @@ class DatabaseSeederDev extends Seeder
             TestimoniArtikelSeeder::class,
             TestimoniEventSeeder::class,
             TestimoniLowonganSeeder::class,
-            TestimoniSeeder::class,
+            TestimoniSliderSeeder::class,
         ]);
     }
 }

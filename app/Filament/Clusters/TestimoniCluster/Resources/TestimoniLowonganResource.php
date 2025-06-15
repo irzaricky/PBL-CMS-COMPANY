@@ -99,15 +99,15 @@ class TestimoniLowonganResource extends Resource
                     ->label('User')
                     ->sortable()
                     ->searchable(),
-
                 Tables\Columns\TextColumn::make('lowongan.judul_lowongan')
                     ->label('Lowongan')
+                    ->limit(30)
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('isi_testimoni')
                     ->label('Testimoni')
-                    ->limit(50)
+                    ->limit(30)
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('rating')

@@ -4,7 +4,7 @@ namespace App\Filament\Widgets\Director;
 
 use App\Models\Feedback;
 use App\Models\Lamaran;
-use App\Models\Testimoni;
+use App\Models\TestimoniSlider;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
@@ -138,7 +138,7 @@ class CustomerServiceActivityTrend extends ApexChartWidget
         // Get growth data for each activity type (non-cumulative)
         $feedbackGrowth = $this->getActivityGrowthPerPeriod(Feedback::class, $dates, $format);
         $lamaranGrowth = $this->getActivityGrowthPerPeriod(Lamaran::class, $dates, $format);
-        $testimoniGrowth = $this->getActivityGrowthPerPeriod(Testimoni::class, $dates, $format);
+        $testimoniGrowth = $this->getActivityGrowthPerPeriod(TestimoniSlider::class, $dates, $format);
 
         // Prepare series data based on activity filter
         $series = [];

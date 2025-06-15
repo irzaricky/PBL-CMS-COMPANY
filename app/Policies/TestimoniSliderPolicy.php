@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\Testimoni;
+use App\Models\TestimoniSlider;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class TestimoniPolicy
+class TestimoniSliderPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class TestimoniPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_testimoni');
+        return $user->can('view_any_testimoni::slider');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Testimoni $testimoni): bool
+    public function view(User $user, TestimoniSlider $testimoniSlider): bool
     {
-        return $user->can('view_testimoni');
+        return $user->can('view_testimoni::slider');
     }
 
     /**
@@ -31,23 +31,23 @@ class TestimoniPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_testimoni');
+        return $user->can('create_testimoni::slider');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Testimoni $testimoni): bool
+    public function update(User $user, TestimoniSlider $testimoniSlider): bool
     {
-        return $user->can('update_testimoni');
+        return $user->can('update_testimoni::slider');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Testimoni $testimoni): bool
+    public function delete(User $user, TestimoniSlider $testimoniSlider): bool
     {
-        return $user->can('delete_testimoni');
+        return $user->can('delete_testimoni::slider');
     }
 
     /**
@@ -55,15 +55,15 @@ class TestimoniPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_testimoni');
+        return $user->can('delete_any_testimoni::slider');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, Testimoni $testimoni): bool
+    public function forceDelete(User $user, TestimoniSlider $testimoniSlider): bool
     {
-        return $user->can('force_delete_testimoni');
+        return $user->can('force_delete_testimoni::slider');
     }
 
     /**
@@ -71,15 +71,15 @@ class TestimoniPolicy
      */
     public function forceDeleteAny(User $user): bool
     {
-        return $user->can('force_delete_any_testimoni');
+        return $user->can('force_delete_any_testimoni::slider');
     }
 
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, Testimoni $testimoni): bool
+    public function restore(User $user, TestimoniSlider $testimoniSlider): bool
     {
-        return $user->can('restore_testimoni');
+        return $user->can('restore_testimoni::slider');
     }
 
     /**
@@ -87,15 +87,15 @@ class TestimoniPolicy
      */
     public function restoreAny(User $user): bool
     {
-        return $user->can('restore_any_testimoni');
+        return $user->can('restore_any_testimoni::slider');
     }
 
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, Testimoni $testimoni): bool
+    public function replicate(User $user, TestimoniSlider $testimoniSlider): bool
     {
-        return $user->can('replicate_testimoni');
+        return $user->can('replicate_testimoni::slider');
     }
 
     /**
@@ -103,6 +103,6 @@ class TestimoniPolicy
      */
     public function reorder(User $user): bool
     {
-        return $user->can('reorder_testimoni');
+        return $user->can('reorder_testimoni::slider');
     }
 }

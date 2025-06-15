@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Testimoni;
 use App\Enums\ContentStatus;
 use Illuminate\Http\Request;
 use App\Models\TestimoniEvent;

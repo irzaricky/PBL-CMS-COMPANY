@@ -31,21 +31,21 @@ class DatabaseSeeder extends Seeder
 
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
-                // TestimoniSeeder::class,
-            // LowonganSeeder::class,
+                // TestimoniSliderSeeder::class,
+                // LowonganSeeder::class,
             EventSeeder::class,
             ArtikelSeeder::class,
 
 
-            // LamaranSeeder::class,
+                // LamaranSeeder::class,
             MitraSeeder::class,
             StrukturOrganisasiSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
             TestimoniArtikelSeeder::class,
             TestimoniEventSeeder::class,
-            // TestimoniLowonganSeeder::class,
-            TestimoniSeeder::class,
+                // TestimoniLowonganSeeder::class,
+            TestimoniSliderSeeder::class,
         ]);
     }
 
