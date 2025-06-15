@@ -21,6 +21,8 @@ return new class extends Migration {
             $table->enum('status_lamaran', ['Diterima', 'Diproses', 'Ditolak'])->default('Diproses');
             $table->timestamps();
             $table->softDeletes();
+
+            $table->unique(['id_user', 'id_lowongan'], 'unique_user_lowongan');
         });
     }
 

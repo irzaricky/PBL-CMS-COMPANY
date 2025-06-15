@@ -28,6 +28,7 @@ class ApiCacheService
         'feature-toggles' => 300,  // Feature toggles cache for 5 hours
         'galeri' => 30,            // Gallery cache for 30 minutes
         'lowongan' => 60,          // Job openings cache for 1 hour
+        'lamaran' => 5,            // Job applications cache for 5 minutes (short cache for dynamic data)
         'case-study' => 90,        // Case studies cache for 1.5 hours
         'unduhan' => 45,           // Downloads cache for 45 minutes
         'feedback' => 30,          // Feedback cache for 30 minutes

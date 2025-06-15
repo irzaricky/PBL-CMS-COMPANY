@@ -44,6 +44,7 @@ Route::prefix('feedback')->group(function () {
 // Lamaran routes (AUTENTIKASI BELUM DITAMBAHKAN)
 Route::post('/lamaran', [LamaranController::class, 'store']);
 Route::get('/lamaran/user/{userId}', [LamaranController::class, 'getByUserId']);
+Route::get('/lamaran/check/{userId}/{lowonganId}', [LamaranController::class, 'checkUserApplication']);
 Route::get('/lamaran/{id}', [LamaranController::class, 'show']);
 
 

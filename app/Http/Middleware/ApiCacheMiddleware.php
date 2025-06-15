@@ -101,6 +101,9 @@ class ApiCacheMiddleware
             'api/*/check-*',        // Check endpoints
             'api/feedback',         // Feedback submission
             'api/lamaran',          // Job application submission
+            'api/lamaran/*',        // Specific lamaran endpoints
+            'api/lamaran/user/*',   // User specific lamaran endpoints
+            'api/lamaran/check/*',  // Check application endpoints
             'api/testimoni/*/store', // Testimoni submission
         ];
 

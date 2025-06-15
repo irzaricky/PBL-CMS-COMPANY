@@ -122,6 +122,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\Lowongan::observe(\App\Observers\LowonganObserver::class);
         }
 
+        if (class_exists('\App\Models\Lamaran')) {
+            \App\Models\Lamaran::observe(\App\Observers\LamaranObserver::class);
+        }
+
         if (class_exists('\App\Models\Mitra')) {
             \App\Models\Mitra::observe(\App\Observers\MitraObserver::class);
         }

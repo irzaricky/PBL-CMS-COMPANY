@@ -1,166 +1,175 @@
 <script setup>
-import { ref } from 'vue'
-import axios from 'axios'
-import { Send, Loader, Eye, X, FileText, File, Archive } from 'lucide-vue-next'
+import { ref } from "vue";
+import axios from "axios";
+import { Send, Loader, Eye, X, FileText, File, Archive } from "lucide-vue-next";
 
 const props = defineProps({
     lowongan: {
         type: Object,
-        required: true
+        required: true,
     },
     user: {
         type: Object,
-        required: true
-    }
-})
+        required: true,
+    },
+});
 
-const emit = defineEmits(['success'])
+const emit = defineEmits(["success"]);
 
-const isApplying = ref(false)
-const previewFile = ref(null)
-const previewType = ref('')
-const showPreview = ref(false)
+const isApplying = ref(false);
+const previewFile = ref(null);
+const previewType = ref("");
+const showPreview = ref(false);
 const formData = ref({
-    nama_lengkap: props.user?.name || '',
-    email: props.user?.email || '',
+    nama_lengkap: props.user?.name || "",
+    email: props.user?.email || "",
     surat_lamaran: null,
     cv: null,
     portfolio: null,
-    pesan_pelamar: '',
-})
+    pesan_pelamar: "",
+});
 
 // File preview URLs
 const filePreviewUrls = ref({
     surat_lamaran: null,
     cv: null,
-    portfolio: null
-})
+    portfolio: null,
+});
 
 function handleFileUpload(fieldName) {
     return (event) => {
-        const file = event.target.files[0]
+        const file = event.target.files[0];
         if (file) {
-            formData.value[fieldName] = file
-            
+            formData.value[fieldName] = file;
+
             // Create preview URL
             if (filePreviewUrls.value[fieldName]) {
-                URL.revokeObjectURL(filePreviewUrls.value[fieldName])
+                URL.revokeObjectURL(filePreviewUrls.value[fieldName]);
             }
-            filePreviewUrls.value[fieldName] = URL.createObjectURL(file)
+            filePreviewUrls.value[fieldName] = URL.createObjectURL(file);
         }
-    }
+    };
 }
 
 function openPreview(fieldName) {
-    const file = formData.value[fieldName]
+    const file = formData.value[fieldName];
     if (file) {
-        previewFile.value = filePreviewUrls.value[fieldName]
-        previewType.value = file.type
-        showPreview.value = true
+        previewFile.value = filePreviewUrls.value[fieldName];
+        previewType.value = file.type;
+        showPreview.value = true;
     }
 }
 
 function closePreview() {
-    showPreview.value = false
-    previewFile.value = null
-    previewType.value = ''
+    showPreview.value = false;
+    previewFile.value = null;
+    previewType.value = "";
 }
 
 function removeFile(fieldName) {
-    formData.value[fieldName] = null
+    formData.value[fieldName] = null;
     if (filePreviewUrls.value[fieldName]) {
-        URL.revokeObjectURL(filePreviewUrls.value[fieldName])
-        filePreviewUrls.value[fieldName] = null
+        URL.revokeObjectURL(filePreviewUrls.value[fieldName]);
+        filePreviewUrls.value[fieldName] = null;
     }
-    document.getElementById(fieldName).value = ''
+    document.getElementById(fieldName).value = "";
 }
 
 function getFileIcon(file) {
-    if (!file) return FileText
-    const extension = file.name.split('.').pop().toLowerCase()
+    if (!file) return FileText;
+    const extension = file.name.split(".").pop().toLowerCase();
     switch (extension) {
-        case 'pdf':
-            return FileText
-        case 'doc':
-        case 'docx':
-            return File
-        case 'zip':
-            return Archive
+        case "pdf":
+            return FileText;
+        case "doc":
+        case "docx":
+            return File;
+        case "zip":
+            return Archive;
         default:
-            return FileText
+            return FileText;
     }
 }
 
 async function submitApplication() {
-    if (!formData.value.nama_lengkap || !formData.value.email || !formData.value.surat_lamaran || !formData.value.cv) {
-        alert('Silakan lengkapi semua field yang diperlukan')
-        return
+    if (
+        !formData.value.nama_lengkap ||
+        !formData.value.email ||
+        !formData.value.surat_lamaran ||
+        !formData.value.cv
+    ) {
+        alert("Silakan lengkapi semua field yang diperlukan");
+        return;
     }
-    
+
     try {
-        isApplying.value = true
-        
-        const submitData = new FormData()
-        submitData.append('id_lowongan', props.lowongan.id_lowongan)
-        
+        isApplying.value = true;
+
+        const submitData = new FormData();
+        submitData.append("id_lowongan", props.lowongan.id_lowongan);
+
         if (props.user?.id_user) {
-            submitData.append('id_user', props.user.id_user)
+            submitData.append("id_user", props.user.id_user);
         } else {
-            alert('Anda harus login terlebih dahulu untuk melamar')
-            return
+            alert("Anda harus login terlebih dahulu untuk melamar");
+            return;
         }
-        
-        submitData.append('surat_lamaran', formData.value.surat_lamaran)
-        submitData.append('cv', formData.value.cv)
-        
+
+        submitData.append("surat_lamaran", formData.value.surat_lamaran);
+        submitData.append("cv", formData.value.cv);
+
         if (formData.value.portfolio) {
-            submitData.append('portfolio', formData.value.portfolio)
+            submitData.append("portfolio", formData.value.portfolio);
         }
-        
-        submitData.append('pesan_pelamar', formData.value.pesan_pelamar)
-        
-        await axios.post('/api/lamaran', submitData, {
+
+        submitData.append("pesan_pelamar", formData.value.pesan_pelamar);
+
+        await axios.post("/api/lamaran", submitData, {
             headers: {
-                'Content-Type': 'multipart/form-data'
-            }
-        })
-        
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
         // Cleanup preview URLs
-        Object.values(filePreviewUrls.value).forEach(url => {
-            if (url) URL.revokeObjectURL(url)
-        })
-        
+        Object.values(filePreviewUrls.value).forEach((url) => {
+            if (url) URL.revokeObjectURL(url);
+        });
+
         // Reset form
         formData.value = {
-            nama_lengkap: props.user?.name || '',
-            email: props.user?.email || '',
+            nama_lengkap: props.user?.name || "",
+            email: props.user?.email || "",
             surat_lamaran: null,
             cv: null,
             portfolio: null,
-            pesan_pelamar: '',
-        }
-        
+            pesan_pelamar: "",
+        };
+
         filePreviewUrls.value = {
             surat_lamaran: null,
             cv: null,
-            portfolio: null
-        }
-        
+            portfolio: null,
+        };
+
         // Reset file inputs
-        document.getElementById('surat_lamaran').value = ''
-        document.getElementById('cv').value = ''
-        if (document.getElementById('portfolio')) {
-            document.getElementById('portfolio').value = ''
+        document.getElementById("surat_lamaran").value = "";
+        document.getElementById("cv").value = "";
+        if (document.getElementById("portfolio")) {
+            document.getElementById("portfolio").value = "";
         }
-        
-        // Emit success event for parent component
-        emit('success')
-        
+
+        // Emit success event for parent component with response data
+        emit("success", response.data);
+
+        console.log("Lamaran berhasil dikirim:", response.data);
     } catch (err) {
-        alert('Gagal mengirim lamaran: ' + (err.response?.data?.message || err.message))
-        console.error(err)
+        alert(
+            "Gagal mengirim lamaran: " +
+                (err.response?.data?.message || err.message)
+        );
+        console.error(err);
     } finally {
-        isApplying.value = false
+        isApplying.value = false;
     }
 }
 </script>
@@ -169,7 +178,10 @@ async function submitApplication() {
     <form @submit.prevent="submitApplication" class="space-y-4">
         <!-- Nama Lengkap -->
         <div>
-            <label for="nama_lengkap" class="block text-sm font-medium text-gray-700 mb-1">
+            <label
+                for="nama_lengkap"
+                class="block text-sm font-medium text-gray-700 mb-1"
+            >
                 Nama Lengkap <span class="text-red-500">*</span>
             </label>
             <input
@@ -180,10 +192,13 @@ async function submitApplication() {
                 required
             />
         </div>
-        
+
         <!-- Email -->
         <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">
+            <label
+                for="email"
+                class="block text-sm font-medium text-gray-700 mb-1"
+            >
                 Email <span class="text-red-500">*</span>
             </label>
             <input
@@ -194,11 +209,16 @@ async function submitApplication() {
                 required
             />
         </div>
-        
+
         <!-- Surat Lamaran -->
         <div>
-            <label for="surat_lamaran" class="block text-sm font-medium text-gray-700 mb-1">
-                Surat Lamaran (.pdf/.doc/.docx)<span class="text-red-500">*</span>
+            <label
+                for="surat_lamaran"
+                class="block text-sm font-medium text-gray-700 mb-1"
+            >
+                Surat Lamaran (.pdf/.doc/.docx)<span class="text-red-500"
+                    >*</span
+                >
             </label>
             <input
                 id="surat_lamaran"
@@ -209,13 +229,30 @@ async function submitApplication() {
                 required
             />
             <!-- File Preview Card -->
-            <div v-if="formData.surat_lamaran" class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div
+                v-if="formData.surat_lamaran"
+                class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <component :is="getFileIcon(formData.surat_lamaran)" class="w-5 h-5 text-gray-600" />
+                        <component
+                            :is="getFileIcon(formData.surat_lamaran)"
+                            class="w-5 h-5 text-gray-600"
+                        />
                         <div>
-                            <p class="text-sm font-medium text-gray-900">{{ formData.surat_lamaran.name }}</p>
-                            <p class="text-xs text-gray-500">{{ (formData.surat_lamaran.size / 1024 / 1024).toFixed(2) }} MB</p>
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ formData.surat_lamaran.name }}
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                {{
+                                    (
+                                        formData.surat_lamaran.size /
+                                        1024 /
+                                        1024
+                                    ).toFixed(2)
+                                }}
+                                MB
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
@@ -239,10 +276,13 @@ async function submitApplication() {
                 </div>
             </div>
         </div>
-        
+
         <!-- CV Upload -->
         <div>
-            <label for="cv" class="block text-sm font-medium text-gray-700 mb-1">
+            <label
+                for="cv"
+                class="block text-sm font-medium text-gray-700 mb-1"
+            >
                 CV (.pdf/.doc/.docx)<span class="text-red-500">*</span>
             </label>
             <input
@@ -254,13 +294,26 @@ async function submitApplication() {
                 required
             />
             <!-- File Preview Card -->
-            <div v-if="formData.cv" class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div
+                v-if="formData.cv"
+                class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <component :is="getFileIcon(formData.cv)" class="w-5 h-5 text-gray-600" />
+                        <component
+                            :is="getFileIcon(formData.cv)"
+                            class="w-5 h-5 text-gray-600"
+                        />
                         <div>
-                            <p class="text-sm font-medium text-gray-900">{{ formData.cv.name }}</p>
-                            <p class="text-xs text-gray-500">{{ (formData.cv.size / 1024 / 1024).toFixed(2) }} MB</p>
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ formData.cv.name }}
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                {{
+                                    (formData.cv.size / 1024 / 1024).toFixed(2)
+                                }}
+                                MB
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
@@ -284,11 +337,15 @@ async function submitApplication() {
                 </div>
             </div>
         </div>
-        
+
         <!-- Portfolio (optional) -->
         <div>
-            <label for="portfolio" class="block text-sm font-medium text-gray-700 mb-1">
-                Portfolio (.pdf/.doc/.docx) <span class="text-gray-500 text-xs">(opsional)</span>
+            <label
+                for="portfolio"
+                class="block text-sm font-medium text-gray-700 mb-1"
+            >
+                Portfolio (.pdf/.doc/.docx)
+                <span class="text-gray-500 text-xs">(opsional)</span>
             </label>
             <input
                 id="portfolio"
@@ -298,13 +355,30 @@ async function submitApplication() {
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20"
             />
             <!-- File Preview Card -->
-            <div v-if="formData.portfolio" class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <div
+                v-if="formData.portfolio"
+                class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+            >
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <component :is="getFileIcon(formData.portfolio)" class="w-5 h-5 text-gray-600" />
+                        <component
+                            :is="getFileIcon(formData.portfolio)"
+                            class="w-5 h-5 text-gray-600"
+                        />
                         <div>
-                            <p class="text-sm font-medium text-gray-900">{{ formData.portfolio.name }}</p>
-                            <p class="text-xs text-gray-500">{{ (formData.portfolio.size / 1024 / 1024).toFixed(2) }} MB</p>
+                            <p class="text-sm font-medium text-gray-900">
+                                {{ formData.portfolio.name }}
+                            </p>
+                            <p class="text-xs text-gray-500">
+                                {{
+                                    (
+                                        formData.portfolio.size /
+                                        1024 /
+                                        1024
+                                    ).toFixed(2)
+                                }}
+                                MB
+                            </p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2">
@@ -328,11 +402,15 @@ async function submitApplication() {
                 </div>
             </div>
         </div>
-        
+
         <!-- Pesan Pelamar -->
         <div>
-            <label for="pesan_pelamar" class="block text-sm font-medium text-gray-700 mb-1">
-                Pesan Lamaran <span class="text-gray-500 text-xs">(opsional)</span>
+            <label
+                for="pesan_pelamar"
+                class="block text-sm font-medium text-gray-700 mb-1"
+            >
+                Pesan Lamaran
+                <span class="text-gray-500 text-xs">(opsional)</span>
             </label>
             <textarea
                 id="pesan_pelamar"
@@ -341,7 +419,7 @@ async function submitApplication() {
                 class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary"
             ></textarea>
         </div>
-        
+
         <!-- Submit Button -->
         <button
             type="submit"
@@ -350,13 +428,18 @@ async function submitApplication() {
         >
             <Send v-if="!isApplying" class="w-4 h-4" />
             <Loader v-else class="animate-spin h-5 w-5" />
-            {{ isApplying ? 'Mengirim...' : 'Kirim Lamaran' }}
+            {{ isApplying ? "Mengirim..." : "Kirim Lamaran" }}
         </button>
     </form>
-    
+
     <!-- File Preview Modal -->
-    <div v-if="showPreview" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden">
+    <div
+        v-if="showPreview"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+    >
+        <div
+            class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden"
+        >
             <div class="flex items-center justify-between p-4 border-b">
                 <h3 class="text-lg font-medium">Preview File</h3>
                 <button
@@ -374,12 +457,23 @@ async function submitApplication() {
                     class="w-full h-full border-0"
                     title="PDF Preview"
                 ></iframe>
-                
+
                 <!-- DOC/DOCX Preview (fallback message) -->
-                <div v-else-if="previewType.includes('document') || previewType.includes('word')" class="flex flex-col items-center justify-center h-full text-gray-500">
+                <div
+                    v-else-if="
+                        previewType.includes('document') ||
+                        previewType.includes('word')
+                    "
+                    class="flex flex-col items-center justify-center h-full text-gray-500"
+                >
                     <FileText class="w-16 h-16 mb-4" />
-                    <p class="text-lg font-medium mb-2">Preview tidak tersedia</p>
-                    <p class="text-sm text-center">File Word/DOC tidak dapat di-preview di browser.<br>Silakan download untuk melihat isi file.</p>
+                    <p class="text-lg font-medium mb-2">
+                        Preview tidak tersedia
+                    </p>
+                    <p class="text-sm text-center">
+                        File Word/DOC tidak dapat di-preview di browser.<br />Silakan
+                        download untuk melihat isi file.
+                    </p>
                     <a
                         :href="previewFile"
                         :download="true"
@@ -388,17 +482,24 @@ async function submitApplication() {
                         Download File
                     </a>
                 </div>
-                
+
                 <!-- Other file types -->
-                <div v-else class="flex flex-col items-center justify-center h-full text-gray-500">
+                <div
+                    v-else
+                    class="flex flex-col items-center justify-center h-full text-gray-500"
+                >
                     <FileText class="w-16 h-16 mb-4" />
-                    <p class="text-lg font-medium mb-2">Preview tidak tersedia</p>
-                    <p class="text-sm text-center">Tipe file ini tidak dapat di-preview di browser.</p>
+                    <p class="text-lg font-medium mb-2">
+                        Preview tidak tersedia
+                    </p>
+                    <p class="text-sm text-center">
+                        Tipe file ini tidak dapat di-preview di browser.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <p class="text-xs text-gray-500 mt-4">
         Field dengan tanda <span class="text-red-500">*</span> wajib diisi
     </p>
