@@ -124,7 +124,7 @@ async function submitApplication() {
 
         submitData.append("pesan_pelamar", formData.value.pesan_pelamar);
 
-        await axios.post("/api/lamaran", submitData, {
+        const response = await axios.post("/api/lamaran", submitData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
