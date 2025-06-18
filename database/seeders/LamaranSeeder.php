@@ -16,7 +16,7 @@ class LamaranSeeder extends Seeder
 
         // Ambil 5 user pertama dari tabel users menggunakan User model
         try {
-            $users = \App\Models\User::orderBy('id_user')->limit(5)->pluck('id_user')->toArray();
+            $users = \App\Models\User::orderBy('id_user')->limit(3)->pluck('id_user')->toArray();
 
             // Jika tidak ada user, skip seeding
             if (empty($users)) {
@@ -42,14 +42,14 @@ class LamaranSeeder extends Seeder
         }
 
         // Generate 30 applications
-        for ($i = 1; $i <= 30; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $createdAt = $faker->dateTimeBetween('-3 months', '-1 month');
             $updatedAt = $faker->dateTimeBetween($createdAt, 'now');
 
             $lamaran[] = [
                 'id_lamaran' => $i,
                 'id_user' => $faker->randomElement($users), // Ambil random dari 5 user pertama
-                'id_lowongan' => $faker->numberBetween(1, 3),
+                'id_lowongan' => $faker->numberBetween(1, 20),
                 'pesan_pelamar' => $faker->sentence(10),
                 'status_lamaran' => $faker->randomElement($statusOptions),
                 'created_at' => $createdAt,
