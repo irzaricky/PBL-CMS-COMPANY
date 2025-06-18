@@ -49,7 +49,7 @@ class LamaranSeeder extends Seeder
             $lamaran[] = [
                 'id_lamaran' => $i,
                 'id_user' => $faker->randomElement($users), // Ambil random dari 5 user pertama
-                'id_lowongan' => $faker->numberBetween(1, 20),
+                'id_lowongan' => $i,
                 'pesan_pelamar' => $faker->sentence(10),
                 'status_lamaran' => $faker->randomElement($statusOptions),
                 'created_at' => $createdAt,

@@ -72,7 +72,7 @@ class ProdukResource extends Resource
                                     ->required()
                                     ->maxLength(50),
                                 Forms\Components\Textarea::make('deskripsi')
-                                    ->label('Deskripsi')
+                                    ->label('Deskripsi')   
                                     ->maxLength(200),
                             ])
                             ->manageOptionForm([
@@ -85,15 +85,22 @@ class ProdukResource extends Resource
                                     ->maxLength(200),
                             ]),
 
+                        Forms\Components\Toggle::make('tampilkan_harga')
+                            ->label('Tampilkan Harga')
+                            ->default(true)
+                            ->live() // Tambahkan live() untuk reaktivitas
+                            ->helperText('Aktifkan untuk menampilkan harga produk di halaman publik'),
+
                         Forms\Components\TextInput::make('harga_produk')
                             ->label('Harga Produk')
                             ->numeric()
                             ->prefix('Rp')
                             ->suffix(',00')
-                            ->required()
+                            ->required(fn (callable $get) => $get('tampilkan_harga')) // Conditional required
                             ->maxLength(50)
                             ->helperText('Masukkan harga produk dalam format angka tanpa titik')
-                            ->placeholder('0'),
+                            ->placeholder('0')
+                            ->visible(fn (callable $get) => $get('tampilkan_harga')), // Sembunyikan jika tampilkan_harga false
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
