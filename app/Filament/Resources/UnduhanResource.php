@@ -247,10 +247,14 @@ class UnduhanResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Unduhan berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Unduhan berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Unduhan berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             foreach ($records as $record) {
