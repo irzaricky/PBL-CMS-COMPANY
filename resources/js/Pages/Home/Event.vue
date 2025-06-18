@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 const events = ref([]);
 const loading = ref(false);
@@ -8,6 +10,10 @@ const error = ref(null);
 
 onMounted(() => {
     fetchEvent();
+    AOS.init({
+        duration: 1000,
+        once: false,
+    });
 });
 
 async function fetchEvent() {
@@ -21,6 +27,9 @@ async function fetchEvent() {
         console.error("Error fetching event:", err);
     } finally {
         loading.value = false;
+        // Refresh AOS to ensure animations work after data change
+        await nextTick();
+        AOS.refresh();  
     }
 }
 
@@ -44,7 +53,7 @@ function getImageUrl(image) {
         <div class="w-full max-w-screen-xl mx-auto flex flex-col lg:flex-row items-center lg:items-start gap-10">
 
             <!-- Left Side: Header dan Panah -->
-            <div class="w-full lg:w-1/4 flex flex-col items-center lg:items-start text-center lg:text-left gap-4">
+            <div class="w-full lg:w-1/4 flex flex-col items-center lg:items-start text-center lg:text-left gap-4" data-aos="fade-right">
                 <div class="text-Color-Scheme-1-Text text-base font-semibold">
                     Coba lihat!
                 </div>
@@ -58,7 +67,7 @@ function getImageUrl(image) {
             </div>
 
             <!-- Right Side: Event Cards -->
-            <div class="w-full lg:w-3/4 flex flex-col lg:flex-row lg:flex-nowrap gap-8">
+            <div class="w-full lg:w-3/4 flex flex-col lg:flex-row lg:flex-nowrap gap-8" data-aos="fade-down">
                 <div v-for="event in events" :key="event.slug"
                     class="relative group rounded-2xl overflow-hidden w-full lg:w-1/3">
 

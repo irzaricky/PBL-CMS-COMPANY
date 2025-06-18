@@ -167,7 +167,7 @@ function lihatSelengkapnya() {
                                 <Link href="/galeri" class="hover:underline">Galeri</Link>
                             </li>
                             <li>
-                                <Link href="/tentang-kami" class="hover:underline">Tentang Kami</Link>
+                                <Link href="/profil-perusahaan" class="hover:underline">Tentang Kami</Link>
                             </li>
                             <li>
                                 <Link href="/unduhan" class="hover:underline">Unduhan</Link>

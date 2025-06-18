@@ -2,6 +2,9 @@
 import { ChevronRight } from 'lucide-vue-next';
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { nextTick } from "vue";
 
 const produk = ref([]);
 const loading = ref(false);
@@ -9,6 +12,10 @@ const error = ref(null);
 
 onMounted(() => {
     fetchProduk();
+    AOS.init({
+        duration: 1000,
+        once: false,
+    });
 });
 
 async function fetchProduk() {
@@ -22,6 +29,9 @@ async function fetchProduk() {
         console.error("Error fetching produk:", err);
     } finally {
         loading.value = false;
+        // Refresh AOS to ensure animations work after data change
+        await nextTick();
+        AOS.refresh();
     }
 }
 
@@ -47,7 +57,7 @@ function getImageUrl(image) {
         <!-- Wrapper untuk membatasi lebar -->
         <div class="w-full max-w-screen-xl mx-auto">
             <!-- Judul Section -->
-            <div class="text-center max-w-[768px] flex flex-col items-center gap-4 mx-auto">
+            <div class="text-center max-w-[768px] flex flex-col items-center gap-4 mx-auto" data-aos="fade-up">
                 <div class="text-base font-semibold ">Mau lihat lebih jauh?</div>
                 <div class="text-5xl font-normal ">Jelajahi produk kami</div>
                 <div class="text-lg font-normal ">Lihat list lengkap produk, atau sekadar Window
@@ -61,7 +71,7 @@ function getImageUrl(image) {
             </div>
 
             <!-- Grid Produk atau Skeleton Loading -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full mt-12" data-aos="fade-up">
                 <!-- Skeleton Loading -->
                 <div v-if="loading" v-for="n in 4" :key="n"
                     class="relative group p-6 rounded-2xl bg-gray-200 animate-pulse flex flex-col h-96 overflow-hidden">

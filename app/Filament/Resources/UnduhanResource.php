@@ -122,24 +122,28 @@ class UnduhanResource extends Resource
                             ->downloadable()
                             ->helperText('Upload file untuk diunduh (format: pdf, doc, docx, xls, xlsx, ppt, pptx, zip)'),
 
-                        Forms\Components\RichEditor::make('deskripsi')
+                        Forms\Components\TextInput::make('deskripsi')
                             ->label('Deskripsi Unduhan')
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('unduhan-attachments')
-                            ->toolbarButtons([
-                                'bold',
-                                'italic',
-                                'underline',
-                                'strike',
-                                'h1',
-                                'h2',
-                                'link',
-                                'bulletList',
-                                'orderedList',
-                                'redo',
-                                'undo',
-                            ])
                             ->columnSpanFull(),
+                        
+                            // Forms\Components\RichEditor::make('deskripsi')
+                            // ->label('Deskripsi Unduhan')
+                            // ->fileAttachmentsDisk('public')
+                            // ->fileAttachmentsDirectory('unduhan-attachments')
+                            // ->toolbarButtons([
+                            //     'bold',
+                            //     'italic',
+                            //     'underline',
+                            //     'strike',
+                            //     'h1',
+                            //     'h2',
+                            //     'link',
+                            //     'bulletList',
+                            //     'orderedList',
+                            //     'redo',
+                            //     'undo',
+                            // ])
+                            // ->columnSpanFull(),
                     ]),
             ]);
     }

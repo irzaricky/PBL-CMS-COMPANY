@@ -2,6 +2,8 @@
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import { AlarmClock, Wallet } from 'lucide-vue-next'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 const lowongan = ref([])
 const profil_perusahaan = ref(null)
@@ -87,7 +89,7 @@ function truncateText(text, length = 150) {
     <div
         class="w-full px-6 py-20 lg:px-16 lg:py-28 bg-Color-Scheme-1-Background flex flex-col gap-20 items-center font-custom">
         <!-- Header -->
-        <div class="w-full max-w-2xl flex flex-col gap-4 items-center text-center">
+        <div class="w-full max-w-2xl flex flex-col gap-4 items-center text-center" data-aos="fade-right">
             <h4 class="text-base font-semibold text-Color-Scheme-1-Text">
                 {{ profil_perusahaan?.nama_perusahaan || "Memuat" }}
             </h4>
@@ -99,7 +101,7 @@ function truncateText(text, length = 150) {
         </div>
 
         <!-- Content -->
-        <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-12">
+        <div class="flex flex-col lg:flex-row w-full max-w-7xl gap-12" data-aos="fade-right">
             <!-- List Lowongan -->
             <div class="flex-1 flex flex-col gap-12">
                 <template v-if="lowongan.length > 0">
@@ -151,7 +153,7 @@ function truncateText(text, length = 150) {
             </div>
 
             <!-- Gambar Slider -->
-            <div class="flex-1 max-w-full">
+            <div class="flex-1 max-w-full" data-aos="fade-left">
                 <div class="relative h-full w-full aspect-[1/1] overflow-hidden rounded-2xl">
                     <template v-if="lowongan.length > 0">
                         <div class="flex transition-transform duration-700 ease-in-out h-full"
