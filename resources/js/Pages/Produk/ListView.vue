@@ -357,28 +357,17 @@ function formatRupiah(value) {
                                 {{ item.nama_produk }}
                             </div>
                             <div class="flex flex-col gap-2">
-                                <div
-                                    class="flex items-center gap-2 text-sm font-normal"
-                                >
+                                <div class="flex items-center gap-2 text-sm font-normal">
                                     <Tag class="w-4 h-4" />
-                                    <span
-                                        >Kategori:
-                                        {{
-                                            item.kategori_produk
-                                                .nama_kategori_produk
-                                        }}</span
-                                    >
+                                    <span>Kategori: {{ item.kategori_produk.nama_kategori_produk }}</span>
                                 </div>
+                                <!-- Harga hanya ditampilkan jika tampilkan_harga true -->
                                 <div
+                                    v-if="item.tampilkan_harga"
                                     class="flex items-center gap-2 text-sm font-normal"
                                 >
                                     <Wallet class="w-4 h-4" />
-                                    <span
-                                        >Harga:
-                                        {{
-                                            formatRupiah(item.harga_produk)
-                                        }}</span
-                                    >
+                                    <span>Harga: {{ formatRupiah(item.harga_produk) }}</span>
                                 </div>
                             </div>
                             <a
@@ -541,11 +530,18 @@ function formatRupiah(value) {
                         {{ item.nama_produk }}
                     </h1>
                     <div class="flex items-center gap-4">
-                        <span class="text-xl font-semibold">{{
-                            formatRupiah(item.harga_produk)
-                        }}</span>
+                        <span
+                            v-if="item.tampilkan_harga"
+                            class="text-xl font-semibold"
+                        >
+                            {{ formatRupiah(item.harga_produk) }}
+                        </span>
                         <div class="flex items-center gap-3">
-                            <div class="h-6 border-l" />
+                            <!-- Border hanya ditampilkan jika ada harga -->
+                            <div
+                                v-if="item.tampilkan_harga"
+                                class="h-6 border-l"
+                            />
                             <span class="text-xl flex items-center gap-1">
                                 <Tag class="w-4" />
                                 {{ item.kategori_produk.nama_kategori_produk }}

@@ -75,6 +75,7 @@ class ProdukSeeder extends Seeder
                 'id_kategori_produk' => $randomProduct['kategori'],
                 'nama_produk' => $randomName,
                 'thumbnail_produk' => json_encode($images),
+                'tampilkan_harga' => $faker->boolean(),
                 'harga_produk' => $randomProduct['harga'],
                 'slug' => $slug,
                 'link_produk' => $faker->randomElement($marketplaces),
