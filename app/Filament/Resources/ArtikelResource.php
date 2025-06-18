@@ -196,7 +196,7 @@ class ArtikelResource extends Resource
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
-                    ->disabled(fn() => !auth()->user()->can('update_artikel', Artikel::class))  
+                    ->disabled(fn() => !auth()->user()->can('update_artikel', Artikel::class))
                     ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('created_at')
@@ -253,13 +253,14 @@ class ArtikelResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Artikel berhasil diarsipkan')
-                        ->before(function (Collection $records) {
-                            MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');
-                        }),
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
+                        ->successNotificationTitle('Artikel berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Artikel berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Artikel berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');
