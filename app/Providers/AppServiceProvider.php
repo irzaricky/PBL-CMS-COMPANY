@@ -122,6 +122,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\Lowongan::observe(\App\Observers\LowonganObserver::class);
         }
 
+        if (class_exists('\App\Models\Lamaran')) {
+            \App\Models\Lamaran::observe(\App\Observers\LamaranObserver::class);
+        }
+
         if (class_exists('\App\Models\Mitra')) {
             \App\Models\Mitra::observe(\App\Observers\MitraObserver::class);
         }
@@ -142,8 +146,8 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\ProfilPerusahaan::observe(\App\Observers\ProfilPerusahaanObserver::class);
         }
 
-        if (class_exists('\App\Models\Testimoni')) {
-            \App\Models\Testimoni::observe(\App\Observers\TestimoniObserver::class);
+        if (class_exists('\App\Models\TestimoniSlider')) {
+            \App\Models\TestimoniSlider::observe(\App\Observers\TestimoniSliderObserver::class);
         }
 
         // Register category observers
@@ -178,6 +182,11 @@ class AppServiceProvider extends ServiceProvider
 
         if (class_exists('\App\Models\StrukturOrganisasi')) {
             \App\Models\StrukturOrganisasi::observe(\App\Observers\StrukturOrganisasiObserver::class);
+        }
+
+        // Register User observer to handle profile changes that affect struktur organisasi
+        if (class_exists('\App\Models\User')) {
+            \App\Models\User::observe(\App\Observers\UserObserver::class);
         }
 
         // Register additional observers for cache invalidation

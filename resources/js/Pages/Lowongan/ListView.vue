@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import { MapPin, Clock, ArrowRight, Briefcase, Search } from "lucide-vue-next";
+import { MapPin, Clock, ArrowRight, Briefcase, Search, X } from "lucide-vue-next";
 import AppLayout from "@/Layouts/AppLayout.vue";
 import axios from "axios";
 
@@ -51,6 +51,7 @@ const fetchLowongan = async (page = 1, query = '') => {
         isLoading.value = false;
     }
 };
+
 // Handle search
 const handleSearch = () => {
     if (debounceTimer) clearTimeout(debounceTimer);
@@ -94,6 +95,20 @@ function getImageUrl(image) {
     }
 
     return `/storage/${image}`;
+}
+
+// Function to strip HTML tags
+function stripHtml(html) {
+    if (!html) return ''
+    const tmp = document.createElement('div')
+    tmp.innerHTML = html
+    return tmp.textContent || tmp.innerText || ''
+}
+
+// Function to truncate text
+function truncateText(text, length = 200) {
+    if (!text) return ''
+    return text.length > length ? text.substring(0, length) + '...' : text
 }
 
 onMounted(() => {
@@ -280,8 +295,10 @@ onMounted(() => {
                                     </span>
                                 </div>
                             </div>
+                            
+                            <!-- Strip HTML and truncate description -->
                             <p class="text-typography-dark font-normal line-clamp-3">
-                                {{ job.deskripsi_pekerjaan }}
+                                {{ truncateText(stripHtml(job.deskripsi_pekerjaan)) }}
                             </p>
                         </div>
                         <div class="flex flex-col gap-6">

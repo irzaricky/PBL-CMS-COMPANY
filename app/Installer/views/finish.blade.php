@@ -58,17 +58,6 @@
                                 </div>
                             </div>
 
-                            <!-- Next Steps -->
-                            <div class="alert alert-info border-0 mb-4 next-steps-alert">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-lightbulb me-3" style="font-size: 1.5rem;"></i>
-                                    <div class="text-start">
-                                        <h6 class="mb-1">{{ __('installer.next_steps') }}</h6>
-                                        <small>{{ __('installer.next_steps_description') }}</small>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Action Buttons -->
                             <div class="d-grid gap-3 d-md-flex justify-content-md-center">
                                 <a href="{{ route('finishSave') }}" class="btn btn-primary btn-lg px-5 finish-btn">

@@ -50,7 +50,6 @@ class DatabaseSeederDev extends Seeder
             ProfilPerusahaanSeeder::class,
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
-            //TestimoniSeeder::class,
             LowonganSeeder::class,
             EventSeeder::class,
             ArtikelSeeder::class,
@@ -63,6 +62,10 @@ class DatabaseSeederDev extends Seeder
             FeatureToggleSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
+            TestimoniArtikelSeeder::class,
+            TestimoniEventSeeder::class,
+            TestimoniLowonganSeeder::class,
+            TestimoniSliderSeeder::class,
         ]);
     }
 }

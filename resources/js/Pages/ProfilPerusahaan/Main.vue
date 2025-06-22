@@ -25,26 +25,44 @@ const mediaSosial = ref([])
 // Jumlah kalimat
 const maxKalimat = 1
 
+// Function to strip HTML tags
+function stripHtml(html: string): string {
+    if (!html) return '';
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+}
+
+// Function to truncate text
+function truncateText(text: string, length = 150): string {
+    if (!text) return '';
+    return text.length > length ? text.substring(0, length) + '...' : text;
+}
+
 // Visi
 const truncatedVisi = computed(() => {
     if (!profil_perusahaan.value?.visi_perusahaan) return 'Visi perusahaan belum tersedia.'
-    const kalimat = profil_perusahaan.value.visi_perusahaan.split(/(?<=[.!?])\s+/)
+    const cleanText = stripHtml(profil_perusahaan.value.visi_perusahaan);
+    const kalimat = cleanText.split(/(?<=[.!?])\s+/)
     return kalimat.slice(0, maxKalimat).join(' ')
 })
 const showReadMoreVisi = computed(() => {
     if (!profil_perusahaan.value?.visi_perusahaan) return false
-    return profil_perusahaan.value.visi_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
+    const cleanText = stripHtml(profil_perusahaan.value.visi_perusahaan);
+    return cleanText.split(/(?<=[.!?])\s+/).length > maxKalimat
 })
 
 // Misi
 const truncatedMisi = computed(() => {
     if (!profil_perusahaan.value?.misi_perusahaan) return 'Misi perusahaan belum tersedia.'
-    const kalimat = profil_perusahaan.value.misi_perusahaan.split(/(?<=[.!?])\s+/)
+    const cleanText = stripHtml(profil_perusahaan.value.misi_perusahaan);
+    const kalimat = cleanText.split(/(?<=[.!?])\s+/)
     return kalimat.slice(0, maxKalimat).join(' ')
 })
 const showReadMoreMisi = computed(() => {
     if (!profil_perusahaan.value?.misi_perusahaan) return false
-    return profil_perusahaan.value.misi_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
+    const cleanText = stripHtml(profil_perusahaan.value.misi_perusahaan);
+    return cleanText.split(/(?<=[.!?])\s+/).length > maxKalimat
 })
 
 // Fetch data
@@ -147,7 +165,6 @@ function getMediaSosialComponent(platform) {
 }
 </script>
 
-
 <template>
     <AppLayout>
         <div class="w-full px-4 sm:px-8 lg:px-16 py-20 bg-secondary text-white relative overflow-hidden">
@@ -191,10 +208,17 @@ function getMediaSosialComponent(platform) {
                 <!-- KOLOM TEKS with modern card styling -->
                 <div class="flex-1 flex flex-col justify-center items-center gap-6">
                     <div class="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
-                        <p class="text-base lg:text-lg font-normal font-custom leading-relaxed">
-                            {{ profil_perusahaan?.deskripsi_perusahaan
-                                ? profil_perusahaan.deskripsi_perusahaan
-                                : 'Sejarah perusahaan belum tersedia.' }}
+                        <!-- Use v-html for rich content display -->
+                        <div 
+                            v-if="profil_perusahaan?.deskripsi_perusahaan"
+                            v-html="profil_perusahaan.deskripsi_perusahaan"
+                            class="text-base lg:text-lg font-normal font-custom leading-relaxed prose prose-invert max-w-none"
+                        ></div>
+                        <p 
+                            v-else
+                            class="text-base lg:text-lg font-normal font-custom leading-relaxed"
+                        >
+                            Sejarah perusahaan belum tersedia.
                         </p>
                     </div>
                 </div>
@@ -211,14 +235,13 @@ function getMediaSosialComponent(platform) {
                     <h3 class="text-2xl lg:text-4xl font-semibold font-custom lg:text-right">
                         Visi Kami
                     </h3>
-                    <p class="text-base lg:text-lg font-normal font-custom leading-relaxed lg:text-right">
-                        {{ profil_perusahaan?.visi_perusahaan
-                            ? truncatedVisi
-                            : 'Visi perusahaan belum tersedia.' }}
+                    <div class="text-base lg:text-lg font-normal font-custom leading-relaxed lg:text-right">
+                        <!-- Strip HTML for preview, show plain text -->
+                        <p>{{ truncatedVisi }}</p>
                         <Link v-if="showReadMoreVisi" href="/visi-misi" class="text-blue-400 cursor-pointer hover:underline">
-                        ... Baca selengkapnya
+                            ... Baca selengkapnya
                         </Link>
-                    </p>
+                    </div>
                 </div>
 
                 <!-- Gambar atas - top-right petal (Slider 1) -->
@@ -255,12 +278,10 @@ function getMediaSosialComponent(platform) {
                      transform hover:translate-y-[-5px] transition-all duration-300">
                     <h3 class="text-2xl lg:text-4xl font-semibold font-custom">Misi Kami</h3>
                     <div class="text-base lg:text-lg font-normal font-custom leading-relaxed">
-                        <div v-if="profil_perusahaan?.misi_perusahaan" v-html="truncatedMisi"
-                            class="prose prose-invert"></div>
-                        <p v-else>Misi perusahaan belum tersedia.</p>
-
+                        <!-- Strip HTML for preview, show plain text -->
+                        <p>{{ truncatedMisi }}</p>
                         <Link v-if="showReadMoreMisi" href="/visi-misi" class="text-blue-400 cursor-pointer hover:underline">
-                        ... Baca selengkapnya
+                            ... Baca selengkapnya
                         </Link>
                     </div>
                 </div>
@@ -311,3 +332,54 @@ function getMediaSosialComponent(platform) {
 
     </AppLayout>
 </template>
+
+<style scoped>
+/* Ensure HTML content in description renders properly */
+:deep(.prose) {
+    max-width: none;
+}
+
+:deep(.prose h1) {
+    @apply text-2xl font-bold text-white mt-6 mb-4;
+}
+
+:deep(.prose h2) {
+    @apply text-xl font-bold text-white mt-6 mb-3;
+}
+
+:deep(.prose h3) {
+    @apply text-lg font-semibold text-white mt-4 mb-3;
+}
+
+:deep(.prose p) {
+    @apply mb-4 leading-relaxed text-white;
+}
+
+:deep(.prose ul) {
+    @apply list-disc ml-6 mb-4;
+}
+
+:deep(.prose ol) {
+    @apply list-decimal ml-6 mb-4;
+}
+
+:deep(.prose li) {
+    @apply mb-2 text-white;
+}
+
+:deep(.prose blockquote) {
+    @apply border-l-4 border-white/30 pl-4 italic my-4 bg-white/10 py-2 text-white;
+}
+
+:deep(.prose strong) {
+    @apply font-semibold text-white;
+}
+
+:deep(.prose em) {
+    @apply italic text-white;
+}
+
+:deep(.prose a) {
+    @apply text-blue-300 hover:text-blue-100 underline;
+}
+</style>

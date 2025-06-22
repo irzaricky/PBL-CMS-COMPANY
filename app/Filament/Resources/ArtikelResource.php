@@ -54,9 +54,7 @@ class ArtikelResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $baseSlug = str($state)->slug();
-                                    $dateSlug = now()->format('Y-m-d');
-                                    $set('slug', $baseSlug . '-' . $dateSlug);
+                                    $set('slug', str($state)->slug());
                                 } else {
                                     $set('slug', null);
                                 }
@@ -111,12 +109,9 @@ class ArtikelResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(Artikel::class, 'slug', ignoreRecord: true)
+                            ->unique(ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan judul')
-                            ->validationMessages([
-                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
-                            ]),
+                            ->helperText('Akan terisi otomatis berdasarkan judul'),
 
                         Forms\Components\Select::make('status_artikel')
                             ->label('Status Artikel')
@@ -158,12 +153,11 @@ class ArtikelResource extends Resource
                                     ->label('Preview Konten')
                                     ->slideOver()
                                     ->form([
-                                        Forms\Components\Placeholder::make('preview')
-                                            ->content(fn(Get $get) => new \Illuminate\Support\HtmlString(
-                                                view('forms.preview-konten-artikel', [
-                                                    'konten' => $get('konten_artikel'),
-                                                ])->render()
-                                            ))
+                                        Forms\Components\ViewField::make('preview')
+                                            ->view('forms.preview-konten-artikel')
+                                            ->viewData([
+                                                'konten' => $get('konten_artikel'),
+                                            ])
                                             ->columnSpanFull(),
                                     ])
                             )
@@ -175,35 +169,13 @@ class ArtikelResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('thumbnail_artikel')
+                Tables\Columns\ImageColumn::make('thumbnail_artikel')
                     ->label('Thumbnail')
-                    ->formatStateUsing(function ($record) {
-                        $images = [];
-                        $totalImages = 0;
-
-                        if (is_array($record->thumbnail_artikel) && !empty($record->thumbnail_artikel)) {
-                            $totalImages = count($record->thumbnail_artikel);
-
-                            // Ambil maksimal 3 gambar untuk stack effect
-                            $imagesToShow = array_slice($record->thumbnail_artikel, 0, 3);
-
-                            foreach ($imagesToShow as $imagePath) {
-                                $images[] = route('thumbnail', [
-                                    'path' => base64_encode($imagePath),
-                                    'w' => 80,
-                                    'h' => 80,
-                                    'q' => 80
-                                ]);
-                            }
-                        }
-
-                        return view('filament.tables.columns.image-stack-advanced', [
-                            'images' => $images,
-                            'total_images' => $totalImages,
-                            'remaining_count' => max(0, $totalImages - 1)
-                        ])->render();
-                    })
-                    ->html(),
+                    ->circular()
+                    ->stacked()
+                    ->limit(1)
+                    ->limitedRemainingText()
+                    ->extraImgAttributes(['class' => 'object-cover']),
 
                 Tables\Columns\TextColumn::make('judul_artikel')
                     ->label('Judul')
@@ -266,16 +238,13 @@ class ArtikelResource extends Resource
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
-                    ->modalHeading('Arsipkan Artikel')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Artikel berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
-                    ->modalHeading('Pulihkan Artikel')
                     ->successNotificationTitle('Artikel berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
-                    ->modalHeading('Hapus Permanen Artikel')
                     ->successNotificationTitle('Artikel berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_artikel');
@@ -284,10 +253,14 @@ class ArtikelResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Artikel berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Artikel berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Artikel berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');

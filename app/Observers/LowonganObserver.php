@@ -49,5 +49,8 @@ class LowonganObserver
     protected function clearRelatedCache(): void
     {
         $this->cacheService->clearEndpointCache('api/lowongan');
+
+        // Also clear lamaran cache since lowongan changes might affect lamaran display
+        $this->cacheService->clearEndpointCache('api/lamaran');
     }
 }

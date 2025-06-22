@@ -17,7 +17,7 @@ class TestimoniResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id_testimoni' => $this->id_testimoni,
+            'id_testimoni_slider' => $this->id_testimoni_slider,
             'user' => [
                 //'id_user' => $this->user->id_user,
                 'name' => $this->user->name,

@@ -17,7 +17,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             FilamentUserSeeder::class,
-            DummyUser::class,
+                // DummyUser::class,
             KategoriUnduhanSeeder::class,
             KategoriProdukSeeder::class,
             KategoriGaleriSeeder::class,
@@ -31,20 +31,21 @@ class DatabaseSeeder extends Seeder
 
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
-            // TestimoniSeeder::class,
-            LowonganSeeder::class,
+                // TestimoniSliderSeeder::class,
+                // LowonganSeeder::class,
             EventSeeder::class,
             ArtikelSeeder::class,
 
 
-            LamaranSeeder::class,
+                // LamaranSeeder::class,
             MitraSeeder::class,
             StrukturOrganisasiSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
             TestimoniArtikelSeeder::class,
             TestimoniEventSeeder::class,
-            TestimoniLowonganSeeder::class,
+                // TestimoniLowonganSeeder::class,
+            TestimoniSliderSeeder::class,
         ]);
     }
 

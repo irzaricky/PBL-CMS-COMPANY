@@ -269,7 +269,7 @@ function goToPage(pageNumber) {
             class="w-full px-4 lg:px-16 py-20 bg-white text-secondary font-custom"
         >
             <div class="mt-10 flex flex-col gap-6">
-                <h3 class="text-2xl font-bold">Feedback dari Pengguna</h3>
+                <h3 v-if="feedbackList.length !== 0" class="text-2xl font-bold">Feedback dari Pengguna</h3>
 
                 <!-- Loading Skeleton -->
                 <div v-if="loading" class="flex flex-col gap-6">
@@ -302,10 +302,31 @@ function goToPage(pageNumber) {
 
                 <!-- Tidak ada feedback -->
                 <div
-                    v-else-if="feedbackList.length === 0"
-                    class="text-gray-300"
+                    v-if="feedbackList.length === 0"
+                    class="col-span-full flex flex-col items-center justify-center gap-6 py-20 text-center"
                 >
-                    Belum ada feedback.
+                    <div
+                        class="flex flex-col lg:flex-row items-center gap-6 text-left"
+                    >
+                        <img
+                            src="/image/empty.svg"
+                            alt="Empty State"
+                            class="w-40 h-40 lg:w-96 lg:h-96 object-contain"
+                        />
+                        <div>
+                            <h3
+                                class="text-xl md:text-2xl font-semibold text-gray-700 font-custom"
+                            >
+                                Belum ada feedback
+                            </h3>
+                            <p
+                                class="text-sm md:text-base text-gray-500 font-custom"
+                            >
+                                Saat ini belum ada feedback yang diberikan
+                                oleh pengguna.
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Daftar feedback -->

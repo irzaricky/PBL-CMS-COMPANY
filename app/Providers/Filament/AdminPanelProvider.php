@@ -6,9 +6,11 @@ namespace App\Providers\Filament;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use App\Helpers\ThemeHelper;
 use App\Filament\Pages\ViewEnv;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
+use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\EditProfile;
@@ -107,7 +109,8 @@ class AdminPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->emailVerification(EmailVerificationPrompt::class)
             ->colors([
-                'primary' => '#3b82f6',
+                'primary' => ThemeHelper::getFilamentTheme()['primary'],
+                'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -196,7 +199,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup('System')
                     ->navigationLabel('Environment Editor')
                     ->navigationIcon('heroicon-o-cog')
-                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS', 'APP_NAME')
+                    ->hideKeys('APP_NAME')
                     ->viewPage(ViewEnv::class)
                     ->authorize(
                         fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')

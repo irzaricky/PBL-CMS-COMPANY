@@ -242,7 +242,9 @@ function formatRupiah(value) {
 
                     <!-- Title & Price -->
                     <h1 class="text-4xl text-secondary font-bold">{{ item.nama_produk }}</h1>
-                    <div class="flex items-center gap-4">
+
+                    <!-- Conditional layout berdasarkan tampilkan_harga -->
+                    <div v-if="item.tampilkan_harga" class="flex items-center gap-4">
                         <span class="text-xl font-semibold">{{ formatRupiah(item.harga_produk) }}</span>
                         <div class="flex items-center gap-3">
                             <div class="h-6 border-l" />
@@ -250,6 +252,13 @@ function formatRupiah(value) {
                                 <Tag class="w-4" /> {{ item.kategori_produk.nama_kategori_produk }}
                             </span>
                         </div>
+                    </div>
+
+                    <!-- Layout tanpa harga -->
+                    <div v-else class="flex items-center gap-3">
+                        <span class="text-xl flex items-center gap-1">
+                            <Tag class="w-4" /> {{ item.kategori_produk.nama_kategori_produk }}
+                        </span>
                     </div>
 
                     <!-- Description -->

@@ -144,22 +144,43 @@ class DatabaseManager
             $logContents = $outputLog->fetch();
             // Log::info('Seeding result: ' . $logContents);
 
-            // Check for seeding errors more thoroughly
-            if (
-                stripos($logContents, 'error') !== false ||
-                stripos($logContents, 'exception') !== false ||
-                stripos($logContents, 'failed') !== false ||
-                stripos($logContents, 'could not') !== false ||
-                stripos($logContents, 'class not found') !== false
-            ) {
-                // Log::error('Seeding failed: ' . $logContents);
-                return ['error', 'Database seeding failed: ' . $logContents];
+            // Check for seeding errors more thoroughly - improved error detection
+            $errorPatterns = [
+                'error',
+                'exception',
+                'failed',
+                'could not',
+                'class not found',
+                'undefined property',
+                'call to undefined method',
+                'syntax error',
+                'fatal error'
+            ];
+
+            foreach ($errorPatterns as $pattern) {
+                if (stripos($logContents, $pattern) !== false) {
+                    // Extract more specific error information
+                    $lines = explode("\n", $logContents);
+                    $errorDetails = [];
+                    foreach ($lines as $line) {
+                        if (stripos($line, $pattern) !== false) {
+                            $errorDetails[] = trim($line);
+                        }
+                    }
+
+                    $errorMessage = !empty($errorDetails)
+                        ? 'Database seeding failed: ' . implode('; ', $errorDetails)
+                        : 'Database seeding failed: ' . $logContents;
+
+                    // Log::error('Seeding failed: ' . $errorMessage);
+                    return ['error', $errorMessage];
+                }
             }
 
             return ['success', $logContents];
         } catch (Exception $e) {
             // Log::error('Seeding exception: ' . $e->getMessage());
-            return ['error', $e->getMessage()];
+            return ['error', 'Seeding exception: ' . $e->getMessage()];
         }
     }
 

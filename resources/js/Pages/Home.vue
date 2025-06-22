@@ -11,6 +11,7 @@ import Lowongan from "@/Pages/Home/Lowongan.vue";
 import Mitra from "@/Pages/Home/Mitra.vue";
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import Testimoni from "./Home/Testimoni.vue";
 
 const featureToggles = ref({});
 
@@ -40,6 +41,7 @@ onMounted(async () => {
         <div v-if="featureToggles.lowongan_module">
             <Lowongan />
         </div>
+        <Testimoni/>
         <div v-if="featureToggles.mitra_module">
             <Mitra /> 
         </div>

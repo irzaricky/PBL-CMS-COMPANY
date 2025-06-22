@@ -15,7 +15,8 @@ return new class extends Migration {
             $table->foreignId('id_kategori_produk')->constrained('kategori_produk', 'id_kategori_produk')->onDelete('cascade');
             $table->string('nama_produk', 100);
             $table->json('thumbnail_produk')->nullable();
-            $table->string('harga_produk', 50);
+            $table->boolean('tampilkan_harga')->default(true);
+            $table->string('harga_produk', 50)->nullable();
             $table->string('slug', 100)->unique();
             $table->string('link_produk')->nullable();
             $table->text('deskripsi_produk')->nullable();

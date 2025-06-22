@@ -30,118 +30,163 @@ class FilamentUserSeeder extends Seeder
             return $targetPath . '/' . $newFileName;
         };
 
-        // Check if admin user already exists
-        $adminEmail = 'admin@example.com';
-        $adminUser = User::where('email', $adminEmail)->first();
+        try {
+            // Check if admin user already exists - use User model properly
+            $adminEmail = 'admin@example.com';
+            $adminUser = User::where('email', $adminEmail)->first();
 
-        if (!$adminUser) {
-            // Admin user - only create if doesn't exist
-            $adminUser = User::create([
-                'name' => 'John Admin',
-                'email' => $adminEmail,
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
-        }
-        $adminUser->assignRole('super_admin');
+            if (!$adminUser) {
+                // Admin user - only create if doesn't exist
+                $adminUser = User::create([
+                    'name' => 'John Admin',
+                    'email' => $adminEmail,
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
 
-        // Director user - check if exists first
-        $directorEmail = 'director@example.com';
-        $directorUser = User::where('email', $directorEmail)->first();
+            // Pastikan $adminUser adalah instance User model yang valid
+            if ($adminUser && $adminUser instanceof User && $adminUser->exists) {
+                $adminUser->assignRole('super_admin');
+            }
 
-        if (!$directorUser) {
-            $directorUser = User::create([
-                'name' => 'John Director',
-                'email' => $directorEmail,
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
-        }
-        $directorUser->assignRole('Director');
+            // Director user - check if exists first
+            $directorEmail = 'director@example.com';
+            $directorUser = User::where('email', $directorEmail)->first();
 
-        // Content Management users - create if they don't exist
-        $editor1 = User::where('email', 'editor1@example.com')->first();
-        if (!$editor1) {
-            $editor1 = User::create([
-                'name' => 'John Editor',
-                'email' => 'editor1@example.com',
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
-        }
+            if (!$directorUser) {
+                $directorUser = User::create([
+                    'name' => 'John Director',
+                    'email' => $directorEmail,
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
 
-        $editor2 = User::where('email', 'editor2@example.com')->first();
-        if (!$editor2) {
-            $editor2 = User::create([
-                'name' => 'Johny Editor',
-                'email' => 'editor2@example.com',
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
-        }
+            // Pastikan $directorUser adalah instance User model yang valid
+            if ($directorUser && $directorUser instanceof User && $directorUser->exists) {
+                $directorUser->assignRole('Director');
+            }
 
-        $editor3 = User::where('email', 'editor3@example.com')->first();
-        if (!$editor3) {
-            $editor3 = User::create([
-                'name' => 'Johnes Editor',
-                'email' => 'editor3@example.com',
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'status' => 'nonaktif',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
-        }
+            // Content Management users - create if they don't exist
+            $editor1 = User::where('email', 'editor1@example.com')->first();
+            if (!$editor1) {
+                $editor1 = User::create([
+                    'name' => 'John Editor',
+                    'email' => 'editor1@example.com',
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
 
-        $editor1->assignRole('Content Management');
-        $editor2->assignRole('Content Management');
-        $editor3->assignRole('Content Management');
+            $editor2 = User::where('email', 'editor2@example.com')->first();
+            if (!$editor2) {
+                $editor2 = User::create([
+                    'name' => 'Johny Editor',
+                    'email' => 'editor2@example.com',
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
 
-        // Customer Service users - create if they don't exist
-        $cs1 = User::where('email', 'cs1@example.com')->first();
-        if (!$cs1) {
-            $cs1 = User::create([
-                'name' => 'John Customer Service',
-                'email' => 'cs1@example.com',
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
+            $editor3 = User::where('email', 'editor3@example.com')->first();
+            if (!$editor3) {
+                $editor3 = User::create([
+                    'name' => 'Johnes Editor',
+                    'email' => 'editor3@example.com',
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'status' => 'nonaktif',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
+
+            // Assign roles dengan validasi
+            if ($editor1 && $editor1 instanceof User && $editor1->exists) {
+                $editor1->assignRole('Content Management');
+            }
+            if ($editor2 && $editor2 instanceof User && $editor2->exists) {
+                $editor2->assignRole('Content Management');
+            }
+            if ($editor3 && $editor3 instanceof User && $editor3->exists) {
+                $editor3->assignRole('Content Management');
+            }
+
+            // Customer Service users - create if they don't exist
+            $cs1 = User::where('email', 'cs1@example.com')->first();
+            if (!$cs1) {
+                $cs1 = User::create([
+                    'name' => 'John Customer Service',
+                    'email' => 'cs1@example.com',
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
+            $cs2 = User::where('email', 'cs2@example.com')->first();
+            if (!$cs2) {
+                $cs2 = User::create([
+                    'name' => 'Johny Customer Service',
+                    'email' => 'cs2@example.com',
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'status' => 'nonaktif',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
+            $cs3 = User::where('email', 'cs3@example.com')->first();
+            if (!$cs3) {
+                $cs3 = User::create([
+                    'name' => 'Johnes Customer Service',
+                    'email' => 'cs3@example.com',
+                    'password' => bcrypt('password123'),
+                    'status_kepegawaian' => 'Tetap',
+                    'email_verified_at' => now(),
+                    'foto_profil' => $getRandomProfilePicture(),
+                ]);
+            }
+
+            // Assign roles dengan validasi
+            if ($cs1 && $cs1 instanceof User && $cs1->exists) {
+                $cs1->assignRole('Customer Service');
+            }
+            if ($cs2 && $cs2 instanceof User && $cs2->exists) {
+                $cs2->assignRole('Customer Service');
+            }
+            if ($cs3 && $cs3 instanceof User && $cs3->exists) {
+                $cs3->assignRole('Customer Service');
+            }
+
+        } catch (\Exception $e) {
+            // Log error but don't stop the seeding process
+            \Log::warning('FilamentUserSeeder error: ' . $e->getMessage());
+
+            // If there's an error, at least try to create a basic admin user
+            if (!User::where('email', 'admin@example.com')->exists()) {
+                try {
+                    $basicAdmin = User::create([
+                        'name' => 'Admin User',
+                        'email' => 'admin@example.com',
+                        'password' => bcrypt('password123'),
+                        'status_kepegawaian' => 'Tetap',
+                        'email_verified_at' => now(),
+                    ]);
+                    $basicAdmin->assignRole('super_admin');
+                } catch (\Exception $fallbackError) {
+                    \Log::error('Failed to create fallback admin user: ' . $fallbackError->getMessage());
+                }
+            }
         }
-        $cs2 = User::where('email', 'cs2@example.com')->first();
-        if (!$cs2) {
-            $cs2 = User::create([
-                'name' => 'Johny Customer Service',
-                'email' => 'cs2@example.com',
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'status' => 'nonaktif',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
-        }
-        $cs3 = User::where('email', 'cs3@example.com')->first();
-        if (!$cs3) {
-            $cs3 = User::create([
-                'name' => 'Johnes Customer Service',
-                'email' => 'cs3@example.com',
-                'password' => bcrypt('password123'),
-                'status_kepegawaian' => 'Tetap',
-                'email_verified_at' => now(),
-                'foto_profil' => $getRandomProfilePicture(),
-            ]);
-        }
-        $cs1->assignRole('Customer Service');
-        $cs2->assignRole('Customer Service');
-        $cs3->assignRole('Customer Service');
     }
 }

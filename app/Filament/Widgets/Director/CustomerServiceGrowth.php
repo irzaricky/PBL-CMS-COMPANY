@@ -3,7 +3,7 @@
 namespace App\Filament\Widgets\Director;
 
 use App\Models\Feedback;
-use App\Models\Testimoni;
+use App\Models\TestimoniSlider;
 use App\Models\Lamaran;
 use Carbon\Carbon;
 use Filament\Support\RawJs;
@@ -92,7 +92,7 @@ class CustomerServiceGrowth extends ApexChartWidget
         }
         // Ambil cumulative growth untuk setiap tipe layanan pelanggan
         $feedbackGrowth = $this->getContentCumulativeGrowth(Feedback::class, $dates, $format);
-        $testimoniGrowth = $this->getContentCumulativeGrowth(Testimoni::class, $dates, $format);
+        $testimoniGrowth = $this->getContentCumulativeGrowth(TestimoniSlider::class, $dates, $format);
         $lamaranGrowth = $this->getContentCumulativeGrowth(Lamaran::class, $dates, $format);
 
         // Jika data kosong, isi dengan 1 agar chart tetap tampil

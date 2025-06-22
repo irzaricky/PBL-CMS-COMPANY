@@ -32,15 +32,21 @@ class ListLamarans extends ListRecords
     {
         return [
             null => Tab::make('Semua')
-                ->query(fn($query) => $query->orderBy('created_at', 'desc')),
+                ->query(fn($query) => $query
+                    ->whereNull('deleted_at')
+                    ->orderBy('created_at', 'desc')),
             'Diproses' => Tab::make()
-                ->query(fn($query) => $query->where('status_lamaran', 'Diproses')
+                ->query(fn($query) => $query
+                    ->whereNull('deleted_at')
+                    ->where('status_lamaran', 'Diproses')
                     ->orderBy('created_at', 'desc')),
             'Diterima' => Tab::make()
                 ->query(fn($query) => $query->where('status_lamaran', 'Diterima')
+                    ->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),
             'Ditolak' => Tab::make()
                 ->query(fn($query) => $query->where('status_lamaran', 'Ditolak')
+                    ->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),
             'Diarsipkan' => Tab::make()
                 ->query(fn($query) => $query->onlyTrashed()),

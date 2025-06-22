@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Enums\ContentStatus;
 use App\Models\CaseStudy;
+use App\Models\Mitra;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CaseStudy\CaseStudyViewResource;
@@ -64,7 +65,7 @@ class CaseStudyController extends Controller
     public function getCaseStudyBySlug($slug)
     {
         try {
-            
+
             $caseStudy = CaseStudy::where('slug_case_study', $slug)
                 ->where('status_case_study', ContentStatus::TERPUBLIKASI)
                 ->firstOrFail();
@@ -92,7 +93,7 @@ class CaseStudyController extends Controller
             return $this->index($request);
         }
 
-        
+
         $CaseStudyQuery = CaseStudy::with(['mitra'])
             ->where('status_case_study', ContentStatus::TERPUBLIKASI);
 
@@ -140,4 +141,29 @@ class CaseStudyController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Mengambil semua mitra yang aktif
+     */
+    public function getAllMitra()
+    {
+        try {
+            $mitra = Mitra::where('status', 'aktif')
+                ->orderBy('nama', 'asc')
+                ->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $mitra
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memuat mitra',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
 }

@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import axios from 'axios'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 const profil_perusahaan = ref(null)
 const artikel = ref(null)
@@ -12,12 +14,17 @@ const currentSlide = ref(0)
 const sliderDuration = ref(5000)
 const featureToggles = ref({})
 
+
 let slideInterval = null
 
 onMounted(async () => {
     await fetchFeatureToggles()
     await fetchProfilPerusahaan()
     await fetchKontenSlider()
+    AOS.init({
+        duration: 1000,
+        once: false,
+    });
 })
 
 onBeforeUnmount(() => {
@@ -153,7 +160,7 @@ function goToSlide(index) {
 <template>
     <div id="KontenSlider" class="w-full bg-secondary text-white py-28 px-6 lg:px-16 overflow-hidden font-custom">
         <!-- Header -->
-        <div class="text-center max-w-2xl mx-auto mb-12">
+        <div class="text-center max-w-2xl mx-auto mb-12" data-aos="fade-up">
             <div class="text-base font-semibold font-custom">Jadi</div>
             <div class="text-5xl font-normal font-custom mb-4">Kenapa sih harus ke sini?</div>
             <div class="text-lg font-normal font-custom leading-relaxed">

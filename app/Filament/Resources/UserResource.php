@@ -44,10 +44,12 @@ class UserResource extends Resource
                         Forms\Components\TextInput::make('password')
                             ->label('Password')
                             ->password()
+                            ->revealable()
                             ->required(fn(string $operation): bool => $operation === 'create')
                             ->dehydrated(fn($state) => filled($state))
                             ->maxLength(72)
-                            ->disabled(),
+                            ->visible(fn() => auth()->user()?->hasRole('super_admin'))
+                            ->helperText('Kosongkan jika tidak ingin mengubah password. Klik ikon mata untuk melihat password.'),
                         Forms\Components\Select::make('roles')
                             ->relationship('roles', 'name')
                             ->multiple()
@@ -86,7 +88,9 @@ class UserResource extends Resource
                             ->displayFormat('d F Y')
                             ->native(false)
                             ->maxDate(now()),
-                    ]),
+                    ])
+                    ->visible(fn() => !auth()->user()?->hasRole('super_admin'))
+                    ->description('Data pribadi hanya dapat diubah oleh user yang bersangkutan'),
 
                 Forms\Components\Section::make('Informasi Kepegawaian')
                     ->schema([
@@ -205,13 +209,16 @@ class UserResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->visible(fn(User $record) => auth()->user()?->hasRole('super_admin') || auth()->user()?->id_user === $record->id_user),
+                Tables\Actions\EditAction::make()
+                    ->visible(fn(User $record) => auth()->user()?->hasRole('super_admin') || auth()->user()?->id_user === $record->id_user),
                 Tables\Actions\Action::make('toggleStatus')
                     ->label(fn(User $record) => $record->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan')
                     ->icon(fn(User $record) => $record->status === 'aktif' ? 'heroicon-o-lock-closed' : 'heroicon-o-lock-open')
                     ->color(fn(User $record) => $record->status === 'aktif' ? 'danger' : 'success')
                     ->requiresConfirmation()
+                    ->visible(fn(User $record) => auth()->user()?->hasRole('super_admin'))
                     ->action(function (User $record) {
                         $record->status = $record->status === 'aktif' ? 'nonaktif' : 'aktif';
                         $record->save();
@@ -221,6 +228,7 @@ class UserResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\BulkAction::make('toggleStatusBulk')
                         ->label('Aktifkan/Nonaktifkan')
+                        ->visible(fn() => auth()->user()?->hasRole('super_admin'))
                         ->action(function (Collection $records, array $data) {
                             foreach ($records as $record) {
                                 $record->status = $data['status'];
@@ -251,7 +259,20 @@ class UserResource extends Resource
 
     public static function canCreate(): bool
     {
-        return false;
+        return auth()->user()?->hasRole('super_admin') ?? false;
+    }
+
+    public static function canEdit($record): bool
+    {
+        $user = auth()->user();
+
+        // Super admin dapat edit semua user
+        if ($user?->hasRole('super_admin')) {
+            return true;
+        }
+
+        // User hanya dapat edit dirinya sendiri (untuk data pribadi)
+        return $user?->id_user === $record->id_user;
     }
 
     public static function getPages(): array

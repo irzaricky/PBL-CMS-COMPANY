@@ -1,11 +1,4 @@
 <div class="language-switcher">
-    <!-- Debug info -->
-    @if(session('language_switched'))
-        <div class="alert alert-success alert-sm mb-2" style="font-size: 0.75rem; padding: 0.25rem 0.5rem;">
-            Language switched to: {{ session('language_switched') }} | Current: {{ app()->getLocale() }}
-        </div>
-    @endif
-
     <div class="language-buttons">
         <a href="{{ route('installer.language', 'en') }}"
             class="language-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}">

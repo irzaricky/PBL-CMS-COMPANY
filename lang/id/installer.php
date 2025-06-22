@@ -77,6 +77,13 @@ return [
     'folder_permissions' => 'Izin Folder',
     'folder' => 'Folder',
 
+    // Pesan untuk tombol disabled
+    'requirements_not_met' => 'Persyaratan sistem belum terpenuhi',
+    'requirements_not_met_message' => 'Silakan perbaiki semua persyaratan sistem sebelum melanjutkan.',
+    'php_requirements_failed' => 'Beberapa persyaratan PHP tidak terpenuhi.',
+    'php_version_not_supported' => 'Versi PHP tidak didukung.',
+    'folder_permissions_failed' => 'Beberapa folder tidak memiliki izin yang tepat.',
+
     // Halaman: Database & Email
     'database_title' => 'Konfigurasi Database & Email',
     'database_configuration' => 'Konfigurasi Database',
@@ -114,7 +121,7 @@ return [
     'company_description' => 'Deskripsi Perusahaan',
     'company_location_link' => 'Link Lokasi Perusahaan',
     'company_logo' => 'Logo Perusahaan',
-    'logo_requirements' => 'Persyaratan logo: Format PNG, JPG, atau JPEG, maksimal 2MB',
+    'logo_requirements' => 'Format: JPEG, PNG, JPG, WebP, SVG | Maksimal: 5MB | Dimensi minimal: 100x100px',
 
     // Halaman: Super Admin
     'super_admin_title' => 'Konfigurasi Super Admin',
@@ -265,5 +272,24 @@ return [
     'user_exists_role_assigned' => 'User dengan email :email sudah ada. Role Super Admin telah diberikan pada akun tersebut.',
     'super_admin_created_msg' => 'Super Admin berhasil dibuat.',
     'failed_assign_role' => 'Gagal memberikan role Super Admin.',
+
+    // Pesan Validasi Logo Perusahaan
+    'logo_upload_success' => 'Logo perusahaan berhasil diunggah.',
+    'logo_upload_failed' => 'Gagal mengunggah logo perusahaan.',
+    'logo_file_too_large' => 'Ukuran file logo terlalu besar. Maksimal 5MB.',
+    'logo_invalid_format' => 'Format file logo tidak didukung. Gunakan: JPEG, PNG, JPG, WebP, atau SVG.',
+    'logo_invalid_dimensions' => 'Dimensi logo tidak sesuai. Minimal 100x100px.',
+    'logo_file_corrupted' => 'File logo rusak atau tidak dapat dibaca.',
+    'logo_svg_invalid' => 'File SVG tidak valid atau mengandung konten yang tidak aman.',
+    'logo_processing_failed' => 'Gagal memproses file logo.',
+    'logo_storage_failed' => 'Gagal menyimpan file logo ke penyimpanan.',
+    'logo_validation_failed' => 'Validasi logo gagal. Silakan periksa file dan coba lagi.',
+    'logo_ratio_warning' => 'Rasio logo tidak persegi. Rasio 1:1 direkomendasikan untuk hasil terbaik.',
+
+    // Email Test Validation
+    'email_test_required' => 'Tes email harus berhasil sebelum melanjutkan',
+    'database_test_required' => 'Tes database harus berhasil sebelum melanjutkan',
+    'please_test_database_and_email_first' => 'Silakan tes koneksi database dan email terlebih dahulu',
+    'please_test_email_connection_first' => 'Silakan tes koneksi email terlebih dahulu',
 
 ];

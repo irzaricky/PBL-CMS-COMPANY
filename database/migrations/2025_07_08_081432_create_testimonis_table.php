@@ -10,8 +10,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('testimoni', function (Blueprint $table) {
-            $table->id('id_testimoni');
+        Schema::create('testimoni_slider', function (Blueprint $table) {
+            $table->id('id_testimoni_slider');
             $table->unsignedBigInteger('id_testimoni_produk')->nullable();
             $table->unsignedBigInteger('id_testimoni_lowongan')->nullable();
             $table->unsignedBigInteger('id_testimoni_event')->nullable();
@@ -31,6 +31,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('testimoni');
+        Schema::dropIfExists('testimoni_slider');
     }
 };

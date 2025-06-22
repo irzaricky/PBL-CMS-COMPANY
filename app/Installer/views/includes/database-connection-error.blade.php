@@ -1,22 +1,20 @@
-@if(session('db_connection_error') || session('database_error') || $errors->has('database_connection') || $errors->has('database_fields') || $errors->has('save_error'))
+@php
+    $dbErrors = array_filter([
+        session('db_connection_error'),
+        session('database_error'),
+        $errors->first('database_connection'),
+        $errors->first('database_fields'),
+        $errors->first('save_error')
+    ]);
+@endphp
+
+@if(!empty($dbErrors))
     <div class="alert alert-danger">
         <strong>{{ __('installer.database_connection_error') }}</strong>
         <ul>
-            @if(session('db_connection_error'))
-                <li>{{ session('db_connection_error') }}</li>
-            @endif
-            @if(session('database_error'))
-                <li>{{ session('database_error') }}</li>
-            @endif
-            @if($errors->has('database_connection'))
-                <li>{{ $errors->first('database_connection') }}</li>
-            @endif
-            @if($errors->has('database_fields'))
-                <li>{{ $errors->first('database_fields') }}</li>
-            @endif
-            @if($errors->has('save_error'))
-                <li>{{ $errors->first('save_error') }}</li>
-            @endif
+            @foreach($dbErrors as $error)
+                <li>{{ $error }}</li>
+            @endforeach
         </ul>
         <p>{{ __('installer.please_make_sure') }}:</p>
         <ul>

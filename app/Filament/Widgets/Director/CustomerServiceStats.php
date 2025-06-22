@@ -3,7 +3,7 @@
 namespace App\Filament\Widgets\Director;
 
 use App\Models\Feedback;
-use App\Models\Testimoni;
+use App\Models\TestimoniSlider;
 use App\Models\Lowongan;
 use App\Models\Lamaran;
 use Carbon\Carbon;
@@ -38,7 +38,7 @@ class CustomerServiceStats extends StatsOverviewWidget
             Feedback::whereMonth('created_at', $thisMonth->month)
                 ->whereYear('created_at', $thisMonth->year)
                 ->count() +
-            Testimoni::whereMonth('created_at', $thisMonth->month)
+            TestimoniSlider::whereMonth('created_at', $thisMonth->month)
                 ->whereYear('created_at', $thisMonth->year)
                 ->count();
 
@@ -49,7 +49,7 @@ class CustomerServiceStats extends StatsOverviewWidget
             Feedback::whereMonth('created_at', $lastMonth->month)
                 ->whereYear('created_at', $lastMonth->year)
                 ->count() +
-            Testimoni::whereMonth('created_at', $lastMonth->month)
+            TestimoniSlider::whereMonth('created_at', $lastMonth->month)
                 ->whereYear('created_at', $lastMonth->year)
                 ->count();
 
@@ -68,7 +68,7 @@ class CustomerServiceStats extends StatsOverviewWidget
 
         $lamaranTrend = $this->getMonthlyTrend(Lamaran::class, 6);
         $feedbackTrend = $this->getMonthlyTrend(Feedback::class, 6);
-        $testimoniTrend = $this->getMonthlyTrend(Testimoni::class, 6);
+        $testimoniTrend = $this->getMonthlyTrend(TestimoniSlider::class, 6);
 
         // Gabungkan data user untuk chart kedua
         $userDataTrend = [];

@@ -20,6 +20,13 @@ const props = defineProps({
         required: true
     }
 })
+function getImageUrl(image) {
+    if (!image) return "/image/placeholder.webp";
+    if (typeof image === "object" && image !== null) {
+        return image[0] ? `/storage/${image[0]}` : "/image/placeholder.webp";
+    }
+    return `/storage/${image}`;
+}
 </script>
 
 <template>
@@ -76,6 +83,14 @@ const props = defineProps({
                         <span class="px-3 py-1 text-sm font-medium bg-gray-100 border-gray-200 border-1 text-secondary rounded-full">
                             {{ lowongan.jenis_lowongan }}
                         </span>
+
+
+
+
+
+
+
+
                     </div>
                 </div>
                 
@@ -100,6 +115,10 @@ const props = defineProps({
                         <div>
                             <p class="text-sm text-gray-500">Tenaga Dibutuhkan</p>
                             <p class="font-medium">{{ lowongan.tenaga_dibutuhkan }} orang</p>
+
+
+
+
                         </div>
                     </div>
                     
@@ -107,6 +126,7 @@ const props = defineProps({
                     <div class="p-4 bg-gray-50 border border-gray-100 rounded-lg flex items-start gap-3">
                         <div class="p-2 bg-secondary/10 rounded-lg">
                             <CalendarDays class="w-5 h-5 text-secondary" />
+
                         </div>
                         <div>
                             <p class="text-sm text-gray-500">Dibuka Sejak</p>
@@ -125,11 +145,32 @@ const props = defineProps({
                         </div>
                     </div>
                 </div>
+
+                 <div v-if="lowongan.thumbnail_lowongan" class="mb-8">
+                    <img Add commentMore actions
+                        :src="getImageUrl(lowongan.thumbnail_lowongan)" 
+                        :alt="lowongan.judul_lowongan"
+                        class="w-full h-64 lg:h-80 object-cover rounded-lg shadow-md"
+                        @error="$event.target.src = '/image/placeholder.webp'"
+                    />
+                </div>
                 
                 <!-- Lowongan Description -->
                 <div>
                     <h2 class="text-xl font-semibold mb-4">Deskripsi Pekerjaan</h2>
                     <div class="prose max-w-none" v-html="lowongan.deskripsi_pekerjaan"></div>
+
+
+
+
+
+
+
+
+
+
+
+
                 </div>
             </div>
             
@@ -137,4 +178,4 @@ const props = defineProps({
             <slot></slot>
         </div>
     </div>
-</template>
+</template>Add comment

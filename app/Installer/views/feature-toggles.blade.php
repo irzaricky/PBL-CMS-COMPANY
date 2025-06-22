@@ -5,25 +5,23 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-md-10">
-                    <div class="card mb-4 shadow-lg border-0 features-config-card">
-                        <div class="card-body py-5">
-                            <!-- Header Section with Icon and Title -->
-                            <div class="text-center mb-5">
-                                <div class="mb-4">
-                                    <i class="bi bi-toggles display-1" style="color: var(--primary-color);"></i>
+                    <form action="{{ route('saveFeatureToggles') }}" method="post">
+                        @csrf
+                        <div class="card mb-4 shadow-lg border-0 features-config-card">
+                            <div class="card-body py-5">
+                                <!-- Header Section with Icon and Title -->
+                                <div class="text-center mb-5">
+                                    <div class="mb-4">
+                                        <i class="bi bi-toggles display-1" style="color: var(--primary-color);"></i>
+                                    </div>
+                                    <h1 class="display-5 mb-3 features-title" style="color: var(--primary-color);">
+                                        {{ __('installer.features_title') }}
+                                    </h1>
+                                    <p class="lead mb-0 text-muted features-subtitle">
+                                        {{ __('installer.features_subtitle') }}
+                                    </p>
                                 </div>
-                                <h1 class="display-5 mb-3 features-title" style="color: var(--primary-color);">
-                                    {{ __('installer.features_title') }}
-                                </h1>
-                                <p class="lead mb-0 text-muted features-subtitle">
-                                    {{ __('installer.features_subtitle') }}
-                                </p>
-                            </div>
 
-                            <!-- Features Content -->
-                            <form action="{{ route('saveFeatureToggles') }}" method="post">
-                                @csrf
-                                
                                 <!-- Error Messages -->
                                 @if($errors->any())
                                     <div class="alert alert-danger mb-4">
@@ -41,16 +39,17 @@
                                     <h4 class="mb-4 text-center" style="color: var(--primary-color);">
                                         <i class="bi bi-sliders me-2"></i>{{ __('installer.configure_features') }}
                                     </h4>
-                                    
+
                                     <div class="row">
                                         @foreach ($features as $feature)
                                             <div class="col-md-6 mb-4">
                                                 <div class="feature-toggle-card p-3 rounded">
                                                     <div class="form-check form-switch">
-                                                        <input class="form-check-input feature-switch" type="checkbox" role="switch"
-                                                            id="feature_{{ $feature['key'] }}" name="features[{{ $feature['key'] }}]"
-                                                            value="1" {{ $feature['status_aktif'] ? 'checked' : '' }}>
-                                                        <label class="form-check-label fw-medium" for="feature_{{ $feature['key'] }}">
+                                                        <input class="form-check-input feature-switch" type="checkbox"
+                                                            role="switch" id="feature_{{ $feature['key'] }}"
+                                                            name="features[{{ $feature['key'] }}]" value="1" {{ $feature['status_aktif'] ? 'checked' : '' }}>
+                                                        <label class="form-check-label fw-medium"
+                                                            for="feature_{{ $feature['key'] }}">
                                                             {{ $feature['label'] }}
                                                         </label>
                                                     </div>
@@ -59,19 +58,21 @@
                                         @endforeach
                                     </div>
                                 </div>
+                            </div>
 
-                                <!-- Action Buttons -->
-                                <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
-                                    <a href="{{ route('user_roles_list') }}" class="btn btn-outline-primary btn-lg px-5 me-md-3">
-                                        <i class="bi bi-arrow-left me-2"></i>{{ __('installer.back') }}
+                            <!-- Card Footer with Action Buttons -->
+                            <div class="card-footer bg-light border-top p-4">
+                                <div class="d-flex justify-content-between">
+                                    <a href="{{ route('user_roles_list') }}" class="btn btn-outline-primary btn-lg px-5">
+                                        {{ __('installer.back') }}
                                     </a>
-                                    <button type="submit" id="next_button" class="btn btn-primary btn-lg px-5 features-btn">
-                                        <i class="bi bi-check-circle me-2"></i>{{ __('installer.next') }}
+                                    <button type="submit" class="btn btn-primary btn-lg px-5 features-btn">
+                                        {{ __('installer.next') }}
                                     </button>
                                 </div>
-                            </form>
+                            </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -187,6 +188,7 @@
                 transform: translateY(30px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -198,6 +200,7 @@
                 transform: translateY(-20px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -209,10 +212,51 @@
                 transform: translateY(20px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
             }
         }
+
+        /* Card Footer Styling */
+        .card-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border-top: 1px solid #dee2e6 !important;
+            border-radius: 0 0 20px 20px !important;
+            margin-top: 0 !important;
+        }
+
+        .card-footer .btn {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card-footer .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-footer .btn-outline-primary {
+            border-width: 2px;
+            font-weight: 600;
+        }
+
+        .card-footer .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+        }
     </style>
+
+    <script>
+        // Form submission handling (if needed for additional validation)
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('form[action*="saveFeatureToggles"]');
+            if (form) {
+                // Add any additional form handling here if needed
+                console.log('Feature toggles form initialized');
+            }
+        });
+    </script>
 @endsection

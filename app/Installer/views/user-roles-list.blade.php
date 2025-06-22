@@ -68,10 +68,12 @@
                                                     <td>
                                                         @if($user->roles->count() > 0)
                                                             @foreach($user->roles as $role)
-                                                                <span class="badge rounded-pill bg-primary me-1">{{ $role->name }}</span>
+                                                                <span
+                                                                    class="badge rounded-pill bg-primary me-1">{{ $role->name }}</span>
                                                             @endforeach
                                                         @else
-                                                            <span class="badge rounded-pill bg-secondary">{{ __('installer.no_role') }}</span>
+                                                            <span
+                                                                class="badge rounded-pill bg-secondary">{{ __('installer.no_role') }}</span>
                                                         @endif
                                                     </td>
                                                 </tr>
@@ -80,14 +82,16 @@
                                     </table>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Action Buttons -->
-                            <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-4">
-                                <a href="{{ route('super_admin_config') }}" class="btn btn-outline-primary btn-lg px-5 me-md-3">
-                                    <i class="bi bi-arrow-left me-2"></i>{{ __('installer.back') }}
+                        <!-- Card Footer with Action Buttons -->
+                        <div class="card-footer bg-light border-top p-4">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ route('super_admin_config') }}" class="btn btn-outline-primary btn-lg px-5">
+                                    {{ __('installer.back') }}
                                 </a>
                                 <a href="{{ route('feature_toggles') }}" class="btn btn-primary btn-lg px-5 user-roles-btn">
-                                    <i class="bi bi-toggles me-2"></i>{{ __('installer.continue_to_features') }}
+                                    {{ __('installer.continue_to_features') }}
                                 </a>
                             </div>
                         </div>
@@ -229,6 +233,7 @@
                 transform: translateY(30px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -240,6 +245,7 @@
                 transform: translateY(-20px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
@@ -251,10 +257,40 @@
                 transform: translateY(20px);
                 opacity: 0;
             }
+
             to {
                 transform: translateY(0);
                 opacity: 1;
             }
+        }
+
+        /* Card Footer Styling */
+        .card-footer {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+            border-top: 1px solid #dee2e6 !important;
+            border-radius: 0 0 20px 20px !important;
+            margin-top: 0 !important;
+        }
+
+        .card-footer .btn {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card-footer .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-footer .btn-outline-primary {
+            border-width: 2px;
+            font-weight: 600;
+        }
+
+        .card-footer .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
         }
     </style>
 @endsection
