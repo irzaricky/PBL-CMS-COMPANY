@@ -349,18 +349,6 @@
             border-radius: 8px;
         }
 
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-            background-color: #e9ecef;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, var(--primary-color), #4338ca);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
         /* Validation Error Styling */
         #logo-validation-error {
             border-left: 4px solid #dc3545;
