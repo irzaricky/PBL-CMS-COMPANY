@@ -1,8 +1,9 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
+import { Search, Tag, Wallet, ChevronLeft, ChevronRight } from "lucide-vue-next";
 
 const produk = ref([]);
 const searchQuery = ref("");
@@ -12,6 +13,9 @@ const lastPage = ref(1);
 let debounceTimer = null;
 const { props } = usePage();
 const isLoading = ref(true);
+
+// State untuk background hero
+const heroBackground = ref("/image/placeholder.webp");
 
 onMounted(() => {
     fetchData();
@@ -52,6 +56,13 @@ const fetchProduk = async (query = "", categoryId = null, page = 1) => {
         produk.value = response.data.data;
         currentPage.value = response.data.meta?.current_page || 1;
         lastPage.value = response.data.meta?.last_page || 1;
+
+        // Set random background dari produk seperti case study
+        if (response.data.data.length > 0) {
+            const randomIndex = Math.floor(Math.random() * response.data.data.length);
+            const randomProduct = response.data.data[randomIndex];
+            heroBackground.value = getImageUrl(randomProduct.thumbnail_produk);
+        }
 
     } catch (error) {
         console.error("Error fetching produk:", error);
@@ -161,65 +172,59 @@ function formatRupiah(value) {
 
 <template>
     <AppLayout>
+        <!-- Hero Section with Search - Updated to match case study style -->
         <div
-            class="relative w-full bg-cover bg-center bg-no-repeat px-4 md:px-8 lg:px-16 py-28 flex flex-col justify-start items-center gap-20 overflow-hidden"
-            :style="
-                produk.length
-                    ? `background-image: url('${getImageUrl(
-                          produk[0].thumbnail_produk
-                      )}')`
-                    : ''
-            "
+            class="relative w-full bg-cover bg-center bg-no-repeat px-4 lg:px-16 py-28 flex flex-col justify-start items-center gap-16 overflow-hidden"
+            :style="{
+                backgroundImage: `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${heroBackground}')`,
+            }"
         >
-            <!-- Overlay -->
-            <div class="absolute inset-0 bg-black/60 z-0"></div>
-
-            <!-- Konten -->
+            <!-- Content -->
             <div
-                class="relative z-10 w-full max-w-3xl flex flex-col justify-start items-center gap-8 text-white text-center"
+                class="relative z-10 w-full max-w-4xl flex flex-col justify-start items-center gap-10 text-white text-center"
             >
                 <!-- Heading -->
-                <div class="flex flex-col items-center gap-4">
-                    <div class="text-base font-semibold font-custom">
-                        Produk
+                <div class="flex flex-col items-center gap-6">
+                    <div
+                        class="text-base font-semibold font-custom uppercase tracking-wider"
+                    >
+                        PRODUK
                     </div>
-                    <div class="flex flex-col gap-6">
-                        <h2
-                            class="text-4xl md:text-5xl font-normal font-custom leading-tight"
-                        >
-                            Belanja Praktis, Hasil Maksimal
-                        </h2>
-                        <p
-                            class="text-lg font-normal font-custom leading-relaxed"
-                        >
-                            Produk pilihan dengan harga bersahabat. Temukan
-                            kebutuhanmu dengan mudah dan cepat hanya dalam satu
-                            tempat.
-                        </p>
-                    </div>
+                    <h1
+                        class="text-4xl lg:text-6xl font-normal font-custom leading-tight"
+                    >
+                        Belanja Praktis,<br />Hasil Maksimal
+                    </h1>
+                    <p
+                        class="text-lg font-normal font-custom leading-relaxed max-w-3xl"
+                    >
+                        Produk pilihan dengan harga bersahabat. Temukan
+                        kebutuhanmu dengan mudah dan cepat hanya dalam satu
+                        tempat.
+                    </p>
                 </div>
 
-                <!-- Search form -->
-                <div class="w-full flex flex-col items-center gap-4">
-                    <div
-                        class="w-full flex flex-col sm:flex-row items-stretch sm:items-center gap-4"
-                    >
+                <!-- Search form - Updated to match case study style -->
+                <div class="w-full max-w-2xl flex flex-col items-center gap-4">
+                    <div class="w-full relative">
                         <input
                             v-model="searchQuery"
                             @input="handleSearch"
                             type="text"
-                            placeholder="Cari produk..."
-                            class="flex-1 px-4 py-3 rounded-xl bg-white/10 text-white placeholder-white/60 outline outline-1 outline-transparent focus:outline-white focus:ring-0 font-custom"
+                            placeholder="Cari produk berdasarkan nama, kategori, atau deskripsi..."
+                            class="w-full px-6 py-4 rounded-full bg-white/10 backdrop-blur-sm text-white placeholder-white/60 outline outline-1 outline-white/30 focus:outline-white/70 focus:ring-0 font-custom pr-16"
                         />
                         <button
                             @click="fetchProduk(searchQuery)"
-                            class="px-6 py-2.5 rounded-full bg-white text-black text-base font-medium font-custom hover:bg-gray-100 transition"
+                            class="absolute right-2 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white text-black hover:bg-opacity-80 transition"
                         >
-                            Cari
+                            <Search class="w-5 h-5" />
                         </button>
                     </div>
-                    <p class="text-xs font-normal font-custom leading-none">
-                        Gunakan kata kunci produk yang Anda inginkan.
+                    <p
+                        class="text-sm font-normal font-custom leading-none opacity-70"
+                    >
+                        Coba cari menggunakan kata kunci
                     </p>
                 </div>
             </div>
@@ -331,6 +336,7 @@ function formatRupiah(value) {
                         </div>
                     </div>
                 </div>
+
                 <!-- Produk asli -->
                 <template v-else>
                     <div

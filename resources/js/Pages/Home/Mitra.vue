@@ -4,7 +4,7 @@
             <div class="w-full max-w-7xl mx-auto px-4 md:px-6 py-32">
 
                 <!-- Header Section -->
-                <div class="text-center mb-20">
+                <div class="text-center mb-20" data-aos="zoom-in-up">
                     <div class="inline-flex items-center px-4 py-2 bg-primary/10 rounded-full mb-6">
                         <span class="text-primary text-sm font-medium tracking-wide uppercase">Partnership</span>
                     </div>
@@ -19,7 +19,7 @@
                 <!-- Mitra Grid -->
                 <div class="mb-16">
                     <!-- Grid Container with better spacing -->
-                    <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+                    <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6" data-aos="zoom-in-up">
                         <!-- Existing Mitra -->
                         <div v-for="mitra in mitraList" :key="mitra.nama"
                             class="group relative aspect-square flex items-center justify-center p-4 md:p-6 bg-white/3 rounded-3xl border border-white/5 hover:bg-white/8 hover:border-white/15 transition-all duration-500 ease-out">
@@ -35,7 +35,7 @@
 
                         <!-- Call to Action Card -->
                         <div
-                            class="group relative aspect-square flex flex-col items-center justify-center p-4 md:p-6 bg-gradient-to-br from-primary/8 to-accent/8 rounded-3xl border-2 border-dashed border-primary/30 hover:border-primary/50 transition-all duration-500 cursor-pointer overflow-hidden">
+                            class="group relative aspect-square flex flex-col items-center justify-center p-4 md:p-6 bg-gradient-to-br from-primary/8 to-accent/8 rounded-3xl border-2 border-dashed border-primary/30 hover:border-primary/50 transition-all duration-500 cursor-pointer overflow-hidden" data-aos="zoom-in-up">
                             <!-- Animated background pattern -->
                             <div
                                 class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
@@ -106,6 +106,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
 
 const mitraList = ref([])
 const isLoading = ref(true)
@@ -152,6 +155,11 @@ function getImageUrl(image) {
 
 onMounted(async () => {
     await fetchMitraData()
+    AOS.init({
+        duration: 1000,
+        once: false,
+    });
+    AOS.refresh();
 })
 </script>
 

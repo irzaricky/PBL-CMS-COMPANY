@@ -134,7 +134,7 @@ function getImage(image) {
 		</div>
 
 		<!-- Kontainer Galeri -->
-		<div class="flex flex-col lg:flex-row gap-8 justify-center w-full" data-aos="fade-up">
+		<div class="flex flex-col lg:flex-row gap-8 justify-center w-full" data-aos="zoom-in">
 
 			<!-- Kolom Kiri -->
 			<div class="flex flex-col gap-8 items-center lg:items-start w-full lg:w-1/2">
