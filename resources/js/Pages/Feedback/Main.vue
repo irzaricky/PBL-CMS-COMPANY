@@ -1,8 +1,11 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
+import FeedbackTerkirim from "@/Components/Modal/FeedbackTerkirim.vue";
 import { ref, reactive, computed, onMounted } from "vue";
 import { usePage } from "@inertiajs/vue3";
 import axios from "axios";
+import { User, ArrowRight, Send, Check } from "lucide-vue-next";
+import SyaratKetentuanFeedback from "@/Components/Modal/SyaratKetentuanFeedback.vue";
 
 const page = usePage();
 const isLoggedIn = computed(() => !!page.props.auth.user);
@@ -10,6 +13,10 @@ const feedbackList = ref([]);
 const currentPage = ref(1);
 const lastPage = ref(1);
 const loading = ref(false);
+
+// Modal states
+const showSuccessModal = ref(false);
+const showTermsModal = ref(false);
 
 const form = reactive({
     name: "",
@@ -66,8 +73,10 @@ async function submitForm() {
             id_user: page.props.auth.user.id_user,
         });
 
-        alert("Terima kasih atas feedback Anda!");
+        // Show success modal instead of alert
+        showSuccessModal.value = true;
 
+        // Reset form
         Object.assign(form, {
             subjek_feedback: "",
             isi_feedback: "",
@@ -81,6 +90,7 @@ async function submitForm() {
         alert("Gagal mengirim feedback.");
     }
 }
+
 function getImageUrl(foto_profil) {
     if (!foto_profil) {
         return "/images/default-profile.png";
@@ -92,37 +102,55 @@ function goToPage(pageNumber) {
     if (pageNumber < 1 || pageNumber > lastPage.value) return;
     fetchFeedback(pageNumber);
 }
+
+// Modal handlers
+const handleCloseModal = () => {
+    showSuccessModal.value = false;
+};
+
+const handleWriteAnother = () => {
+    showSuccessModal.value = false;
+    // Scroll to form
+    document.querySelector('form').scrollIntoView({ behavior: 'smooth' });
+};
+
+const openTermsModal = () => {
+    showTermsModal.value = true;
+};
+
+const closeTermsModal = () => {
+    showTermsModal.value = false;
+};
 </script>
 
 <template>
     <AppLayout>
-        <div
-            class="w-full px-4 lg:px-16 py-20 bg-secondary text-white font-custom"
-        >
-            <div
-                class="max-w-screen-lg mx-auto flex flex-col lg:flex-row gap-10 overflow-hidden"
-            >
-                <!-- Gambar -->
-                <img
-                    class="w-full lg:w-1/2 object-contain"
-                    src="image/Feedback-white.svg"
-                    alt="Contact"
-                />
+        <!-- Hero Section with Form - Updated to match case study CTA style -->
+        <section
+            class="w-full relative bg-gradient-to-br from-secondary via-secondary to-black px-4 lg:px-16 py-20 overflow-hidden">
+            <!-- Content -->
+            <div class="relative z-10 max-w-screen-lg mx-auto flex flex-col lg:flex-row gap-10 lg:gap-20 items-center">
+                <!-- Left: Illustration -->
+                <div class="w-full lg:w-1/2 flex justify-center">
+                    <div
+                        class="w-full max-w-md bg-white/10 backdrop-blur-sm rounded-2xl p-8 flex items-center justify-center">
+                        <img class="w-full h-auto object-contain" src="image/Feedback-white.svg"
+                            alt="Feedback Illustration" />
+                    </div>
+                </div>
 
-                <!-- Form -->
+                <!-- Right: Form -->
                 <div class="w-full lg:w-1/2 flex flex-col gap-8">
                     <!-- Heading -->
-                    <div class="flex flex-col gap-4">
-                        <div class="text-custom text-base font-semibold">
+                    <div class="flex flex-col gap-6">
+                        <div class="text-white/80 text-base font-semibold font-custom uppercase tracking-wider">
                             Hubungi kami lewat
                         </div>
                         <div class="flex flex-col gap-4">
-                            <h2
-                                class="text-custom text-3xl lg:text-6xl font-normal leading-tight"
-                            >
+                            <h1 class="text-white text-3xl lg:text-5xl font-normal font-custom leading-tight">
                                 Feedback Anda!
-                            </h2>
-                            <p class="text-custom text-base lg:text-lg">
+                            </h1>
+                            <p class="text-white/80 text-base lg:text-lg font-custom leading-relaxed">
                                 Kami tumbuh lewat feedback Anda. Beri kami
                                 masukan untuk meningkatkan layanan kami.
                             </p>
@@ -130,245 +158,211 @@ function goToPage(pageNumber) {
                     </div>
 
                     <!-- Jika belum login -->
-                    <div
-                        v-if="!isLoggedIn"
-                        class="flex flex-col gap-4 text-center"
-                    >
-                        <p class="text-lg">
-                            Mohon login terlebih dahulu untuk memberikan
-                            feedback.
-                        </p>
-                        <a
-                            href="/login"
-                            class="inline-block bg-white text-secondary px-6 py-2.5 rounded-full font-semibold hover:bg-gray-100 transition"
-                        >
-                            Login
+                    <div v-if="!isLoggedIn"
+                        class="flex flex-col gap-6 text-center bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                        <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto">
+                            <User class="w-8 h-8 text-white" />
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2 font-custom">
+                                Login Diperlukan
+                            </h3>
+                            <p class="text-white/70 font-custom">
+                                Mohon login terlebih dahulu untuk memberikan feedback.
+                            </p>
+                        </div>
+                        <a href="/login"
+                            class="inline-flex items-center justify-center gap-2 bg-white text-secondary px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 font-custom">
+                            <span>Login Sekarang</span>
+                            <ArrowRight class="w-5 h-5" />
                         </a>
                     </div>
 
                     <!-- Jika sudah login -->
-                    <form
-                        v-else
-                        @submit.prevent="submitForm"
-                        class="flex flex-col gap-6"
-                    >
-                        <!-- Nama -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-custom text-base font-medium"
-                                >Name</label
-                            >
-                            <input
-                                v-model="form.name"
-                                type="text"
-                                readonly
-                                class="w-full px-3 py-2 bg-gray-100 text-black rounded-md focus:outline-none"
-                            />
-                        </div>
+                    <form v-else @submit.prevent="submitForm"
+                        class="flex flex-col gap-6 bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
+                        <!-- Form Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Nama -->
+                            <div class="flex flex-col gap-2">
+                                <label class="text-white text-sm font-medium font-custom">
+                                    Nama Lengkap
+                                </label>
+                                <input v-model="form.name" type="text" readonly
+                                    class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 font-custom" />
+                            </div>
 
-                        <!-- Email -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-custom text-base font-medium"
-                                >Email</label
-                            >
-                            <input
-                                v-model="form.email"
-                                type="email"
-                                readonly
-                                class="w-full px-3 py-2 bg-gray-100 text-black rounded-md focus:outline-none"
-                            />
+                            <!-- Email -->
+                            <div class="flex flex-col gap-2">
+                                <label class="text-white text-sm font-medium font-custom">
+                                    Alamat Email
+                                </label>
+                                <input v-model="form.email" type="email" readonly
+                                    class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 font-custom" />
+                            </div>
                         </div>
 
                         <!-- Subjek -->
                         <div class="flex flex-col gap-2">
-                            <label class="text-custom text-base font-medium"
-                                >Subjek</label
-                            >
-                            <input
-                                v-model="form.subjek_feedback"
-                                type="text"
-                                class="w-full px-3 py-2 bg-white text-black rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
-                                placeholder="Contoh: Kritik tentang layanan"
-                                required
-                            />
+                            <label class="text-white text-sm font-medium font-custom">
+                                Subjek Feedback
+                            </label>
+                            <input v-model="form.subjek_feedback" type="text"
+                                class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 font-custom"
+                                placeholder="Contoh: Kritik tentang layanan" required />
                         </div>
 
                         <!-- Message -->
                         <div class="flex flex-col gap-2">
-                            <label class="text-custom text-base font-medium"
-                                >Pesan</label
-                            >
-                            <textarea
-                                v-model="form.isi_feedback"
-                                rows="4"
-                                class="w-full p-3 bg-white text-black rounded-md focus:outline-none focus:ring-2 focus:ring-secondary"
-                                placeholder="Tulis masukan Anda..."
-                                required
-                            ></textarea>
+                            <label class="text-white text-sm font-medium font-custom">
+                                Pesan Feedback
+                            </label>
+                            <textarea v-model="form.isi_feedback" rows="4"
+                                class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none font-custom"
+                                placeholder="Tulis masukan Anda dengan detail..." required></textarea>
                         </div>
 
                         <!-- Rating Emoji -->
-                        <div class="flex flex-col gap-2">
-                            <label class="text-custom text-base font-medium"
-                                >Seberapa puas Anda?</label
-                            >
+                        <div class="flex flex-col gap-4">
+                            <label class="text-white text-sm font-medium font-custom">
+                                Tingkat Kepuasan Anda
+                            </label>
                             <div
-                                class="flex justify-between text-2xl lg:text-3xl px-2"
-                            >
-                                <label
-                                    v-for="n in 5"
-                                    :key="n"
-                                    class="cursor-pointer transition hover:scale-110"
-                                >
-                                    <input
-                                        type="radio"
-                                        v-model="form.tingkat_kepuasan"
-                                        :value="n"
-                                        class="hidden"
-                                    />
-                                    <span
-                                        :class="
-                                            form.tingkat_kepuasan === n
-                                                ? 'opacity-100'
-                                                : 'opacity-40'
-                                        "
-                                    >
+                                class="flex justify-between bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                <label v-for="n in 5" :key="n"
+                                    class="cursor-pointer transition-all duration-300 hover:scale-125 flex flex-col items-center gap-2">
+                                    <input type="radio" v-model="form.tingkat_kepuasan" :value="n" class="hidden" />
+                                    <span class="text-3xl transition-all duration-300" :class="form.tingkat_kepuasan === n
+                                        ? 'opacity-100 scale-110'
+                                        : 'opacity-50 hover:opacity-80'
+                                        ">
                                         {{ emojis[n - 1] }}
+                                    </span>
+                                    <span class="text-xs text-white/70 font-custom">
+                                        {{ ['Buruk', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'][n - 1] }}
                                     </span>
                                 </label>
                             </div>
                         </div>
 
-                        <!-- Checkbox -->
-                        <div class="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                v-model="form.acceptTerms"
-                                class="w-4 h-4 rounded border-gray-300 text-secondary focus:ring-secondary"
-                                required
-                            />
-                            <span class="text-custom text-sm">
+                        <!-- Checkbox with Terms Modal -->
+                        <div
+                            class="flex items-start gap-3 bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                            <div class="relative">
+                                <input type="checkbox" v-model="form.acceptTerms" class="sr-only" required />
+                                <div @click="form.acceptTerms = !form.acceptTerms"
+                                    class="w-5 h-5 mt-0.5 border-2 rounded bg-white/20 flex items-center justify-center cursor-pointer transition-all duration-200"
+                                    :class="form.acceptTerms ? 'border-white bg-white/20' : 'border-white/30 hover:border-white/50'">
+                                    <Check v-if="form.acceptTerms" class="w-3 h-3 text-white" />
+                                </div>
+                            </div>
+                            <span class="text-white/90 text-sm font-custom leading-relaxed">
                                 Saya menerima
-                                <span class="underline"
-                                    >syarat dan ketentuan</span
-                                >
+                                <button type="button" @click="openTermsModal"
+                                    class="underline cursor-pointer hover:text-white transition-colors">
+                                    syarat dan ketentuan
+                                </button>
+                                yang berlaku dan memberikan izin untuk memproses feedback ini.
                             </span>
                         </div>
 
                         <!-- Submit Button -->
-                        <button
-                            type="submit"
-                            class="bg-white text-secondary px-6 py-2.5 rounded-full font-semibold hover:bg-gray-100 transition"
-                        >
-                            Submit
+                        <button type="submit"
+                            class="group w-full bg-white text-secondary px-6 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 font-custom">
+                            <span>Kirim Feedback</span>
+                            <Send class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
                     </form>
                 </div>
             </div>
-        </div>
-        <div
-            class="w-full px-4 lg:px-16 py-20 bg-white text-secondary font-custom"
-        >
-            <div class="mt-10 flex flex-col gap-6">
-                <h3 v-if="feedbackList.length !== 0" class="text-2xl font-bold">Feedback dari Pengguna</h3>
+        </section>
+
+        <!-- Feedback List Section -->
+        <div class="w-full px-4 lg:px-16 py-20 bg-white text-secondary font-custom">
+            <div class="max-w-screen-lg mx-auto">
+                <div class="mb-12 text-center">
+                    <div class="text-black text-base font-semibold font-custom uppercase tracking-wider mb-4">
+                        Testimoni Pengguna
+                    </div>
+                    <h2 v-if="feedbackList.length !== 0"
+                        class="text-black text-3xl lg:text-4xl font-normal font-custom">
+                        Feedback dari Pengguna Kami
+                    </h2>
+                </div>
 
                 <!-- Loading Skeleton -->
-                <div v-if="loading" class="flex flex-col gap-6">
-                    <div
-                        v-for="i in 5"
-                        :key="i"
-                        class="animate-pulse bg-white p-4 rounded-xl shadow-md"
-                    >
-                        <div class="flex items-center justify-between mb-2">
+                <div v-if="loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div v-for="i in 4" :key="i"
+                        class="animate-pulse bg-gray-50 p-6 rounded-2xl border border-gray-100">
+                        <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">
-                                <div
-                                    class="w-10 h-10 bg-gray-300 rounded-full"
-                                ></div>
+                                <div class="w-12 h-12 bg-gray-300 rounded-full"></div>
                                 <div>
-                                    <div
-                                        class="h-4 bg-gray-300 rounded w-24 mb-1"
-                                    ></div>
-                                    <div
-                                        class="h-3 bg-gray-200 rounded w-32"
-                                    ></div>
+                                    <div class="h-4 bg-gray-300 rounded w-24 mb-2"></div>
+                                    <div class="h-3 bg-gray-200 rounded w-32"></div>
                                 </div>
                             </div>
-                            <div class="w-6 h-6 bg-gray-300 rounded"></div>
+                            <div class="w-8 h-8 bg-gray-300 rounded"></div>
                         </div>
-                        <div class="h-5 bg-gray-300 rounded w-3/4 mb-2"></div>
-                        <div class="h-4 bg-gray-200 rounded w-full mb-1"></div>
+                        <div class="h-5 bg-gray-300 rounded w-3/4 mb-3"></div>
+                        <div class="h-4 bg-gray-200 rounded w-full mb-2"></div>
                         <div class="h-4 bg-gray-200 rounded w-5/6"></div>
                     </div>
                 </div>
 
                 <!-- Tidak ada feedback -->
-                <div
-                    v-if="feedbackList.length === 0"
-                    class="col-span-full flex flex-col items-center justify-center gap-6 py-20 text-center"
-                >
-                    <div
-                        class="flex flex-col lg:flex-row items-center gap-6 text-left"
-                    >
-                        <img
-                            src="/image/empty.svg"
-                            alt="Empty State"
-                            class="w-40 h-40 lg:w-96 lg:h-96 object-contain"
-                        />
+                <div v-if="!loading && feedbackList.length === 0"
+                    class="flex flex-col items-center justify-center gap-6 py-20 text-center">
+                    <div class="flex flex-col lg:flex-row items-center gap-6 text-center">
+                        <img src="/image/empty.svg" alt="Empty State"
+                            class="w-40 h-40 lg:w-64 lg:h-64 object-contain" />
                         <div>
-                            <h3
-                                class="text-xl md:text-2xl font-semibold text-gray-700 font-custom"
-                            >
+                            <h3 class="text-xl md:text-2xl font-semibold text-gray-700 font-custom mb-2">
                                 Belum ada feedback
                             </h3>
-                            <p
-                                class="text-sm md:text-base text-gray-500 font-custom"
-                            >
-                                Saat ini belum ada feedback yang diberikan
-                                oleh pengguna.
+                            <p class="text-sm md:text-base text-gray-500 font-custom">
+                                Jadilah yang pertama memberikan feedback untuk membantu kami berkembang.
                             </p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Daftar feedback -->
-                <div v-else class="flex flex-col gap-6">
-                    <div
-                        v-for="item in feedbackList"
-                        :key="item.id_feedback"
-                        class="bg-white text-black p-4 rounded-xl shadow-md"
-                    >
-                        <div class="flex items-center justify-between mb-2">
+                <div v-else-if="!loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div v-for="item in feedbackList" :key="item.id_feedback"
+                        class="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:border-secondary/30 transition-all duration-300 hover:border-2 hover:border-secondary">
+                        <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">
-                                <img
-                                    :src="getImageUrl(item.user.foto_profil)"
-                                    alt="Foto Profil"
-                                    class="w-10 h-10 rounded-full"
-                                />
+                                <img :src="getImageUrl(item.user.foto_profil)" alt="Foto Profil"
+                                    class="w-12 h-12 rounded-full object-cover border-2 border-gray-200" />
                                 <div>
-                                    <div class="font-semibold">
+                                    <div class="font-semibold text-black font-custom">
                                         {{ item.user.name }}
                                     </div>
-                                    <div class="text-sm text-gray-500">
+                                    <div class="text-sm text-black font-custom">
                                         {{ item.user.email }}
                                     </div>
                                 </div>
                             </div>
-                            <div class="text-xl">
+                            <div class="text-2xl">
                                 {{ emojis[item.tingkat_kepuasan - 1] }}
                             </div>
                         </div>
-                        <div class="text-lg font-medium">
+
+                        <div class="text-lg font-medium text-black mb-3 font-custom">
                             {{ item.subjek_feedback }}
                         </div>
-                        <p class="text-gray-700">{{ item.isi_feedback }}</p>
 
-                        <div
-                            v-if="item.tanggapan_feedback"
-                            class="mt-4 bg-secondary/10 border-l-4 border-secondary p-3 rounded"
-                        >
-                            <div class="text-sm text-secondary font-semibold">
+                        <p class="text-black font-custom leading-relaxed">
+                            {{ item.isi_feedback }}
+                        </p>
+
+                        <div v-if="item.tanggapan_feedback"
+                            class="mt-4 bg-secondary/5 border-l-4 border-secondary p-4 rounded-r-xl">
+                            <div class="text-sm text-secondary font-semibold font-custom mb-1">
                                 Tanggapan Admin:
                             </div>
-                            <p class="text-sm text-secondary">
+                            <p class="text-sm text-secondary/80 font-custom">
                                 {{ item.tanggapan_feedback }}
                             </p>
                         </div>
@@ -376,46 +370,37 @@ function goToPage(pageNumber) {
                 </div>
 
                 <!-- Pagination -->
-                <div
-                    v-if="lastPage > 1 && !loading"
-                    class="flex justify-center items-center gap-4 mt-10 font-custom text-sm"
-                >
+                <div v-if="lastPage > 1 && !loading"
+                    class="flex justify-center items-center gap-4 mt-12 font-custom text-sm">
                     <!-- Tombol Sebelumnya -->
-                    <button
-                        @click="goToPage(currentPage - 1)"
-                        :disabled="currentPage === 1"
-                        class="px-4 py-2 rounded-xl font-medium transition border"
-                        :class="
-                            currentPage === 1
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                                : 'bg-white text-secondary border-secondary hover:bg-secondary hover:text-white'
-                        "
-                    >
+                    <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
+                        class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === 1
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                            ">
                         Sebelumnya
                     </button>
 
                     <!-- Indikator halaman -->
-                    <div
-                        class="px-4 py-2 rounded-xl border border-secondary text-secondary font-semibold"
-                    >
+                    <div class="px-4 py-2 rounded-xl border border-black text-black font-semibold">
                         {{ currentPage }} / {{ lastPage }}
                     </div>
 
                     <!-- Tombol Selanjutnya -->
-                    <button
-                        @click="goToPage(currentPage + 1)"
-                        :disabled="currentPage === lastPage"
-                        class="px-4 py-2 rounded-xl font-medium transition border"
-                        :class="
-                            currentPage === lastPage
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                                : 'bg-white text-secondary border-secondary hover:bg-secondary hover:text-white'
-                        "
-                    >
+                    <button @click="goToPage(currentPage + 1)" :disabled="currentPage === lastPage"
+                        class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === lastPage
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                            ">
                         Selanjutnya
                     </button>
                 </div>
             </div>
         </div>
+
+        <!-- Modals -->
+        <FeedbackTerkirim :show="showSuccessModal" @close="handleCloseModal" @write-another="handleWriteAnother" />
+
+        <SyaratKetentuanFeedback :show="showTermsModal" @close="closeTermsModal" />
     </AppLayout>
 </template>

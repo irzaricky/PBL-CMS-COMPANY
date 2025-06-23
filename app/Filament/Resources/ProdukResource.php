@@ -224,10 +224,12 @@ class ProdukResource extends Resource
                         ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
                         ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
                     ])
+                    ->disabled(fn() => !auth()->user()->can('update_produk', Produk::class))
                     ->rules(['required']),
 
                 Tables\Columns\TextColumn::make('link_produk')
                     ->label('Tautan Produk')
+                    ->icon('heroicon-s-link')
                     ->url(fn($record) => $record->link_produk)
                     ->openUrlInNewTab()
                     ->searchable()

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Feedback;
-use App\Http\Resources\FeedbackResource;
+use App\Enums\ContentStatus;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\FeedbackResource;
 use Illuminate\Support\Facades\Validator;
 
 class FeedbackController extends Controller
@@ -60,6 +61,7 @@ class FeedbackController extends Controller
 
         try {
             $query = Feedback::with('user:id_user,name,foto_profil,email')
+                ->where('status_feedback', ContentStatus::TERPUBLIKASI)
                 ->orderBy('created_at', 'desc');
 
             $feedback = $query->paginate(10);
