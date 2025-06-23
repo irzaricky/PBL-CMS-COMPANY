@@ -66,7 +66,6 @@ class StrukturOrganisasiResource extends Resource
                                     }
                                 } catch (\Exception $e) {
                                     // Handle any errors silently or log them
-                                    \Log::error('Error updating jabatan: ' . $e->getMessage());
                                 }
                             }),
 
@@ -226,7 +225,7 @@ class StrukturOrganisasiResource extends Resource
 
                         // Force clear cache after reordering
                         \App\Observers\StrukturOrganisasiObserver::clearCache();
-                        \Illuminate\Support\Facades\Log::info('Cache cleared after manual reordering and urutan fixed for inactive users');
+                        // \Illuminate\Support\Facades\Log::info('Cache cleared after manual reordering and urutan fixed for inactive users');
                     })
             )
             ->filters([
