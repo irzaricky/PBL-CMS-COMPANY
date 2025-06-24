@@ -124,7 +124,7 @@ const teamMembers = computed(() => {
                                 <img
                                     :src="member.image"
                                     :alt="`${member.name}'s photo`"
-                                    class="w-full h-full object-cover"
+                                    class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-300"
                                     @error="
                                         $event.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
                                             member.name

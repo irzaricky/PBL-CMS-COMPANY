@@ -6,6 +6,8 @@ import { usePage } from "@inertiajs/vue3";
 import axios from "axios";
 import { User, ArrowRight, Send, Check } from "lucide-vue-next";
 import SyaratKetentuanFeedback from "@/Components/Modal/SyaratKetentuanFeedback.vue";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 const page = usePage();
 const isLoggedIn = computed(() => !!page.props.auth.user);
@@ -30,6 +32,11 @@ const form = reactive({
 const emojis = ["😢", "😕", "😐", "😊", "😄"];
 
 onMounted(() => {
+    AOS.init({
+        duration: 1000,
+        once: false,
+        mirror: true,
+    });
     if (isLoggedIn.value) {
         form.name = page.props.auth.user.name;
         form.email = page.props.auth.user.email;
@@ -268,9 +275,9 @@ const closeTermsModal = () => {
 
                         <!-- Submit Button -->
                         <button type="submit"
-                            class="group w-full bg-white text-secondary px-6 py-4 rounded-xl font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2 font-custom">
+                            class="group w-full bg-white text-secondary px-6 py-4 rounded-xl font-semibold hover:bg-secondary hover:text-white transition-all duration-300 transform flex items-center justify-center gap-2 font-custom">
                             <span>Kirim Feedback</span>
-                            <Send class="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            <Send class="w-5 h-5 group-hover:text-white transition-transform" />
                         </button>
                     </form>
                 </div>
@@ -329,8 +336,10 @@ const closeTermsModal = () => {
 
                 <!-- Daftar feedback -->
                 <div v-else-if="!loading" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div v-for="item in feedbackList" :key="item.id_feedback"
-                        class="bg-gray-50 p-6 rounded-2xl border border-gray-100 hover:border-secondary/30 transition-all duration-300 hover:border-2 hover:border-secondary">
+                    <div v-for="(item, index) in feedbackList" :key="item.id_feedback"
+                        class="bg-gray-50 p-6 rounded-2xl border border-gray-100"
+                        data-aos="zoom-in-up" :data-aos-delay="(index * 100)">
+                        
                         <div class="flex items-center justify-between mb-4">
                             <div class="flex items-center gap-3">
                                 <img :src="getImageUrl(item.user.foto_profil)" alt="Foto Profil"
@@ -368,35 +377,36 @@ const closeTermsModal = () => {
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Pagination -->
-                <div v-if="lastPage > 1 && !loading"
-                    class="flex justify-center items-center gap-4 mt-12 font-custom text-sm">
-                    <!-- Tombol Sebelumnya -->
-                    <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
-                        class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === 1
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
-                            ">
-                        Sebelumnya
-                    </button>
+            <!-- Pagination -->
+            <div v-if="lastPage > 1 && !loading"
+                class="flex justify-center items-center gap-4 mt-12 font-custom text-sm">
+                <!-- Tombol Sebelumnya -->
+                <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
+                    class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === 1
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                        : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                        ">
+                    Sebelumnya
+                </button>
 
-                    <!-- Indikator halaman -->
-                    <div class="px-4 py-2 rounded-xl border border-black text-black font-semibold">
-                        {{ currentPage }} / {{ lastPage }}
-                    </div>
-
-                    <!-- Tombol Selanjutnya -->
-                    <button @click="goToPage(currentPage + 1)" :disabled="currentPage === lastPage"
-                        class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === lastPage
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
-                            ">
-                        Selanjutnya
-                    </button>
+                <!-- Indikator halaman -->
+                <div class="px-4 py-2 rounded-xl border border-black text-black font-semibold">
+                    {{ currentPage }} / {{ lastPage }}
                 </div>
+
+                <!-- Tombol Selanjutnya -->
+                <button @click="goToPage(currentPage + 1)" :disabled="currentPage === lastPage"
+                    class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === lastPage
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                        : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                        ">
+                    Selanjutnya
+                </button>
             </div>
         </div>
+
 
         <!-- Modals -->
         <FeedbackTerkirim :show="showSuccessModal" @close="handleCloseModal" @write-another="handleWriteAnother" />

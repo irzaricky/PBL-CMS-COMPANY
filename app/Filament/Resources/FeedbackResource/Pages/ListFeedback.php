@@ -30,11 +30,14 @@ class ListFeedback extends ListRecords
     {
         return [
             null => Tab::make('Semua')
+                ->icon('heroicon-o-squares-2x2')
                 ->query(fn($query) => $query->orderBy('created_at', 'desc')),
             'Belum Ditanggapi' => Tab::make()
+                ->icon('heroicon-o-x-circle')
                 ->query(fn($query) => $query->whereNull('tanggapan_feedback')
                     ->orderBy('created_at', 'desc')),
             'Sudah Ditanggapi' => Tab::make()
+                ->icon('heroicon-o-check-circle')
                 ->query(fn($query) => $query->whereNotNull('tanggapan_feedback')
                     ->orderBy('created_at', 'desc')),
         ];

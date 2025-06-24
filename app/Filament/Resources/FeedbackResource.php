@@ -37,7 +37,7 @@ class FeedbackResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Feedback')
-                    ->icon('heroicon-o-information-circle')
+                    ->icon('heroicon-s-information-circle')
                     ->description('Informasi terkait feedback yang diberikan oleh pengguna.')
                     ->schema([
                         Forms\Components\Select::make('id_user')
@@ -75,24 +75,19 @@ class FeedbackResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Tanggapan Admin')
-                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->icon('heroicon-s-chat-bubble-left-right')
                     ->description('Tanggapan dari admin terkait feedback yang diberikan.')
                     ->schema([
                         Forms\Components\TextInput::make('tanggapan_feedback')
                             ->label('Tanggapan')
                             ->placeholder('Masukkan tanggapan untuk feedback ini')
                             ->columnSpanFull(),
-                        Forms\Components\Select::make('status_feedback')
-                            ->label('Status')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                            ])
-                            ->default(ContentStatus::TIDAK_TERPUBLIKASI->value)
-                            ->required()
-                            ->rules(['required'])
-                            ->disabled(fn() => !auth()->user()->can('update_feedback', Feedback::class))
-                            ->native(false),
+                        Forms\Components\ToggleButtons::make('status_feedback')
+                            ->label('Status Feedback')
+                            ->inline()
+                            ->options(ContentStatus::class)
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
             ]);
     }
@@ -110,14 +105,21 @@ class FeedbackResource extends Resource
                     ->searchable()
                     ->limit(50),
 
-                Tables\Columns\SelectColumn::make('status_feedback')
+                Tables\Columns\ToggleColumn::make('status_feedback')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
                     ->disabled(fn() => !auth()->user()->can('update_feedback', Feedback::class))
-                    ->rules(['required']),
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_feedback' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn ($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn ($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
 
                 Tables\Columns\IconColumn::make('tanggapan_feedback')

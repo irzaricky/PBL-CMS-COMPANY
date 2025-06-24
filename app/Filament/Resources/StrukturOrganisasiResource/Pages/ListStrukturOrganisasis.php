@@ -70,8 +70,10 @@ class ListStrukturOrganisasis extends ListRecords
                         $query->whereNull('tanggal_selesai')
                             ->orWhere('tanggal_selesai', '>=', now());
                     })
-                    ->orderBy('urutan', 'asc')),
+                    ->orderBy('urutan', 'asc'))
+                ->icon('heroicon-o-check-circle'),
             'Posisi Nonaktif' => Tab::make()
+                ->icon('heroicon-o-x-circle')
                 ->query(fn($query) => $query->where(function ($query) {
                     $query->whereHas('user', fn($query) => $query->where('status', 'nonaktif'))
                         ->orWhere('tanggal_selesai', '<', now());
@@ -101,7 +103,6 @@ class ListStrukturOrganisasis extends ListRecords
                 ->body('Data struktur organisasi telah diperbarui dan disinkronisasi.')
                 ->success()
                 ->send();
-
         } catch (\Exception $e) {
             \Filament\Notifications\Notification::make()
                 ->title('Error')
@@ -182,7 +183,6 @@ class ListStrukturOrganisasis extends ListRecords
 
             // Update cache timestamp regardless of sync result
             Cache::put($cacheKey, now(), now()->addMinutes(10));
-
         } catch (\Exception $e) {
             Log::error('Auto-sync struktur organisasi failed', [
                 'error' => $e->getMessage(),
@@ -267,7 +267,6 @@ class ListStrukturOrganisasis extends ListRecords
                     'records_updated' => $activeStructures->count()
                 ]);
             }
-
         } catch (\Exception $e) {
             Log::error('Failed to auto-generate urutan', [
                 'error' => $e->getMessage(),
@@ -359,7 +358,6 @@ class ListStrukturOrganisasis extends ListRecords
                     ->info()
                     ->send();
             }
-
         } catch (\Exception $e) {
             \Filament\Notifications\Notification::make()
                 ->title('Error')

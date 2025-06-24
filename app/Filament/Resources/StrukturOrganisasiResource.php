@@ -139,6 +139,7 @@ class StrukturOrganisasiResource extends Resource
                 Tables\Columns\TextColumn::make('jabatan')
                     ->label('Posisi/Jabatan')
                     ->searchable()
+                    ->icon('heroicon-s-user')
                     ->badge()
                     ->color('success'),
 
@@ -154,6 +155,7 @@ class StrukturOrganisasiResource extends Resource
                         $roleName = $user->roles->first()->name;
                         return ucwords(str_replace('_', ' ', $roleName));
                     })
+                    ->toggledHiddenByDefault()
                     ->toggleable(),
 
                 Tables\Columns\TextColumn::make('deskripsi')

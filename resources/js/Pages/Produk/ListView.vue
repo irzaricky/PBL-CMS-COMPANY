@@ -4,6 +4,9 @@ import { ref, onMounted, computed } from "vue";
 import axios from "axios";
 import { usePage } from "@inertiajs/vue3";
 import { Search, Tag, Wallet, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import AOS from "aos";
+import "aos/dist/aos.css";
+
 
 const produk = ref([]);
 const searchQuery = ref("");
@@ -18,6 +21,11 @@ const isLoading = ref(true);
 const heroBackground = ref("/image/placeholder.webp");
 
 onMounted(() => {
+    AOS.init({
+        duration: 1000,
+        once: false,
+        mirror: true,
+    });
     fetchData();
     fetchKategori();
     fetchLatestProduct();
@@ -57,7 +65,7 @@ const fetchProduk = async (query = "", categoryId = null, page = 1) => {
         currentPage.value = response.data.meta?.current_page || 1;
         lastPage.value = response.data.meta?.last_page || 1;
 
-        // Set random background dari produk seperti case study
+        // Set random background dari produk 
         if (response.data.data.length > 0) {
             const randomIndex = Math.floor(Math.random() * response.data.data.length);
             const randomProduct = response.data.data[randomIndex];
@@ -198,7 +206,7 @@ function formatRupiah(value) {
                     <p
                         class="text-lg font-normal font-custom leading-relaxed max-w-3xl"
                     >
-                        Produk pilihan dengan harga bersahabat. Temukan
+                        Katalog produk dan jasa. Temukan
                         kebutuhanmu dengan mudah dan cepat hanya dalam satu
                         tempat.
                     </p>
@@ -236,7 +244,7 @@ function formatRupiah(value) {
             <!-- Filter Kategori -->
             <div
                 v-if="usedCategories.length > 0"
-                class="w-full overflow-x-auto mt-6"
+                class="w-full overflow-x-auto mt-6" data-aos="fade-right"
             >
                 <div class="flex gap-2 font-custom text-sm whitespace-nowrap">
                     <!-- Skeleton Kategori -->
@@ -340,7 +348,7 @@ function formatRupiah(value) {
                 <!-- Produk asli -->
                 <template v-else>
                     <div
-                        v-for="item in produk"
+                        v-for="(item, index) in produk"
                         :key="item.id_produk"
                         class="relative p-6 rounded-2xl bg-cover bg-center bg-no-repeat flex flex-col h-[480px] overflow-hidden transform transition duration-300 hover:scale-105"
                         :style="
@@ -351,6 +359,8 @@ function formatRupiah(value) {
                                   )}')`
                                 : 'background-color: #ccc'
                         "
+                        data-aos="fade-up"
+                        :data-aos-delay="index * 100"
                     >
                         <div
                             class="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/80 to-transparent z-10"
@@ -430,7 +440,7 @@ function formatRupiah(value) {
 
             <div
                 v-if="item"
-                class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end"
+                class="w-full flex flex-col lg:flex-row justify-between items-start lg:items-end" data-aos="fade-up"
             >
                 <div class="w-full lg:w-3/4 flex flex-col gap-4">
                     <div
@@ -484,7 +494,7 @@ function formatRupiah(value) {
                 class="flex flex-col lg:flex-row gap-10 lg:gap-20 w-full max-w-7xl mx-auto"
             >
                 <!-- Left: Product Image -->
-                <div class="w-full lg:w-1/2 flex justify-center">
+                <div class="w-full lg:w-1/2 flex justify-center" data-aos="zoom-in-up">
                     <div
                         class="relative w-full max-w-[600px] aspect-[4/3] overflow-hidden rounded-2xl"
                     >
@@ -530,7 +540,7 @@ function formatRupiah(value) {
                 </div>
 
                 <!-- Right: Product Info -->
-                <div class="w-full lg:w-1/2 flex flex-col gap-8">
+                <div class="w-full lg:w-1/2 flex flex-col gap-8" data-aos="zoom-in-up">
                     <!-- Title & Price -->
                     <h1 class="text-4xl text-secondary font-bold">
                         {{ item.nama_produk }}
