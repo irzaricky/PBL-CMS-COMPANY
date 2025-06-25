@@ -125,7 +125,7 @@ async function fetchProfilPerusahaan() {
                                         <div
                                             class="absolute -right-4 -top-4 transform rotate-12">
                                             <div
-                                                class="bg-white/20 backdrop-blur-sm w-24 h-24 rounded-lg shadow-lg flex items-center justify-center">
+                                                class="bg-white/20 backdrop-blur-sm w-24 h-24 rounded-lg flex items-center justify-center">
                                                 <div class="bg-white/30 w-20 h-20 rounded-lg rotate-45 absolute"></div>
                                                 <span class="text-3xl font-bold text-white relative z-10">{{ item.tahun
                                                     }}</span>

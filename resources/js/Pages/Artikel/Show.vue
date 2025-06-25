@@ -279,26 +279,15 @@ function writeAnotherTestimoni() {
 
                 <!-- Bagian Kanan: Artikel Lainnya Skeleton -->
                 <div class="w-full lg:w-80 flex-shrink-0">
-                    <div
-                        class="bg-gray-300 h-8 w-48 rounded animate-pulse mb-4"
-                    ></div>
+                    <div class="bg-gray-300 h-8 w-48 rounded animate-pulse mb-4"></div>
                     <div class="flex flex-col gap-4">
                         <div
                             v-for="i in 4"
                             :key="i"
-                            class="flex items-start gap-4 p-3 bg-gray-100 rounded-xl border border-gray-200"
+                            class="flex flex-col gap-3 p-4 bg-white rounded-xl border border-gray-100"
                         >
-                            <div
-                                class="bg-gray-200 w-16 h-16 rounded flex-shrink-0 animate-pulse"
-                            ></div>
-                            <div class="flex-1">
-                                <div
-                                    class="bg-gray-200 h-4 w-full rounded animate-pulse mb-2"
-                                ></div>
-                                <div
-                                    class="bg-gray-200 h-4 w-5/6 rounded animate-pulse"
-                                ></div>
-                            </div>
+                            <!-- Image skeleton -->
+                            <div class="bg-gray-200 w-full h-32 rounded-lg animate-pulse"></div>
                         </div>
                     </div>
                 </div>
@@ -309,46 +298,36 @@ function writeAnotherTestimoni() {
                 <!-- Bagian Kiri: Artikel -->
                 <div class="flex-1 flex flex-col gap-10">
                     <!-- Breadcrumb -->
-                    <!-- ...existing code... -->
                     <div class="flex flex-col gap-12">
                         <div>
                             <nav class="flex" aria-label="Breadcrumb">
-                                <ol
-                                    class="inline-flex items-center space-x-1 md:space-x-3 text-sm"
-                                >
-                                    <li>
+                                <ol class="inline-flex items-center space-x-1 text-sm">
+                                    <li class="inline-flex items-center">
                                         <Link
                                             href="/"
-                                            class="inline-flex items-center text-gray-500 hover:text-secondary"
+                                            class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors"
                                         >
-                                            <Home class="w-4 h-4 mr-2" />
+                                            <Home class="w-4 h-4 mr-1.5" />
                                             Home
                                         </Link>
                                     </li>
                                     <li class="inline-flex items-center">
-                                        <ChevronRight
-                                            class="w-4 h-4 text-gray-400"
-                                        />
+                                        <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
                                         <Link
                                             href="/artikel"
-                                            class="ml-1 inline-flex items-center text-gray-500 hover:text-secondary"
+                                            class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors"
                                         >
-                                            <FileText class="w-4 h-4 mr-2" />
+                                            <FileText class="w-4 h-4 mr-1.5" />
                                             Artikel
                                         </Link>
                                     </li>
-                                    <li class="flex items-center min-w-0">
-                                        <ChevronRight
-                                            class="w-4 h-4 text-gray-400 flex-shrink-0"
-                                        />
+                                    <li class="inline-flex items-center">
+                                        <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
                                         <span
-                                            class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
+                                            class="text-sm font-medium text-gray-700 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
                                             :title="article?.judul_artikel"
                                         >
-                                            {{
-                                                article?.judul_artikel ||
-                                                "Memuat..."
-                                            }}
+                                            {{ article?.judul_artikel || "Memuat..." }}
                                         </span>
                                     </li>
                                 </ol>
@@ -366,7 +345,8 @@ function writeAnotherTestimoni() {
                                         "Tanpa Kategori"
                                     }}
                                 </div>
-                                <div class="text-sm font-semibold text-black">
+                                <div class="text-sm font-semibold text-black flex gap-2 items-center">
+                                    <Clock class="w-4 h-4" />
                                     {{ readingTime }}
                                 </div>
                             </div>
@@ -382,7 +362,6 @@ function writeAnotherTestimoni() {
                     </div>
 
                     <!-- Gambar & Info Penulis -->
-                    <!-- ...existing code... -->
                     <div class="flex flex-col gap-8">
                         <img
                             class="w-full h-[300px] sm:h-[400px] lg:h-[600px] rounded-2xl object-cover"
@@ -612,25 +591,56 @@ function writeAnotherTestimoni() {
                         <div
                             v-for="item in relatedArticles"
                             :key="item.id_artikel"
-                            class="flex items-start gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100 hover:bg-gray-100 transition cursor-pointer"
+                            class="flex flex-col gap-3 p-4 bg-white rounded-xl border border-gray-100 hover:border-gray-200 transition-all duration-200 cursor-pointer"
                             @click="$inertia.visit(`/artikel/${item.slug}`)"
                         >
                             <img
-                                class="w-16 h-16 rounded object-cover flex-shrink-0"
+                                class="w-full h-32 rounded-lg object-cover"
                                 :src="getImageUrl(item.thumbnail_artikel)"
                                 :alt="item.judul_artikel"
                             />
-                            <div class="flex flex-col justify-center">
-                                <h3
-                                    class="font-semibold text-lg lg:text-sm leading-snug line-clamp-2 pb-1"
-                                >
+                            <div class="flex flex-col gap-2">
+                                <!-- Category Badge -->
+                                <span class="px-2 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-700 w-fit">
+                                    {{ item.kategoriArtikel?.nama_kategori_artikel || 'Tanpa Kategori' }}
+                                </span>
+                                
+                                <!-- Title -->
+                                <h3 class="font-semibold text-sm leading-snug line-clamp-2">
                                     {{ item.judul_artikel }}
                                 </h3>
-                                <p
-                                    class="text-sm lg:text-xs text-gray-500 line-clamp-2"
-                                >
-                                    {{ getArticleExcerpt(item.konten_artikel) }}
+                                
+                                <!-- Excerpt -->
+                                <p class="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+                                    {{ getArticleExcerpt(item.konten_artikel, 60) }}
                                 </p>
+                                
+                                <!-- Meta Info -->
+                                <div class="flex items-center justify-between pt-2 border-t border-gray-100">
+                                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                                        <LucideEye class="w-3 h-3" />
+                                        <span>{{ item.jumlah_view || 0 }}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 text-xs text-gray-500">
+                                        <LucideCalendar class="w-3 h-3" />
+                                        <span>{{ new Date(item.created_at).toLocaleDateString('id-ID', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                        }) }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Author Info -->
+                                <div class="flex items-center gap-2 pt-1">
+                                    <img
+                                        class="w-5 h-5 rounded-full object-cover"
+                                        :src="getImageUrl(item.user?.foto_profil)"
+                                        :alt="item.user?.name || 'Author'"
+                                    />
+                                    <span class="text-xs text-gray-600 font-medium">
+                                        {{ item.user?.name || 'Anonim' }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>

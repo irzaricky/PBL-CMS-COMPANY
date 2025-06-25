@@ -374,21 +374,25 @@ function formatRupiah(value) {
                             </div>
                             <div class="flex flex-col gap-2">
                                 <div class="flex items-center gap-2 text-sm font-normal">
-                                    <Tag class="w-4 h-4" />
-                                    <span>Kategori: {{ item.kategori_produk.nama_kategori_produk }}</span>
+                                    <span class="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20">
+                                        <Tag class="w-4 h-4" />
+                                        <span>{{ item.kategori_produk.nama_kategori_produk }}</span>
+                                    </span>
                                 </div>
                                 <!-- Harga hanya ditampilkan jika tampilkan_harga true -->
                                 <div
                                     v-if="item.tampilkan_harga"
                                     class="flex items-center gap-2 text-sm font-normal"
                                 >
-                                    <Wallet class="w-4 h-4" />
-                                    <span>Harga: {{ formatRupiah(item.harga_produk) }}</span>
+                                    <span class="flex items-center gap-2 bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full border border-white/20">
+                                        <Wallet class="w-4 h-4" />
+                                        <span>{{ formatRupiah(item.harga_produk) }}</span>
+                                    </span>
                                 </div>
                             </div>
                             <a
                                 :href="`/produk/${item.slug}`"
-                                class="inline-flex items-center justify-center gap-2 px-6 py-2 mt-4 bg-white/30 text-white font-medium text-sm rounded-full hover:bg-white hover:text-black transition-all duration-300"
+                                class="inline-flex items-center justify-center gap-2 px-6 py-2 mt-4 bg-white/30 backdrop-blur-sm text-white font-medium text-sm rounded-full hover:bg-white hover:text-black transition-all duration-300"
                             >
                                 Lihat Detail
                             </a>
