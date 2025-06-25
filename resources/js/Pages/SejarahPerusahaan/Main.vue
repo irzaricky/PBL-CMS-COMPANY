@@ -61,14 +61,14 @@ async function fetchProfilPerusahaan() {
                             <div v-for="(item, index) in placeholderItems" :key="'skeleton-' + index" class="relative">
                                 <!-- Skeleton Timeline Dot -->
                                 <div
-                                    class="absolute left-4 md:left-1/2 w-10 h-10 bg-gray-300 rounded-full shadow-md transform translate-x-[-15px] md:translate-x-[-20px] animate-pulse">
+                                    class="absolute left-4 md:left-1/2 w-10 h-10 bg-gray-300 rounded-full transform translate-x-[-15px] md:translate-x-[-20px] animate-pulse">
                                 </div>
 
                                 <!-- Skeleton Content Card -->
                                 <div class="md:w-[calc(50%-40px)] ml-16 md:ml-0"
                                     :class="index % 2 === 0 ? 'md:mr-auto' : 'md:ml-auto'">
                                     <div
-                                        class="bg-gray-200 p-6 rounded-xl shadow-sm relative overflow-hidden animate-pulse">
+                                        class="bg-gray-200 p-6 rounded-xl relative overflow-hidden animate-pulse">
                                         <!-- Skeleton Year Badge -->
                                         <div class="absolute -right-1 -top-6">
                                             <div class="bg-gray-300 w-20 h-20 rounded-lg"></div>
@@ -86,8 +86,6 @@ async function fetchProfilPerusahaan() {
                                             </div>
                                         </div>
                                     </div>
-
-                                    <!-- Removed Skeleton Connector Lines -->
                                 </div>
                             </div>
                         </template>
@@ -122,10 +120,10 @@ async function fetchProfilPerusahaan() {
                                 <div class="md:w-[calc(50%-40px)] ml-16 md:ml-0"
                                     :class="index % 2 === 0 ? 'md:mr-auto' : 'md:ml-auto'">
                                     <div
-                                        class="bg-secondary text-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+                                        class="bg-secondary text-white p-6 rounded-xl transition-all duration-300 relative overflow-hidden">
                                         <!-- Year Badge - Revamped -->
                                         <div
-                                            class="absolute -right-4 -top-4 transform rotate-12 hover:rotate-0 transition-transform duration-300">
+                                            class="absolute -right-4 -top-4 transform rotate-12">
                                             <div
                                                 class="bg-white/20 backdrop-blur-sm w-24 h-24 rounded-lg shadow-lg flex items-center justify-center">
                                                 <div class="bg-white/30 w-20 h-20 rounded-lg rotate-45 absolute"></div>

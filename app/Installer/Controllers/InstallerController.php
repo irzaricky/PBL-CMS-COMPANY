@@ -71,7 +71,12 @@ class InstallerController extends Controller
     public function index()
     {
         // Create storage symbolic link (essential for file uploads)
-        Artisan::call('storage:link');
+        try {
+            Artisan::call('storage:link');
+        } catch (\Exception $e) {
+            Log::warning('Failed to create storage link: ' . $e->getMessage());
+            // Continue installation even if storage link fails
+        }
 
         $permissions = $this->permissions->check(
             config('install.permissions')

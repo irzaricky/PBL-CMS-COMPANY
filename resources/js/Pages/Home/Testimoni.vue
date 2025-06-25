@@ -4,7 +4,7 @@
     >
         <div class="max-w-screen-xl mx-auto">
             <!-- Header Section -->
-            <div class="w-full mb-12 lg:mb-16">
+            <div class="w-full mb-12 lg:mb-16" data-aos="fade-up">
                 <div class="max-w-2xl">
                     <h2
                         class="text-3xl sm:text-4xl lg:text-5xl font-normal leading-tight mb-4"
@@ -42,7 +42,7 @@
                 </div>
 
                 <!-- Testimonials Container -->
-                <div v-else class="w-full">
+                <div v-else class="w-full" data-aos="fade-zoom-out">
                     <!-- Show message if no testimonials -->
                     <div
                         v-if="availableTestimonials.length === 0"
@@ -228,6 +228,8 @@ import { ref, onMounted, computed } from "vue";
 import { ArrowRight, ChevronLeft, ChevronRight, Star } from "lucide-vue-next";
 import { Link } from "@inertiajs/vue3";
 import axios from "axios";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 // Reactive data
 const currentSlide = ref(0);
@@ -393,6 +395,10 @@ const fetchTestimonials = async () => {
 // Lifecycle
 onMounted(() => {
     fetchTestimonials();
+    AOS.init({
+        duration: 1000,
+        once: false,
+    });
 
     // Auto-slide every 5 seconds
     setInterval(() => {

@@ -40,10 +40,11 @@ class FeatureToggleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->heading('Daftar Fitur')
+            ->description('Daftar fitur yang dapat diaktifkan atau dinonaktifkan.')
+            ->defaultPaginationPageOption('all')
+            ->paginationPageOptions(['all'])
             ->columns([
-                // Tables\Columns\TextColumn::make('key')
-                //     ->label('Fitur yang ditampilkan')
-                // ,
                 Tables\Columns\TextColumn::make('label')
                     ->label('Daftar Fitur'),
                 Tables\Columns\TextColumn::make('status_aktif')

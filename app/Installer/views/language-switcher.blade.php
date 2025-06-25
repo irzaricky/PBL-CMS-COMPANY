@@ -2,13 +2,13 @@
     <div class="language-buttons">
         <a href="{{ route('installer.language', 'en') }}"
             class="language-btn {{ app()->getLocale() === 'en' ? 'active' : '' }}">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTUiIHZpZXdCb3g9IjAgMCAyMCA1IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMjAiIGhlaWdodD0iNSIgZmlsbD0iI0IyMjIzNCIvPgo8cmVjdCB5PSIxLjY3IiB3aWR0aD0iMjAiIGhlaWdodD0iMS42NiIgZmlsbD0id2hpdGUiLz4KPHJlY3QgeT0iMy4zMyIgd2lkdGg9IjIwIiBoZWlnaHQ9IjEuNjciIGZpbGw9IiNCMjIyMzQiLz4KPC9zdmc+"
+            <img src="{{ asset('image/flag/us.svg') }}"
                 alt="EN" class="flag-icon" />
             <span>EN</span>
         </a>
         <a href="{{ route('installer.language', 'id') }}"
             class="language-btn {{ app()->getLocale() === 'id' ? 'active' : '' }}">
-            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTUiIHZpZXdCb3g9IjAgMCAyMCAxNSIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjIwIiBoZWlnaHQ9IjE1IiBmaWxsPSIjRkYwMDAwIi8+CjxyZWN0IHk9IjcuNSIgd2lkdGg9IjIwIiBoZWlnaHQ9IjcuNSIgZmlsbD0id2hpdGUiLz4KPC9zdmc+"
+            <img src="{{ asset('image/flag/id.svg') }}"
                 alt="ID" class="flag-icon" />
             <span>ID</span>
         </a>

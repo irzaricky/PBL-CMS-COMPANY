@@ -4,12 +4,12 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import axios from 'axios'
 import { Link } from '@inertiajs/vue3'
 // Import Lucide icons
-import { 
-    Facebook, 
-    Instagram, 
-    Linkedin, 
-    Twitter, 
-    Youtube, 
+import {
+    Facebook,
+    Instagram,
+    Linkedin,
+    Twitter,
+    Youtube,
     Github,
     MessageCircle, // For WhatsApp
     Send, // For Telegram
@@ -22,8 +22,9 @@ const loading = ref(false)
 const error = ref(null)
 const mediaSosial = ref([])
 
-// Jumlah kalimat
-const maxKalimat = 1
+// Text reveal animation refs
+const isTextVisible = ref(false)
+const observer = ref(null)
 
 // Function to strip HTML tags
 function stripHtml(html: string): string {
@@ -33,11 +34,16 @@ function stripHtml(html: string): string {
     return tmp.textContent || tmp.innerText || '';
 }
 
-// Function to truncate text
-function truncateText(text: string, length = 150): string {
-    if (!text) return '';
-    return text.length > length ? text.substring(0, length) + '...' : text;
-}
+// Computed for company description
+const companyDescription = computed(() => {
+    if (!profil_perusahaan.value?.deskripsi_perusahaan) {
+        return 'Deskripsi perusahaan belum tersedia saat ini.';
+    }
+    return stripHtml(profil_perusahaan.value.deskripsi_perusahaan);
+})
+
+// Jumlah kalimat untuk visi misi
+const maxKalimat = 1
 
 // Visi
 const truncatedVisi = computed(() => {
@@ -84,10 +90,9 @@ async function fetchMediaSosial() {
     try {
         const response = await axios.get('/api/media-sosial');
         mediaSosial.value = [];
-        
-        // Process the response data
+
         for (const [platform, data] of Object.entries(response.data.data)) {
-            if ((data as any).active === 1) {  // Check if active is 1 (true)
+            if ((data as any).active === 1) {
                 mediaSosial.value.push({
                     name: platform,
                     link: (data as any).link
@@ -101,9 +106,9 @@ async function fetchMediaSosial() {
 
 // Utility
 function getImageUrl(image: string | string[] | null): string {
-    if (!image) return "/image/placeholder.webp"
+    if (!image) return ""
     if (Array.isArray(image)) {
-        return image.length > 0 ? `/storage/${image[0]}` : "/image/placeholder.webp"
+        return image.length > 0 ? `/storage/${image[0]}` : ""
     }
     return `/storage/${image}`
 }
@@ -112,7 +117,6 @@ function getImageUrl(image: string | string[] | null): string {
 const topIndex = ref(0)
 const bottomIndex = ref(0)
 
-// Bagi thumbnail jadi 2 bagian
 const thumbnailTop = computed(() => {
     return profil_perusahaan.value?.thumbnail_perusahaan?.slice(0, 2) || []
 })
@@ -139,16 +143,45 @@ onMounted(() => {
             bottomIndex.value = (bottomIndex.value + 1) % thumbnailBottom.value.length
         }
     }, 4000)
+
+    // Intersection Observer for text reveal - Modified untuk refresh berulang
+    observer.value = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    // Reset dulu kemudian trigger animasi
+                    isTextVisible.value = false
+                    setTimeout(() => {
+                        isTextVisible.value = true
+                    }, 50)
+                } else {
+                    // Reset ketika keluar dari viewport
+                    isTextVisible.value = false
+                }
+            })
+        },
+        { threshold: 0.3 }
+    )
+
+    // Observe the description section after component is mounted
+    setTimeout(() => {
+        const descSection = document.getElementById('company-description')
+        if (descSection && observer.value) {
+            observer.value.observe(descSection)
+        }
+    }, 100)
 })
 
 onUnmounted(() => {
     clearInterval(intervalTop)
     clearInterval(intervalBottom)
+    if (observer.value) {
+        observer.value.disconnect()
+    }
 })
 
 // Social media icons
 function getMediaSosialComponent(platform) {
-    // Map platform names to Lucide components
     const iconMap = {
         'Facebook': Facebook,
         'Instagram': Instagram,
@@ -160,66 +193,175 @@ function getMediaSosialComponent(platform) {
         'Telegram': Send,
         'GitHub': Github
     };
-    
+
     return iconMap[platform] || null;
 }
 </script>
 
 <template>
     <AppLayout>
-        <div class="w-full px-4 sm:px-8 lg:px-16 py-20 bg-secondary text-white relative overflow-hidden">
-            <div class="w-full max-w-screen-xl mx-auto flex flex-col justify-start items-center gap-16 overflow-hidden relative z-10">
-                <div class="w-full max-w-3xl flex flex-col justify-start items-center gap-6">
-                    <div class="w-full flex flex-col justify-start items-center gap-4 text-center">
-                        <h1 class="text-4xl lg:text-6xl font-normal font-custom leading-tight">
-                            Haloo, kenalan dong!
-                        </h1>
-                        <p class="text-base lg:text-lg font-normal font-custom leading-relaxed">
-                            Ayo kita cari tahu lebih banyak tentang {{ profil_perusahaan?.nama_perusahaan }}
-                        </p>
+        <!-- Extended Modern Hero Section -->
+        <div class="relative w-full min-h-screen bg-secondary overflow-hidden font-custom">
+            <!-- Animated Background Elements -->
+            <div class="absolute inset-0">
+                <!-- Floating geometric shapes -->
+                <div class="absolute top-20 left-10 w-32 h-32 bg-white/5 rounded-full animate-pulse"></div>
+                <div class="absolute top-40 right-20 w-24 h-24 bg-white/10 rounded-lg rotate-45 animate-bounce"></div>
+                <div class="absolute bottom-32 left-20 w-40 h-40 bg-primary/20 rounded-full animate-pulse"></div>
+                <div class="absolute bottom-20 right-40 w-16 h-16 bg-white/15 rounded-full animate-ping"></div>
+
+                <!-- Grid pattern overlay -->
+                <div
+                    class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]">
+                </div>
+            </div>
+
+            <!-- Main Hero Content -->
+            <div
+                class="relative z-10 w-full max-w-screen-xl mx-auto px-4 sm:px-8 lg:px-16 py-20 min-h-screen flex items-center">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-20 w-full">
+
+                    <!-- Left Content -->
+                    <div class="flex-1 text-center lg:text-left space-y-8">
+                        <!-- Greeting Badge -->
+                        <div
+                            class="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm font-medium text-white">
+                            <span class="w-2 h-2 bg-green-400 rounded-full mr-3 animate-pulse"></span>
+                            Selamat datang
+                        </div>
+
+                        <!-- Main Heading -->
+                        <div class="space-y-4">
+                            <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold text-white leading-tight">
+                                <span class="block">Halo,</span>
+                                <span
+                                    class="block bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                                    Kenalan Yuk!
+                                </span>
+                            </h1>
+                            <p class="text-lg lg:text-xl text-white/80 font-light leading-relaxed max-w-2xl">
+                                Mari berkenalan lebih dekat dengan
+                                <span class="font-semibold text-white">
+                                    {{ profil_perusahaan?.nama_perusahaan || 'Perusahaan Kami' }}
+                                </span>
+                                dan temukan cerita di balik inovasi yang kami ciptakan.
+                            </p>
+                        </div>
+
+                        <!-- CTA Buttons -->
+                        <div class="flex flex-col lg:flex-row gap-4 pt-4">
+                            <a href="#company-description"
+                                class="inline-flex items-center justify-center px-8 py-4 bg-white text-secondary font-semibold rounded-full hover:bg-black hover:text-white transition-all duration-300 shadow-lg">
+                                <span>Jelajahi Cerita Kami</span>
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                                </svg>
+                            </a>
+                            <Link href="/kontak"
+                                class="inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:bg-white/10 hover:border-white/50 transition-all duration-300">
+                            <span>Hubungi Kami</span>
+                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                            </svg>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <!-- Right Content - Logo Display -->
+                    <div class="flex-1 flex justify-center lg:justify-end">
+                        <div class="relative">
+                            <!-- Logo Container with modern styling -->
+                            <div class="relative group">
+                                <!-- Animated rings -->
+                                <div
+                                    class="absolute inset-0 rounded-full bg-gradient-to-r from-white/20 to-primary/20 animate-spin [animation-duration:20s]">
+                                </div>
+                                <div
+                                    class="absolute inset-2 rounded-full bg-gradient-to-l from-primary/30 to-white/10 animate-spin [animation-duration:15s] [animation-direction:reverse]">
+                                </div>
+
+                                <!-- Logo -->
+                                <div
+                                    class="relative bg-white/10 backdrop-blur-lg rounded-full p-8 border border-white/20 group-hover:scale-105 transition-all duration-500">
+                                    <div v-if="profil_perusahaan?.logo_perusahaan" class="w-48 h-48 lg:w-64 lg:h-64">
+                                        <img :src="getImageUrl(profil_perusahaan.logo_perusahaan)"
+                                            :alt="profil_perusahaan.nama_perusahaan"
+                                            class="w-full h-full object-contain drop-shadow-2xl" />
+                                    </div>
+                                    <div v-else class="w-48 h-48 lg:w-64 lg:h-64 flex items-center justify-center">
+                                        <div class="text-6xl lg:text-8xl font-bold text-white/50">
+                                            {{ profil_perusahaan?.nama_perusahaan?.charAt(0) || '?' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Floating greeting cards -->
+                            <div
+                                class="absolute -bottom-6 -left-6 bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-white">Hi!</div>
+                                    <div class="text-xs text-white/70">Salam Hangat</div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="absolute -top-6 -right-6 bg-primary/20 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                                <div class="text-center">
+                                    <div class="text-2xl font-bold text-white">👋</div>
+                                    <div class="text-xs text-white/70">Welcome</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Section 2: Company Story with Enhanced Design -->
-        <div class="w-full px-4 sm:px-8 lg:px-16 pb-20 bg-secondary text-white">
-            <div class="w-full max-w-screen-xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-20">
-                <!-- KOLOM LOGO + TAGLINE -->
-                <div class="flex-1 flex flex-col justify-center items-center text-center gap-4 overflow-hidden">
-                    <!-- LOGO PERUSAHAAN with enhanced presentation -->
-                    <div class="mb-2 relative group">
-                        <div class="absolute inset-0 bg-white/10 rounded-full scale-90 group-hover:scale-100 transition-all duration-300"></div>
-                        <img :src="getImageUrl(profil_perusahaan?.logo_perusahaan)" alt="Logo Perusahaan"
-                            class="w-80 h-80 object-contain relative z-10" />
-                    </div>
-
-                    <!-- TAGLINE with modern styling -->
-                    <div class="text-sm lg:text-base font-semibold font-custom leading-normal px-4 py-1 bg-white/10 backdrop-blur-sm rounded-full">
-                        Profil Perusahaan
-                    </div>
-
-                    <!-- TITLE with enhanced typography -->
-                    <h2 class="text-3xl lg:text-5xl font-normal font-custom leading-tight">
-                        {{ profil_perusahaan?.nama_perusahaan }}
-                    </h2>
+            <!-- Scroll indicator -->
+            <div class="relative mt-8 flex justify-center">
+                <div class="flex flex-col items-center space-y-2 animate-bounce">
+                    <span class="text-white/60 text-sm">Scroll untuk melihat lebih</span>
+                    <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
                 </div>
+            </div>
 
-                <!-- KOLOM TEKS with modern card styling -->
-                <div class="flex-1 flex flex-col justify-center items-center gap-6">
-                    <div class="bg-white/5 backdrop-blur-sm p-6 rounded-2xl border border-white/10">
-                        <!-- Use v-html for rich content display -->
-                        <div 
-                            v-if="profil_perusahaan?.deskripsi_perusahaan"
-                            v-html="profil_perusahaan.deskripsi_perusahaan"
-                            class="text-base lg:text-lg font-normal font-custom leading-relaxed prose prose-invert max-w-none"
-                        ></div>
-                        <p 
-                            v-else
-                            class="text-base lg:text-lg font-normal font-custom leading-relaxed"
-                        >
-                            Sejarah perusahaan belum tersedia.
-                        </p>
+            <!-- Company Description Section with Text Reveal -->
+            <div id="company-description"
+                class="relative z-10 w-full max-w-screen-xl mx-auto px-4 sm:px-8 lg:px-16 py-20 text-secondary">
+                <div class="text-center space-y-8">
+                    <!-- Section Badge -->
+                    <div
+                        class="inline-flex items-center px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-sm font-medium text-white">
+                        <span class="w-2 h-2 bg-blue-400 rounded-full mr-3 animate-pulse"></span>
+                        Tentang Kami
+                    </div>
+
+                    <!-- Company Name with Gradient -->
+                    <h2
+                        class="text-3xl lg:text-5xl font-bold leading-tight bg-gradient-to-r from-white to-white/90 bg-clip-text text-white">
+                        {{ profil_perusahaan?.nama_perusahaan || 'Perusahaan Kami' }}
+                    </h2>
+
+                    <!-- Text Reveal Animation -->
+                    <div class="max-w-4xl mx-auto pb-12">
+                        <div class="overflow-hidden text-lg lg:text-xl font-light leading-relaxed text-white">
+                            <span v-for="(char, index) in companyDescription.split('')" :key="`${char}-${index}`"
+                                :class="[
+                                    'inline-block transition-all duration-500 ease-out',
+                                    isTextVisible
+                                        ? 'transform translate-y-0 opacity-100'
+                                        : 'transform translate-y-8 opacity-0'
+                                ]" :style="{
+                                    transitionDelay: isTextVisible ? `${index * 0.02}s` : '0s'
+                                }">
+                                {{ char === ' ' ? '\u00A0' : char }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -236,16 +378,17 @@ function getMediaSosialComponent(platform) {
                         Visi Kami
                     </h3>
                     <div class="text-base lg:text-lg font-normal font-custom leading-relaxed lg:text-right">
-                        <!-- Strip HTML for preview, show plain text -->
                         <p>{{ truncatedVisi }}</p>
-                        <Link v-if="showReadMoreVisi" href="/visi-misi" class="text-blue-400 cursor-pointer hover:underline">
-                            ... Baca selengkapnya
+                        <Link v-if="showReadMoreVisi" href="/visi-misi"
+                            class="text-blue-400 cursor-pointer hover:underline">
+                        ... Baca selengkapnya
                         </Link>
                     </div>
                 </div>
 
                 <!-- Gambar atas - top-right petal (Slider 1) -->
-                <div class="order-2 overflow-hidden rounded-lg lg:rounded-tr-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-bl-[20px] h-96">
+                <div
+                    class="order-2 overflow-hidden rounded-lg lg:rounded-tr-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-bl-[20px] h-96">
                     <div v-if="thumbnailTop.length" class="flex h-full transition-transform duration-700 ease-in-out"
                         :style="{ transform: `translateX(-${topIndex * 100}%)` }">
                         <div v-for="(img, i) in thumbnailTop" :key="'top-slide-' + i"
@@ -259,7 +402,8 @@ function getMediaSosialComponent(platform) {
                 </div>
 
                 <!-- Gambar bawah - bottom-left petal (Slider 2) -->
-                <div class="order-3 overflow-hidden rounded-lg lg:rounded-bl-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-tr-[20px] h-96">
+                <div
+                    class="order-3 overflow-hidden rounded-lg lg:rounded-bl-[100px] lg:rounded-tl-[100px] lg:rounded-br-[100px] lg:rounded-tr-[20px] h-96">
                     <div v-if="thumbnailBottom.length" class="flex h-full transition-transform duration-700 ease-in-out"
                         :style="{ transform: `translateX(-${bottomIndex * 100}%)` }">
                         <div v-for="(img, i) in thumbnailBottom" :key="'bottom-slide-' + i"
@@ -278,10 +422,10 @@ function getMediaSosialComponent(platform) {
                      transform hover:translate-y-[-5px] transition-all duration-300">
                     <h3 class="text-2xl lg:text-4xl font-semibold font-custom">Misi Kami</h3>
                     <div class="text-base lg:text-lg font-normal font-custom leading-relaxed">
-                        <!-- Strip HTML for preview, show plain text -->
                         <p>{{ truncatedMisi }}</p>
-                        <Link v-if="showReadMoreMisi" href="/visi-misi" class="text-blue-400 cursor-pointer hover:underline">
-                            ... Baca selengkapnya
+                        <Link v-if="showReadMoreMisi" href="/visi-misi"
+                            class="text-blue-400 cursor-pointer hover:underline">
+                        ... Baca selengkapnya
                         </Link>
                     </div>
                 </div>
@@ -293,7 +437,7 @@ function getMediaSosialComponent(platform) {
             <!-- Decorative elements -->
             <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-bl-full"></div>
             <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-tr-full"></div>
-            
+
             <div class="max-w-screen-xl mx-auto flex flex-col justify-center items-center gap-10 relative z-10">
                 <!-- Modern heading with accent line -->
                 <div class="text-center">
@@ -303,29 +447,22 @@ function getMediaSosialComponent(platform) {
                     <div class="w-16 h-1 bg-primary mx-auto mt-3"></div>
                 </div>
 
-                <!-- Social media icons - modern grid layout -->
+                <!-- Social media icons -->
                 <div v-if="mediaSosial.length > 0" class="flex flex-wrap justify-center gap-6">
-                    <a 
-                        v-for="(platform, index) in mediaSosial" 
-                        :key="index"
-                        :href="platform.link" 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        class="group flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/20 
+                    <a v-for="(platform, index) in mediaSosial" :key="index" :href="platform.link" target="_blank"
+                        rel="noopener noreferrer" class="group flex items-center justify-center w-12 h-12 rounded-full bg-white/10 border border-white/20 
                                hover:bg-white hover:text-secondary hover:border-primary transition-all duration-300"
-                        :title="platform.name"
-                    >
-                        <component 
-                            :is="getMediaSosialComponent(platform.name)" 
-                            class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" 
-                        />
+                        :title="platform.name">
+                        <component :is="getMediaSosialComponent(platform.name)"
+                            class="w-6 h-6 transition-transform duration-300 group-hover:scale-110" />
                     </a>
                 </div>
 
                 <!-- Call to action text -->
                 <p class="text-sm lg:text-base font-normal font-custom leading-relaxed text-center max-w-2xl px-4 
                           bg-white/5 backdrop-blur-sm py-4 rounded-xl border border-white/10">
-                    Bergabunglah dengan kami dan dapatkan update terbaru tentang perusahaan, produk, dan penawaran menarik lainnya.
+                    Bergabunglah dengan kami dan dapatkan update terbaru tentang perusahaan, produk, dan penawaran
+                    menarik lainnya.
                 </p>
             </div>
         </div>
@@ -334,6 +471,28 @@ function getMediaSosialComponent(platform) {
 </template>
 
 <style scoped>
+/* Add smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom animations */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
 /* Ensure HTML content in description renders properly */
 :deep(.prose) {
     max-width: none;

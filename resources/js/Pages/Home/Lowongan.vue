@@ -153,7 +153,7 @@ function truncateText(text, length = 150) {
             </div>
 
             <!-- Gambar Slider -->
-            <div class="flex-1 max-w-full" data-aos="fade-left">
+            <div class="flex-1 max-w-full" data-aos="fade-up">
                 <div class="relative h-full w-full aspect-[1/1] overflow-hidden rounded-2xl">
                     <template v-if="lowongan.length > 0">
                         <div class="flex transition-transform duration-700 ease-in-out h-full"

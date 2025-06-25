@@ -65,6 +65,7 @@ class FeedbackSeeder extends Seeder
                 'subjek_feedback' => $faker->randomElement($subjects),
                 'isi_feedback' => $faker->paragraph(rand(1, 3)),
                 'tanggapan_feedback' => $hasResponse ? $faker->paragraph(rand(1, 2)) : null,
+                'status_feedback' => $hasResponse ? 'terpublikasi' : 'tidak terpublikasi',
                 'created_at' => $faker->dateTimeBetween('-1 year', 'now'),
             ];
         }

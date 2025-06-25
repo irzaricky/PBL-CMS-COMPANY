@@ -13,10 +13,13 @@ use Filament\Resources\Resource;
 use Filament\Resources\Components\Tab;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Clusters\TestimoniCluster\Resources\TestimoniProdukResource\Pages;
 use App\Filament\Clusters\TestimoniCluster\Resources\TestimoniProdukResource\RelationManagers;
+use Illuminate\Database\Eloquent\Model;
 
 class TestimoniProdukResource extends Resource
 {
@@ -33,59 +36,65 @@ class TestimoniProdukResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
+        // Hilangkan form atau return empty form
+        return $form->schema([]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
             ->schema([
-                Forms\Components\Section::make('Informasi Testimoni')
+                Infolists\Components\Section::make('Informasi Testimoni')
                     ->schema([
-                        Forms\Components\Select::make('id_user')
+                        Infolists\Components\TextEntry::make('user.name')
                             ->label('User')
-                            ->relationship('user', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
+                            ->icon('heroicon-o-user'),
 
-                        Forms\Components\Select::make('id_produk')
+                        Infolists\Components\TextEntry::make('user.email')
+                            ->label('Email User')
+                            ->icon('heroicon-o-envelope'),
+
+                        Infolists\Components\TextEntry::make('produk.nama_produk')
                             ->label('Produk')
-                            ->relationship('produk', 'nama_produk')
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-                        Forms\Components\Textarea::make('isi_testimoni')
+                            ->icon('heroicon-o-shopping-bag'),
+
+                        Infolists\Components\TextEntry::make('produk.kategori_produk.nama_kategori_produk')
+                            ->label('Kategori Produk')
+                            ->icon('heroicon-o-tag'),
+
+                        Infolists\Components\TextEntry::make('isi_testimoni')
                             ->label('Isi Testimoni')
-                            ->rows(5)
-                            ->required()
                             ->columnSpanFull()
-                            ->maxLength(255)
-                            ->helperText('Maksimal 5 kata')
-                            ->rules([
-                                'required',
-                                function ($attribute, $value, $fail) {
-                                    $wordCount = str_word_count($value);
-                                    if ($wordCount > 5) {
-                                        $fail('Isi testimoni tidak boleh lebih dari 5 kata.');
-                                    }
-                                },
-                            ]),
+                            ->icon('heroicon-o-chat-bubble-left-right'),
 
-                        Forms\Components\Select::make('rating')
+                        Infolists\Components\TextEntry::make('rating')
                             ->label('Rating')
-                            ->options([
-                                1 => '1 ⭐',
-                                2 => '2 ⭐⭐',
-                                3 => '3 ⭐⭐⭐',
-                                4 => '4 ⭐⭐⭐⭐',
-                                5 => '5 ⭐⭐⭐⭐⭐',
-                            ])
-                            ->required(),
+                            ->formatStateUsing(fn(string $state): string => str_repeat('⭐', (int) $state))
+                            ->icon('heroicon-o-star'),
 
-                        Forms\Components\Select::make('status')
+                        Infolists\Components\TextEntry::make('status')
                             ->label('Status')
-                            ->options([
-                                'tidak terpublikasi' => 'Tidak Terpublikasi',
+                            ->badge()
+                            ->color(fn (string $state): string => match ($state) {
+                                'terpublikasi' => 'success',
+                                'tidak terpublikasi' => 'warning',
+                                default => 'gray',
+                            })
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'terpublikasi' => 'Terpublikasi',
-                            ])
-                            ->default('tidak terpublikasi')
-                            ->required(),
+                                'tidak terpublikasi' => 'Tidak Terpublikasi',
+                                default => $state,
+                            }),
+
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('Tanggal Dibuat')
+                            ->dateTime('d M Y, H:i')
+                            ->icon('heroicon-o-calendar'),
+
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('Terakhir Diperbarui')
+                            ->dateTime('d M Y, H:i')
+                            ->icon('heroicon-o-clock'),
                     ])
                     ->columns(2),
             ]);
@@ -107,13 +116,14 @@ class TestimoniProdukResource extends Resource
 
                 Tables\Columns\TextColumn::make('isi_testimoni')
                     ->label('Testimoni')
-                    ->limit(30)
+                    ->limit(50)
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('rating')
                     ->label('Rating')
                     ->formatStateUsing(fn(string $state): string => str_repeat('⭐', (int) $state))
                     ->sortable(),
+                    
                 Tables\Columns\SelectColumn::make('status')
                     ->label('Status')
                     ->options([
@@ -125,7 +135,7 @@ class TestimoniProdukResource extends Resource
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat')
-                    ->dateTime()
+                    ->dateTime('d M Y')
                     ->sortable(),
             ])
             ->filters([
@@ -143,15 +153,23 @@ class TestimoniProdukResource extends Resource
                         4 => '4 ⭐⭐⭐⭐',
                         5 => '5 ⭐⭐⭐⭐⭐',
                     ]),
+
+                Tables\Filters\SelectFilter::make('produk')
+                    ->relationship('produk', 'nama_produk')
+                    ->searchable()
+                    ->preload(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Lihat Detail'),
+                Tables\Actions\DeleteAction::make()
+                    ->visible(fn() => auth()->user()->can('delete_testimoni::produk', TestimoniProduk::class)),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible(fn() => auth()->user()->can('delete_any_testimoni::produk')),
+                        
                     Tables\Actions\BulkAction::make('approve')
                         ->label('Setujui')
                         ->icon('heroicon-o-check')
@@ -161,7 +179,8 @@ class TestimoniProdukResource extends Resource
                                 $record->update(['status' => 'terpublikasi']);
                             });
                         })
-                        ->requiresConfirmation(),
+                        ->requiresConfirmation()
+                        ->visible(fn() => auth()->user()->can('update_testimoni::produk', TestimoniProduk::class)),
 
                     Tables\Actions\BulkAction::make('reject')
                         ->label('Tolak')
@@ -172,7 +191,8 @@ class TestimoniProdukResource extends Resource
                                 $record->update(['status' => 'tidak terpublikasi']);
                             });
                         })
-                        ->requiresConfirmation(),
+                        ->requiresConfirmation()
+                        ->visible(fn() => auth()->user()->can('update_testimoni::produk', TestimoniProduk::class)),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
@@ -184,22 +204,30 @@ class TestimoniProdukResource extends Resource
             //
         ];
     }
+
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListTestimoniProduk::route('/'),
             'view' => Pages\ViewTestimoniProduk::route('/{record}'),
-            'edit' => Pages\EditTestimoniProduk::route('/{record}/edit'),
+            // Hilangkan 'edit' dan 'create' pages
         ];
     }
+
     public static function canAccess(): bool
     {
         return auth()->user()?->can('view_any_testimoni::produk') ?? false;
     }
+
     public static function canCreate(): bool
     {
-        return false;
+        return false; // Disable create
     }
+
+     public static function canEdit(Model $record): bool
+     {
+        return false; // Disable edit
+     }
 
     public static function getTabs(): array
     {

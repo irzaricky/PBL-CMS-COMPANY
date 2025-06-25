@@ -107,22 +107,9 @@ class ProfilPerusahaanResource extends Resource
                             ->maxLength(50)
                             ->placeholder('contoh@perusahaan.com'),
 
-                        Forms\Components\RichEditor::make('deskripsi_perusahaan')
+                        Forms\Components\TextInput::make('deskripsi_perusahaan')
                             ->label('Deskripsi Perusahaan')
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('perusahaan-attachments')
-                            ->toolbarButtons([
-                                'bold',
-                                'italic',
-                                'underline',
-                                'h1',
-                                'h2',
-                                'link',
-                                'bulletList',
-                                'orderedList',
-                                'redo',
-                                'undo',
-                            ])
+                            ->maxLength(300)
                             ->columnSpanFull(),
                     ]),
 
@@ -343,97 +330,51 @@ class ProfilPerusahaanResource extends Resource
                             ->schema([
                                 Infolists\Components\Grid::make([
                                     'default' => 1,
-                                    'sm' => 1,
-                                    'md' => 12,
+                                    'md' => 4,
                                 ])
                                     ->schema([
-                                        // Year Badge Section 
+                                        // Year Section
                                         Infolists\Components\Group::make([
                                             Infolists\Components\TextEntry::make('tahun')
-                                                ->label('')
-                                                ->formatStateUsing(fn($state) => $state)
-                                                ->badge()
+                                                ->label('Tahun')
                                                 ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
                                                 ->weight('bold')
+                                                ->badge()
                                                 ->color(function ($state) {
                                                     $currentYear = date('Y');
                                                     $yearDiff = $currentYear - $state;
-
+                                                    
                                                     return match (true) {
                                                         $yearDiff <= 2 => 'success',
-                                                        $yearDiff <= 5 => 'info',
+                                                        $yearDiff <= 5 => 'info', 
                                                         $yearDiff <= 10 => 'warning',
-                                                        $yearDiff <= 20 => 'gray',
-                                                        default => 'danger'
-                                                    };
-                                                })
-                                                ->icon('heroicon-o-calendar-days')
-                                                ->extraAttributes([
-                                                    'class' => 'timeline-year-badge flex justify-center items-center text-center min-h-[60px] md:min-h-[80px] text-lg md:text-2xl font-black mb-4 md:mb-0'
-                                                ])
-                                                ->tooltip(function ($state) {
-                                                    if (!$state || !is_numeric($state)) {
-                                                        return null;
-                                                    }
-
-                                                    $currentYear = (int) date('Y');
-                                                    $yearDiff = $currentYear - (int) $state;
-
-                                                    if ($yearDiff < 1) {
-                                                        return 'Tahun ini';
-                                                    }
-
-                                                    if ($yearDiff == 1) {
-                                                        return 'Tahun lalu';
-                                                    }
-
-                                                    return match (true) {
-                                                        // Mulai dari 2 tahun
-                                                        $yearDiff <= 5 => "Baru ({$yearDiff} tahun lalu)",
-                                                        $yearDiff <= 10 => "Cukup lama ({$yearDiff} tahun lalu)",
-                                                        $yearDiff <= 20 => "Lama ({$yearDiff} tahun lalu)",
-                                                        default => "Sangat lama ({$yearDiff} tahun lalu)"
+                                                        default => 'gray'
                                                     };
                                                 }),
                                         ])->columnSpan([
-                                            'default' => 1,    // Mobile: full width
-                                            'md' => 2,         // Desktop: 2/12 kolom
+                                            'default' => 1,
+                                            'md' => 1,
                                         ]),
 
-                                        // Content Section - Responsive  
+                                        // Content Section  
                                         Infolists\Components\Group::make([
-                                            // Achievement Title
                                             Infolists\Components\TextEntry::make('judul')
-                                                ->label('')
-                                                ->formatStateUsing(fn($state) => "🏆 " . $state)
+                                                ->label('Pencapaian')
                                                 ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
                                                 ->weight('bold')
-                                                ->color('primary')
-                                                ->extraAttributes([
-                                                    'class' => 'timeline-title mb-3 text-base md:text-lg'
-                                                ]),
+                                                ->color('primary'),
 
-                                            // Description
                                             Infolists\Components\TextEntry::make('deskripsi')
-                                                ->label('')
+                                                ->label('Deskripsi')
                                                 ->prose()
-                                                ->color('gray')
-                                                ->extraAttributes([
-                                                    'class' => 'timeline-description leading-relaxed text-sm md:text-base'
-                                                ]),
+                                                ->color('gray'),
                                         ])->columnSpan([
-                                            'default' => 1,    // Mobile: full width
-                                            'md' => 10,        // Desktop: 10/12 kolom
+                                            'default' => 1,
+                                            'md' => 3,
                                         ]),
-                                    ])
-                                    ->extraAttributes([
-                                        'class' => 'timeline-item bg-gradient-to-r from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-xl p-4 md:p-6 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary-300 transition-all duration-300 mb-4'
                                     ]),
                             ])
-                            ->contained(false)
-                            ->extraAttributes([
-                                'class' => 'timeline-container space-y-4'
-                            ]),
+                            ->contained(true),
                     ])
                     ->collapsible()
                     ->visible(fn($record) => !empty($record->sejarah_perusahaan)),

@@ -34,6 +34,7 @@ class Feedback extends Model
         'tingkat_kepuasan',
         'isi_feedback',
         'tanggapan_feedback',
+        'status_feedback',
     ];
 
     /**

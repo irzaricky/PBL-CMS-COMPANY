@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import { nextTick } from 'vue';
 
 const events = ref([]);
 const loading = ref(false);
