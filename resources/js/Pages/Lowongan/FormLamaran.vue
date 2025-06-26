@@ -180,15 +180,16 @@ async function submitApplication() {
         <div>
             <label
                 for="nama_lengkap"
-                class="block text-sm font-medium text-gray-700 mb-1"
+                class="block text-sm font-medium text-white mb-2"
             >
-                Nama Lengkap <span class="text-red-500">*</span>
+                Nama Lengkap <span class="text-red-400">*</span>
             </label>
             <input
                 id="nama_lengkap"
                 v-model="formData.nama_lengkap"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary"
+                class="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:bg-white/15 focus:border-white/30"
+                placeholder="Masukkan nama lengkap Anda"
                 required
             />
         </div>
@@ -197,15 +198,16 @@ async function submitApplication() {
         <div>
             <label
                 for="email"
-                class="block text-sm font-medium text-gray-700 mb-1"
+                class="block text-sm font-medium text-white mb-2"
             >
-                Email <span class="text-red-500">*</span>
+                Email <span class="text-red-400">*</span>
             </label>
             <input
                 id="email"
                 v-model="formData.email"
                 type="email"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary"
+                class="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:bg-white/15 focus:border-white/30"
+                placeholder="contoh@email.com"
                 required
             />
         </div>
@@ -214,36 +216,38 @@ async function submitApplication() {
         <div>
             <label
                 for="surat_lamaran"
-                class="block text-sm font-medium text-gray-700 mb-1"
+                class="block text-sm font-medium text-white mb-2"
             >
-                Surat Lamaran (.pdf/.doc/.docx)<span class="text-red-500"
-                    >*</span
-                >
+                Surat Lamaran <span class="text-red-400">*</span>
             </label>
-            <input
-                id="surat_lamaran"
-                type="file"
-                @change="handleFileUpload('surat_lamaran')($event)"
-                accept=".pdf,.doc,.docx"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20"
-                required
-            />
+            <div class="relative">
+                <input
+                    id="surat_lamaran"
+                    type="file"
+                    @change="handleFileUpload('surat_lamaran')($event)"
+                    accept=".pdf,.doc,.docx"
+                    class="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-white/20 file:text-white hover:file:bg-white/30 file:cursor-pointer cursor-pointer focus:outline-none focus:bg-white/15 focus:border-white/30"
+                    required
+                />
+            </div>
             <!-- File Preview Card -->
             <div
                 v-if="formData.surat_lamaran"
-                class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                class="mt-3 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10"
             >
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <component
-                            :is="getFileIcon(formData.surat_lamaran)"
-                            class="w-5 h-5 text-gray-600"
-                        />
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white/10 rounded-lg">
+                            <component
+                                :is="getFileIcon(formData.surat_lamaran)"
+                                class="w-5 h-5 text-white"
+                            />
+                        </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-900">
+                            <p class="text-sm font-medium text-white">
                                 {{ formData.surat_lamaran.name }}
                             </p>
-                            <p class="text-xs text-gray-500">
+                            <p class="text-xs text-white/60">
                                 {{
                                     (
                                         formData.surat_lamaran.size /
@@ -255,11 +259,11 @@ async function submitApplication() {
                             </p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1">
                         <button
                             type="button"
                             @click="openPreview('surat_lamaran')"
-                            class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
+                            class="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                             title="Preview file"
                         >
                             <Eye class="w-4 h-4" />
@@ -267,7 +271,7 @@ async function submitApplication() {
                         <button
                             type="button"
                             @click="removeFile('surat_lamaran')"
-                            class="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
+                            class="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors"
                             title="Hapus file"
                         >
                             <X class="w-4 h-4" />
@@ -281,34 +285,36 @@ async function submitApplication() {
         <div>
             <label
                 for="cv"
-                class="block text-sm font-medium text-gray-700 mb-1"
+                class="block text-sm font-medium text-white mb-2"
             >
-                CV (.pdf/.doc/.docx)<span class="text-red-500">*</span>
+                CV/Resume <span class="text-red-400">*</span>
             </label>
             <input
                 id="cv"
                 type="file"
                 @change="handleFileUpload('cv')($event)"
                 accept=".pdf,.doc,.docx"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20"
+                class="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-white/20 file:text-white hover:file:bg-white/30 file:cursor-pointer cursor-pointer focus:outline-none focus:bg-white/15 focus:border-white/30"
                 required
             />
             <!-- File Preview Card -->
             <div
                 v-if="formData.cv"
-                class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                class="mt-3 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10"
             >
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <component
-                            :is="getFileIcon(formData.cv)"
-                            class="w-5 h-5 text-gray-600"
-                        />
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white/10 rounded-lg">
+                            <component
+                                :is="getFileIcon(formData.cv)"
+                                class="w-5 h-5 text-white"
+                            />
+                        </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-900">
+                            <p class="text-sm font-medium text-white">
                                 {{ formData.cv.name }}
                             </p>
-                            <p class="text-xs text-gray-500">
+                            <p class="text-xs text-white/60">
                                 {{
                                     (formData.cv.size / 1024 / 1024).toFixed(2)
                                 }}
@@ -316,11 +322,11 @@ async function submitApplication() {
                             </p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1">
                         <button
                             type="button"
                             @click="openPreview('cv')"
-                            class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
+                            class="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                             title="Preview file"
                         >
                             <Eye class="w-4 h-4" />
@@ -328,7 +334,7 @@ async function submitApplication() {
                         <button
                             type="button"
                             @click="removeFile('cv')"
-                            class="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
+                            class="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors"
                             title="Hapus file"
                         >
                             <X class="w-4 h-4" />
@@ -342,34 +348,36 @@ async function submitApplication() {
         <div>
             <label
                 for="portfolio"
-                class="block text-sm font-medium text-gray-700 mb-1"
+                class="block text-sm font-medium text-white mb-2"
             >
-                Portfolio (.pdf/.doc/.docx)
-                <span class="text-gray-500 text-xs">(opsional)</span>
+                Portfolio
+                <span class="text-white/60 text-xs font-normal">(opsional)</span>
             </label>
             <input
                 id="portfolio"
                 type="file"
                 @change="handleFileUpload('portfolio')($event)"
                 accept=".pdf,.doc,.docx,.zip"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-secondary/10 file:text-secondary hover:file:bg-secondary/20"
+                class="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-white/20 file:text-white hover:file:bg-white/30 file:cursor-pointer cursor-pointer focus:outline-none focus:bg-white/15 focus:border-white/30"
             />
             <!-- File Preview Card -->
             <div
                 v-if="formData.portfolio"
-                class="mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200"
+                class="mt-3 p-4 bg-white/5 backdrop-blur-sm rounded-lg border border-white/10"
             >
                 <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <component
-                            :is="getFileIcon(formData.portfolio)"
-                            class="w-5 h-5 text-gray-600"
-                        />
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-white/10 rounded-lg">
+                            <component
+                                :is="getFileIcon(formData.portfolio)"
+                                class="w-5 h-5 text-white"
+                            />
+                        </div>
                         <div>
-                            <p class="text-sm font-medium text-gray-900">
+                            <p class="text-sm font-medium text-white">
                                 {{ formData.portfolio.name }}
                             </p>
-                            <p class="text-xs text-gray-500">
+                            <p class="text-xs text-white/60">
                                 {{
                                     (
                                         formData.portfolio.size /
@@ -381,11 +389,11 @@ async function submitApplication() {
                             </p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1">
                         <button
                             type="button"
                             @click="openPreview('portfolio')"
-                            class="p-1 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded"
+                            class="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
                             title="Preview file"
                         >
                             <Eye class="w-4 h-4" />
@@ -393,7 +401,7 @@ async function submitApplication() {
                         <button
                             type="button"
                             @click="removeFile('portfolio')"
-                            class="p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded"
+                            class="p-2 text-red-400 hover:text-red-300 hover:bg-red-400/10 rounded-lg transition-colors"
                             title="Hapus file"
                         >
                             <X class="w-4 h-4" />
@@ -407,16 +415,17 @@ async function submitApplication() {
         <div>
             <label
                 for="pesan_pelamar"
-                class="block text-sm font-medium text-gray-700 mb-1"
+                class="block text-sm font-medium text-white mb-2"
             >
                 Pesan Lamaran
-                <span class="text-gray-500 text-xs">(opsional)</span>
+                <span class="text-white/60 text-xs font-normal">(opsional)</span>
             </label>
             <textarea
                 id="pesan_pelamar"
                 v-model="formData.pesan_pelamar"
                 rows="4"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-secondary focus:border-secondary"
+                class="w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:bg-white/15 focus:border-white/30 resize-none"
+                placeholder="Ceritakan mengapa Anda tertarik dengan posisi ini..."
             ></textarea>
         </div>
 
@@ -424,37 +433,45 @@ async function submitApplication() {
         <button
             type="submit"
             :disabled="isApplying"
-            class="w-full bg-secondary hover:bg-black transition-colors duration-300 text-white py-2.5 px-4 rounded-full font-medium flex items-center justify-center gap-2"
+            class="w-full bg-white text-black hover:bg-white/90 transition-colors duration-300 py-3.5 px-6 rounded-lg font-semibold flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed mt-6"
         >
-            <Send v-if="!isApplying" class="w-4 h-4" />
+            <Send v-if="!isApplying" class="w-5 h-5" />
             <Loader v-else class="animate-spin h-5 w-5" />
-            {{ isApplying ? "Mengirim..." : "Kirim Lamaran" }}
+            {{ isApplying ? "Mengirim Lamaran..." : "Kirim Lamaran" }}
         </button>
+
+        <!-- Required Fields Info -->
+        <div class="flex items-center gap-2 pt-2">
+            <div class="w-1 h-1 bg-red-400 rounded-full"></div>
+            <p class="text-xs text-white/60">
+                Field bertanda <span class="text-red-400">*</span> wajib diisi
+            </p>
+        </div>
     </form>
 
     <!-- File Preview Modal -->
     <div
         v-if="showPreview"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4"
     >
         <div
-            class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden"
+            class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
         >
-            <div class="flex items-center justify-between p-4 border-b">
-                <h3 class="text-lg font-medium">Preview File</h3>
+            <div class="flex items-center justify-between p-6 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-900">Preview File</h3>
                 <button
                     @click="closePreview"
-                    class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full"
+                    class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                     <X class="w-5 h-5" />
                 </button>
             </div>
-            <div class="p-4 h-[70vh] overflow-auto">
+            <div class="p-6 h-[70vh] overflow-auto">
                 <!-- PDF Preview -->
                 <iframe
                     v-if="previewType === 'application/pdf'"
                     :src="previewFile"
-                    class="w-full h-full border-0"
+                    class="w-full h-full border-0 rounded-lg"
                     title="PDF Preview"
                 ></iframe>
 
@@ -466,18 +483,19 @@ async function submitApplication() {
                     "
                     class="flex flex-col items-center justify-center h-full text-gray-500"
                 >
-                    <FileText class="w-16 h-16 mb-4" />
-                    <p class="text-lg font-medium mb-2">
-                        Preview tidak tersedia
+                    <div class="p-6 bg-gray-50 rounded-full mb-6">
+                        <FileText class="w-16 h-16 text-gray-400" />
+                    </div>
+                    <p class="text-xl font-semibold mb-2 text-gray-700">
+                        Preview Tidak Tersedia
                     </p>
-                    <p class="text-sm text-center">
-                        File Word/DOC tidak dapat di-preview di browser.<br />Silakan
-                        download untuk melihat isi file.
+                    <p class="text-sm text-center text-gray-600 mb-6 max-w-md">
+                        File Word/DOC tidak dapat di-preview di browser. Silakan download untuk melihat isi file.
                     </p>
                     <a
                         :href="previewFile"
                         :download="true"
-                        class="mt-4 px-4 py-2 bg-secondary text-white rounded-lg hover:bg-black transition-colors"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
                         Download File
                     </a>
@@ -488,19 +506,17 @@ async function submitApplication() {
                     v-else
                     class="flex flex-col items-center justify-center h-full text-gray-500"
                 >
-                    <FileText class="w-16 h-16 mb-4" />
-                    <p class="text-lg font-medium mb-2">
-                        Preview tidak tersedia
+                    <div class="p-6 bg-gray-50 rounded-full mb-6">
+                        <FileText class="w-16 h-16 text-gray-400" />
+                    </div>
+                    <p class="text-xl font-semibold mb-2 text-gray-700">
+                        Preview Tidak Tersedia
                     </p>
-                    <p class="text-sm text-center">
+                    <p class="text-sm text-center text-gray-600">
                         Tipe file ini tidak dapat di-preview di browser.
                     </p>
                 </div>
             </div>
         </div>
     </div>
-
-    <p class="text-xs text-gray-500 mt-4">
-        Field dengan tanda <span class="text-red-500">*</span> wajib diisi
-    </p>
 </template>

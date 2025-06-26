@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Lowongan;
 use App\Http\Resources\Lowongan\LowonganListResource;
 use App\Http\Resources\Lowongan\LowonganViewResource;
+use App\Enums\ContentStatus;
 use Illuminate\Http\Request;
 
 class LowonganController extends Controller
@@ -20,7 +21,9 @@ class LowonganController extends Controller
     {
         try {
             $perPage = $request->query('per_page', 6);
-            $lowongan = Lowongan::orderBy('tanggal_dibuka', 'desc')->paginate($perPage);
+            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI)
+                ->orderBy('tanggal_dibuka', 'desc')
+                ->paginate($perPage);
 
             return response()->json([
                 'status' => 'success',
@@ -54,12 +57,13 @@ class LowonganController extends Controller
         try {
             $query = $request->input('query');
 
-            $lowonganQuery = Lowongan::where(function ($q) use ($query) {
-                $q->where('judul_lowongan', 'LIKE', "%{$query}%")
-                    ->orWhere('deskripsi_pekerjaan', 'LIKE', "%{$query}%");
-                // Hapus bagian lokasi jika kolom tidak ada
-                // ->orWhere('lokasi', 'LIKE', "%{$query}%");
-            });
+            $lowonganQuery = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI)
+                ->where(function ($q) use ($query) {
+                    $q->where('judul_lowongan', 'LIKE', "%{$query}%")
+                        ->orWhere('deskripsi_pekerjaan', 'LIKE', "%{$query}%");
+                    // Hapus bagian lokasi jika kolom tidak ada
+                    // ->orWhere('lokasi', 'LIKE', "%{$query}%");
+                });
 
             $lowongan = $lowonganQuery->paginate(10);
 
@@ -93,7 +97,9 @@ class LowonganController extends Controller
     public function getLowonganBySlug($slug)
     {
         try {
-            $lowongan = Lowongan::where('slug', $slug)->first();
+            $lowongan = Lowongan::where('slug', $slug)
+                ->where('status_lowongan', ContentStatus::TERPUBLIKASI)
+                ->first();
 
             if (!$lowongan) {
                 return response()->json([
@@ -125,7 +131,9 @@ class LowonganController extends Controller
     public function getLowonganById($id)
     {
         try {
-            $lowongan = Lowongan::find($id);
+            $lowongan = Lowongan::where('id_lowongan', $id)
+                ->where('status_lowongan', ContentStatus::TERPUBLIKASI)
+                ->first();
 
             if (!$lowongan) {
                 return response()->json([
@@ -158,7 +166,8 @@ class LowonganController extends Controller
     {
         try {
             $limit = $request->query('limit', 1);
-            $lowongan = Lowongan::orderBy('tanggal_dibuka', 'desc')
+            $lowongan = Lowongan::where('status_lowongan', ContentStatus::TERPUBLIKASI)
+                ->orderBy('tanggal_dibuka', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->limit($limit)
                 ->get();

@@ -123,7 +123,8 @@ class MitraResource extends Resource
                         Tables\Columns\TextColumn::make('nama')
                             ->label('Nama Mitra')
                             ->weight(FontWeight::Bold)
-                            ->size('lg'),
+                            ->size('lg')
+                            ->searchable(),
                         Tables\Columns\TextColumn::make('alamat_mitra')
                             ->label('Alamat')
                             ->color('gray')

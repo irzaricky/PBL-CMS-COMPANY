@@ -119,7 +119,27 @@ class LowonganSeeder extends Seeder
             // Menentukan status - 50% terpublikasi, 50% tidak terpublikasi
             $status = rand(1, 100) <= 50 ? ContentStatus::TERPUBLIKASI->value : ContentStatus::TIDAK_TERPUBLIKASI->value;
 
-            $tanggalDibuka = Carbon::now()->subDays(rand(30, 180));
+            // Adjusted date logic to have more open positions
+            // 70% of jobs will be currently open
+            $isCurrentlyOpen = rand(1, 100) <= 70;
+            
+            if ($isCurrentlyOpen) {
+                // For open positions: start date is in the past, end date is in the future
+                $tanggalDibuka = Carbon::now()->subDays(rand(1, 60)); // Started 1-60 days ago
+                $tanggalDitutup = Carbon::now()->addDays(rand(15, 90)); // Will close in 15-90 days
+            } else {
+                // For closed positions: either not started yet or already ended
+                $closedType = rand(1, 2);
+                if ($closedType === 1) {
+                    // Not started yet (future opening)
+                    $tanggalDibuka = Carbon::now()->addDays(rand(1, 30));
+                    $tanggalDitutup = $tanggalDibuka->copy()->addDays(rand(30, 60));
+                } else {
+                    // Already ended (past closing)
+                    $tanggalDitutup = Carbon::now()->subDays(rand(1, 30));
+                    $tanggalDibuka = $tanggalDitutup->copy()->subDays(rand(30, 90));
+                }
+            }
 
             $lowonganData[] = [
                 'id_lowongan' => $i,
@@ -130,7 +150,7 @@ class LowonganSeeder extends Seeder
                 'jenis_lowongan' => $jobType,
                 'gaji' => rand(5, 25) * 1000000,
                 'tanggal_dibuka' => $tanggalDibuka,
-                'tanggal_ditutup' => $tanggalDibuka->copy()->addDays(rand(30, 50)),
+                'tanggal_ditutup' => $tanggalDitutup,
                 'tenaga_dibutuhkan' => rand(1, 5),
                 'thumbnail_lowongan' => $getRandomThumbnails(),
                 'status_lowongan' => $status,

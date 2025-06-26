@@ -25,7 +25,7 @@ use App\Filament\Resources\LamaranResource\Widgets\LamaranStats;
 class LamaranResource extends Resource
 {
     protected static ?string $model = Lamaran::class;
-    protected static ?string $navigationIcon = 'heroicon-s-briefcase';
+    protected static ?string $navigationIcon = 'heroicon-s-clipboard-document';
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationGroup(): ?string

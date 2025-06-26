@@ -11,7 +11,7 @@ import LoginOverlay from "@/Pages/Lowongan/LoginOverlay.vue";
 import LowonganTutup from "@/Pages/Lowongan/LowonganTutup.vue";
 import TestimoniTerkirim from "@/Components/Modal/TestimoniTerkirim.vue";
 // Menambahkan import icons dari lucide
-import { Wallet, RefreshCw, Loader, FrownIcon, Star } from "lucide-vue-next";
+import { Wallet, RefreshCw, Loader, FrownIcon, Star, Home, ChevronRight, Briefcase } from "lucide-vue-next";
 
 // Props dari route
 const { slug } = defineProps({ slug: String });
@@ -278,9 +278,9 @@ function writeAnotherTestimoni() {
                 <!-- Right Column Slot -->
                 <div class="w-full lg:w-1/3">
                     <div
-                        class="sticky top-24 bg-gray-50 border border-gray-100 rounded-xl p-6 shadow-sm"
+                        class="sticky top-24 bg-gradient-to-br from-secondary via-secondary to-black border border-gray-100 rounded-xl p-6 shadow-sm max-h-[calc(100vh-4rem)] lg:max-h-[calc(100vh-6rem)] overflow-y-auto"
                     >
-                        <h3 class="text-lg font-semibold mb-4">
+                        <h3 class="text-lg font-semibold mb-4 text-white">
                             Lamar Posisi Ini
                         </h3>
 
@@ -301,9 +301,9 @@ function writeAnotherTestimoni() {
                                 class="py-8 flex flex-col items-center justify-center"
                             >
                                 <Loader
-                                    class="animate-spin h-8 w-8 text-secondary mb-4"
+                                    class="animate-spin h-8 w-8 text-white mb-4"
                                 />
-                                <p class="text-gray-600">
+                                <p class="text-gray-200">
                                     Memeriksa status lamaran...
                                 </p>
                             </div>
