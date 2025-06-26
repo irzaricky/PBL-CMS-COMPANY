@@ -7,20 +7,8 @@
                 <div class="col-md-10">
                     <div class="card mb-4 shadow-lg border-0 finish-card">
                         <div class="card-body text-center py-5">
-                            <!-- Success Animation Icon -->
-                            <div class="mb-4 success-animation">
-                                <div class="success-checkmark">
-                                    <div class="check-icon">
-                                        <span class="icon-line line-tip"></span>
-                                        <span class="icon-line line-long"></span>
-                                        <div class="icon-circle"></div>
-                                        <div class="icon-fix"></div>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Title and Subtitle -->
-                            <h1 class="display-5 mb-3 finish-title" style="color: var(--primary-color);">
+                            <h1 class="display-5 mb-3 mt-3 finish-title" style="color: var(--primary-color);">
                                 {{ __('installer.finish_title') }}
                             </h1>
                             <p class="lead mb-5 text-muted finish-subtitle">
@@ -88,102 +76,6 @@
 
         .finish-subtitle {
             animation: fadeInUp 1s ease-out 0.5s both;
-        }
-
-        /* Success checkmark animation */
-        .success-animation {
-            animation: zoomIn 0.8s ease-out 0.2s both;
-        }
-
-        .success-checkmark {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            display: block;
-            stroke-width: 2;
-            stroke: var(--primary-color);
-            stroke-miterlimit: 10;
-            margin: 10px auto;
-            box-shadow: inset 0px 0px 0px var(--primary-color);
-            animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
-            position: relative;
-        }
-
-        .success-checkmark .check-icon {
-            width: 56px;
-            height: 56px;
-            position: absolute;
-            left: 32px;
-            top: 32px;
-            border-radius: 50%;
-            display: block;
-            stroke-width: 3;
-            stroke: #fff;
-            stroke-miterlimit: 10;
-            margin: 10% auto;
-            box-shadow: inset 0px 0px 0px var(--primary-color);
-            animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
-        }
-
-        .success-checkmark .check-icon::after {
-            content: '';
-            width: 5px;
-            height: 3px;
-            border-radius: 2px;
-            position: absolute;
-            z-index: 10;
-            background: var(--primary-color);
-            left: 9px;
-            top: 6px;
-            animation: fill 0.4s ease-in-out 0.4s forwards, scale 0.3s ease-in-out 0.9s both;
-        }
-
-        .success-checkmark .icon-line {
-            height: 4px;
-            background: #fff;
-            display: block;
-            border-radius: 2px;
-            position: absolute;
-            z-index: 10;
-        }
-
-        .success-checkmark .icon-line.line-tip {
-            top: 46px;
-            left: 14px;
-            width: 25px;
-            transform: rotate(45deg);
-            animation: icon-line-tip 0.75s;
-        }
-
-        .success-checkmark .icon-line.line-long {
-            top: 38px;
-            right: 8px;
-            width: 47px;
-            transform: rotate(-45deg);
-            animation: icon-line-long 0.75s;
-        }
-
-        .success-checkmark .icon-circle {
-            top: -4px;
-            left: -4px;
-            z-index: 10;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            position: absolute;
-            box-sizing: content-box;
-            border: 4px solid var(--primary-color);
-        }
-
-        .success-checkmark .icon-fix {
-            top: 8px;
-            width: 5px;
-            left: 26px;
-            z-index: 1;
-            height: 85px;
-            position: absolute;
-            transform: rotate(-45deg);
-            background: #fff;
         }
 
         /* Feature cards */
@@ -282,103 +174,10 @@
             }
         }
 
-        @keyframes fill {
-            100% {
-                box-shadow: inset 0px 0px 0px 60px var(--primary-color);
-            }
-        }
-
-        @keyframes scale {
-
-            0%,
-            100% {
-                transform: none;
-            }
-
-            50% {
-                transform: scale3d(1.1, 1.1, 1);
-            }
-        }
-
-        @keyframes icon-line-tip {
-            0% {
-                width: 0;
-                left: 1px;
-                top: 19px;
-            }
-
-            54% {
-                width: 0;
-                left: 1px;
-                top: 19px;
-            }
-
-            70% {
-                width: 50px;
-                left: -8px;
-                top: 37px;
-            }
-
-            84% {
-                width: 17px;
-                left: 21px;
-                top: 48px;
-            }
-
-            100% {
-                width: 25px;
-                left: 14px;
-                top: 45px;
-            }
-        }
-
-        @keyframes icon-line-long {
-            0% {
-                width: 0;
-                right: 46px;
-                top: 54px;
-            }
-
-            65% {
-                width: 0;
-                right: 46px;
-                top: 54px;
-            }
-
-            84% {
-                width: 55px;
-                right: 0px;
-                top: 35px;
-            }
-
-            100% {
-                width: 47px;
-                right: 8px;
-                top: 38px;
-            }
-        }
-
         /* Responsive adjustments */
         @media (max-width: 768px) {
             .finish-card .card-body {
                 padding: 2rem 1rem;
-            }
-
-            .success-checkmark {
-                width: 80px;
-                height: 80px;
-            }
-
-            .success-checkmark .check-icon {
-                width: 36px;
-                height: 36px;
-                left: 22px;
-                top: 22px;
-            }
-
-            .success-checkmark .icon-circle {
-                width: 80px;
-                height: 80px;
             }
 
             .feature-card {
