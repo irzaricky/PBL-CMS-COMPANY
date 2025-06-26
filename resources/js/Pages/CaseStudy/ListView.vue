@@ -257,7 +257,7 @@ const dynamicStats = computed(() => {
                                 </h3>
                             </Link>
 
-                            <p class="text-gray-600 line-clamp-2">
+                            <p class="text-gray-600 line-clamp-2 font-custom">
                                 {{ item.deskripsi_case_study }}
                             </p>
 

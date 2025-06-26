@@ -14,7 +14,9 @@ class ListMitras extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Tambah Mitra Kerjasama')
+                ->icon('heroicon-o-user-plus'),
         ];
     }
 
@@ -22,17 +24,16 @@ class ListMitras extends ListRecords
     {
         return [
             null => Tab::make('Semua')
+                ->icon('heroicon-o-squares-2x2')
                 ->query(fn($query) => $query->orderBy('nama', 'asc')),
             'Aktif' => Tab::make()
+                ->icon('heroicon-o-check-circle')
                 ->query(fn($query) => $query->where('status', 'aktif')
                     ->orderBy('tanggal_kemitraan', 'desc')),
             'Nonaktif' => Tab::make()
+                ->icon('heroicon-o-x-circle')
                 ->query(fn($query) => $query->where('status', 'nonaktif')
                     ->orderBy('tanggal_kemitraan', 'desc')),
-            'Dokumen Tidak Lengkap' => Tab::make()
-                ->query(fn($query) => $query->whereNull('dok_siup')
-                    ->whereNull('dok_npwp')
-                    ->orderBy('nama', 'asc')),
         ];
     }
 }

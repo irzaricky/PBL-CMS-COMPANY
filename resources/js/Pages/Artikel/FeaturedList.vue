@@ -46,25 +46,23 @@ function truncateText(text, limit = 150) {
 <template>
     <div class="w-full px-4 sm:px-6 lg:px-6 py-28 max-w-screen-xl mx-auto flex flex-col gap-20 overflow-hidden font-custom">
         <!-- Heading Section -->
-        <div class="w-full max-w-4xl flex flex-col gap-6">
-            <div class="px-4 py-2 text-gray-800 text-sm font-bold rounded-full w-fit">
-                ARTIKEL TERBARU
-            </div>
-            <div class="flex flex-col items-start gap-6">
-                <h1 class="text-5xl md:text-6xl font-normal leading-tight text-gray-900 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text">
-                    Jelajahi Beragam Cerita dan Tips Seru
-                </h1>
+       <div class="w-full mb-12 flex flex-col gap-4">
+                <div class="text-secondary text-base font-semibold font-custom uppercase tracking-wider">
+                    Artikel
+                </div>
+                <h2 class="text-3xl lg:text-5xl font-normal font-custom leading-tight">
+                    Temukan Berbagai Artikel Menarik
+                </h2>
                 <p class="text-lg font-normal leading-relaxed text-gray-600 max-w-2xl">
                     Mulai petualangan pengetahuan dengan artikel-artikel penuh ide segar dan cerita menarik yang
                     membangkitkan semangat.
                 </p>
             </div>
-        </div>
 
         <!-- Featured Blog Section -->
         <div class="flex flex-col gap-12" v-if="!loading">
             <div class="flex items-center justify-between">
-                <h2 v-if="featuredArticles.length" class="text-3xl lg:text-4xl font-semibold text-gray-900">
+                <h2 v-if="featuredArticles.length" class="text-3xl lg:text-4xl font-normal text-gray-900">
                     Artikel Terpopuler
                 </h2>
                 <div class="hidden lg:block w-24 h-1 bg-gradient-to-r from-secondary to-gray-300 rounded-full"></div>
@@ -73,7 +71,7 @@ function truncateText(text, limit = 150) {
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8" v-if="featuredArticles.length">
                 <!-- Large Featured Blog -->
                 <div class="lg:col-span-7 group" v-if="featuredArticles[0]">
-                    <div class="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500">
+                    <div class="relative overflow-hidden rounded-2xl ">
                         <img class="w-full h-96 lg:h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
                             :src="getImageUrl(featuredArticles[0].thumbnail_artikel)" 
                             alt="thumbnail" />
@@ -132,7 +130,7 @@ function truncateText(text, limit = 150) {
                     
                     <div class="space-y-6">
                         <div v-for="(post, i) in featuredArticles.slice(1, 4)" :key="i"
-                            class="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300">
+                            class="group relative overflow-hidden rounded-xl">
                             
                             <!-- Background Image -->
                             <img class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-500"

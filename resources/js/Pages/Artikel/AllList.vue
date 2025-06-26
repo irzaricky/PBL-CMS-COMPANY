@@ -1,6 +1,9 @@
 <script setup>
+import AOS from "aos";
+import "aos/dist/aos.css";
 import axios from "axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
+import { LucideSearch, LucideEye } from "lucide-vue-next";
 
 const articles = ref([]);
 const categories = ref([]);
@@ -15,8 +18,22 @@ let debounceTimer = null;
 
 onMounted(() => {
     fetchData();
-    fetchCategories();
-    fetchArticles();
+    AOS.init({
+        duration: 1000,
+        once: false,
+        mirror: true,
+        disable: false,
+        startEvent: 'DOMContentLoaded',
+        initClassName: 'aos-init',
+        animatedClassName: 'aos-animate',
+        useClassNames: false,
+        disableMutationObserver: false,
+        debounceDelay: 50,
+        throttleDelay: 99,
+        offset: 120,
+        delay: 0,
+        easing: 'ease',
+    });
 });
 
 async function fetchData() {
@@ -49,6 +66,10 @@ async function fetchArticles(page = 1) {
         articles.value = response.data.data;
         currentPage.value = response.data.meta?.current_page || 1;
         lastPage.value = response.data.meta?.last_page || 1;
+        
+        // Refresh AOS setelah konten dimuat
+        await nextTick();
+        AOS.refresh();
     } catch (error) {
         console.error("Error fetching articles:", error);
         articles.value = [];
@@ -68,6 +89,10 @@ async function searchArticles(query) {
         }
         const response = await axios.get("/api/artikel/search", { params });
         articles.value = response.data.data || [];
+        
+        // Refresh AOS setelah pencarian
+        await nextTick();
+        AOS.refresh();
     } catch (error) {
         console.error("Error searching articles:", error);
         articles.value = [];
@@ -223,7 +248,8 @@ function filterUsedCategories() {
                 <div v-if="!loading && articles.length > 0" class="flex flex-col gap-6">
                     <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                         <article v-for="(post, index) in articles" :key="index" 
-                            class="flex flex-col gap-6 bg-white p-6 rounded-2xl shadow-sm transition duration-300">
+                            class="flex flex-col gap-6 bg-white p-6 rounded-2xl shadow-sm transition duration-300" data-aos="fade-up"
+                        :data-aos-delay="index * 100">
                             <img :src="getImageUrl(post.thumbnail_artikel)" alt="Blog post image"
                                 class="rounded-2xl h-64 w-full object-cover" />
                             <div class="flex items-center gap-4">
