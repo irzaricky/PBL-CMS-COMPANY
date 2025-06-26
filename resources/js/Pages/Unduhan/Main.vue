@@ -205,8 +205,8 @@ async function fetchData() {
                 </div>
             </div>
 
-            <!-- Categories with horizontal scrolling and search -->
-            <div v-if="isSearching || unduhanList.length > 0" class="w-full flex flex-col gap-4">
+            <!-- Categories with horizontal scrolling and search - Always show unless initial loading -->
+            <div v-if="!isLoading || categories.length > 0" class="w-full flex flex-col gap-4">
                 <div class="flex flex-wrap justify-between items-center">
                     <h2 class="text-xl font-semibold mb-2">Kategori</h2>
                     <div class="flex items-center gap-2 relative">
@@ -224,7 +224,7 @@ async function fetchData() {
                 <div class="w-full overflow-x-auto">
                     <div class="flex gap-2 whitespace-nowrap py-1">
                         <!-- Skeleton loading for categories -->
-                        <template v-if="isLoading && !usedCategories.length">
+                        <template v-if="isLoading && !categories.length">
                             <div v-for="n in 4" :key="n"
                                 class="px-4 py-2 rounded-xl bg-gray-200 animate-pulse w-24 h-9"></div>
                         </template>
@@ -237,13 +237,15 @@ async function fetchData() {
                                 " @click="filterByCategory(null)">
                                 Semua
                             </button>
-                            <button v-for="cat in usedCategories" :key="cat.id_kategori_unduhan"
-                                class="px-4 py-2 rounded-xl text-sm font-medium transition border" :class="selectedCategory === cat.id_kategori_unduhan
+                            <!-- Show all categories, not just used ones when searching -->
+                            <button v-for="cat in (search || selectedCategory !== null ? categories : usedCategories)" 
+                                :key="cat.id_kategori_unduhan"
+                                class="px-4 py-2 rounded-xl text-sm font-medium transition border" 
+                                :class="selectedCategory === cat.id_kategori_unduhan
                                         ? 'bg-gray-800 text-white border-gray-800'
                                         : 'bg-white text-gray-800 border-gray-300'
-                                    " @click="
-                                    filterByCategory(cat.id_kategori_unduhan)
-                                    ">
+                                    " 
+                                @click="filterByCategory(cat.id_kategori_unduhan)">
                                 {{ cat.nama_kategori_unduhan }}
                             </button>
                         </template>
@@ -276,26 +278,34 @@ async function fetchData() {
                     </div>
                 </template>
 
-                <!-- Empty state -->
-                <div v-else-if="unduhanList.length === 0"
+                <!-- Empty state - only when no results found but not initial loading -->
+                <div v-else-if="unduhanList.length === 0 && !isLoading"
                     class="flex flex-col items-center justify-center gap-6 py-20 text-center">
                     <div class="flex flex-col lg:flex-row items-center gap-6 text-left">
                         <img src="/image/empty.svg" alt="Empty State"
                             class="w-40 h-40 lg:w-96 lg:h-96 object-contain" />
                         <div>
                             <h3 class="text-xl md:text-2xl font-semibold text-gray-700">
-                                Yah, file tidak ditemukan
+                                {{ search || selectedCategory !== null ? 'Yah, file tidak ditemukan' : 'Belum ada file unduhan' }}
                             </h3>
                             <p class="text-sm md:text-base text-gray-500">
-                                Cari dengan kata kunci lain atau periksa kembali
-                                nanti.
+                                {{ search || selectedCategory !== null 
+                                    ? 'Coba ubah kata kunci pencarian atau pilih kategori lain.'
+                                    : 'File unduhan akan muncul di sini setelah ditambahkan.'
+                                }}
                             </p>
+                            <!-- Reset filter button when searching -->
+                            <button v-if="search || selectedCategory !== null"
+                                @click="resetFilters"
+                                class="mt-4 px-4 py-2 bg-gray-800 text-white rounded-xl text-sm font-medium hover:bg-gray-700 transition-colors">
+                                Reset Filter
+                            </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Actual unduhan list -->
-                <div v-else v-for="item in unduhanList" :key="item.id"
+                <div v-else-if="unduhanList.length > 0" v-for="item in unduhanList" :key="item.id"
                     class="bg-white border border-gray-200 rounded-2xl p-8 hover:border-gray-300 transition-colors duration-300 "
                     data-aos="fade-right" :data-aos-delay="item * 100">
                     <div class="flex flex-col lg:flex-row gap-8">
