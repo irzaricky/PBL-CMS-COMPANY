@@ -113,7 +113,7 @@ onMounted(() => {
                                     >
                                         <component
                                             :is="link.icon"
-                                            class="w-6 h-6 group-hover:scale-110 transition-transform duration-200"
+                                            class="w-6 h-6 group-hover:scale-100 transition-transform duration-200"
                                         />
                                     </div>
                                     <span class="leading-relaxed">{{
