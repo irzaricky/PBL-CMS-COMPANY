@@ -221,42 +221,6 @@ class MitraResource extends Resource
                             ->send();
                     }),
                 Tables\Actions\EditAction::make(),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('updateStatus')
-                        ->label('Update Status')
-                        ->icon('heroicon-o-check-circle')
-                        ->form([
-                            Forms\Components\Select::make('status')
-                                ->label('Status')
-                                ->options([
-                                    'aktif' => 'Aktif',
-                                    'nonaktif' => 'Nonaktif',
-                                ])
-                                ->native(false)
-                                ->required(),
-                        ])
-                        ->action(function (Collection $records, array $data): void {
-                            foreach ($records as $record) {
-                                $record->update([
-                                    'status' => $data['status'],
-                                ]);
-                            }
-
-                            Notification::make()
-                                ->title('Status mitra berhasil diperbarui')
-                                ->success()
-                                ->send();
-                        }),
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->action(function () {
-                            Notification::make()
-                                ->title('Hati-hati! Jangan menghapus semua data mitra!')
-                                ->warning()
-                                ->send();
-                        }),
-                ]),
             ]);
     }
 

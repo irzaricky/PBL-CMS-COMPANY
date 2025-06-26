@@ -31,18 +31,22 @@ class GaleriStats extends BaseWidget
         return [
             Stat::make('Total Galeri', $this->getPageTableQuery()->count())
                 ->description('Total semua galeri menurut filter')
+                ->descriptionIcon('heroicon-s-photo')
                 ->color('primary'),
 
             Stat::make('Total Unduhan', Number::format($this->getPageTableQuery()->sum('jumlah_unduhan')))
                 ->description('Total semua unduhan menurut filter')
+                ->descriptionIcon('heroicon-s-arrow-down-tray')
                 ->color('success'),
 
             Stat::make('Rata-rata Unduhan', Number::format($this->getPageTableQuery()->avg('jumlah_unduhan') ?? 0, 0))
                 ->description('Rata-rata unduhan menurut filter')
+                ->descriptionIcon('heroicon-s-arrow-down-tray')
                 ->color('warning'),
 
             Stat::make('Total Ukuran Storage', $this->formatBytes($totalStorage))
                 ->description('Total ukuran file menurut filter')
+                ->descriptionIcon('heroicon-s-chart-pie')
                 ->color('info'),
         ];
     }
