@@ -18,7 +18,10 @@ class ListUnduhans extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->icon('heroicon-o-plus')
+                ->label('Buat Berkas Unduhan Baru')
+                ->color('primary'),
         ];
     }
 
@@ -33,28 +36,34 @@ class ListUnduhans extends ListRecords
     {
         return [
             'Semua' => Tab::make()
+                ->icon('heroicon-o-squares-2x2')
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('nama_unduhan', 'asc')),
 
             'Terpublikasi' => Tab::make()
+                ->icon('heroicon-o-eye')
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->where('status_unduhan', ContentStatus::TERPUBLIKASI->value)
                     ->orderBy('created_at', 'desc')),
 
             'Tidak Terpublikasi' => Tab::make()
+                ->icon('heroicon-o-eye-slash')
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->where('status_unduhan', ContentStatus::TIDAK_TERPUBLIKASI->value)
                     ->orderBy('created_at', 'desc')),
 
             'Terbaru' => Tab::make()
+                ->icon('heroicon-o-clock')
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('created_at', 'desc')),
 
             'Terpopuler' => Tab::make()
+                ->icon('heroicon-o-fire')
                 ->query(fn($query) => $query->whereNull('deleted_at')
                     ->orderBy('jumlah_unduhan', 'desc')),
 
             'Diarsipkan' => Tab::make()
+                ->icon('heroicon-o-archive-box')
                 ->query(fn($query) => $query->onlyTrashed()),
         ];
     }

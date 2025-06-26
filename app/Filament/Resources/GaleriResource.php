@@ -216,6 +216,7 @@ class GaleriResource extends Resource
 
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
+                    ->icon('heroicon-s-arrow-down-tray')
                     ->numeric()
                     ->alignCenter()
                     ->badge(),

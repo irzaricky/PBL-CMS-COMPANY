@@ -7,7 +7,7 @@ use App\Helpers\FilamentGroupingHelper;
 
 class UnduhanCluster extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-s-document-arrow-down';
+    protected static ?string $navigationIcon = 'heroicon-s-arrow-down-tray';
 
     protected static ?string $navigationLabel = 'Unduhan';
 
