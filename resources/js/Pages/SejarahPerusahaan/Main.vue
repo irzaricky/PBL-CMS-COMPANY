@@ -135,7 +135,7 @@ async function fetchProfilPerusahaan() {
                                         <div class="pt-2 pb-4">
                                             <h3 class="text-2xl sm:text-3xl font-normal mb-4 pr-16">{{ item.judul }}
                                             </h3>
-                                            <p class="text-lg leading-relaxed text-white/90">
+                                            <p class="text-sm lg:text-md leading-relaxed text-white/90">
                                                 {{ item.deskripsi }}
                                             </p>
                                         </div>

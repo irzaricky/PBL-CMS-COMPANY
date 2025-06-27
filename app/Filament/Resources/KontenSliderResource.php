@@ -60,9 +60,9 @@ class KontenSliderResource extends Resource
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
-                                        '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
-                                        '<span class="truncate">' . e($record->judul_artikel) . '</span>' .
-                                        '</div>'
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->judul_artikel) . '</span>' .
+                                            '</div>'
                                     );
                                 }
 
@@ -88,9 +88,9 @@ class KontenSliderResource extends Resource
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
-                                        '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
-                                        '<span class="truncate">' . e($record->judul_galeri) . '</span>' .
-                                        '</div>'
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->judul_galeri) . '</span>' .
+                                            '</div>'
                                     );
                                 }
 
@@ -113,9 +113,9 @@ class KontenSliderResource extends Resource
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
-                                        '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
-                                        '<span class="truncate">' . e($record->nama_event) . '</span>' .
-                                        '</div>'
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->nama_event) . '</span>' .
+                                            '</div>'
                                     );
                                 }
 
@@ -142,9 +142,9 @@ class KontenSliderResource extends Resource
                                 if ($thumbnail) {
                                     return new \Illuminate\Support\HtmlString(
                                         '<div class="flex items-center gap-3">' .
-                                        '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
-                                        '<span class="truncate">' . e($record->nama_produk) . '</span>' .
-                                        '</div>'
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->nama_produk) . '</span>' .
+                                            '</div>'
                                     );
                                 }
 
@@ -195,6 +195,7 @@ class KontenSliderResource extends Resource
                                             ->schema([
                                                 Components\TextEntry::make('artikel.judul_artikel')
                                                     ->label('Artikel')
+                                                    ->icon('heroicon-s-newspaper')
                                                     ->weight('bold')
                                                     ->size('lg')
                                                     ->color('primary'),
@@ -204,9 +205,6 @@ class KontenSliderResource extends Resource
                                                     ->html()
                                                     ->limit(150)
                                                     ->extraAttributes(['style' => 'line-height: 1.4;'])
-                                                    ->tooltip(function ($record) {
-                                                        return $record->artikel ? strip_tags($record->artikel->konten_artikel) : null;
-                                                    }),
                                             ])
                                             ->columnSpan(2),
                                     ])
@@ -240,10 +238,11 @@ class KontenSliderResource extends Resource
                                         Components\Grid::make(1)
                                             ->schema([
                                                 Components\TextEntry::make('galeri.judul_galeri')
+                                                    ->icon('heroicon-s-photo')
                                                     ->label('Galeri')
                                                     ->weight('bold')
                                                     ->size('lg')
-                                                    ->color('success'),
+                                                    ->color('primary'),
 
                                                 Components\TextEntry::make('galeri.deskripsi_galeri')
                                                     ->label('Deskripsi')
@@ -282,21 +281,24 @@ class KontenSliderResource extends Resource
                                         Components\Grid::make(1)
                                             ->schema([
                                                 Components\TextEntry::make('event.nama_event')
+                                                    ->icon('heroicon-s-calendar')
                                                     ->label('Event')
                                                     ->weight('bold')
                                                     ->size('lg')
-                                                    ->color('warning'),
+                                                    ->color('primary'),
 
                                                 Components\TextEntry::make('event.deskripsi_event')
                                                     ->label('Deskripsi')
                                                     ->limit(120)
+                                                    ->html()
                                                     ->extraAttributes(['style' => 'line-height: 1.4;']),
 
                                                 Components\TextEntry::make('event.waktu_start_event')
                                                     ->label('Waktu Mulai')
+                                                    ->icon('heroicon-o-clock')
                                                     ->dateTime('d M Y H:i')
                                                     ->badge()
-                                                    ->color('gray'),
+                                                    ->color('primary'),
                                             ])
                                             ->columnSpan(2),
                                     ])
@@ -330,10 +332,11 @@ class KontenSliderResource extends Resource
                                         Components\Grid::make(1)
                                             ->schema([
                                                 Components\TextEntry::make('produk.nama_produk')
+                                                    ->icon('heroicon-s-shopping-bag')
                                                     ->label('Produk')
                                                     ->weight('bold')
                                                     ->size('lg')
-                                                    ->color('danger'),
+                                                    ->color('primary'),
 
                                                 Components\TextEntry::make('produk.deskripsi_produk')
                                                     ->label('Deskripsi')
@@ -343,8 +346,9 @@ class KontenSliderResource extends Resource
                                                 Components\TextEntry::make('produk.harga_produk')
                                                     ->label('Harga')
                                                     ->money('IDR')
+                                                    ->icon('heroicon-o-wallet')
                                                     ->badge()
-                                                    ->color('success'),
+                                                    ->color('primary'),
                                             ])
                                             ->columnSpan(2),
                                     ])
