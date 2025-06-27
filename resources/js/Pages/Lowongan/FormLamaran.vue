@@ -160,8 +160,6 @@ async function submitApplication() {
 
         // Emit success event for parent component with response data
         emit("success", response.data);
-
-        console.log("Lamaran berhasil dikirim:", response.data);
     } catch (err) {
         alert(
             "Gagal mengirim lamaran: " +

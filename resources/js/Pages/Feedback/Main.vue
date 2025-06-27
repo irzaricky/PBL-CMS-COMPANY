@@ -195,8 +195,8 @@ const closeTermsModal = () => {
                                 <label class="text-white text-sm font-medium font-custom">
                                     Nama Lengkap
                                 </label>
-                                <input v-model="form.name" type="text" readonly
-                                    class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 font-custom" />
+                                <input v-model="form.name" type="text" readonly  
+                                    class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-0 focus:ring-white/20 font-custom" />
                             </div>
 
                             <!-- Email -->
@@ -205,7 +205,7 @@ const closeTermsModal = () => {
                                     Alamat Email
                                 </label>
                                 <input v-model="form.email" type="email" readonly
-                                    class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 font-custom" />
+                                    class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-0 focus:ring-white/20 font-custom" />
                             </div>
                         </div>
 
@@ -215,7 +215,7 @@ const closeTermsModal = () => {
                                 Subjek Feedback
                             </label>
                             <input v-model="form.subjek_feedback" type="text"
-                                class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 font-custom"
+                                class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-0 focus:ring-white/20 font-custom"
                                 placeholder="Contoh: Kritik tentang layanan" required />
                         </div>
 
@@ -225,7 +225,7 @@ const closeTermsModal = () => {
                                 Pesan Feedback
                             </label>
                             <textarea v-model="form.isi_feedback" rows="4"
-                                class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 resize-none font-custom"
+                                class="w-full px-4 py-3 bg-white/20 backdrop-blur-sm text-white placeholder-white/60 rounded-xl border border-white/20 focus:outline-none focus:ring-0 focus:ring-white/20 resize-none font-custom"
                                 placeholder="Tulis masukan Anda dengan detail..." required></textarea>
                         </div>
 

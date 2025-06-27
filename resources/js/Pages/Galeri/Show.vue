@@ -250,15 +250,6 @@ function closeMetaModal() {
     showMetaModal.value = false;
 }
 
-// Test function - you can call this from console
-window.testModals = () => {
-    console.log("Modal states:", {
-        showImageModal: showImageModal.value,
-        showMetaModal: showMetaModal.value,
-        showCopyModal: showCopyModal.value
-    });
-};
-
 function nextImage() {
     if (gallery.value?.thumbnail_galeri?.length > 1) {
         activeImageIndex.value =

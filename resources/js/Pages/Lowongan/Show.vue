@@ -92,10 +92,8 @@ async function checkUserApplication() {
 
             if (existingApplication) {
                 userApplication.value = existingApplication;
-                console.log("User already applied:", existingApplication);
             } else {
                 userApplication.value = null;
-                console.log("User has not applied yet");
             }
         }
     } catch (err) {

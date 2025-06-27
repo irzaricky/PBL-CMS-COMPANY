@@ -66,7 +66,7 @@ async function fetchArticles(page = 1) {
         articles.value = response.data.data;
         currentPage.value = response.data.meta?.current_page || 1;
         lastPage.value = response.data.meta?.last_page || 1;
-        
+
         // Refresh AOS setelah konten dimuat
         await nextTick();
         AOS.refresh();
@@ -89,7 +89,7 @@ async function searchArticles(query) {
         }
         const response = await axios.get("/api/artikel/search", { params });
         articles.value = response.data.data || [];
-        
+
         // Refresh AOS setelah pencarian
         await nextTick();
         AOS.refresh();
@@ -247,9 +247,9 @@ function filterUsedCategories() {
                 <!-- Daftar artikel -->
                 <div v-if="!loading && articles.length > 0" class="flex flex-col gap-6">
                     <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
-                        <article v-for="(post, index) in articles" :key="index" 
-                            class="flex flex-col gap-6 bg-white p-6 rounded-2xl shadow-sm transition duration-300" data-aos="fade-up"
-                        :data-aos-delay="index * 100">
+                        <article v-for="(post, index) in articles" :key="index"
+                            class="flex flex-col gap-6 bg-white p-6 rounded-2xl shadow-sm transition duration-300"
+                            data-aos="fade-up" :data-aos-delay="index * 100">
                             <img :src="getImageUrl(post.thumbnail_artikel)" alt="Blog post image"
                                 class="rounded-2xl h-64 w-full object-cover" />
                             <div class="flex items-center gap-4">
@@ -266,7 +266,8 @@ function filterUsedCategories() {
                                 </span>
                             </div>
                             <a :href="`/artikel/${post.slug}`" class="hover:underline group">
-                                <h3 class="text-2xl leading-snug group-hover:text-gray-700 transition-colors duration-200">
+                                <h3
+                                    class="text-2xl leading-snug group-hover:text-gray-700 transition-colors duration-200">
                                     {{ post.judul_artikel }}
                                 </h3>
                             </a>
@@ -279,23 +280,19 @@ function filterUsedCategories() {
                                 }}...
                             </p>
                             <div class="flex items-center gap-4 mt-2 pt-4 border-t border-gray-100">
-                                <img class="w-12 h-12 rounded-full object-cover" :src="getImageUrl(post.user.foto_profil, true)
-                                    " alt="Foto profil" />
+                                <img class="w-12 h-12 rounded-full object-cover"
+                                    :src="getImageUrl(post.user.foto_profil, true)" alt="Foto profil" />
                                 <div class="flex flex-col">
                                     <div class="text-sm font-semibold leading-tight">
                                         {{ post.user.name || "Anonim" }}
                                     </div>
-                                    <div class="flex items-center gap-2 text-sm text-gray-600">
-                                        <span>{{ post.user.email }}</span>
-                                        <span class="text-xs font-normal leading-loose py-1">•</span>
+                                    <div class="text-sm text-gray-600">
                                         <span>{{
-                                            new Date(
-                                                post.created_at
-                                            ).toLocaleDateString("id-ID", {
+                                            new Date(post.created_at).toLocaleDateString("id-ID", {
                                                 day: "numeric",
                                                 month: "short",
-                                                year: "numeric",
-                                            })
+                                        year: "numeric",
+                                        })
                                         }}</span>
                                     </div>
                                 </div>
@@ -306,12 +303,12 @@ function filterUsedCategories() {
 
                 <!-- Pagination -->
                 <div v-if="!loading && lastPage > 1"
-                    class="flex justify-center items-center gap-4 mt-6 font-custom text-sm bg-white p-4 rounded-2xl">
+                    class="flex justify-center items-center gap-4 mt-6 text-xs font-custom bg-white p-4 rounded-2xl">
                     <!-- Tombol Sebelumnya -->
                     <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
                         class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === 1
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                                : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
                             ">
                         Sebelumnya
                     </button>
@@ -324,8 +321,8 @@ function filterUsedCategories() {
                     <!-- Tombol Selanjutnya -->
                     <button @click="goToPage(currentPage + 1)" :disabled="currentPage === lastPage"
                         class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === lastPage
-                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                                : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
                             ">
                         Selanjutnya
                     </button>

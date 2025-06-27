@@ -380,7 +380,6 @@ const fetchTestimonials = async () => {
 
         if (response.data.status === "success") {
             testimoniData.value = response.data.data;
-            console.log("Testimoni data loaded:", testimoniData.value);
         } else {
             throw new Error("Failed to fetch testimonials");
         }
