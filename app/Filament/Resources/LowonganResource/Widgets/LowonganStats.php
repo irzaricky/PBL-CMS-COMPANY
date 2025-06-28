@@ -25,6 +25,7 @@ class LowonganStats extends BaseWidget
         return [
             Stat::make('Total Lowongan', $this->getPageTableQuery()->count())
                 ->description('Total lowongan menurut filter')
+                ->descriptionIcon('heroicon-s-briefcase')
                 ->color('primary'),
 
             Stat::make('Terpublikasi', Lowongan::query()
@@ -32,6 +33,7 @@ class LowonganStats extends BaseWidget
                 ->whereNull('deleted_at')
                 ->count())
                 ->description('Lowongan yang dipublikasi')
+                ->descriptionIcon('heroicon-s-check-circle')
                 ->color('success'),
 
 
@@ -41,6 +43,7 @@ class LowonganStats extends BaseWidget
                 ->whereNull('deleted_at')
                 ->count())
                 ->description('Lowongan yang sedang dalam periode dibuka')
+                ->descriptionIcon('heroicon-s-envelope-open')
                 ->color('info'),
         ];
     }

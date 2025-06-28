@@ -24,18 +24,22 @@ class CaseStudyStats extends BaseWidget
         return [
             Stat::make('Total Case Study', CaseStudy::query()->count())
                 ->description('Jumlah keseluruhan case study')
+                ->descriptionIcon('heroicon-o-document')
                 ->color('primary'),
 
             Stat::make('Terpublikasi', CaseStudy::query()->where('status_case_study', ContentStatus::TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('Case study yang sudah dipublikasikan')
+                ->descriptionIcon('heroicon-o-eye') 
                 ->color('success'),
 
             Stat::make('Tidak Terpublikasi', CaseStudy::query()->where('status_case_study', ContentStatus::TIDAK_TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('Case study masih sebagai draft')
+                ->descriptionIcon('heroicon-o-eye-slash')
                 ->color('warning'),
 
             Stat::make('Diarsipkan', CaseStudy::query()->onlyTrashed()->count())
                 ->description('Case study yang diarsipkan')
+                ->descriptionIcon('heroicon-o-archive-box')
                 ->color('danger'),
         ];
     }

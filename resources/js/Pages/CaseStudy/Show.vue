@@ -152,27 +152,33 @@ function formatDate(date) {
                 <div class="flex flex-col gap-12">
                     <div>
                         <nav class="flex" aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-3 text-sm">
-                                <li>
-                                    <Link href="/" class="inline-flex items-center text-gray-500 hover:text-secondary">
-                                    <Home class="w-4 h-4 mr-2" />
-                                    Home
+                            <ol class="inline-flex items-center space-x-1 text-sm">
+                                <li class="inline-flex items-center">
+                                    <Link
+                                        href="/"
+                                        class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors"
+                                    >
+                                        <Home class="w-4 h-4 mr-1.5" />
+                                        Home
                                     </Link>
                                 </li>
                                 <li class="inline-flex items-center">
-                                    <ChevronRight class="w-4 h-4 text-gray-400" />
-                                    <Link href="/case-study"
-                                        class="ml-1 inline-flex items-center text-gray-500 hover:text-secondary">
-                                    <BookOpenCheck class="w-4 h-4 mr-2" />
-                                    Case Study
+                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
+                                    <Link
+                                        href="/case-study"
+                                        class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors"
+                                    >
+                                        <BookOpenCheck class="w-4 h-4 mr-1.5" />
+                                        Case Study
                                     </Link>
                                 </li>
-                                <li class="flex items-center min-w-0">
-                                    <ChevronRight class="w-4 h-4 text-gray-400 flex-shrink-0" />
+                                <li class="inline-flex items-center">
+                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
                                     <span
-                                        class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
-                                        :title="caseStudy.judul_case_study">
-                                        {{ caseStudy.judul_case_study }}
+                                        class="text-sm font-medium text-gray-700 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
+                                        :title="caseStudy?.judul_case_study"
+                                    >
+                                        {{ caseStudy?.judul_case_study || "Memuat..." }}
                                     </span>
                                 </li>
                             </ol>
@@ -182,10 +188,10 @@ function formatDate(date) {
                     <div class="flex flex-col gap-4">
                         <div class="flex items-center gap-4 flex-wrap">
                             <div v-if="caseStudy.mitra"
-                                class="px-3 py-1 rounded-full border border-secondary/30 bg-secondary/10 text-sm font-medium text-secondary">
+                                class="px-3 py-1 rounded-full border text-sm font-semibold bg-black/5 text-black">
                                 {{ caseStudy.mitra.nama_mitra }}
                             </div>
-                            <div class="text-sm font-medium text-gray-600 flex items-center gap-2">
+                            <div class="text-sm font-semibold text-black flex items-center gap-2">
                                 <Clock class="w-4 h-4" />
                                 {{ readingTime }}
                             </div>

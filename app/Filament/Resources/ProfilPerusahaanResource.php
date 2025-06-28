@@ -339,18 +339,8 @@ class ProfilPerusahaanResource extends Resource
                                                 ->label('Tahun')
                                                 ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
                                                 ->weight('bold')
-                                                ->badge()
-                                                ->color(function ($state) {
-                                                    $currentYear = date('Y');
-                                                    $yearDiff = $currentYear - $state;
-                                                    
-                                                    return match (true) {
-                                                        $yearDiff <= 2 => 'success',
-                                                        $yearDiff <= 5 => 'info', 
-                                                        $yearDiff <= 10 => 'warning',
-                                                        default => 'gray'
-                                                    };
-                                                }),
+                                                ->icon('heroicon-o-calendar')
+                                                ->color('primary'),
                                         ])->columnSpan([
                                             'default' => 1,
                                             'md' => 1,
@@ -361,6 +351,7 @@ class ProfilPerusahaanResource extends Resource
                                             Infolists\Components\TextEntry::make('judul')
                                                 ->label('Pencapaian')
                                                 ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                                ->icon('heroicon-o-trophy')
                                                 ->weight('bold')
                                                 ->color('primary'),
 

@@ -27,22 +27,22 @@ class ProdukStats extends BaseWidget
         return [
             Stat::make('Total Produk', $this->getPageTableQuery()->count())
                 ->description('Total produk menurut filter')
-                ->icon('heroicon-s-shopping-bag')
+                ->descriptionIcon('heroicon-s-shopping-bag')
                 ->color('primary'),
 
             Stat::make('Terpublikasi', Produk::query()->where('status_produk', ContentStatus::TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('Produk yang sudah dipublikasikan')
-                ->icon("heroicon-s-eye")
+                ->descriptionIcon("heroicon-s-eye")
                 ->color('success'),
 
             Stat::make('Tidak Terpublikasi', Produk::query()->where('status_produk', ContentStatus::TIDAK_TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('Produk masih sebagai draft')
-                ->icon("heroicon-s-eye-slash")
+                ->descriptionIcon("heroicon-s-eye-slash")
                 ->color('warning'),
 
             Stat::make('Diarsipkan', Produk::query()->onlyTrashed()->count())
                 ->description('Produk yang diarsipkan')
-                ->icon("heroicon-s-archive-box")
+                ->descriptionIcon("heroicon-s-archive-box")
                 ->color('danger'),
         ];
     }

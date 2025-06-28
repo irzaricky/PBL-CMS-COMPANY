@@ -35,6 +35,8 @@ class GaleriResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Galeri')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Isi informasi dasar galeri Anda. Judul dan kategori galeri wajib diisi.')
                     ->schema([
                         Forms\Components\TextInput::make('judul_galeri')
                             ->label('Judul Galeri')
@@ -108,18 +110,17 @@ class GaleriResource extends Resource
                                 'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
                             ]),
 
-                        Forms\Components\Select::make('status_galeri')
+                        Forms\Components\ToggleButtons::make('status_galeri')
                             ->label('Status Galeri')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
-                            ])
+                            ->inline()
+                            ->options(ContentStatus::class)
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
-                            ->native(false)
                             ->required(),
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
+                    ->icon('heroicon-s-photo')
+                    ->description('Unggah gambar galeri dan tambahkan deskripsi. Gambar akan digunakan sebagai thumbnail galeri.')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_galeri')
                             ->label('Gambar Galeri')
@@ -215,18 +216,26 @@ class GaleriResource extends Resource
 
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
+                    ->icon('heroicon-s-arrow-down-tray')
                     ->numeric()
                     ->alignCenter()
                     ->badge(),
 
-                Tables\Columns\SelectColumn::make('status_galeri')
+                Tables\Columns\ToggleColumn::make('status_galeri')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
                     ->disabled(fn() => !auth()->user()->can('update_galeri', Galeri::class))
-                    ->rules(['required']),
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_galeri' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn($record) => $record->status_galeri === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_galeri === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -253,10 +262,7 @@ class GaleriResource extends Resource
 
                 Tables\Filters\SelectFilter::make('status_galeri')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ->options(ContentStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

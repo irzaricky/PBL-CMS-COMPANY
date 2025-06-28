@@ -46,6 +46,8 @@ class ArtikelResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Artikel')
+                ->description('Isi informasi dasar artikel seperti judul, kategori, penulis, dan status artikel.')
+                ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\TextInput::make('judul_artikel')
                             ->label('Judul Artikel')
@@ -113,18 +115,17 @@ class ArtikelResource extends Resource
                             ->dehydrated()
                             ->helperText('Akan terisi otomatis berdasarkan judul'),
 
-                        Forms\Components\Select::make('status_artikel')
+                        Forms\Components\ToggleButtons::make('status_artikel')
                             ->label('Status Artikel')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
-                            ])
+                            ->inline()
+                            ->options(ContentStatus::class)
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
-                            ->native(false)
                             ->required(),
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
+                ->description('Tambahkan gambar thumbnail dan konten artikel. Gambar akan dioptimalkan untuk ukuran yang sesuai.')
+                ->icon('heroicon-o-photo')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_artikel')
                             ->label('Galeri Gambar Artikel')
@@ -190,14 +191,21 @@ class ArtikelResource extends Resource
                     ->label('Penulis')
                     ->searchable(),
 
-                Tables\Columns\SelectColumn::make('status_artikel')
+                Tables\Columns\ToggleColumn::make('status_artikel')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
                     ->disabled(fn() => !auth()->user()->can('update_artikel', Artikel::class))
-                    ->rules(['required']),
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_artikel' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn ($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn ($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -227,12 +235,9 @@ class ArtikelResource extends Resource
                     ->label('Penulis')
                     ->relationship('user', 'name'),
 
-                Tables\Filters\SelectFilter::make('status_artikel')
+                Tables\Filters\SelectFilter::make('status_produk')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ->options(ContentStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

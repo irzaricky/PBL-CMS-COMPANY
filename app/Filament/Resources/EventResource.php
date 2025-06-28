@@ -37,6 +37,8 @@ class EventResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Dasar')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Tambahkan informasi dasar event yang akan diselenggarakan')
                     ->schema([
                         Forms\Components\TextInput::make('nama_event')
                             ->label('Nama Event')
@@ -73,6 +75,8 @@ class EventResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Detail Event')
+                    ->icon('heroicon-s-calendar')
+                    ->description('Tambahkan informasi detail event yang akan diselenggarakan')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_event')
                             ->label('Thumbnail Event')

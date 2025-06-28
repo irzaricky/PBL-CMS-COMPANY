@@ -138,7 +138,6 @@ const fetchMitraData = async () => {
 
 // Handle image loading errors
 const handleImageError = (event) => {
-    console.warn('Failed to load image:', event.target.src)
     event.target.src = '/image/placeholder.webp'
 }
 

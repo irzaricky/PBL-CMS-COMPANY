@@ -26,14 +26,17 @@ class UnduhanStats extends BaseWidget
         return [
             Stat::make('Terpublikasi', Unduhan::query()->where('status_unduhan', ContentStatus::TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('File yang sudah dipublikasikan')
+                ->descriptionIcon('heroicon-s-eye')
                 ->color('success'),
 
             Stat::make('Tidak Terpublikasi', Unduhan::query()->where('status_unduhan', ContentStatus::TIDAK_TERPUBLIKASI)->whereNull('deleted_at')->count())
                 ->description('File masih sebagai draft')
+                ->descriptionIcon('heroicon-s-eye-slash')
                 ->color('warning'),
 
             Stat::make('Total Download', Number::format(Unduhan::query()->sum('jumlah_unduhan')))
                 ->description('Total file yang diunduh')
+                ->descriptionIcon('heroicon-s-arrow-down-tray')
                 ->color('primary'),
 
             Stat::make('Unduhan Bulan Ini', Unduhan::query()
@@ -41,6 +44,7 @@ class UnduhanStats extends BaseWidget
                 ->whereYear('created_at', now()->year)
                 ->count())
                 ->description('File yang ditambahkan bulan ini')
+                ->descriptionIcon('heroicon-s-arrow-up-tray')
                 ->color('info'),
         ];
     }

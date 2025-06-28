@@ -125,7 +125,7 @@ async function fetchProfilPerusahaan() {
                                         <div
                                             class="absolute -right-4 -top-4 transform rotate-12">
                                             <div
-                                                class="bg-white/20 backdrop-blur-sm w-24 h-24 rounded-lg shadow-lg flex items-center justify-center">
+                                                class="bg-white/20 backdrop-blur-sm w-24 h-24 rounded-lg flex items-center justify-center">
                                                 <div class="bg-white/30 w-20 h-20 rounded-lg rotate-45 absolute"></div>
                                                 <span class="text-3xl font-bold text-white relative z-10">{{ item.tahun
                                                     }}</span>
@@ -135,7 +135,7 @@ async function fetchProfilPerusahaan() {
                                         <div class="pt-2 pb-4">
                                             <h3 class="text-2xl sm:text-3xl font-normal mb-4 pr-16">{{ item.judul }}
                                             </h3>
-                                            <p class="text-lg leading-relaxed text-white/90">
+                                            <p class="text-sm lg:text-md leading-relaxed text-white/90">
                                                 {{ item.deskripsi }}
                                             </p>
                                         </div>

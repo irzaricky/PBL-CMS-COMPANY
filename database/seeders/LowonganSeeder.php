@@ -113,24 +113,44 @@ class LowonganSeeder extends Seeder
 
             $jobType = $jobTypes[array_rand($jobTypes)];
 
-            // Generate rich HTML description
+            // Generate simple HTML description
             $description = $this->generateJobDescription($faker, $fakerEN, $jobTitle, $jobType);
 
             // Menentukan status - 50% terpublikasi, 50% tidak terpublikasi
             $status = rand(1, 100) <= 50 ? ContentStatus::TERPUBLIKASI->value : ContentStatus::TIDAK_TERPUBLIKASI->value;
 
-            $tanggalDibuka = Carbon::now()->subDays(rand(30, 180));
+            // Adjusted date logic to have more open positions
+            // 70% of jobs will be currently open
+            $isCurrentlyOpen = rand(1, 100) <= 70;
+            
+            if ($isCurrentlyOpen) {
+                // For open positions: start date is in the past, end date is in the future
+                $tanggalDibuka = Carbon::now()->subDays(rand(1, 60)); // Started 1-60 days ago
+                $tanggalDitutup = Carbon::now()->addDays(rand(15, 90)); // Will close in 15-90 days
+            } else {
+                // For closed positions: either not started yet or already ended
+                $closedType = rand(1, 2);
+                if ($closedType === 1) {
+                    // Not started yet (future opening)
+                    $tanggalDibuka = Carbon::now()->addDays(rand(1, 30));
+                    $tanggalDitutup = $tanggalDibuka->copy()->addDays(rand(30, 60));
+                } else {
+                    // Already ended (past closing)
+                    $tanggalDitutup = Carbon::now()->subDays(rand(1, 30));
+                    $tanggalDibuka = $tanggalDitutup->copy()->subDays(rand(30, 90));
+                }
+            }
 
             $lowonganData[] = [
                 'id_lowongan' => $i,
-                'id_user' => $faker->randomElement($users), // Ambil random dari 5 user pertama
+                'id_user' => $faker->randomElement($users),
                 'judul_lowongan' => $jobTitle,
                 'slug' => $slug,
                 'deskripsi_pekerjaan' => $description,
                 'jenis_lowongan' => $jobType,
-                'gaji' => rand(5, 25) * 1000000, // 5-25 juta
+                'gaji' => rand(5, 25) * 1000000,
                 'tanggal_dibuka' => $tanggalDibuka,
-                'tanggal_ditutup' => $tanggalDibuka->copy()->addDays(rand(30, 50)),
+                'tanggal_ditutup' => $tanggalDitutup,
                 'tenaga_dibutuhkan' => rand(1, 5),
                 'thumbnail_lowongan' => $getRandomThumbnails(),
                 'status_lowongan' => $status,
@@ -143,7 +163,7 @@ class LowonganSeeder extends Seeder
     }
 
     /**
-     * Generate job description dengan struktur HTML yang kaya
+     * Generate job description dengan struktur HTML sederhana
      * @param \Faker\Generator $faker
      * @param \Faker\Generator $fakerEN
      * @param string $jobTitle
@@ -182,7 +202,7 @@ class LowonganSeeder extends Seeder
 
         // Preferred Qualifications
         if ($faker->boolean(80)) {
-            $description .= '<h3>Kualifikasi Tambahan (Nice to Have)</h3>';
+            $description .= '<h3>Kualifikasi Tambahan</h3>';
             $preferred = $this->getPreferredQualifications($jobTitle);
             $description .= '<ul>';
             foreach ($preferred as $pref) {
@@ -191,33 +211,31 @@ class LowonganSeeder extends Seeder
             $description .= '</ul>';
         }
 
-        // Benefits Section dengan styling menarik
+        // Benefits Section
         $description .= '<h3>Benefit & Fasilitas</h3>';
-        $description .= '<div style="background-color: #f8f9fa; border-left: 4px solid #28a745; padding: 20px; margin: 20px 0;">';
-        $description .= '<p style="margin-bottom: 15px;"><strong>Kami menawarkan paket kompensasi dan benefit yang menarik:</strong></p>';
+        $description .= '<p>Kami menawarkan paket kompensasi dan benefit yang menarik:</p>';
 
         $benefits = [
-            '💰 Gaji kompetitif sesuai pengalaman dan kemampuan',
-            '🏥 Asuransi kesehatan untuk karyawan dan keluarga',
-            '📚 Program training dan pengembangan karir',
-            '🏖️ Cuti tahunan dan cuti fleksibel',
-            '🍕 Makan siang gratis dan snack di kantor',
-            '🚗 Tunjangan transportasi atau parkir',
-            '💻 Laptop dan peralatan kerja terbaru',
-            '🎉 Bonus kinerja dan THR',
-            '🏠 Work from home flexibility',
-            '⚡ Internet allowance untuk WFH',
-            '🎯 Performance bonus dan career advancement',
-            '🎪 Team building dan company outing'
+            'Gaji kompetitif sesuai pengalaman dan kemampuan',
+            'Asuransi kesehatan untuk karyawan dan keluarga',
+            'Program training dan pengembangan karir',
+            'Cuti tahunan dan cuti fleksibel',
+            'Makan siang gratis dan snack di kantor',
+            'Tunjangan transportasi atau parkir',
+            'Laptop dan peralatan kerja terbaru',
+            'Bonus kinerja dan THR',
+            'Work from home flexibility',
+            'Internet allowance untuk WFH',
+            'Performance bonus dan career advancement',
+            'Team building dan company outing'
         ];
 
         $selectedBenefits = $faker->randomElements($benefits, rand(6, 9));
-        $description .= '<ul style="margin-bottom: 0;">';
+        $description .= '<ul>';
         foreach ($selectedBenefits as $benefit) {
-            $description .= '<li style="margin-bottom: 8px;">' . $benefit . '</li>';
+            $description .= '<li>' . $benefit . '</li>';
         }
         $description .= '</ul>';
-        $description .= '</div>';
 
         // Work Environment Section
         if ($faker->boolean(75)) {
@@ -241,49 +259,39 @@ class LowonganSeeder extends Seeder
         if ($faker->boolean(70)) {
             $description .= '<h3>Jenjang Karir</h3>';
             $description .= '<p>Kami berkomitmen untuk mengembangkan karir karyawan dengan jalur yang jelas:</p>';
-            $description .= '<div style="background-color: #e7f3ff; border: 1px solid #b3d9ff; border-radius: 8px; padding: 15px; margin: 15px 0;">';
-
+            
             $careerPaths = $this->getCareerPath($jobTitle);
-            $description .= '<p style="margin-bottom: 10px;"><strong>Possible Career Progression:</strong></p>';
-            $description .= '<p style="margin-bottom: 0; color: #0066cc;">';
-            $description .= implode(' → ', $careerPaths);
-            $description .= '</p>';
-            $description .= '</div>';
+            $description .= '<p><strong>Career Progression:</strong></p>';
+            $description .= '<p>' . implode(' → ', $careerPaths) . '</p>';
         }
 
         // Application Process
         $description .= '<h3>Proses Seleksi</h3>';
-        $description .= '<div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 20px 0;">';
-        $description .= '<h4 style="color: #856404; margin-top: 0;">📋 Tahapan Seleksi:</h4>';
-        $description .= '<ol style="color: #856404; margin-bottom: 15px;">';
+        $description .= '<p><strong>Tahapan Seleksi:</strong></p>';
+        $description .= '<ol>';
         $description .= '<li>Screening CV dan portfolio</li>';
         $description .= '<li>Interview HR via phone/video call</li>';
         $description .= '<li>Technical test/assessment</li>';
         $description .= '<li>Interview dengan user/manager</li>';
         $description .= '<li>Final interview dan negosiasi offer</li>';
         $description .= '</ol>';
-        $description .= '<p style="color: #856404; margin-bottom: 0;"><em>💡 Proses seleksi memakan waktu 1-2 minggu</em></p>';
-        $description .= '</div>';
+        $description .= '<p><em>Proses seleksi memakan waktu 1-2 minggu</em></p>';
 
         // Call to Action
         $description .= '<h3>Siap Bergabung dengan Tim Kami?</h3>';
-        $description .= '<div style="background-color: #d1ecf1; border: 1px solid #bee5eb; border-radius: 8px; padding: 20px; margin: 20px 0;">';
-        $description .= '<p style="color: #0c5460; margin-bottom: 15px;"><strong>🚀 Jangan lewatkan kesempatan emas ini!</strong></p>';
-        $description .= '<p style="color: #0c5460; margin-bottom: 15px;">Kirimkan CV terbaru Anda beserta portfolio (jika ada) melalui tombol "Lamar Sekarang" di atas.</p>';
-        $description .= '<p style="color: #0c5460; margin-bottom: 0;"><em>Hanya kandidat yang memenuhi kualifikasi yang akan kami hubungi untuk tahap selanjutnya.</em></p>';
-        $description .= '</div>';
+        $description .= '<p><strong>Jangan lewatkan kesempatan emas ini!</strong></p>';
+        $description .= '<p>Kirimkan CV terbaru Anda beserta portfolio (jika ada) melalui tombol "Lamar Sekarang" di atas.</p>';
+        $description .= '<p><em>Hanya kandidat yang memenuhi kualifikasi yang akan kami hubungi untuk tahap selanjutnya.</em></p>';
 
         // Contact Information
         if ($faker->boolean(60)) {
             $description .= '<h3>Informasi Kontak</h3>';
-            $description .= '<div style="background-color: #f8f9fa; border-left: 4px solid #007bff; padding: 20px; margin: 20px 0;">';
-            $description .= '<p style="margin-bottom: 10px;"><strong>Ada pertanyaan tentang posisi ini?</strong></p>';
-            $description .= '<ul style="margin-bottom: 0;">';
-            $description .= '<li>📧 Email: recruitment@company.com</li>';
-            $description .= '<li>📱 WhatsApp: +62 812-3456-7890</li>';
-            $description .= '<li>🕐 Jam kerja: Senin-Jumat, 09:00-17:00 WIB</li>';
+            $description .= '<p><strong>Ada pertanyaan tentang posisi ini?</strong></p>';
+            $description .= '<ul>';
+            $description .= '<li>Email: recruitment@company.com</li>';
+            $description .= '<li>WhatsApp: +62 812-3456-7890</li>';
+            $description .= '<li>Jam kerja: Senin-Jumat, 09:00-17:00 WIB</li>';
             $description .= '</ul>';
-            $description .= '</div>';
         }
 
         return $description;

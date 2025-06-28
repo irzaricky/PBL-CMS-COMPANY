@@ -37,6 +37,8 @@ class LowonganResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Lowongan')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Masukkan informasi dasar tentang lowongan yang akan dibuka')
                     ->schema([
                         Forms\Components\TextInput::make('judul_lowongan')
                             ->label('Judul Lowongan')
@@ -69,6 +71,7 @@ class LowonganResource extends Resource
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
+                            ->disabled()
                             ->native(false)
                             ->default(fn() => Auth::id())
                             ->required(),
@@ -87,9 +90,10 @@ class LowonganResource extends Resource
                         Forms\Components\TextInput::make('gaji')
                             ->label('Gaji')
                             ->prefix('Rp')
+                            ->suffix(',-')
                             ->numeric()
                             ->placeholder('Gaji/tunjangan yang ditawarkan')
-                            ->helperText('Nominal'),
+                            ->helperText('Masukkan nominal tanpa menggunakan titik'),
 
                         Forms\Components\TextInput::make('tenaga_dibutuhkan')
                             ->label('Jumlah Posisi')
@@ -101,6 +105,8 @@ class LowonganResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Detail Lowongan')
+                    ->icon('heroicon-s-briefcase')
+                    ->description('Tambahkan informasi pelengkap tentang lowongan yang akan dibuka')
                     ->schema([
                         Forms\Components\RichEditor::make('deskripsi_pekerjaan')
                             ->label('Deskripsi Pekerjaan')
@@ -127,6 +133,8 @@ class LowonganResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Periode Lowongan')
+                    ->icon('heroicon-s-calendar')
+                    ->description('Atur periode pembukaan dan penutupan lowongan')
                     ->schema([
                         Forms\Components\Grid::make()
                             ->schema([
@@ -153,12 +161,10 @@ class LowonganResource extends Resource
                                     ]),
                             ]),
 
-                        Forms\Components\Select::make('status_lowongan')
+                        Forms\Components\ToggleButtons::make('status_lowongan')
                             ->label('Status Lowongan')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
-                            ])
+                            ->inline()
+                            ->options(ContentStatus::class)
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
                             ->required(),
                     ]),
@@ -224,26 +230,31 @@ class LowonganResource extends Resource
 
                 Tables\Columns\TextColumn::make('gaji')
                     ->label('Gaji')
-                    ->money('Rp.')
-                ,
+                    ->money('IDR'),
 
                 Tables\Columns\TextColumn::make('tanggal_dibuka')
                     ->label('Tanggal Dibuka')
-                    ->date('d M Y')
-                ,
+                    ->date('d M Y'),
 
                 Tables\Columns\TextColumn::make('tanggal_ditutup')
                     ->label('Tanggal Ditutup')
-                    ->date('d M Y')
-                ,
+                    ->date('d M Y'),
 
-                Tables\Columns\SelectColumn::make('status_lowongan')
+                Tables\Columns\ToggleColumn::make('status_lowongan')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
-                    ->rules(['required']),
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
+                    ->disabled(fn() => !auth()->user()->can('update_lowongan', Lowongan::class))
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_lowongan' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn($record) => $record->status_lowongan === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_lowongan === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('periode_status')
                     ->label('Periode')
@@ -306,10 +317,7 @@ class LowonganResource extends Resource
 
                 Tables\Filters\SelectFilter::make('status_lowongan')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ->options(ContentStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

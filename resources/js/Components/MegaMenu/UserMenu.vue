@@ -1,11 +1,21 @@
 <script setup>
-import { computed, ref } from "vue";
+import { computed, ref, onMounted } from "vue";
 import { usePage, router } from "@inertiajs/vue3";
 import { User, LayoutDashboard, LogOut, Bell, Check, ChevronRight } from "lucide-vue-next";
 
 const page = usePage();
 const user = computed(() => page.props.auth?.user ?? null);
 const activeTab = ref("profile"); // 'profile' or 'notifications'
+const theme = usePage().props.theme;
+
+onMounted(() => {
+    if (theme && theme.secondary) {
+        document.documentElement.style.setProperty(
+            "--color-secondary",
+            theme.secondary
+        );
+    }
+});
 
 const greeting = computed(() => {
     const hour = new Date().getHours();
@@ -117,19 +127,22 @@ const handleNotificationClick = (notification) => {
                 <button
                     @click="activeTab = 'profile'"
                     class="flex-1 py-2 px-4 text-sm font-medium"
-                    :class="activeTab === 'profile' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
+                    :class="activeTab === 'profile' ? 'border-b-2' : 'text-gray-500 hover:text-gray-700'"
+                    :style="activeTab === 'profile' ? { color: theme?.secondary || '#3B82F6', borderBottomColor: theme?.secondary || '#3B82F6' } : {}"
                 >
                     Profil
                 </button>
                 <button
                     @click="activeTab = 'notifications'"
                     class="flex-1 py-2 px-4 text-sm font-medium relative"
-                    :class="activeTab === 'notifications' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'"
+                    :class="activeTab === 'notifications' ? 'border-b-2' : 'text-gray-500 hover:text-gray-700'"
+                    :style="activeTab === 'notifications' ? { color: theme?.secondary || '#3B82F6', borderBottomColor: theme?.secondary || '#3B82F6' } : {}"
                 >
                     Notifikasi
                     <span
                         v-if="unreadCount > 0"
-                        class="absolute top-1 right-1 inline-flex items-center justify-center px-1 py-0.5 text-[10px] font-bold leading-none text-white bg-red-600 rounded-full"
+                        class="absolute top-1 right-1 inline-flex items-center justify-center px-1 py-0.5 text-[10px] font-bold leading-none text-white rounded-full"
+                        :style="{ backgroundColor: theme?.secondary || '#EF4444' }"
                     >
                         {{ unreadCount > 99 ? "99+" : unreadCount }}
                     </span>
@@ -149,9 +162,7 @@ const handleNotificationClick = (notification) => {
                     </li>
                     <li class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-200">
                         <LogOut class="w-4 h-4 text-red-600" />
-                        <a href="/logout" class="text-red-600 hover:underline"
-                            >Logout</a
-                        >
+                        <a href="/logout" class="text-red-600 hover:underline">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -164,7 +175,8 @@ const handleNotificationClick = (notification) => {
                     <button
                         v-if="unreadCount > 0"
                         @click="markAllAsRead"
-                        class="text-xs text-blue-600 hover:text-blue-800"
+                        class="text-xs hover:underline"
+                        :style="{ color: theme?.secondary || '#3B82F6' }"
                     >
                         Tandai Semua Dibaca
                     </button>
@@ -178,7 +190,11 @@ const handleNotificationClick = (notification) => {
                     <div
                         v-for="notification in notifications.unread"
                         :key="notification.id"
-                        class="px-4 py-3 border-l-4 border-blue-500 hover:bg-blue-50"
+                        class="px-4 py-3 border-l-4 cursor-pointer hover:bg-gray-100 transition-colors"
+                        :style="{ 
+                            borderLeftColor: theme?.secondary || '#3B82F6',
+                            backgroundColor: `${theme?.secondary || '#3B82F6'}08`
+                        }"
                         @click="handleNotificationClick(notification)"
                     >
                         <div class="flex items-start">
@@ -186,7 +202,8 @@ const handleNotificationClick = (notification) => {
                             <div class="flex-shrink-0 mr-3">
                                 <component
                                     :is="iconMap[notification.icon] || Bell"
-                                    class="w-5 h-5 text-blue-600"
+                                    class="w-5 h-5"
+                                    :style="{ color: theme?.secondary || '#3B82F6' }"
                                 />
                             </div>
 
@@ -204,7 +221,8 @@ const handleNotificationClick = (notification) => {
                                     </span>
                                     <button
                                         @click.stop="markAsRead(notification.id)"
-                                        class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                                        class="text-xs font-medium hover:opacity-80"
+                                        :style="{ color: theme?.secondary || '#3B82F6' }"
                                     >
                                         <Check class="w-4 h-4" />
                                     </button>
@@ -266,7 +284,10 @@ const handleNotificationClick = (notification) => {
                 <div class="p-3 border-t border-gray-200">
                     <a
                         href="/notifications"
-                        class="block w-full text-center text-blue-600 hover:text-blue-800 font-medium text-sm py-2 hover:bg-blue-50 rounded-lg transition-colors"
+                        class="block w-full text-center font-medium text-sm py-2 rounded-lg transition-colors hover:bg-gray-100"
+                        :style="{ 
+                            color: theme?.secondary || '#3B82F6'
+                        }"
                     >
                         <div class="flex items-center justify-center">
                             <span>Lihat Semua Notifikasi</span>
