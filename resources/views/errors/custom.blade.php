@@ -7,7 +7,7 @@
     <meta name="description" content="404 - Page Not Found">
     <meta name="robots" content="noindex, nofollow">
 
-    <title>404 - Page Not Found</title>
+    <title>@yield('code') - @yield('message')</title>
 
     {{-- Favicon --}}
     <link rel="icon" type="image/x-icon"
