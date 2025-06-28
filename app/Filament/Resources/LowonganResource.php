@@ -72,6 +72,7 @@ class LowonganResource extends Resource
                             ->searchable()
                             ->preload()
                             ->disabled()
+                            ->dehydrated()
                             ->native(false)
                             ->default(fn() => Auth::id())
                             ->required(),
