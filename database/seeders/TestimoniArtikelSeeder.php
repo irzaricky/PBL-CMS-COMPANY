@@ -13,24 +13,40 @@ class TestimoniArtikelSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
 
-        // Contoh produk dan user ID
-        $artikelIds = DB::table('artikel')->pluck('id_artikel')->toArray();
-        $userIds = DB::table('users')->pluck('id_user')->toArray();
+        // Ambil artikel dan user yang ada menggunakan model yang benar
+        try {
+            $artikelIds = DB::table('artikel')->pluck('id_artikel')->toArray();
+            $userIds = DB::table('users')->pluck('id_user')->toArray(); // FIX: gunakan 'id_user' karena itu adalah primary key di tabel users
 
-        $data = [];
+            // Validasi data tersedia
+            if (empty($artikelIds)) {
+                $this->command->warn('No articles found in database. Skipping testimoni artikel seeding.');
+                return;
+            }
 
-        for ($i = 1; $i <= 20; $i++) {
-            $data[] = [
-                'isi_testimoni' => $faker->paragraph(2),
-                'rating' => $faker->numberBetween(3, 5),
-                'status' => 'terpublikasi',
-                'id_artikel' => $faker->randomElement($artikelIds),
-                'id_user' => $faker->randomElement($userIds),
-                'created_at' => Carbon::now()->subDays(rand(1, 180)),
-                'updated_at' => Carbon::now(),
-            ];
+            if (empty($userIds)) {
+                $this->command->warn('No users found in database. Skipping testimoni artikel seeding.');
+                return;
+            }
+
+            $data = [];
+
+            for ($i = 1; $i <= 20; $i++) {
+                $data[] = [
+                    'isi_testimoni' => $faker->paragraph(2),
+                    'rating' => $faker->numberBetween(3, 5),
+                    'status' => 'terpublikasi',
+                    'id_artikel' => $faker->randomElement($artikelIds),
+                    'id_user' => $faker->randomElement($userIds),
+                    'created_at' => Carbon::now()->subDays(rand(1, 180)),
+                    'updated_at' => Carbon::now(),
+                ];
+            }
+
+            DB::table('testimoni_artikel')->insert($data);
+
+        } catch (\Exception $e) {
+            $this->command->error('Error in TestimoniArtikelSeeder: ' . $e->getMessage());
         }
-
-        DB::table('testimoni_artikel')->insert($data);
     }
 }

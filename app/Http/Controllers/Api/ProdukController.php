@@ -142,6 +142,11 @@ class ProdukController extends Controller
         }
     }
 
+    /**
+     * Mengambil semua kategori produk
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function getCategories()
     {
         try {
@@ -159,6 +164,11 @@ class ProdukController extends Controller
         }
     }
 
+    /**
+     * Mengambil produk terbaru
+     * 
+     * @return \App\Http\Resources\Produk\ProdukListResource|\Illuminate\Http\JsonResponse
+     */
     public function latest()
     {
         try {

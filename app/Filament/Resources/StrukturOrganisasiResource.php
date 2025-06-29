@@ -6,6 +6,7 @@ use App\Filament\Resources\StrukturOrganisasiResource\Pages;
 use App\Filament\Resources\StrukturOrganisasiResource\RelationManagers;
 use App\Filament\Resources\StrukturOrganisasiResource\Widgets\StrukturOrganisasiStats;
 use App\Models\StrukturOrganisasi;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -13,10 +14,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
 use App\Helpers\FilamentGroupingHelper;
 
 class StrukturOrganisasiResource extends Resource
@@ -29,13 +26,10 @@ class StrukturOrganisasiResource extends Resource
     {
         return FilamentGroupingHelper::getNavigationGroup('Company Owner');
     }
-
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+            ->with(['user', 'user.roles']);
     }
 
     public static function form(Form $form): Form
@@ -46,18 +40,40 @@ class StrukturOrganisasiResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('id_user')
                             ->label('Pengguna')
-                            ->relationship('user', 'name')
+                            ->options(function () {
+                                return User::where('status', 'aktif')
+                                    ->whereIn('status_kepegawaian', ['Tetap', 'Kontrak', 'Magang'])
+                                    ->pluck('name', 'id_user');
+                            })
                             ->searchable()
                             ->preload()
                             ->required()
                             ->native(false)
-                            ->helperText('Pilih pengguna yang menempati posisi ini. Status posisi akan mengikuti status pengguna'),
+                            ->helperText('Pilih pengguna aktif dengan status kepegawaian Tetap, Kontrak, atau Magang')
+                            ->live()
+                            ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                if (!$state) {
+                                    return;
+                                }
+
+                                try {
+                                    $user = User::with('roles')->find($state);
+                                    if ($user && $user->roles && $user->roles->count() > 0) {
+                                        // Ambil role pertama dan konversi ke nama jabatan
+                                        $roleName = $user->roles->first()->name;
+                                        $jabatan = self::convertRoleToJabatan($roleName);
+                                        $set('jabatan', $jabatan);
+                                    }
+                                } catch (\Exception $e) {
+                                    // Handle any errors silently or log them
+                                }
+                            }),
 
                         Forms\Components\TextInput::make('jabatan')
                             ->label('Posisi/Jabatan')
                             ->required()
                             ->maxLength(255)
-                            ->placeholder('Contoh: Direktur Utama, Manager, dsb'),
+                            ->helperText('Jabatan akan diisi otomatis berdasarkan role pengguna. Anda dapat mengedit jika diperlukan'),
 
                         Forms\Components\TextInput::make('deskripsi')
                             ->label('Deskripsi Posisi/Jabatan')
@@ -82,6 +98,12 @@ class StrukturOrganisasiResource extends Resource
                             ->validationMessages([
                                 'after_or_equal' => 'Tanggal selesai jabatan harus setelah tanggal mulai jabatan',
                             ]),
+                        Forms\Components\TextInput::make('urutan')
+                            ->label('Urutan Tampil')
+                            ->numeric()
+                            ->default(1)
+                            ->required()
+                            ->helperText('Urutan tampil di struktur organisasi (angka kecil akan tampil di atas). Sistem otomatis mengatur berdasarkan hierarki: Super Admin → Director → Content Management → Customer Service'),
                     ]),
             ]);
     }
@@ -90,56 +112,124 @@ class StrukturOrganisasiResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('urutan')
+                    ->label('Urutan')
+                    ->alignCenter()
+                    ->badge()
+                    ->color(fn($record) => $record->urutan == 0 ? 'danger' : 'primary')
+                    ->getStateUsing(
+                        fn(StrukturOrganisasi $record): string =>
+                        $record->urutan == 0 ? 'Nonaktif' : (string) $record->urutan
+                    ),
+
+                Tables\Columns\ImageColumn::make('user.foto_profil')
+                    ->label('Foto')
+                    ->circular()
+                    ->size(50)
+                    ->disk('public')
+                    ->defaultImageUrl(function ($record) {
+                        return 'https://ui-avatars.com/api/?name=' . urlencode($record->user?->name ?? 'User') . '&color=7F9CF5&background=EBF4FF';
+                    }),
+
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nama')
                     ->searchable()
-                ,
+                    ->weight('bold'),
 
                 Tables\Columns\TextColumn::make('jabatan')
                     ->label('Posisi/Jabatan')
                     ->searchable()
-                ,
+                    ->icon('heroicon-s-user')
+                    ->badge()
+                    ->color('success'),
+
+                Tables\Columns\TextColumn::make('user_role')
+                    ->label('Role Sistem')
+                    ->badge()
+                    ->color('info')
+                    ->getStateUsing(function (StrukturOrganisasi $record): string {
+                        $user = $record->user;
+                        if (!$user || !$user->roles || $user->roles->isEmpty()) {
+                            return 'Tidak ada role';
+                        }
+                        $roleName = $user->roles->first()->name;
+                        return ucwords(str_replace('_', ' ', $roleName));
+                    })
+                    ->toggledHiddenByDefault()
+                    ->toggleable(),
 
                 Tables\Columns\TextColumn::make('deskripsi')
                     ->label('Deskripsi Posisi/Jabatan')
                     ->searchable()
                     ->limit(50)
-                    ->tooltip(fn(StrukturOrganisasi $record): string => $record->deskripsi)
-                ,
+                    ->tooltip(fn(StrukturOrganisasi $record): string => $record->deskripsi),
 
-                Tables\Columns\SelectColumn::make('user.status')
+                Tables\Columns\TextColumn::make('user_status')
                     ->label('Status Pengguna')
-                    ->options([
+                    ->badge()
+                    ->color(fn($record): string => match ($record->user?->status) {
+                        'aktif' => 'success',
+                        'nonaktif' => 'danger',
+                        default => 'gray',
+                    })
+                    ->getStateUsing(fn(StrukturOrganisasi $record): string => match ($record->user?->status) {
                         'aktif' => 'Aktif',
                         'nonaktif' => 'Nonaktif',
-                    ])
-                    ->rules(['required']),
+                        default => 'Tidak ada status',
+                    }),
 
                 Tables\Columns\TextColumn::make('tanggal_mulai')
                     ->label('Tanggal Mulai')
-                    ->date('d M Y'),
+                    ->date('d M Y')
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('tanggal_selesai')
                     ->label('Tanggal Selesai')
                     ->date('d M Y')
-                    ->placeholder('-'),
+                    ->placeholder('-')
+                    ->sortable(),
+
+                Tables\Columns\TextColumn::make('user_status_kepegawaian')
+                    ->label('Status Kepegawaian')
+                    ->badge()
+                    ->color(fn($record): string => match ($record->user?->status_kepegawaian) {
+                        'Tetap' => 'success',
+                        'Kontrak' => 'warning',
+                        'Magang' => 'info',
+                        default => 'gray',
+                    })
+                    ->getStateUsing(fn(StrukturOrganisasi $record): string => $record->user?->status_kepegawaian ?? 'Tidak ada status'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->label('Dihapus Pada')
-                    ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
             ])
-            ->defaultSort('tanggal_mulai', 'desc')
+            ->defaultSort('urutan', 'asc')
+            ->reorderable('urutan')
+            ->reorderRecordsTriggerAction(
+                fn(\Filament\Tables\Actions\Action $action, bool $isReordering) => $action
+                    ->button()
+                    ->label($isReordering ? 'Selesai Mengatur Urutan' : 'Atur Urutan')
+                    ->color($isReordering ? 'success' : 'primary')
+                    ->after(function () {
+                        // Ensure inactive users always have urutan 0 after reordering
+                        \DB::table('struktur_organisasi')
+                            ->join('users', 'struktur_organisasi.id_user', '=', 'users.id_user')
+                            ->where('users.status', 'nonaktif')
+                            ->update(['struktur_organisasi.urutan' => 0]);
+
+                        // Force clear cache after reordering
+                        \App\Observers\StrukturOrganisasiObserver::clearCache();
+                        // \Illuminate\Support\Facades\Log::info('Cache cleared after manual reordering and urutan fixed for inactive users');
+                    })
+            )
             ->filters([
                 Tables\Filters\SelectFilter::make('user.status')
                     ->label('Status Pengguna')
@@ -147,6 +237,32 @@ class StrukturOrganisasiResource extends Resource
                         'aktif' => 'Aktif',
                         'nonaktif' => 'Nonaktif',
                     ]),
+
+                Tables\Filters\SelectFilter::make('user.status_kepegawaian')
+                    ->label('Status Kepegawaian')
+                    ->options([
+                        'Tetap' => 'Tetap',
+                        'Kontrak' => 'Kontrak',
+                        'Magang' => 'Magang',
+                        'Non Pegawai' => 'Non Pegawai',
+                    ]),
+
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Role Pengguna')
+                    ->options([
+                        'super_admin' => 'Super Admin',
+                        'Director' => 'Director',
+                        'Content Management' => 'Content Management',
+                        'Customer Service' => 'Customer Service',
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        if (filled($data['value'])) {
+                            return $query->whereHas('user.roles', function (Builder $query) use ($data) {
+                                $query->where('name', $data['value']);
+                            });
+                        }
+                        return $query;
+                    }),
 
                 Tables\Filters\Filter::make('tanggal_mulai')
                     ->form([
@@ -171,7 +287,8 @@ class StrukturOrganisasiResource extends Resource
                     ->label('Posisi Aktif')
                     ->query(fn(Builder $query): Builder => $query
                         ->whereHas('user', function (Builder $query) {
-                            $query->where('status', 'aktif');
+                            $query->where('status', 'aktif')
+                                ->whereIn('status_kepegawaian', ['Tetap', 'Kontrak', 'Magang']);
                         })
                         ->where(function (Builder $query) {
                             $query->whereNull('tanggal_selesai')
@@ -180,29 +297,9 @@ class StrukturOrganisasiResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make()
-                    ->label('Arsipkan')
-                    ->modalHeading('Arsipkan Struktur Organisasi')
-                    ->icon('heroicon-s-archive-box-arrow-down')
-                    ->color('warning')
-                    ->successNotificationTitle('Struktur organisasi berhasil diarsipkan'),
-                Tables\Actions\RestoreAction::make()
-                    ->modalHeading('Pulihkan Struktur Organisasi')
-                    ->successNotificationTitle('Struktur organisasi berhasil dipulihkan'),
-                Tables\Actions\ForceDeleteAction::make()
-                    ->label('hapus permanen')
-                    ->modalHeading('Hapus Permanen Struktur Organisasi')
-                    ->successNotificationTitle('Struktur organisasi berhasil dihapus permanen'),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->successNotificationTitle('Struktur organisasi berhasil diarsipkan'),
-                    RestoreBulkAction::make()
-                        ->successNotificationTitle('Struktur organisasi berhasil dipulihkan'),
-                    ForceDeleteBulkAction::make()
-                        ->successNotificationTitle('Struktur organisasi berhasil dihapus permanen'),
-                ]),
+                // No bulk actions - archive and delete disabled
             ]);
     }
 
@@ -219,13 +316,25 @@ class StrukturOrganisasiResource extends Resource
             StrukturOrganisasiStats::class,
         ];
     }
-
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListStrukturOrganisasis::route('/'),
-            'create' => Pages\CreateStrukturOrganisasi::route('/create'),
             'edit' => Pages\EditStrukturOrganisasi::route('/{record}/edit'),
         ];
+    }
+
+    /**
+     * Konversi nama role ke nama jabatan yang sesuai
+     */
+    public static function convertRoleToJabatan(string $roleName): string
+    {
+        return match ($roleName) {
+            'super_admin' => 'Super Administrator',
+            'Director' => 'Direktur',
+            'Content Management' => 'Manager Konten',
+            'Customer Service' => 'Customer Service',
+            default => ucwords(str_replace('_', ' ', $roleName))
+        };
     }
 }

@@ -1,29 +1,27 @@
-@if(session('db_connection_error') || session('database_error') || $errors->has('database_connection') || $errors->has('database_fields') || $errors->has('save_error'))
+@php
+    $dbErrors = array_filter([
+        session('db_connection_error'),
+        session('database_error'),
+        $errors->first('database_connection'),
+        $errors->first('database_fields'),
+        $errors->first('save_error')
+    ]);
+@endphp
+
+@if(!empty($dbErrors))
     <div class="alert alert-danger">
-        <strong>Database Connection Error!</strong>
+        <strong>{{ __('installer.database_connection_error') }}</strong>
         <ul>
-            @if(session('db_connection_error'))
-                <li>{{ session('db_connection_error') }}</li>
-            @endif
-            @if(session('database_error'))
-                <li>{{ session('database_error') }}</li>
-            @endif
-            @if($errors->has('database_connection'))
-                <li>{{ $errors->first('database_connection') }}</li>
-            @endif
-            @if($errors->has('database_fields'))
-                <li>{{ $errors->first('database_fields') }}</li>
-            @endif
-            @if($errors->has('save_error'))
-                <li>{{ $errors->first('save_error') }}</li>
-            @endif
+            @foreach($dbErrors as $error)
+                <li>{{ $error }}</li>
+            @endforeach
         </ul>
-        <p>Please make sure:</p>
+        <p>{{ __('installer.please_make_sure') }}:</p>
         <ul>
-            <li>Your database server is running</li>
-            <li>The database exists</li>
-            <li>Your username and password are correct</li>
-            <li>The user has proper permissions on the database</li>
+            <li>{{ __('installer.database_server_running') }}</li>
+            <li>{{ __('installer.database_exists') }}</li>
+            <li>{{ __('installer.credentials_correct') }}</li>
+            <li>{{ __('installer.user_has_permissions') }}</li>
         </ul>
     </div>
 @endif

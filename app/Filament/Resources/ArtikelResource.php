@@ -46,6 +46,8 @@ class ArtikelResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Artikel')
+                ->description('Isi informasi dasar artikel seperti judul, kategori, penulis, dan status artikel.')
+                ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\TextInput::make('judul_artikel')
                             ->label('Judul Artikel')
@@ -54,9 +56,7 @@ class ArtikelResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (!empty($state)) {
-                                    $baseSlug = str($state)->slug();
-                                    $dateSlug = now()->format('Y-m-d');
-                                    $set('slug', $baseSlug . '-' . $dateSlug);
+                                    $set('slug', str($state)->slug());
                                 } else {
                                     $set('slug', null);
                                 }
@@ -111,25 +111,21 @@ class ArtikelResource extends Resource
                         Forms\Components\TextInput::make('slug')
                             ->required()
                             ->maxLength(100)
-                            ->unique(Artikel::class, 'slug', ignoreRecord: true)
+                            ->unique(ignoreRecord: true)
                             ->dehydrated()
-                            ->helperText('Akan terisi otomatis berdasarkan judul')
-                            ->validationMessages([
-                                'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
-                            ]),
+                            ->helperText('Akan terisi otomatis berdasarkan judul'),
 
-                        Forms\Components\Select::make('status_artikel')
+                        Forms\Components\ToggleButtons::make('status_artikel')
                             ->label('Status Artikel')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
-                            ])
+                            ->inline()
+                            ->options(ContentStatus::class)
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
-                            ->native(false)
                             ->required(),
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
+                ->description('Tambahkan gambar thumbnail dan konten artikel. Gambar akan dioptimalkan untuk ukuran yang sesuai.')
+                ->icon('heroicon-o-photo')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_artikel')
                             ->label('Galeri Gambar Artikel')
@@ -195,14 +191,21 @@ class ArtikelResource extends Resource
                     ->label('Penulis')
                     ->searchable(),
 
-                Tables\Columns\SelectColumn::make('status_artikel')
+                Tables\Columns\ToggleColumn::make('status_artikel')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
                     ->disabled(fn() => !auth()->user()->can('update_artikel', Artikel::class))
-                    ->rules(['required']),
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_artikel' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn ($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn ($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -232,27 +235,21 @@ class ArtikelResource extends Resource
                     ->label('Penulis')
                     ->relationship('user', 'name'),
 
-                Tables\Filters\SelectFilter::make('status_artikel')
+                Tables\Filters\SelectFilter::make('status_produk')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ->options(ContentStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->label('Arsipkan')
-                    ->modalHeading('Arsipkan Artikel')
                     ->icon('heroicon-s-archive-box-arrow-down')
                     ->color('warning')
                     ->successNotificationTitle('Artikel berhasil diarsipkan'),
                 Tables\Actions\RestoreAction::make()
-                    ->modalHeading('Pulihkan Artikel')
                     ->successNotificationTitle('Artikel berhasil dipulihkan'),
                 Tables\Actions\ForceDeleteAction::make()
                     ->label('hapus permanen')
-                    ->modalHeading('Hapus Permanen Artikel')
                     ->successNotificationTitle('Artikel berhasil dihapus permanen')
                     ->before(function ($record) {
                         MultipleFileHandler::deleteFiles($record, 'thumbnail_artikel');
@@ -261,10 +258,14 @@ class ArtikelResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Artikel berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Artikel berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Artikel berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');

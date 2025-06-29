@@ -3,28 +3,52 @@ import { ref, onMounted } from "vue";
 import axios from "axios";
 import { computed } from "vue";
 import { Link } from "@inertiajs/vue3";
-import { Phone, Mail, MapPin } from "lucide-vue-next";
+import {
+    Phone,
+    Mail,
+    MapPin,
+    Facebook,
+    Instagram,
+    Linkedin,
+    Twitter,
+    Youtube,
+    Github,
+    MessageCircle,
+    Send, 
+    Music
+} from "lucide-vue-next";
 
 const profil_perusahaan = ref(null);
+const mediaSosial = ref([]);
 const loading = ref(false);
 const error = ref(null);
 
 const maxKalimat = 1
 
-const truncatedDeskripsi = computed(() => {
-    if (!profil_perusahaan.value?.deskripsi_perusahaan) return 'Sejarah perusahaan belum tersedia.'
+// Function to strip HTML tags
+function stripHtml(html) {
+    if (!html) return '';
+    return html.replace(/<[^>]*>/g, '');
+}
 
-    const kalimat = profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/)
-    return kalimat.slice(0, maxKalimat).join(' ')
+const truncatedDeskripsi = computed(() => {
+    if (!profil_perusahaan.value?.deskripsi_perusahaan) return 'Deskripsi perusahaan belum tersedia.'
+
+    // Strip HTML tags first, then split into sentences
+    const cleanText = stripHtml(profil_perusahaan.value.deskripsi_perusahaan);
+    const kalimat = cleanText.split(/(?<=[.!?])\s+/);
+    return kalimat.slice(0, maxKalimat).join(' ');
 })
 
 const showReadMore = computed(() => {
     if (!profil_perusahaan.value?.deskripsi_perusahaan) return false
-    return profil_perusahaan.value.deskripsi_perusahaan.split(/(?<=[.!?])\s+/).length > maxKalimat
+    const cleanText = stripHtml(profil_perusahaan.value.deskripsi_perusahaan);
+    return cleanText.split(/(?<=[.!?])\s+/).length > maxKalimat
 })
 
 onMounted(() => {
     fetchProfilPerusahaan();
+    fetchMediaSosial();
 });
 
 async function fetchProfilPerusahaan() {
@@ -40,6 +64,48 @@ async function fetchProfilPerusahaan() {
     }
 }
 
+async function fetchMediaSosial() {
+    try {
+        const response = await axios.get('/api/media-sosial');
+        mediaSosial.value = [];
+
+        // Process the updated response format
+        for (const [platform, data] of Object.entries(response.data.data)) {
+            if (data.active) {
+                mediaSosial.value.push({
+                    name: platform,
+                    link: data.link
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error fetching social media:", err);
+    }
+}
+
+function getMediaSosialLink(platform) {
+    // This function will be populated with real data from your API
+    // For now, it returns placeholder URLs
+    return "#"; // In reality, this would return the actual link from your API
+}
+
+function getMediaSosialComponent(platform) {
+    // Map platform names to Lucide components
+    const iconMap = {
+        'Facebook': Facebook,
+        'Instagram': Instagram,
+        'LinkedIn': Linkedin,
+        'Twitter': Twitter,
+        'YouTube': Youtube,
+        'TikTok': Music,
+        'WhatsApp Business': MessageCircle,
+        'Telegram': Send,
+        'GitHub': Github
+    };
+
+    return iconMap[platform] || null;
+}
+
 function getImageUrl(image) {
     if (!image) return "/image/placeholder.webp";
 
@@ -49,11 +115,10 @@ function getImageUrl(image) {
 
     return `/storage/${image}`;
 }
+
 function lihatSelengkapnya() {
     alert(profil_perusahaan.value.sejarah_perusahaan)
 }
-
-
 </script>
 
 <template>
@@ -72,19 +137,21 @@ function lihatSelengkapnya() {
                         <p class="mt-4 text-left">
                             {{ truncatedDeskripsi }}
                             <Link v-if="showReadMore" href="/profil-perusahaan" class="text-blue-400 cursor-pointer">
-                                ... Baca selengkapnya
+                            ... Baca selengkapnya
                             </Link>
                         </p>
 
                         <div class="mt-6">
-                            <h4 class="font-bold pb-1">Contact Us</h4>
+                            <h4 class="font-bold pb-1">Hubungi Kami</h4>
                             <div class="flex items-center gap-2">
                                 <Phone class="w-4" />
-                                <span>(031) 33101059</span>
+                                <span>{{ profil_perusahaan?.telepon_perusahaan || 'Telepon perusahaan belum tersedia.'
+                                    }}</span>
                             </div>
                             <div class="flex items-center gap-2">
                                 <Mail class="w-4" />
-                                <span>marketing@biiscorp.com</span>
+                                <span>{{ profil_perusahaan?.email_perusahaan || 'Email perusahaan belum tersedia.'
+                                    }}</span>
                             </div>
                         </div>
                     </div>
@@ -93,14 +160,30 @@ function lihatSelengkapnya() {
                     <div class="flex flex-col justify-center h-full lg:col-span-2 lg:pl-20">
                         <h4 class="font-bold mb-4">Quick Links</h4>
                         <ul class="grid grid-cols-2 gap-y-2">
-                            <li><a href="#" class="hover:underline">Beranda</a></li>
-                            <li><a href="#" class="hover:underline">Galeri</a></li>
-                            <li><a href="#" class="hover:underline">Tentang Kami</a></li>
-                            <li><a href="#" class="hover:underline">Unduhan</a></li>
-                            <li><a href="#" class="hover:underline">Produk</a></li>
-                            <li><a href="#" class="hover:underline">Event</a></li>
-                            <li><a href="#" class="hover:underline">Artikel</a></li>
-                            <li><a href="#" class="hover:underline">Lowongan</a></li>
+                            <li>
+                                <Link href="/" class="hover:underline">Beranda</Link>
+                            </li>
+                            <li>
+                                <Link href="/galeri" class="hover:underline">Galeri</Link>
+                            </li>
+                            <li>
+                                <Link href="/profil-perusahaan" class="hover:underline">Tentang Kami</Link>
+                            </li>
+                            <li>
+                                <Link href="/unduhan" class="hover:underline">Unduhan</Link>
+                            </li>
+                            <li>
+                                <Link href="/produk" class="hover:underline">Produk</Link>
+                            </li>
+                            <li>
+                                <Link href="/event" class="hover:underline">Event</Link>
+                            </li>
+                            <li>
+                                <Link href="/artikel" class="hover:underline">Artikel</Link>
+                            </li>
+                            <li>
+                                <Link href="/lowongan" class="hover:underline">Lowongan</Link>
+                            </li>
                         </ul>
                     </div>
 
@@ -117,26 +200,28 @@ function lihatSelengkapnya() {
                         </div>
                         <div>
                             <h4 class="font-bold mb-4">Follow Us</h4>
-                            <div class="flex flex-wrap gap-4">
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i
-                                        class="bi bi-instagram"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-tiktok"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-facebook"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-linkedin"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i
-                                        class="bi bi-twitter-x"></i></a>
-                                <a href="#" target="_blank" rel="noopener noreferrer"><i class="bi bi-telegram"></i></a>
+                            <div v-if="mediaSosial.length > 0" class="flex flex-wrap gap-4">
+                                <a v-for="(platform, index) in mediaSosial" :key="index" :href="platform.link"
+                                    target="_blank" rel="noopener noreferrer"
+                                    class="hover:text-primary transition-colors" :title="platform.name">
+                                    <component :is="getMediaSosialComponent(platform.name)" class="w-5 h-5" />
+                                </a>
                             </div>
+                            <p v-else class="text-sm italic">Belum ada media sosial yang aktif.</p>
                         </div>
                     </div>
 
                     <!-- Kolom 4: Google Maps -->
                     <div class="flex flex-col justify-center h-full">
                         <div class="w-full aspect-video rounded-lg overflow-hidden">
-                            <iframe class="w-full h-full"
-                                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d7910.17971246413!2d110.8504919!3d-7.565182!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e7a14234667a3fd%3A0xbda63b32997616ad!2sUniversitas%20Sebelas%20Maret%20(UNS)!5e0!3m2!1sid!2sid!4v1746990931583!5m2!1sid!2sid"
-                                width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-                                referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <iframe v-if="profil_perusahaan?.map_embed_perusahaan" class="w-full h-full"
+                                :src="profil_perusahaan.map_embed_perusahaan" width="600" height="450" style="border:0;"
+                                allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                            </iframe>
+                            <div v-else
+                                class="w-full h-full bg-gray-700 flex items-center justify-center text-gray-400">
+                                <span>Peta lokasi belum tersedia</span>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -39,6 +39,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'tanggal_lahir',
         'status_kepegawaian',
         'status',
+        'email_verified_at',
     ];
 
     /**
@@ -75,5 +76,41 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
     {
         // Izinkan akses berdasarkan status aktif dan status kepegawaian saja
         return $this->status === 'aktif' && $this->status_kepegawaian !== 'Non Pegawai' || $this->status_kepegawaian !== null;
+    }
+
+    /**
+     * Get the struktur organisasi for this user
+     */
+    public function strukturOrganisasi()
+    {
+        return $this->hasOne(StrukturOrganisasi::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Get suggested jabatan based on user's primary role
+     */
+    public function getSuggestedJabatan(): string
+    {
+        $primaryRole = $this->roles->first();
+
+        if (!$primaryRole) {
+            return 'Staff';
+        }
+
+        return match ($primaryRole->name) {
+            'super_admin' => 'Super Administrator',
+            'Director' => 'Direktur',
+            'Content Management' => 'Manager Konten',
+            'Customer Service' => 'Customer Service',
+            default => ucwords(str_replace('_', ' ', $primaryRole->name))
+        };
+    }
+
+    /**
+     * Get primary role name
+     */
+    public function getPrimaryRoleName(): ?string
+    {
+        return $this->roles->first()?->name;
     }
 }

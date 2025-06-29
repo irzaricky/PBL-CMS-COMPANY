@@ -16,6 +16,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Collection;
 use App\Services\FileHandlers\SingleFileHandler;
 use App\Helpers\FilamentGroupingHelper;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Support\Enums\FontWeight;
+use Filament\Notifications\Notification;
 
 
 class MitraResource extends Resource
@@ -34,6 +39,8 @@ class MitraResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Mitra')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Isi informasi dasar mengenai mitra atau perusahaan yang bekerja sama.')
                     ->schema([
                         Forms\Components\TextInput::make('nama')
                             ->label('Nama Mitra/Perusahaan')
@@ -76,6 +83,8 @@ class MitraResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Dokumen Legal')
+                    ->icon('heroicon-s-document-text')
+                    ->description('Unggah dokumen legal yang diperlukan untuk kemitraan.')
                     ->schema([
                         Forms\Components\FileUpload::make('dok_siup')
                             ->label('Dokumen SIUP')
@@ -99,59 +108,69 @@ class MitraResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->heading('Daftar Mitra')
+            ->description('Daftar mitra yang bekerja sama.')
+            ->defaultPaginationPageOption('all')
+            ->paginationPageOptions(['all'])
             ->columns([
-                Tables\Columns\ImageColumn::make('logo')
-                    ->label('Logo')
-                    ->circular()
-                    ->disk('public'),
-
-                Tables\Columns\TextColumn::make('nama')
-                    ->label('Nama Mitra')
-                    ->searchable()
-                ,
-
-                Tables\Columns\TextColumn::make('alamat_mitra')
-                    ->label('Alamat')
-                    ->limit(30)
-                    ->tooltip(fn(Mitra $record): string => $record->alamat_mitra ?? '')
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('status')
-                    ->label('Status')
-                    ->badge()
-                    ->colors([
-                        'success' => 'aktif',
-                        'danger' => 'nonaktif',
+                Tables\Columns\Layout\Stack::make([
+                    Tables\Columns\ImageColumn::make('logo')
+                        ->height('100%')
+                        ->width('100%')
+                        ->defaultImageUrl(url('/image/placeholder.webp'))
+                        ->extraImgAttributes(['class' => 'rounded-lg object-cover']),
+                    Tables\Columns\Layout\Stack::make([
+                        Tables\Columns\TextColumn::make('nama')
+                            ->label('Nama Mitra')
+                            ->weight(FontWeight::Bold)
+                            ->size('lg')
+                            ->searchable(),
+                        Tables\Columns\TextColumn::make('alamat_mitra')
+                            ->label('Alamat')
+                            ->color('gray')
+                            ->limit(50)
+                            ->tooltip(fn(Mitra $record): string => $record->alamat_mitra ?? ''),
                     ]),
+                ])->space(3),
+                Tables\Columns\Layout\Panel::make([
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\TextColumn::make('status')
+                            ->badge()
+                            ->colors([
+                                'success' => 'aktif',
+                                'danger' => 'nonaktif',
+                            ])
+                            ->grow(false),
+                        Tables\Columns\TextColumn::make('tanggal_kemitraan')
+                            ->label('Kemitraan sejak')
+                            ->date('d M Y')
+                            ->color('gray')
+                            ->prefix('Sejak: '),
+                    ]),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('documents_status')
+                                ->label('Dokumen')
+                                ->formatStateUsing(function (Mitra $record): string {
+                                    $documents = [];
+                                    if ($record->dok_siup) $documents[] = 'SIUP';
+                                    if ($record->dok_npwp) $documents[] = 'NPWP';
 
-                Tables\Columns\IconColumn::make('dok_siup')
-                    ->label('SIUP')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-document-text')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->state(fn(Mitra $record): bool => !empty($record->dok_siup)),
-
-                Tables\Columns\IconColumn::make('dok_npwp')
-                    ->label('NPWP')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-document-text')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->state(fn(Mitra $record): bool => !empty($record->dok_npwp)),
-
-                Tables\Columns\TextColumn::make('tanggal_kemitraan')
-                    ->label('Tanggal Kemitraan')
-                    ->date('d M Y')
-                ,
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Diperbarui Pada')
-                    ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                                    return !empty($documents)
+                                        ? 'Dokumen: ' . implode(', ', $documents)
+                                        : 'Belum ada dokumen';
+                                })
+                                ->color(function (Mitra $record): string {
+                                    return ($record->dok_siup && $record->dok_npwp) ? 'success' : 'warning';
+                                })
+                                ->icon(function (Mitra $record): string {
+                                    return ($record->dok_siup && $record->dok_npwp)
+                                        ? 'heroicon-o-document-check'
+                                        : 'heroicon-o-document-text';
+                                }),
+                        ])->grow(true),
+                    ]),
+                ])->collapsible(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -169,8 +188,17 @@ class MitraResource extends Resource
                     ->label('Mitra Baru')
                     ->query(fn(Builder $query): Builder => $query->where('tanggal_kemitraan', '>=', now()->subMonths(3))),
             ])
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
+            ->paginated([
+                12,
+                24,
+                48,
+                'all',
+            ])
             ->actions([
-                Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('toggleStatus')
                     ->label(
                         fn(Mitra $record): string =>
@@ -187,31 +215,13 @@ class MitraResource extends Resource
                     ->action(function (Mitra $record): void {
                         $record->status = $record->status === 'aktif' ? 'nonaktif' : 'aktif';
                         $record->save();
+
+                        Notification::make()
+                            ->title('Status mitra berhasil diperbarui')
+                            ->success()
+                            ->send();
                     }),
-            ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\BulkAction::make('updateStatus')
-                        ->label('Update Status')
-                        ->icon('heroicon-o-check-circle')
-                        ->form([
-                            Forms\Components\Select::make('status')
-                                ->label('Status')
-                                ->options([
-                                    'aktif' => 'Aktif',
-                                    'nonaktif' => 'Nonaktif',
-                                ])
-                                ->native(false)
-                                ->required(),
-                        ])
-                        ->action(function (Collection $records, array $data): void {
-                            foreach ($records as $record) {
-                                $record->update([
-                                    'status' => $data['status'],
-                                ]);
-                            }
-                        }),
-                ]),
+                Tables\Actions\EditAction::make(),
             ]);
     }
 

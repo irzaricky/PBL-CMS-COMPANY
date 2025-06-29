@@ -24,7 +24,6 @@ class LamaranController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required|exists:users,id_user|integer',
                 'id_lowongan' => 'required|exists:lowongan,id_lowongan|integer',
                 'surat_lamaran' => 'required|file|mimes:pdf,doc,docx|max:5120',
                 'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
@@ -40,10 +39,22 @@ class LamaranController extends Controller
                 ], 422);
             }
 
+            // Cek apakah user sudah pernah melamar untuk lowongan ini
+            $existingApplication = Lamaran::where('id_user', auth()->id())
+                ->where('id_lowongan', $request->id_lowongan)
+                ->first();
+
+            if ($existingApplication) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Anda sudah pernah melamar untuk lowongan ini'
+                ], 422);
+            }
+
             $data = [
-                'id_user' => $request->id_user,
+                'id_user' => auth()->id(),
                 'id_lowongan' => $request->id_lowongan,
-                'pesan_pelamar' => $request->pesan_pelamar, 
+                'pesan_pelamar' => $request->pesan_pelamar,
                 'status_lamaran' => 'Diproses'
             ];
 
@@ -64,12 +75,12 @@ class LamaranController extends Controller
                 $portfolioPath = $request->file('portfolio')->store('lamaran/portfolio', 'public');
                 $data['portfolio'] = $portfolioPath;
             }
-            
+
             $lamaran = Lamaran::create($data);
-            
+
             // Send notification to user
-            $lowongan = Lowongan::find($request->id_lowongan);
-            $user = User::find($request->id_user);
+            $lowongan = Lowongan::findOrFail($request->id_lowongan);
+            $user = auth()->user();
             $user->notify(new LamaranSubmissionNotification($lamaran, $lowongan));
 
             return (new LamaranResource($lamaran))
@@ -97,6 +108,7 @@ class LamaranController extends Controller
         try {
             $lamaran = Lamaran::with('lowongan')
                 ->where('id_user', $userId)
+                ->orderBy('created_at', 'desc') // Urutkan berdasarkan yang terbaru
                 ->get();
 
             return LamaranResource::collection($lamaran)
@@ -141,6 +153,46 @@ class LamaranController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Gagal mengambil detail lamaran',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Mengecek apakah user sudah melamar untuk lowongan tertentu
+     * 
+     * @param int $userId
+     * @param int $lowonganId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function checkUserApplication($userId, $lowonganId)
+    {
+        try {
+            $application = Lamaran::with('lowongan')
+                ->where('id_user', $userId)
+                ->where('id_lowongan', $lowonganId)
+                ->orderBy('created_at', 'desc') // Ambil yang terbaru jika ada duplikasi
+                ->first();
+
+            if ($application) {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'User sudah pernah melamar',
+                    'data' => new LamaranResource($application),
+                    'has_applied' => true
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'User belum pernah melamar',
+                    'data' => null,
+                    'has_applied' => false
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal mengecek status lamaran',
                 'error' => $e->getMessage()
             ], 500);
         }

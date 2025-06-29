@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-center items-center w-full h-auto py-16 font-custom">
+    <div class="flex justify-center items-center max-w-screen-xl mx-auto h-auto py-16 font-custom">
         <div class="flex flex-col items-center w-full max-w-screen-lg px-24">
             <!-- Heading -->
             <h1 class="text-3xl sm:text-4xl md:text-4xl lg:text-5xl text-shadow text-center"

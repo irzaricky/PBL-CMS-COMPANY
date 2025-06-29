@@ -44,6 +44,12 @@ class GaleriController extends Controller
      * @param string $slug
      * @return \App\Http\Resources\Galeri\GaleriViewResource|\Illuminate\Http\JsonResponse
      */
+    /**
+     * Mengambil galeri berdasarkan slug
+     * 
+     * @param string $slug
+     * @return \App\Http\Resources\Galeri\GaleriViewResource|\Illuminate\Http\JsonResponse
+     */
     public function getGaleriBySlug($slug)
     {
         try {

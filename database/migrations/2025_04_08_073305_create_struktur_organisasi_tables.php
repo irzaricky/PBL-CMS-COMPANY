@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('deskripsi');
             $table->timestamp('tanggal_mulai')->nullable();
             $table->timestamp('tanggal_selesai')->nullable();
+            $table->integer('urutan')->default(0);
             $table->softDeletes();
             $table->timestamps();
         });

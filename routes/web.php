@@ -5,7 +5,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckFeatureToggle;
-use App\Http\Controllers\Api\FeedbackController;
+use App\Http\Controllers\ThumbnailController;
+use App\Http\Controllers\SEO\RobotsController;
+use App\Http\Controllers\SEO\SitemapController;
+
+
 
 
 // Route::get('/dashboard', function () {
@@ -71,6 +75,19 @@ Route::prefix('artikel')
     });
 
 
+// Rute group untuk studi kasus
+Route::prefix('case-study')
+    ->middleware(CheckFeatureToggle::class . ':case_study_module')
+    ->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('CaseStudy/ListView');
+        })->name('studi-kasus.list');
+
+        Route::get('/{slug}', function ($slug) {
+            return Inertia::render('CaseStudy/Show', ['slug' => $slug]);
+        })->name('studi-kasus.show');
+    });
+
 // Rute group untuk event
 Route::prefix('event')
     ->middleware(CheckFeatureToggle::class . ':event_module')
@@ -98,19 +115,6 @@ Route::prefix('galeri')
         });
     });
 
-
-// Rute group untuk portofolio
-Route::prefix('portofolio')
-    ->middleware(CheckFeatureToggle::class . ':portofolio_module')
-    ->group(function () {
-        Route::get('/', action: function () {
-            return Inertia::render('Event/ListView');
-        });
-
-        Route::get('/{slug}', action: function ($slug) {
-            return Inertia::render('Event/Show', ['slug' => $slug]);
-        });
-    });
 
 // Rute group feedback
 Route::prefix('feedback')
@@ -192,5 +196,46 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Route::prefix('error')->group(function () {
+//     Route::get('/404', function () {
+//         abort(404);
+//     })->name('error.404');
+
+//     Route::get('/403', function () {
+//         abort(403);
+//     })->name('error.403');
+
+//     Route::get('/500', function () {
+//         abort(500);
+//     })->name('error.500');
+
+//     Route::get('/503', function () {
+//         abort(503);
+//     })->name('error.503');
+
+//     Route::get('/401', function () {
+//         abort(401);
+//     })->name('error.401');
+
+//     Route::get('/419', function () {
+//         abort(419);
+//     })->name('error.419');
+
+//     Route::get('/429', function () {
+//         abort(429);
+//     })->name('error.429');
+
+//     Route::get('/custom', function () {
+//         throw new \Exception('This is a custom error for testing purposes');
+//     })->name('error.custom');
+// });
+
+Route::get('/thumbnail/{path}', [ThumbnailController::class, 'generate'])->name('thumbnail');
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index']);
+Route::post('/sitemap/clear-cache', [SitemapController::class, 'clearCache'])->middleware('auth');
+
+Route::get('/robots.txt', [RobotsController::class, 'index']);
 
 require __DIR__ . '/auth.php';

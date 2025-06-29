@@ -145,15 +145,7 @@ function formatRupiah(value) {
                 <!-- Right: Product Info Skeleton -->
                 <div class="w-full lg:w-1/2 flex flex-col gap-8">
                     <!-- Breadcrumbs Skeleton -->
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
-                            <div class="h-4 w-4 bg-gray-200 animate-pulse rounded-full"></div>
-                            <div class="h-4 w-24 bg-gray-200 animate-pulse rounded"></div>
-                            <div class="h-4 w-4 bg-gray-200 animate-pulse rounded-full"></div>
-                            <div class="h-4 w-32 bg-gray-200 animate-pulse rounded"></div>
-                        </div>
-                    </div>
+                    <div class="bg-gray-200 h-6 w-3/4 rounded animate-pulse"></div>
 
                     <!-- Title Skeleton -->
                     <div class="h-12 bg-gray-200 animate-pulse rounded w-3/4"></div>
@@ -212,28 +204,27 @@ function formatRupiah(value) {
                     <!-- Breadcrumbs -->
                     <div>
                         <nav class="flex" aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                                <li>
+                            <ol class="inline-flex items-center space-x-1 text-sm">
+                                <li class="inline-flex items-center">
                                     <Link href="/"
-                                        class="inline-flex items-center text-sm text-gray-500 hover:text-secondary">
-                                    <Home class="w-4 h-4 mr-2" />
-                                    Home
+                                        class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors">
+                                        <Home class="w-4 h-4 mr-1.5" />
+                                        Home
                                     </Link>
                                 </li>
                                 <li class="inline-flex items-center">
-                                    <ChevronRight class="w-4 h-4 text-gray-400" />
+                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
                                     <Link href="/produk"
-                                        class="ml-1 inline-flex items-center text-sm text-gray-500 hover:text-secondary">
-                                    <ShoppingBag class="w-4 h-4 mr-2" />
-                                    Produk
+                                        class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors">
+                                        <ShoppingBag class="w-4 h-4 mr-1.5" />
+                                        Produk
                                     </Link>
                                 </li>
-                                <li class="flex items-center min-w-0">
-                                    <ChevronRight class="w-4 h-4 text-gray-400 flex-shrink-0" />
-                                    <span
-                                        class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
+                                <li class="inline-flex items-center">
+                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
+                                    <span class="text-sm font-medium text-gray-700 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
                                         :title="item?.nama_produk">
-                                        {{ item?.nama_produk || "Memuat" }}
+                                        {{ item?.nama_produk || "Memuat..." }}
                                     </span>
                                 </li>
                             </ol>
@@ -242,7 +233,9 @@ function formatRupiah(value) {
 
                     <!-- Title & Price -->
                     <h1 class="text-4xl text-secondary font-bold">{{ item.nama_produk }}</h1>
-                    <div class="flex items-center gap-4">
+
+                    <!-- Conditional layout berdasarkan tampilkan_harga -->
+                    <div v-if="item.tampilkan_harga" class="flex items-center gap-4">
                         <span class="text-xl font-semibold">{{ formatRupiah(item.harga_produk) }}</span>
                         <div class="flex items-center gap-3">
                             <div class="h-6 border-l" />
@@ -250,6 +243,13 @@ function formatRupiah(value) {
                                 <Tag class="w-4" /> {{ item.kategori_produk.nama_kategori_produk }}
                             </span>
                         </div>
+                    </div>
+
+                    <!-- Layout tanpa harga -->
+                    <div v-else class="flex items-center gap-3">
+                        <span class="text-xl flex items-center gap-1">
+                            <Tag class="w-4" /> {{ item.kategori_produk.nama_kategori_produk }}
+                        </span>
                     </div>
 
                     <!-- Description -->
@@ -266,6 +266,7 @@ function formatRupiah(value) {
                 </div>
             </div>
 
+            <!-- Rest of the template remains the same -->
             <!-- TESTIMONI LIST -->
             <div v-if="testimoniList.length" class="w-full max-w-3xl mx-auto border-t pt-10">
                 <span class="text-sm text-gray-500">Ulasan dari</span>

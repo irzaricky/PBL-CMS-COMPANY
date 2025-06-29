@@ -40,7 +40,8 @@ class DatabaseTestController extends Controller
                     // Log::error('Error creating SQLite database file: ' . $e->getMessage());
                     return response()->json([
                         'success' => false,
-                        'message' => 'Could not create SQLite database file: ' . $e->getMessage()
+                        'message' => __('installer.sqlite_file_creation_failed_friendly'),
+                        'technical_details' => $e->getMessage()
                     ]);
                 }
             }
@@ -121,14 +122,15 @@ class DatabaseTestController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Database connection successful!',
+                'message' => __('installer.database_connection_successful'),
             ]);
         } catch (Exception $e) {
             // Log::error('Database connection test failed: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,
-                'message' => 'Database connection failed: ' . $e->getMessage(),
+                'message' => __('installer.database_connection_failed_friendly'),
+                'technical_details' => $e->getMessage(),
             ]);
         }
     }

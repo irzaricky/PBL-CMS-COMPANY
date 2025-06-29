@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Enums\ContentStatus;
+use App\Enums\Contentstatus_aktif;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Faker\Factory as Faker;
@@ -20,49 +20,55 @@ class MediaSosialSeeder extends Seeder
                 'id_media_sosial' => 1,
                 'nama_media_sosial' => 'Facebook',
                 'link' => 'https://facebook.com/' . $companyName,
-                'status' => ContentStatus::TERPUBLIKASI->value,
-                'created_at' => $faker->dateTimeBetween('-1 year', '-6 months'),
-                'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
+                'status_aktif' => true,
             ],
             [
                 'id_media_sosial' => 2,
                 'nama_media_sosial' => 'Instagram',
                 'link' => 'https://instagram.com/' . $companyName,
-                'status' => ContentStatus::TERPUBLIKASI->value,
-                'created_at' => $faker->dateTimeBetween('-1 year', '-6 months'),
-                'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
+                'status_aktif' => true,
             ],
             [
                 'id_media_sosial' => 3,
                 'nama_media_sosial' => 'LinkedIn',
                 'link' => 'https://linkedin.com/company/' . $companyName,
-                'status' => ContentStatus::TERPUBLIKASI->value,
-                'created_at' => $faker->dateTimeBetween('-1 year', '-6 months'),
-                'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
+                'status_aktif' => true,
             ],
             [
                 'id_media_sosial' => 4,
                 'nama_media_sosial' => 'Twitter',
                 'link' => 'https://twitter.com/' . $companyName,
-                'status' => ContentStatus::TIDAK_TERPUBLIKASI->value,
-                'created_at' => $faker->dateTimeBetween('-1 year', '-6 months'),
-                'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
+                'status_aktif' => false,
             ],
             [
                 'id_media_sosial' => 5,
                 'nama_media_sosial' => 'YouTube',
-                'link' => 'https://youtube.com/c/' . $companyName,
-                'status' => ContentStatus::TIDAK_TERPUBLIKASI->value,
-                'created_at' => $faker->dateTimeBetween('-1 year', '-6 months'),
-                'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
+                'link' => 'https://youtube.com/' . $companyName,
+                'status_aktif' => false,
             ],
             [
                 'id_media_sosial' => 6,
                 'nama_media_sosial' => 'TikTok',
                 'link' => 'https://tiktok.com/@' . $companyName,
-                'status' => ContentStatus::TIDAK_TERPUBLIKASI->value,
-                'created_at' => $faker->dateTimeBetween('-6 months', 'now'),
-                'updated_at' => $faker->dateTimeBetween('-3 months', 'now'),
+                'status_aktif' => false,
+            ],
+            [
+                'id_media_sosial' => 7,
+                'nama_media_sosial' => 'WhatsApp Business',
+                'link' => 'https://wa.me/6281234567890',
+                'status_aktif' => false,
+            ],
+            [
+                'id_media_sosial' => 8,
+                'nama_media_sosial' => 'Telegram',
+                'link' => 'https://t.me/' . $companyName,
+                'status_aktif' => true,
+            ],
+            [
+                'id_media_sosial' => 9,
+                'nama_media_sosial' => 'GitHub',
+                'link' => 'https://github.com/' . $companyName,
+                'status_aktif' => true,
             ],
         ];
 

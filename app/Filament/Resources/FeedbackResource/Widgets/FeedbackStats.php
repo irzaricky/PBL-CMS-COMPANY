@@ -15,19 +15,22 @@ class FeedbackStats extends BaseWidget
     {
         return [
             Stat::make('Total Feedback', Feedback::query()->count())
-                ->description('Total semua feedback')
+                ->description('Total semua feedback yang masuk')
+                ->descriptionIcon('heroicon-s-chat-bubble-left-right')
                 ->color('primary'),
 
             Stat::make('Sudah Ditanggapi', Feedback::query()
                 ->whereNotNull('tanggapan_feedback')
                 ->count())
-                ->description('Feedback yang sudah ditanggapi')
+                ->description('Feedback yang sudah mendapat tanggapan')
+                ->descriptionIcon('heroicon-s-check-circle')
                 ->color('success'),
 
             Stat::make('Belum Ditanggapi', Feedback::query()
                 ->whereNull('tanggapan_feedback')
                 ->count())
-                ->description('Feedback yang belum ditanggapi')
+                ->description('Feedback yang masih menunggu tanggapan')
+                ->descriptionIcon('heroicon-s-x-circle')
                 ->color('warning'),
 
             Stat::make('Feedback Bulan Ini', Feedback::query()
@@ -35,6 +38,7 @@ class FeedbackStats extends BaseWidget
                 ->whereYear('created_at', now()->year)
                 ->count())
                 ->description('Feedback yang diterima bulan ini')
+                ->descriptionIcon('heroicon-s-calendar-date-range')
                 ->color('info'),
         ];
     }

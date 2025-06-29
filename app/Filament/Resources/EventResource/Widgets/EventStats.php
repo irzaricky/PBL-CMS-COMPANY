@@ -24,6 +24,7 @@ class EventStats extends BaseWidget
         return [
             Stat::make('Total Event', $this->getPageTableQuery()->count())
                 ->description('Total semua event menurut filter')
+                ->descriptionIcon('heroicon-o-calendar')
                 ->color('primary'),
 
             Stat::make('Event Aktif', Event::query()
@@ -31,16 +32,19 @@ class EventStats extends BaseWidget
                 ->where('waktu_end_event', '>=', now())
                 ->count())
                 ->description('Event yang sedang berlangsung')
+                ->descriptionIcon('heroicon-o-play')
                 ->color('success'),
 
             Stat::make('Event Akan Datang', Event::query()
                 ->where('waktu_start_event', '>', now())
                 ->count())
                 ->description('Event yang belum dimulai')
+                ->descriptionIcon('heroicon-o-clock')
                 ->color('warning'),
 
             Stat::make('Rata-rata Pendaftar', Number::format((float) $this->getPageTableQuery()->avg('jumlah_pendaftar'), 0))
                 ->description('Rata-rata pendaftar per event menurut filter')
+                ->descriptionIcon('heroicon-o-user-plus')
                 ->color('info'),
         ];
     }

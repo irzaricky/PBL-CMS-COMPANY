@@ -15,6 +15,7 @@ use App\Installer\Main\EnvironmentManager;
 class DatabaseController extends Controller
 {
     protected EnvironmentManager $EnvironmentManager;
+    private string $lastDatabaseError = '';
 
     public function __construct(EnvironmentManager $environmentManager)
     {
@@ -39,12 +40,12 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['database_fields' => ['Please provide a database name']]
+                    'errors' => ['database_fields' => [__('installer.database_name_required')]]
                 ], 422);
             }
 
             return $redirect->route('database_import')->withInput()->withErrors([
-                'database_fields' => 'Please provide a database name',
+                'database_fields' => __('installer.database_name_required'),
             ]);
         }
 
@@ -61,12 +62,12 @@ class DatabaseController extends Controller
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => false,
-                        'errors' => ['database_name' => ['Database name can only contain letters, numbers, dashes, underscores and periods.']]
+                        'errors' => ['database_name' => [__('installer.database_name_invalid')]]
                     ], 422);
                 }
 
                 return $redirect->route('database_import')->withInput()->withErrors([
-                    'database_name' => 'Database name can only contain letters, numbers, dashes, underscores and periods.',
+                    'database_name' => __('installer.database_name_invalid'),
                 ]);
             }
 
@@ -86,12 +87,12 @@ class DatabaseController extends Controller
                 if ($request->ajax() || $request->wantsJson()) {
                     return response()->json([
                         'success' => false,
-                        'errors' => ['database_fields' => ['Please provide all required MySQL database information']]
+                        'errors' => ['database_fields' => [__('installer.mysql_credentials_required')]]
                     ], 422);
                 }
 
                 return $redirect->route('database_import')->withInput()->withErrors([
-                    'database_fields' => 'Please provide all required MySQL database information',
+                    'database_fields' => __('installer.mysql_credentials_required'),
                 ]);
             }
         }
@@ -100,8 +101,8 @@ class DatabaseController extends Controller
 
         // Add conditional validation for email fields based on mail driver
         $mailDriver = $request->input('mail_mailer');
-        if (in_array($mailDriver, ['smtp', 'mailgun', 'ses'])) {
-            // Require host and port for SMTP-based drivers
+        if ($mailDriver === 'smtp') {
+            // Require host and port for SMTP
             $rules['mail_host'] = 'required|string|max:100';
             $rules['mail_port'] = 'required|numeric|min:1|max:65535';
         }
@@ -109,7 +110,7 @@ class DatabaseController extends Controller
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            // Log::error('Validation errors:', $validator->errors()->toArray());
+            Log::error('Validation errors:', $validator->errors()->toArray());
 
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
@@ -131,12 +132,17 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['database_connection' => ['Database connection failed. Please check your credentials and make sure the database exists.']]
+                    'errors' => [
+                        'database_connection' => [
+                            'message' => __('installer.database_connection_failed_friendly'),
+                            'technical_details' => $this->lastDatabaseError
+                        ]
+                    ]
                 ], 422);
             }
 
             return $redirect->route('database_import')->withInput()->withErrors([
-                'database_connection' => 'Database connection failed. Please check your credentials and make sure the database exists.',
+                'database_connection' => __('installer.database_connection_failed_friendly'),
             ]);
         }
 
@@ -153,6 +159,7 @@ class DatabaseController extends Controller
             }
 
             // Only proceed to next step if database connection is established
+            // Log::info('Redirecting to company profile setup');
             return redirect(route('profil_perusahaan'));
         } catch (\Exception $e) {
             // Log::error('Error saving environment: ' . $e->getMessage());
@@ -160,12 +167,12 @@ class DatabaseController extends Controller
             if ($request->ajax() || $request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['save_error' => ['Failed to save environment: ' . $e->getMessage()]]
+                    'errors' => ['save_error' => [__('installer.config_save_failed')]]
                 ], 500);
             }
 
             return $redirect->route('database_import')->withInput()->withErrors([
-                'save_error' => 'Failed to save environment: ' . $e->getMessage(),
+                'save_error' => __('installer.config_save_failed'),
             ]);
         }
     }
@@ -181,113 +188,90 @@ class DatabaseController extends Controller
         try {
             // Validate basic email configuration
             $validator = Validator::make($request->all(), [
-                'mail_mailer' => 'required|string|in:smtp,sendmail,mailgun,ses,log',
+                'mail_mailer' => 'required|string|in:smtp',
                 'mail_from_address' => 'required|email',
             ]);
 
             if ($validator->fails()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid email configuration: ' . implode(', ', $validator->errors()->all())
+                    'message' => __('installer.email_config_invalid')
                 ]);
             }
 
             $mailDriver = $request->input('mail_mailer');
 
-            // For log driver, just return success as it doesn't require real sending
-            if ($mailDriver === 'log') {
+            // Only SMTP is supported now
+            if ($mailDriver !== 'smtp') {
                 return response()->json([
-                    'success' => true,
-                    'message' => 'Log mail driver configuration is valid. Emails will be logged to storage/logs/laravel.log'
+                    'success' => false,
+                    'message' => __('installer.email_smtp_only')
                 ]);
             }
 
-            // For sendmail, check if sendmail is available
-            if ($mailDriver === 'sendmail') {
-                $sendmailPath = config('mail.mailers.sendmail.path', '/usr/sbin/sendmail -bs');
-                $command = explode(' ', $sendmailPath)[0];
-
-                if (!is_executable($command)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Sendmail is not available or not executable on this system'
-                    ]);
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Sendmail configuration is valid'
-                ]);
-            }
-
-            // For SMTP-based drivers, validate required fields
-            if (in_array($mailDriver, ['smtp', 'mailgun', 'ses'])) {
-                $additionalValidator = Validator::make($request->all(), [
-                    'mail_host' => 'required|string',
-                    'mail_port' => 'required|numeric|min:1|max:65535',
-                ]);
-
-                if ($additionalValidator->fails()) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Missing required SMTP configuration: ' . implode(', ', $additionalValidator->errors()->all())
-                    ]);
-                }
-
-                // Configure temporary mail settings
-                $originalMailConfig = config('mail');
-
-                config([
-                    'mail.default' => $mailDriver,
-                    'mail.mailers.' . $mailDriver => [
-                        'transport' => $mailDriver === 'smtp' ? 'smtp' : $mailDriver,
-                        'host' => $request->input('mail_host'),
-                        'port' => $request->input('mail_port'),
-                        'encryption' => $request->input('mail_encryption'),
-                        'username' => $request->input('mail_username'),
-                        'password' => $request->input('mail_password'),
-                        'timeout' => 10,
-                        'local_domain' => env('MAIL_EHLO_DOMAIN'),
-                    ],
-                    'mail.from.address' => $request->input('mail_from_address'),
-                    'mail.from.name' => 'CMS Company Installation Test',
-                ]);
-
-                // Try to send a test email
-                try {
-                    \Illuminate\Support\Facades\Mail::raw('This is a test email from CMS Company installer.', function ($message) use ($request) {
-                        $message->to($request->input('mail_from_address'))
-                            ->subject('CMS Company Installation - Email Test');
-                    });
-
-                    // Restore original mail configuration
-                    config(['mail' => $originalMailConfig]);
-
-                    return response()->json([
-                        'success' => true,
-                        'message' => 'Email test successful! Test email sent to ' . $request->input('mail_from_address')
-                    ]);
-
-                } catch (\Exception $e) {
-                    // Restore original mail configuration
-                    config(['mail' => $originalMailConfig]);
-
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Email test failed: ' . $e->getMessage()
-                    ]);
-                }
-            }
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Unsupported mail driver: ' . $mailDriver
+            // For SMTP, validate required fields
+            $additionalValidator = Validator::make($request->all(), [
+                'mail_host' => 'required|string',
+                'mail_port' => 'required|numeric|min:1|max:65535',
             ]);
+
+            if ($additionalValidator->fails()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => __('installer.email_smtp_config_missing')
+                ]);
+            }
+
+            // Configure temporary mail settings for SMTP
+            $originalMailConfig = config('mail');
+
+            config([
+                'mail.default' => 'smtp',
+                'mail.mailers.smtp' => [
+                    'transport' => 'smtp',
+                    'host' => $request->input('mail_host'),
+                    'port' => $request->input('mail_port'),
+                    'encryption' => $request->input('mail_encryption'),
+                    'username' => $request->input('mail_username'),
+                    'password' => $request->input('mail_password'),
+                    'timeout' => 10,
+                    'local_domain' => env('MAIL_EHLO_DOMAIN'),
+                ],
+                'mail.from.address' => $request->input('mail_from_address'),
+                'mail.from.name' => 'CMS Company Installation Test',
+            ]);
+
+            // Try to send a test email
+            try {
+                \Illuminate\Support\Facades\Mail::raw('This is a test email from CMS Company installer.', function ($message) use ($request) {
+                    $message->to($request->input('mail_from_address'))
+                        ->subject('CMS Company Installation - Email Test');
+                });
+
+                // Restore original mail configuration
+                config(['mail' => $originalMailConfig]);
+
+                return response()->json([
+                    'success' => true,
+                    'message' => __('installer.email_test_successful', ['email' => $request->input('mail_from_address')])
+                ]);
+
+            } catch (\Exception $e) {
+                // Restore original mail configuration
+                config(['mail' => $originalMailConfig]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => __('installer.email_test_failed_friendly'),
+                    'technical_details' => $e->getMessage()
+                ]);
+            }
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email test error: ' . $e->getMessage()
+                'message' => __('installer.email_test_error_friendly'),
+                'technical_details' => $e->getMessage()
             ]);
         }
     }
@@ -366,6 +350,7 @@ class DatabaseController extends Controller
                         // Log::info('Created SQLite database file at: ' . $databasePath);
                     } catch (\Exception $e) {
                         // Log::error('Failed to create SQLite database file: ' . $e->getMessage());
+                        $this->lastDatabaseError = 'SQLite file creation failed: ' . $e->getMessage();
                         return false;
                     }
                 }
@@ -408,6 +393,7 @@ class DatabaseController extends Controller
 
             if (!$result || !isset($result[0]->connection_test) || $result[0]->connection_test !== 1) {
                 // Log::error('Database connection failed: Test query failed');
+                $this->lastDatabaseError = 'Database test query failed';
                 return false;
             }
 
@@ -424,6 +410,7 @@ class DatabaseController extends Controller
 
                 if (!$permissionResults['success']) {
                     // Log::error('Database permission check failed: ' . implode(', ', $permissionResults['messages']));
+                    $this->lastDatabaseError = 'Permission check failed: ' . implode(', ', $permissionResults['messages']);
                     return false;
                 }
 
@@ -434,6 +421,7 @@ class DatabaseController extends Controller
             $connectionSuccess = true;
         } catch (Exception $e) {
             // Log::error('Database connection error: ' . $e->getMessage());
+            $this->lastDatabaseError = $e->getMessage();
             $connectionSuccess = false;
         } finally {
             // Always disconnect the temporary connection and restore original state

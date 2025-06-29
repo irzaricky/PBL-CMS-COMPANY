@@ -13,18 +13,33 @@ use App\Http\Resources\TestimoniArtikelResource;
 
 class TestimoniArtikelController extends Controller
 {
-    // Dapatkan semua testimoni untuk artikel tertentu (publikasi saja)
-
+    /**
+     * Mengambil semua testimoni untuk artikel tertentu (yang terpublikasi)
+     * 
+     * @param int $artikelId
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index($artikelId)
     {
         $testimoni = TestimoniArtikel::with('user:id_user,name,foto_profil,email')
             ->where('id_artikel', $artikelId)
-            ->where('status', 'Terpublikasi')
+            ->where('status', 'terpublikasi')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return TestimoniArtikelResource::collection($testimoni);
     }
+
+    /**
+     * Menyimpan testimoni baru untuk artikel
+     * 
+     * @param Request $request Request dengan data:
+     *   - isi_testimoni (string, required): Isi testimoni
+     *   - rating (int, required): Rating 1-5
+     *   - id_user (int, required): ID user yang memberikan testimoni
+     * @param int $artikelId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request, $artikelId)
     {
         $request->validate([
@@ -38,7 +53,7 @@ class TestimoniArtikelController extends Controller
         $testimoni->isi_testimoni = $request->isi_testimoni;
         $testimoni->rating = $request->rating;
         $testimoni->id_user = $request->id_user;
-        $testimoni->status = 'Terpublikasi';
+        $testimoni->status = 'terpublikasi';
         $testimoni->save();
 
         return response()->json(['message' => 'Testimoni berhasil dikirim!']);

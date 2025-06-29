@@ -35,6 +35,7 @@ class StrukturOrganisasi extends Model
         'jabatan',
         'tanggal_mulai',
         'tanggal_selesai',
+        'urutan',
     ];
 
     /**
@@ -53,5 +54,35 @@ class StrukturOrganisasi extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    /**
+     * Scope untuk posisi yang masih aktif
+     */
+    public function scopeActive($query)
+    {
+        return $query->where(function ($query) {
+            $query->whereNull('tanggal_selesai')
+                ->orWhere('tanggal_selesai', '>=', now());
+        });
+    }
+
+    /**
+     * Scope untuk user yang aktif dan memiliki status kepegawaian yang valid
+     */
+    public function scopeWithActiveUsers($query)
+    {
+        return $query->whereHas('user', function ($query) {
+            $query->where('status', 'aktif')
+                ->whereIn('status_kepegawaian', ['Tetap', 'Kontrak', 'Magang']);
+        });
+    }
+
+    /**
+     * Scope untuk ordering berdasarkan urutan
+     */
+    public function scopeOrdered($query)
+    {
+        return $query->orderBy('urutan', 'asc')->orderBy('tanggal_mulai', 'asc');
     }
 }

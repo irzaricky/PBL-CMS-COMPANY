@@ -8,23 +8,24 @@ use App\Models\Lamaran;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use App\Helpers\FilamentGroupingHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\RestoreBulkAction;
+use App\Services\FileHandlers\SingleFileHandler;
 use App\Filament\Resources\LamaranResource\Pages;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\LamaranResource\RelationManagers;
 use App\Filament\Resources\LamaranResource\Widgets\LamaranStats;
-use App\Helpers\FilamentGroupingHelper;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Filters\TrashedFilter;
-use App\Services\FileHandlers\SingleFileHandler;
 
 class LamaranResource extends Resource
 {
     protected static ?string $model = Lamaran::class;
-    protected static ?string $navigationIcon = 'heroicon-s-briefcase';
+    protected static ?string $navigationIcon = 'heroicon-s-clipboard-document';
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationGroup(): ?string
@@ -184,8 +185,6 @@ class LamaranResource extends Resource
                 Tables\Filters\SelectFilter::make('id_lowongan')
                     ->label('Lowongan')
                     ->relationship('lowongan', 'judul_lowongan'),
-
-                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -232,12 +231,15 @@ class LamaranResource extends Resource
                             }
                         }),
 
-                    Tables\Actions\DeleteBulkAction::make()
+                    DeleteBulkAction::make()
                         ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Lamaran berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Lamaran berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Lamaran berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             foreach ($records as $record) {

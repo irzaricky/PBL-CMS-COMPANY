@@ -52,6 +52,23 @@ class KontenSliderResource extends Resource
                                 titleAttribute: 'judul_artikel',
                                 modifyQueryUsing: fn($query) => $query->where('status_artikel', ContentStatus::TERPUBLIKASI)
                             )
+                            ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                $thumbnail = is_array($record->thumbnail_artikel) && !empty($record->thumbnail_artikel)
+                                    ? $record->thumbnail_artikel[0]
+                                    : null;
+
+                                if ($thumbnail) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->judul_artikel) . '</span>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $record->judul_artikel;
+                            })
+                            ->allowHtml()
                             ->searchable()
                             ->native(false)
                             ->preload()
@@ -63,6 +80,23 @@ class KontenSliderResource extends Resource
                                 titleAttribute: 'judul_galeri',
                                 modifyQueryUsing: fn($query) => $query->where('status_galeri', ContentStatus::TERPUBLIKASI)
                             )
+                            ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                $thumbnail = is_array($record->thumbnail_galeri) && !empty($record->thumbnail_galeri)
+                                    ? $record->thumbnail_galeri[0]
+                                    : null;
+
+                                if ($thumbnail) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->judul_galeri) . '</span>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $record->judul_galeri;
+                            })
+                            ->allowHtml()
                             ->searchable()
                             ->preload()
                             ->native(false)
@@ -71,8 +105,26 @@ class KontenSliderResource extends Resource
                         Forms\Components\Select::make('id_event')
                             ->label('Event')
                             ->relationship('event', 'nama_event')
+                            ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                $thumbnail = is_array($record->thumbnail_event) && !empty($record->thumbnail_event)
+                                    ? $record->thumbnail_event[0]
+                                    : null;
+
+                                if ($thumbnail) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->nama_event) . '</span>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $record->nama_event;
+                            })
+                            ->allowHtml()
                             ->searchable()
                             ->preload()
+                            ->native(false)
                             ->helperText('Pilih event untuk ditampilkan di slider'),
 
                         Forms\Components\Select::make('id_produk')
@@ -82,7 +134,23 @@ class KontenSliderResource extends Resource
                                 titleAttribute: 'nama_produk',
                                 modifyQueryUsing: fn($query) => $query->where('status_produk', ContentStatus::TERPUBLIKASI)
                             )
-                            ->native(false)
+                            ->getOptionLabelFromRecordUsing(function (Model $record) {
+                                $thumbnail = is_array($record->thumbnail_produk) && !empty($record->thumbnail_produk)
+                                    ? $record->thumbnail_produk[0]
+                                    : null;
+
+                                if ($thumbnail) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . asset('storage/' . $thumbnail) . '" class="w-10 h-10 rounded object-cover flex-shrink-0" />' .
+                                            '<span class="truncate">' . e($record->nama_produk) . '</span>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $record->nama_produk;
+                            })
+                            ->allowHtml()
                             ->native(false)
                             ->searchable()
                             ->preload()
@@ -99,24 +167,192 @@ class KontenSliderResource extends Resource
                     ->description('Konten yang sedang ditampilkan di slider')
                     ->icon('heroicon-s-play')
                     ->schema([
-                        Components\TextEntry::make('artikel.judul_artikel')
-                            ->label('Artikel')
-                            ->placeholder('Tidak ada artikel dipilih')
+                        // Artikel Section
+                        Components\Card::make()
+                            ->schema([
+                                Components\Grid::make([
+                                    'sm' => 1,
+                                    'md' => 3,
+                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('artikel.thumbnail_artikel')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->artikel && $record->artikel->thumbnail_artikel) {
+                                                    $thumbnail = is_array($record->artikel->thumbnail_artikel)
+                                                        ? $record->artikel->thumbnail_artikel[0]
+                                                        : $record->artikel->thumbnail_artikel;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('artikel.judul_artikel')
+                                                    ->label('Artikel')
+                                                    ->icon('heroicon-s-newspaper')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('primary'),
+
+                                                Components\TextEntry::make('artikel.konten_artikel')
+                                                    ->label('Konten')
+                                                    ->html()
+                                                    ->limit(150)
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;'])
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
+                            ])
                             ->visible(fn($record) => $record->id_artikel !== null),
 
-                        Components\TextEntry::make('galeri.judul_galeri')
-                            ->label('Galeri')
-                            ->placeholder('Tidak ada galeri dipilih')
+                        // Galeri Section
+                        Components\Card::make()
+                            ->schema([
+                                Components\Grid::make([
+                                    'sm' => 1,
+                                    'md' => 3,
+                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('galeri.thumbnail_galeri')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->galeri && $record->galeri->thumbnail_galeri) {
+                                                    $thumbnail = is_array($record->galeri->thumbnail_galeri)
+                                                        ? $record->galeri->thumbnail_galeri[0]
+                                                        : $record->galeri->thumbnail_galeri;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('galeri.judul_galeri')
+                                                    ->icon('heroicon-s-photo')
+                                                    ->label('Galeri')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('primary'),
+
+                                                Components\TextEntry::make('galeri.deskripsi_galeri')
+                                                    ->label('Deskripsi')
+                                                    ->limit(150)
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;']),
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
+                            ])
                             ->visible(fn($record) => $record->id_galeri !== null),
 
-                        Components\TextEntry::make('event.nama_event')
-                            ->label('Event')
-                            ->placeholder('Tidak ada event dipilih')
+                        // Event Section
+                        Components\Card::make()
+                            ->schema([
+                                Components\Grid::make([
+                                    'sm' => 1,
+                                    'md' => 3,
+                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('event.thumbnail_event')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->event && $record->event->thumbnail_event) {
+                                                    $thumbnail = is_array($record->event->thumbnail_event)
+                                                        ? $record->event->thumbnail_event[0]
+                                                        : $record->event->thumbnail_event;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('event.nama_event')
+                                                    ->icon('heroicon-s-calendar')
+                                                    ->label('Event')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('primary'),
+
+                                                Components\TextEntry::make('event.deskripsi_event')
+                                                    ->label('Deskripsi')
+                                                    ->limit(120)
+                                                    ->html()
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;']),
+
+                                                Components\TextEntry::make('event.waktu_start_event')
+                                                    ->label('Waktu Mulai')
+                                                    ->icon('heroicon-o-clock')
+                                                    ->dateTime('d M Y H:i')
+                                                    ->badge()
+                                                    ->color('primary'),
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
+                            ])
                             ->visible(fn($record) => $record->id_event !== null),
 
-                        Components\TextEntry::make('produk.nama_produk')
-                            ->label('Produk')
-                            ->placeholder('Tidak ada produk dipilih')
+                        // Produk Section
+                        Components\Card::make()
+                            ->schema([
+                                Components\Grid::make([
+                                    'sm' => 1,
+                                    'md' => 3,
+                                ])
+                                    ->schema([
+                                        Components\ImageEntry::make('produk.thumbnail_produk')
+                                            ->label('')
+                                            ->square()
+                                            ->size(200)
+                                            ->disk('public')
+                                            ->getStateUsing(function ($record) {
+                                                if ($record->produk && $record->produk->thumbnail_produk) {
+                                                    $thumbnail = is_array($record->produk->thumbnail_produk)
+                                                        ? $record->produk->thumbnail_produk[0]
+                                                        : $record->produk->thumbnail_produk;
+                                                    return $thumbnail;
+                                                }
+                                                return null;
+                                            })
+                                            ->columnSpan(1),
+
+                                        Components\Grid::make(1)
+                                            ->schema([
+                                                Components\TextEntry::make('produk.nama_produk')
+                                                    ->icon('heroicon-s-shopping-bag')
+                                                    ->label('Produk')
+                                                    ->weight('bold')
+                                                    ->size('lg')
+                                                    ->color('primary'),
+
+                                                Components\TextEntry::make('produk.deskripsi_produk')
+                                                    ->label('Deskripsi')
+                                                    ->limit(120)
+                                                    ->extraAttributes(['style' => 'line-height: 1.4;']),
+
+                                                Components\TextEntry::make('produk.harga_produk')
+                                                    ->label('Harga')
+                                                    ->money('IDR')
+                                                    ->icon('heroicon-o-wallet')
+                                                    ->badge()
+                                                    ->color('primary'),
+                                            ])
+                                            ->columnSpan(2),
+                                    ])
+                            ])
                             ->visible(fn($record) => $record->id_produk !== null),
                     ])
                     ->columns(2),
@@ -152,13 +388,106 @@ class KontenSliderResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('thumbnail')
+                    ->label('Thumbnail')
+                    ->formatStateUsing(function ($record) {
+                        $imagePath = null;
+
+                        // Prioritas: artikel -> galeri -> event -> produk
+                        if ($record->artikel && $record->artikel->thumbnail_artikel) {
+                            $imagePath = is_array($record->artikel->thumbnail_artikel)
+                                ? $record->artikel->thumbnail_artikel[0]
+                                : $record->artikel->thumbnail_artikel;
+                        } elseif ($record->galeri && $record->galeri->thumbnail_galeri) {
+                            $imagePath = is_array($record->galeri->thumbnail_galeri)
+                                ? $record->galeri->thumbnail_galeri[0]
+                                : $record->galeri->thumbnail_galeri;
+                        } elseif ($record->event && $record->event->thumbnail_event) {
+                            $imagePath = is_array($record->event->thumbnail_event)
+                                ? $record->event->thumbnail_event[0]
+                                : $record->event->thumbnail_event;
+                        } elseif ($record->produk && $record->produk->thumbnail_produk) {
+                            $imagePath = is_array($record->produk->thumbnail_produk)
+                                ? $record->produk->thumbnail_produk[0]
+                                : $record->produk->thumbnail_produk;
+                        }
+
+                        if ($imagePath) {
+                            $thumbnailUrl = route('thumbnail', [
+                                'path' => base64_encode($imagePath),
+                                'w' => 60,
+                                'h' => 60,
+                                'q' => 80
+                            ]);
+                            return '<img src="' . $thumbnailUrl . '" class="w-15 h-15 object-cover rounded-lg" loading="lazy" decoding="async" />';
+                        }
+
+                        return '<div class="w-15 h-15 bg-gray-200 rounded-lg flex items-center justify-center text-gray-500 text-xs">No Image</div>';
+                    })
+                    ->html(),
+
+                Tables\Columns\TextColumn::make('konten_info')
+                    ->label('Konten')
+                    ->getStateUsing(function ($record) {
+                        if ($record->artikel) {
+                            return 'Artikel: ' . $record->artikel->judul_artikel;
+                        }
+                        if ($record->galeri) {
+                            return 'Galeri: ' . $record->galeri->judul_galeri;
+                        }
+                        if ($record->event) {
+                            return 'Event: ' . $record->event->nama_event;
+                        }
+                        if ($record->produk) {
+                            return 'Produk: ' . $record->produk->nama_produk;
+                        }
+                        return 'Tidak ada konten';
+                    })
+                    ->searchable(query: function (Builder $query, string $search): Builder {
+                        return $query
+                            ->orWhereHas('artikel', fn($q) => $q->where('judul_artikel', 'like', "%{$search}%"))
+                            ->orWhereHas('galeri', fn($q) => $q->where('judul_galeri', 'like', "%{$search}%"))
+                            ->orWhereHas('event', fn($q) => $q->where('nama_event', 'like', "%{$search}%"))
+                            ->orWhereHas('produk', fn($q) => $q->where('nama_produk', 'like', "%{$search}%"));
+                    })
+                    ->wrap(),
+
+                Tables\Columns\TextColumn::make('tipe_konten')
+                    ->label('Tipe')
+                    ->getStateUsing(function ($record) {
+                        if ($record->artikel)
+                            return 'Artikel';
+                        if ($record->galeri)
+                            return 'Galeri';
+                        if ($record->event)
+                            return 'Event';
+                        if ($record->produk)
+                            return 'Produk';
+                        return 'Kosong';
+                    })
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'Artikel' => 'info',
+                        'Galeri' => 'success',
+                        'Event' => 'warning',
+                        'Produk' => 'danger',
+                        default => 'gray',
+                    }),
+
+                Tables\Columns\TextColumn::make('durasi_slider')
+                    ->label('Durasi')
+                    ->suffix(' detik')
+                    ->alignCenter(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
-                    ->dateTime('d M Y H:i'),
+                    ->dateTime('d M Y H:i')
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([

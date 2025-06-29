@@ -17,6 +17,33 @@ class GaleriSeeder extends Seeder
         $faker = Faker::create('id_ID');
         $galeries = [];
 
+        // Ambil 5 user pertama dari tabel users menggunakan User model
+        try {
+            $users = \App\Models\User::orderBy('id_user')->limit(5)->pluck('id_user')->toArray();
+
+            // Jika tidak ada user, skip seeding
+            if (empty($users)) {
+                $this->command->warn('No users found in the database. Skipping galeri seeding.');
+                return;
+            }
+
+            // Validasi bahwa semua user ID yang diambil valid
+            $validUsers = \App\Models\User::whereIn('id_user', $users)->pluck('id_user')->toArray();
+            if (count($validUsers) !== count($users)) {
+                $this->command->warn('Some users not found, using only valid users for galeri seeding.');
+                $users = $validUsers;
+            }
+
+            if (empty($users)) {
+                $this->command->warn('No valid users found. Skipping galeri seeding.');
+                return;
+            }
+
+        } catch (\Exception $e) {
+            $this->command->error('Error accessing users table: ' . $e->getMessage());
+            return;
+        }
+
         // bagian proses image
         $sourcePath = database_path('seeders/seeder_image/');
         $targetPath = 'galeri-thumbnails';
@@ -107,7 +134,7 @@ class GaleriSeeder extends Seeder
 
             $galeries[] = [
                 'id_galeri' => $i,
-                'id_user' => $faker->numberBetween(1, 5),
+                'id_user' => $faker->randomElement($users), // Ambil random dari 5 user pertama
                 'id_kategori_galeri' => $faker->numberBetween(1, 3),
                 'judul_galeri' => $title,
                 'thumbnail_galeri' => json_encode($images),

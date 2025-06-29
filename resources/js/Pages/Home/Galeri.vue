@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import axios from 'axios'
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 const galleries = ref([])
 
@@ -80,6 +82,10 @@ function handleEmptyGallery() {
 
 onMounted(() => {
 	fetchGaleri()
+	AOS.init({
+		duration: 1000,
+		once: false
+	})
 
 	intervalLeftTop = setInterval(() => {
 		currentIndexLeftTop.value = (currentIndexLeftTop.value + 1) % (leftColumn.value.length || 1)
@@ -121,14 +127,14 @@ function getImage(image) {
 		class="w-full max-w-[1440px] mx-auto px-4 md:px-10 lg:px-16 py-28 flex flex-col items-center gap-20 overflow-x-hidden font-custom">
 
 		<!-- Judul -->
-		<div class="w-full max-w-[768px] flex flex-col items-center gap-6 text-center">
+		<div class="w-full max-w-[768px] flex flex-col items-center gap-6 text-center" data-aos="fade-up">
 			<h2 class="text-Color-Scheme-1-Text text-4xl lg:text-5xl font-normal leading-tight">Cerita dalam galeri</h2>
 			<p class="text-Color-Scheme-1-Text text-base lg:text-lg leading-relaxed">Setiap foto punya cerita. Yuk,
 				lihat keseruan dan kebersamaan tim kami dari balik lensa.</p>
 		</div>
 
 		<!-- Kontainer Galeri -->
-		<div class="flex flex-col lg:flex-row gap-8 justify-center w-full">
+		<div class="flex flex-col lg:flex-row gap-8 justify-center w-full" data-aos="zoom-in">
 
 			<!-- Kolom Kiri -->
 			<div class="flex flex-col gap-8 items-center lg:items-start w-full lg:w-1/2">

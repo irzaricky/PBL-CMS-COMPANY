@@ -34,6 +34,8 @@ class ProdukResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Produk')
+                ->icon('heroicon-s-information-circle')
+                ->description('Informasi terkait produk yang akan ditambahkan atau diedit.')
                     ->schema([
                         Forms\Components\TextInput::make('nama_produk')
                             ->label('Nama Produk')
@@ -72,7 +74,7 @@ class ProdukResource extends Resource
                                     ->required()
                                     ->maxLength(50),
                                 Forms\Components\Textarea::make('deskripsi')
-                                    ->label('Deskripsi')
+                                    ->label('Deskripsi')   
                                     ->maxLength(200),
                             ])
                             ->manageOptionForm([
@@ -85,15 +87,22 @@ class ProdukResource extends Resource
                                     ->maxLength(200),
                             ]),
 
+                        Forms\Components\Toggle::make('tampilkan_harga')
+                            ->label('Tampilkan Harga')
+                            ->default(true)
+                            ->live() // Tambahkan live() untuk reaktivitas
+                            ->helperText('Aktifkan untuk menampilkan harga produk di halaman publik'),
+
                         Forms\Components\TextInput::make('harga_produk')
                             ->label('Harga Produk')
                             ->numeric()
                             ->prefix('Rp')
                             ->suffix(',00')
-                            ->required()
+                            ->required(fn (callable $get) => $get('tampilkan_harga')) // Conditional required
                             ->maxLength(50)
                             ->helperText('Masukkan harga produk dalam format angka tanpa titik')
-                            ->placeholder('0'),
+                            ->placeholder('0')
+                            ->visible(fn (callable $get) => $get('tampilkan_harga')), // Sembunyikan jika tampilkan_harga false
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
@@ -105,18 +114,17 @@ class ProdukResource extends Resource
                                 'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
                             ]),
 
-                        Forms\Components\Select::make('status_produk')
+                        Forms\Components\ToggleButtons::make('status_produk')
                             ->label('Status Produk')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
-                            ])
+                            ->inline()
+                            ->options(ContentStatus::class)
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
-                            ->native(false)
                             ->required(),
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
+                    ->icon('heroicon-s-photo')
+                    ->description('Tambahkan gambar produk dan deskripsi untuk memperkaya informasi produk.')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_produk')
                             ->label('Gambar Produk')
@@ -139,6 +147,8 @@ class ProdukResource extends Resource
                             ->columnSpanFull(),
                     ]),
                 Forms\Components\Section::make('Tautan & Informasi Tambahan')
+                    ->icon('heroicon-s-link')
+                    ->description('Tambahkan tautan produk dan informasi tambahan yang relevan.')
                     ->schema([
                         Forms\Components\Grid::make(2)
                             ->schema([
@@ -168,14 +178,35 @@ class ProdukResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_produk')
-                    ->label('Gambar')
-                    ->disk('public')
-                    ->circular()
-                    ->stacked()
-                    ->limit(1)
-                    ->limitedRemainingText()
-                    ->extraImgAttributes(['class' => 'object-cover']),
+                Tables\Columns\TextColumn::make('thumbnail_produk')
+                    ->label('Thumbnail')
+                    ->formatStateUsing(function ($record) {
+                        $images = [];
+                        $totalImages = 0;
+
+                        if (is_array($record->thumbnail_produk) && !empty($record->thumbnail_produk)) {
+                            $totalImages = count($record->thumbnail_produk);
+
+                            // Ambil maksimal 3 gambar untuk stack effect
+                            $imagesToShow = array_slice($record->thumbnail_produk, 0, 3);
+
+                            foreach ($imagesToShow as $imagePath) {
+                                $images[] = route('thumbnail', [
+                                    'path' => base64_encode($imagePath),
+                                    'w' => 80,
+                                    'h' => 80,
+                                    'q' => 80
+                                ]);
+                            }
+                        }
+
+                        return view('filament.tables.columns.image-stack-advanced', [
+                            'images' => $images,
+                            'total_images' => $totalImages,
+                            'remaining_count' => max(0, $totalImages - 1)
+                        ])->render();
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('nama_produk')
                     ->label('Nama Produk')
@@ -190,16 +221,25 @@ class ProdukResource extends Resource
                     ->label('Harga')
                     ->money('IDR'),
 
-                Tables\Columns\SelectColumn::make('status_produk')
+                Tables\Columns\ToggleColumn::make('status_produk')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
-                    ->rules(['required']),
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
+                    ->disabled(fn() => !auth()->user()->can('update_produk', Produk::class))
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_produk' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn ($record) => $record->status_produk === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn ($record) => $record->status_produk === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('link_produk')
                     ->label('Tautan Produk')
+                    ->icon('heroicon-s-link')
                     ->url(fn($record) => $record->link_produk)
                     ->openUrlInNewTab()
                     ->searchable()
@@ -227,10 +267,7 @@ class ProdukResource extends Resource
 
                 Tables\Filters\SelectFilter::make('status_produk')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ->options(ContentStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -254,10 +291,14 @@ class ProdukResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Produk berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Produk berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Produk berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_produk');

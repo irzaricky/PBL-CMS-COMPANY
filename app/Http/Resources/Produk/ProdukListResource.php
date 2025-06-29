@@ -12,6 +12,7 @@ class ProdukListResource extends JsonResource
         return [
             'id_produk' => $this->id_produk,
             'nama_produk' => $this->nama_produk,
+            'tampilkan_harga' => $this->tampilkan_harga,
             'harga_produk' => $this->harga_produk,
             'thumbnail_produk' => $this->thumbnail_produk,
             'link_produk' => $this->link_produk,

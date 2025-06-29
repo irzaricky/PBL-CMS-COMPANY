@@ -270,49 +270,11 @@ function prevImage() {
 
 <template>
     <AppLayout>
-        <div
-            class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-20 font-custom text-black"
-        >
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-20 font-custom text-black">
             <!-- Loading Skeleton -->
             <div v-if="loading" class="flex flex-col gap-20">
-                <!-- Skeleton Breadcrumb -->
-                <nav class="flex" aria-label="Breadcrumb">
-                    <ol
-                        class="inline-flex items-center space-x-1 md:space-x-3 text-sm"
-                    >
-                        <li>
-                            <div class="inline-flex items-center">
-                                <div
-                                    class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"
-                                ></div>
-                                <div
-                                    class="w-16 h-4 bg-gray-200 animate-pulse rounded"
-                                ></div>
-                            </div>
-                        </li>
-                        <li class="inline-flex items-center">
-                            <div
-                                class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"
-                            ></div>
-                            <div class="inline-flex items-center">
-                                <div
-                                    class="w-4 h-4 mr-2 bg-gray-200 animate-pulse rounded"
-                                ></div>
-                                <div
-                                    class="w-16 h-4 bg-gray-200 animate-pulse rounded"
-                                ></div>
-                            </div>
-                        </li>
-                        <li class="flex items-center min-w-0">
-                            <div
-                                class="w-4 h-4 bg-gray-200 animate-pulse rounded mx-1"
-                            ></div>
-                            <div
-                                class="w-24 h-4 bg-gray-200 animate-pulse rounded ml-1"
-                            ></div>
-                        </li>
-                    </ol>
-                </nav>
+                <!-- Skeleton Breadcrumb - Simplified to single rectangle -->
+                <div class="w-full max-w-md h-5 bg-gray-200 animate-pulse rounded"></div>
 
                 <!-- Skeleton Judul & Kategori -->
                 <div class="flex flex-col gap-4">
@@ -423,118 +385,143 @@ function prevImage() {
             <!-- Actual Content (Existing) -->
             <div v-else-if="!error" class="flex flex-col gap-20">
                 <!-- Breadcrumb -->
-                <nav class="flex" aria-label="Breadcrumb">
-                    <ol
-                        class="inline-flex items-center space-x-1 md:space-x-3 text-sm"
-                    >
-                        <li>
-                            <Link
-                                href="/"
-                                class="inline-flex items-center text-gray-500 hover:text-secondary"
-                            >
-                                <Home class="w-4 h-4 mr-2" />
-                                Home
-                            </Link>
-                        </li>
-                        <li class="inline-flex items-center">
-                            <ChevronRight class="w-4 h-4 text-gray-400" />
-                            <Link
-                                href="/galeri"
-                                class="ml-1 inline-flex items-center text-gray-500 hover:text-secondary"
-                            >
-                                <Image class="w-4 h-4 mr-2" />
-                                Galeri
-                            </Link>
-                        </li>
-                        <li class="flex items-center min-w-0">
-                            <ChevronRight
-                                class="w-4 h-4 text-gray-400 flex-shrink-0"
-                            />
-                            <span
-                                class="ml-1 text-sm font-medium text-gray-500 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
-                                :title="gallery?.judul_galeri"
-                            >
-                                {{ gallery?.judul_galeri || "Loading..." }}
-                            </span>
-                        </li>
-                    </ol>
-                </nav>
-
-                <!-- Judul & Kategori -->
-                <div class="flex flex-col gap-4">
-                    <div class="flex items-center gap-4">
-                        <div
-                            class="px-3 py-1 rounded-full border text-sm font-semibold bg-black/5 text-black"
-                        >
-                            {{
-                                gallery?.kategoriGaleri?.nama_kategori_galeri ||
-                                "Tanpa Kategori"
-                            }}
-                        </div>
-                        <div class="text-sm font-semibold text-black">
-                            {{ gallery?.thumbnail_galeri?.length || 0 }} gambar
-                        </div>
+                <div class="flex flex-col gap-12">
+                    <div>
+                        <nav class="flex" aria-label="Breadcrumb">
+                            <ol class="inline-flex items-center space-x-1 text-sm">
+                                <li class="inline-flex items-center">
+                                    <Link
+                                        href="/"
+                                        class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors"
+                                    >
+                                        <Home class="w-4 h-4 mr-1.5" />
+                                        Home
+                                    </Link>
+                                </li>
+                                <li class="inline-flex items-center">
+                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
+                                    <Link
+                                        href="/galeri"
+                                        class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors"
+                                    >
+                                        <Image class="w-4 h-4 mr-1.5" />
+                                        Galeri
+                                    </Link>
+                                </li>
+                                <li class="inline-flex items-center">
+                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
+                                    <span
+                                        class="text-sm font-medium text-gray-700 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
+                                        :title="gallery?.judul_galeri"
+                                    >
+                                        {{ gallery?.judul_galeri || "Memuat..." }}
+                                    </span>
+                                </li>
+                            </ol>
+                        </nav>
                     </div>
-                    <h1 class="text-4xl sm:text-5xl font-normal leading-tight">
-                        {{ gallery?.judul_galeri || "Judul tidak tersedia" }}
-                    </h1>
+
+                    <!-- Judul & Kategori -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-4 flex-wrap">
+                            <div
+                                class="px-3 py-1 rounded-full border text-sm font-semibold bg-black/5 text-black"
+                            >
+                                {{
+                                    gallery?.kategoriGaleri?.nama_kategori_galeri ||
+                                    "Tanpa Kategori"
+                                }}
+                            </div>
+                            <div class="text-sm font-semibold text-black flex items-center gap-2">
+                                <Image class="w-4 h-4" />
+                                {{ gallery?.thumbnail_galeri?.length || 0 }} gambar
+                            </div>
+                        </div>
+                        <h1 class="text-4xl sm:text-5xl font-normal leading-tight">
+                            {{ gallery?.judul_galeri || "Judul tidak tersedia" }}
+                        </h1>
+                    </div>
                 </div>
 
-                <!-- Gambar Utama -->
-                <div
-                    class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white group cursor-pointer"
-                    @click="openImageModal"
-                >
+                <!-- Gambar Utama - Fixed button events -->
+                <div class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white group">
                     <img
-                        :src="
-                            getImageUrl(
-                                gallery?.thumbnail_galeri?.[activeImageIndex]
-                            )
-                        "
+                        :src="getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])"
                         :alt="gallery?.judul_galeri"
-                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        class="w-full h-full object-cover"
                     />
 
-                    <!-- Overlay dengan info dan tombol -->
-                    <div
-                        class="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center"
-                    >
-                        <div
-                            class="opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex gap-3"
+                    <!-- Action buttons - Fixed with proper event handlers -->
+                    <div class="absolute top-4 right-4 flex gap-2 z-20">
+                        <button
+                            @click.stop="openImageModal"
+                            class="p-3 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg 
+                                   opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                            title="Lihat gambar penuh"
+                            type="button"
                         >
-                            <button
-                                @click.stop="openImageModal"
-                                class="p-3 bg-white/90 rounded-full text-black hover:bg-white transition-colors"
-                                title="Lihat gambar penuh"
-                            >
-                                <Eye class="w-5 h-5" />
-                            </button>
-                            <button
-                                @click.stop="openMetaModal"
-                                class="p-3 bg-white/90 rounded-full text-black hover:bg-white transition-colors"
-                                title="Info gambar"
-                            >
-                                <Info class="w-5 h-5" />
-                            </button>
-                        </div>
+                            <Eye class="w-5 h-5" />
+                        </button>
+                        <button
+                            @click.stop="openMetaModal"
+                            class="p-3 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg 
+                                   opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                            title="Info gambar"
+                            type="button"
+                        >
+                            <Info class="w-5 h-5" />
+                        </button>
                     </div>
 
-                    <!-- Navigation arrows for keyboard users -->
+                    <!-- Navigation arrows - Fixed z-index -->
                     <div
                         v-if="gallery?.thumbnail_galeri?.length > 1"
-                        class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                        class="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 z-10"
                     >
+                        <!-- Desktop arrows (hover only) -->
                         <button
                             @click.stop="prevImage"
-                            class="p-2 bg-white/80 rounded-full text-black hover:bg-white transition-colors pointer-events-auto"
+                            class="p-3 bg-white/80 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg
+                                   hidden md:block opacity-0 group-hover:opacity-100"
+                            title="Gambar sebelumnya"
+                            type="button"
                         >
                             <ChevronRight class="w-5 h-5 rotate-180" />
                         </button>
                         <button
                             @click.stop="nextImage"
-                            class="p-2 bg-white/80 rounded-full text-black hover:bg-white transition-colors pointer-events-auto"
+                            class="p-3 bg-white/80 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg
+                                   hidden md:block opacity-0 group-hover:opacity-100"
+                            title="Gambar selanjutnya"
+                            type="button"
                         >
                             <ChevronRight class="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <!-- Mobile navigation - Fixed z-index -->
+                    <div
+                        v-if="gallery?.thumbnail_galeri?.length > 1"
+                        class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 md:hidden z-10"
+                    >
+                        <button
+                            @click.stop="prevImage"
+                            class="p-2 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-colors shadow-lg"
+                            title="Gambar sebelumnya"
+                            type="button"
+                        >
+                            <ChevronRight class="w-4 h-4 rotate-180" />
+                        </button>
+                        <span class="px-3 py-2 bg-white/90 backdrop-blur-sm rounded-full text-black text-sm font-medium">
+                            {{ activeImageIndex + 1 }} / {{ gallery?.thumbnail_galeri?.length }}
+                        </span>
+                        <button
+                            @click.stop="nextImage"
+                            class="p-2 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-colors shadow-lg"
+                            title="Gambar selanjutnya"
+                            type="button"
+                        >
+                            <ChevronRight class="w-4 h-4" />
                         </button>
                     </div>
                 </div>
@@ -650,42 +637,38 @@ function prevImage() {
             </div>
         </div>
 
-        <!-- Copy Link Modal -->
-        <CopyLink
-            :show="showCopyModal"
-            @close="closeCopyModal"
-            :auto-close="true"
-            :auto-close-delay="3000"
-        />
+        <!-- Modal Components - Fixed positioning -->
+        <Teleport to="body">
+            <!-- Copy Link Modal -->
+            <CopyLink
+                :show="showCopyModal"
+                @close="closeCopyModal"
+                :auto-close="true"
+                :auto-close-delay="3000"
+            />
 
-        <!-- Copy Link Modal -->
-        <CopyLink :show="showCopyModal" @close="closeCopyModal" />
+            <!-- Zoom Modal Component -->
+            <ZoomGaleri
+                :show="showImageModal"
+                :images="gallery?.thumbnail_galeri"
+                :active-index="activeImageIndex"
+                :current-image-url="getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])"
+                :gallery-title="gallery?.judul_galeri"
+                @close="closeImageModal"
+                @next="nextImage"
+                @prev="prevImage"
+                @update:active-index="setActiveImage"
+            />
 
-        <!-- Zoom Modal Component -->
-        <ZoomGaleri
-            :show="showImageModal"
-            :images="gallery?.thumbnail_galeri"
-            :current-image-url="
-                getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])
-            "
-            :gallery-title="gallery?.judul_galeri"
-            :current-index="activeImageIndex"
-            :total-images="gallery?.thumbnail_galeri?.length || 0"
-            @close="closeImageModal"
-            @next="nextImage"
-            @prev="prevImage"
-        />
-
-        <!-- Metadata Modal Component -->
-        <MetaGambarGaleri
-            :show="showMetaModal"
-            :metadata="currentImageMeta"
-            :loading-meta="loadingMeta"
-            :current-image-url="
-                getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])
-            "
-            :gallery-title="gallery?.judul_galeri"
-            @close="closeMetaModal"
-        />
+            <!-- Metadata Modal Component -->
+            <MetaGambarGaleri
+                :show="showMetaModal"
+                :metadata="currentImageMeta"
+                :loading-meta="loadingMeta"
+                :current-image-url="getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])"
+                :gallery-title="gallery?.judul_galeri"
+                @close="closeMetaModal"
+            />
+        </Teleport>
     </AppLayout>
 </template>

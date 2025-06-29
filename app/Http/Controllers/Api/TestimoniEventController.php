@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Testimoni;
 use App\Enums\ContentStatus;
 use Illuminate\Http\Request;
 use App\Models\TestimoniEvent;
@@ -14,18 +13,33 @@ use App\Http\Resources\TestimoniEventResource;
 
 class TestimoniEventController extends Controller
 {
-    // Dapatkan semua testimoni untuk event tertentu (publikasi saja)
-
+    /**
+     * Mengambil semua testimoni untuk event tertentu (yang terpublikasi)
+     * 
+     * @param int $eventId
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index($eventId)
     {
         $testimoni = TestimoniEvent::with('user:id_user,name,foto_profil,email')
             ->where('id_event', $eventId)
-            ->where('status', 'Terpublikasi')
+            ->where('status', 'terpublikasi')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return TestimoniEventResource::collection($testimoni);
     }
+
+    /**
+     * Menyimpan testimoni baru untuk event
+     * 
+     * @param Request $request Request dengan data:
+     *   - isi_testimoni (string, required): Isi testimoni
+     *   - rating (int, required): Rating 1-5
+     *   - id_user (int, required): ID user yang memberikan testimoni
+     * @param int $eventId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request, $eventId)
     {
         $request->validate([
@@ -39,7 +53,7 @@ class TestimoniEventController extends Controller
         $testimoni->isi_testimoni = $request->isi_testimoni;
         $testimoni->rating = $request->rating;
         $testimoni->id_user = $request->id_user;
-        $testimoni->status = 'Terpublikasi';
+        $testimoni->status = 'terpublikasi';
         $testimoni->save();
 
         return response()->json(['message' => 'Testimoni berhasil dikirim!']);

@@ -14,6 +14,20 @@ class EditStrukturOrganisasi extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        // Ensure inactive users always have urutan 0
+        if (isset($data['id_user'])) {
+            $user = \App\Models\User::find($data['id_user']);
+            if ($user && $user->status === 'nonaktif') {
+                $data['urutan'] = 0;
+            }
+        }
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

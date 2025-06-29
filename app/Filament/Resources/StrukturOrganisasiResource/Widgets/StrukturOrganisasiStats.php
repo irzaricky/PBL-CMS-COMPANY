@@ -22,30 +22,32 @@ class StrukturOrganisasiStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Jabatan Terisi', StrukturOrganisasi::query()->count())
-                ->description('Jumlah total Jabatan yang sedang terisi')
+            Stat::make('Total Pegawai Organisasi', StrukturOrganisasi::query()->count())
+                ->description('Jumlah Pegawai dalam organisasi')
+                ->descriptionIcon('heroicon-m-users')
                 ->color('primary'),
 
-            Stat::make('Jabatan Aktif Saat Ini', StrukturOrganisasi::query()
-                ->whereNull('tanggal_selesai')
-                ->orWhere('tanggal_selesai', '>=', now())
+            Stat::make('Pegawai Aktif', StrukturOrganisasi::query()
+                ->whereHas('user', function ($query) {
+                    $query->where('status', 'aktif')
+                        ->whereIn('status_kepegawaian', ['Tetap', 'Kontrak', 'Magang']);
+                })
+                ->where(function ($query) {
+                    $query->whereNull('tanggal_selesai')
+                        ->orWhere('tanggal_selesai', '>=', now());
+                })
                 ->count())
-                ->description('Jabatan yang masih aktif hingga hari ini')
+                ->description('Posisi dengan pengguna aktif')
+                ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success'),
 
-            Stat::make('Jabatan Kosong / Selesai', StrukturOrganisasi::query()
-                ->whereNotNull('tanggal_selesai')
-                ->where('tanggal_selesai', '<', now())
-                ->count())
-                ->description('Jabatan yang sudah selesai atau kosong')
-                ->color('danger'),
-
-            Stat::make('Penempatan Baru Bulan Ini', StrukturOrganisasi::query()
+            Stat::make('Posisi Baru Bulan Ini', StrukturOrganisasi::query()
                 ->whereMonth('tanggal_mulai', now()->month)
                 ->whereYear('tanggal_mulai', now()->year)
                 ->count())
-                ->description('Jumlah orang mulai menjabat bulan ini')
-                ->color('info'),
+                ->description('Posisi baru yang dibuat bulan ini')
+                ->descriptionIcon('heroicon-m-plus-circle')
+                ->color('warning'),
         ];
 
     }

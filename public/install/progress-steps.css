@@ -26,6 +26,8 @@
     font-size: 10px;
     font-weight: 500;
     color: #666;
+    display: inline-block;
+    width: 100px;
 }
 
 .circle-icon.active + .step-label {

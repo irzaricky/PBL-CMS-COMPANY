@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeederDev extends Seeder
 {
@@ -27,6 +28,10 @@ class DatabaseSeederDev extends Seeder
             Storage::disk('public')->deleteDirectory($directory);
         }
 
+        Artisan::call('migrate:fresh', [
+            '--force' => true,
+        ]);
+
         $this->call([
             ShieldSeeder::class,
             FilamentUserSeeder::class,
@@ -45,7 +50,6 @@ class DatabaseSeederDev extends Seeder
             ProfilPerusahaanSeeder::class,
             MediaSosialSeeder::class,
             FeedbackSeeder::class,
-            TestimoniSeeder::class,
             LowonganSeeder::class,
             EventSeeder::class,
             ArtikelSeeder::class,
@@ -58,6 +62,10 @@ class DatabaseSeederDev extends Seeder
             FeatureToggleSeeder::class,
             CaseStudySeeder::class,
             TestimoniProdukSeeder::class,
+            TestimoniArtikelSeeder::class,
+            TestimoniEventSeeder::class,
+            TestimoniLowonganSeeder::class,
+            TestimoniSliderSeeder::class,
         ]);
     }
 }

@@ -85,10 +85,11 @@
 #msform .action-button:focus,
 #msform .action-button:hover,
 .card-footer,
-.progress-bar,
-select.decorated option:hover {
+.progress-bar {
     background-color: var(--secondary-color) !important;
 }
+
+/* Removed problematic select.decorated option:hover rule */
 #msform .action-button-previous {
     background: #616161;
     border: 0;
@@ -206,12 +207,6 @@ form {
     padding: 7px 11px 7px 0 !important;
     border-radius: 4px !important;
 }
-option:checked,
-option:hover,
-select option[selected] {
-    color: #fff !important;
-    background-color: var(--secondary-color) !important;
-}
 .select_error {
     font-size: 0.875em;
 }
@@ -231,4 +226,51 @@ select option[selected] {
 }
 .mr-8 {
     margin-right: 8px !important;
+}
+
+/* Fix select dropdown option styling issues */
+select.form-control option {
+    background-color: white !important;
+    color: #212529 !important;
+}
+
+select.form-control option:checked,
+select.form-control option:focus {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+/* Prevent aggressive option styling */
+select option {
+    background-color: white !important;
+    color: #212529 !important;
+}
+
+select option:checked {
+    background-color: #007bff !important;
+    color: white !important;
+}
+
+/* Readonly input styling - slightly darker background */
+input.form-control[readonly] {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.8 !important;
+}
+
+input.form-control[readonly]:focus {
+    background-color: #f8f9fa !important;
+    border-color: #ced4da !important;
+    box-shadow: none !important;
+}
+
+/* Additional specificity for readonly inputs */
+.form-control[readonly="readonly"],
+.form-control[readonly="true"],
+input[readonly].form-control {
+    background-color: #f8f9fa !important;
+    color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.8 !important;
 }

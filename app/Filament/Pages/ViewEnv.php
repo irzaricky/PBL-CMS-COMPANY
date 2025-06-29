@@ -19,7 +19,6 @@ use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\RestoreBackupAction;
 use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\ShowBackupContentAction;
 use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\UploadBackupAction;
 use GeoSot\FilamentEnvEditor\Pages\Actions\CreateAction;
-use GeoSot\FilamentEnvEditor\Pages\Actions\DeleteAction;
 use GeoSot\FilamentEnvEditor\Pages\Actions\EditAction;
 use GeoSot\FilamentEnvEditor\Pages\ViewEnv as BaseViewEnvEditor;
 use Illuminate\Support\Collection;
@@ -51,7 +50,7 @@ class ViewEnv extends BaseViewEnvEditor
         // since we're just filtering and searching existing env data
     }
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
+    protected static ?string $navigationIcon = 'heroicon-o-command-line';
     protected static ?string $navigationLabel = 'Environment Variables';
     protected static ?int $navigationSort = 5;
 
@@ -221,10 +220,14 @@ class ViewEnv extends BaseViewEnvEditor
         $options = [];
 
         foreach ($differences as $key => $diff) {
+            // Skip 'remove' type differences for security reasons
+            if ($diff['type'] === 'remove') {
+                continue;
+            }
+
             $label = $diff['key'];
             $badge = match ($diff['type']) {
                 'add' => '➕ ADD',
-                'remove' => '➖ REMOVE',
                 'modify' => '🔄 MODIFY',
             };
 
@@ -268,11 +271,8 @@ class ViewEnv extends BaseViewEnvEditor
                             $restoredCount++;
                             break;
 
-                        case 'remove':
-                            // Remove the variable
-                            unset($currentVars[$key]);
-                            $restoredCount++;
-                            break;
+                        // Note: 'remove' case is disabled for security reasons
+                        // Variables cannot be deleted through this interface
                     }
                 }
             }
@@ -770,9 +770,6 @@ class ViewEnv extends BaseViewEnvEditor
 
                             Forms\Components\Actions::make([
                                 $this->createCustomEditAction($obj),
-                                DeleteAction::make("delete_{$obj->key}")
-                                    ->setEntry($obj)
-                                    ->size(ActionSize::Small),
                             ])->alignEnd(),
                         ]),
                 ])->columnSpanFull();
@@ -1060,24 +1057,9 @@ class ViewEnv extends BaseViewEnvEditor
             ->form([
                 Forms\Components\TextInput::make('key')
                     ->label('Key')
-                    ->required()
                     ->default($obj->key)
-                    ->rules([
-                        function () use ($obj) {
-                            return function (string $attribute, $value, \Closure $fail) use ($obj) {
-                                if (!$this->validateEnvKey($value)) {
-                                    $fail($this->getEnvKeyValidationMessage());
-                                }
-
-                                if ($this->keyExists($value, $obj->key)) {
-                                    $fail('This environment variable key already exists.');
-                                }
-                            };
-                        },
-                    ])
-                    ->validationMessages([
-                        'required' => 'Environment variable key is required.',
-                    ]),
+                    ->disabled()
+                    ->helperText('Environment variable keys cannot be modified'),
 
                 Forms\Components\TextInput::make('value')
                     ->label('Value')
@@ -1085,18 +1067,13 @@ class ViewEnv extends BaseViewEnvEditor
             ])
             ->action(function (array $data) use ($obj) {
                 try {
-                    // If key changed, we need to delete old and create new
-                    if ($data['key'] !== $obj->key) {
-                        EnvEditor::deleteKey($obj->key);
-                        $result = EnvEditor::addKey($data['key'], $data['value'] ?? '');
-                    } else {
-                        $result = EnvEditor::editKey($obj->key, $data['value'] ?? '');
-                    }
+                    // Only allow editing the value, not the key
+                    $result = EnvEditor::editKey($obj->key, $data['value'] ?? '');
 
                     if ($result) {
                         Notification::make()
                             ->title('Success')
-                            ->body("Environment variable '{$data['key']}' has been updated successfully.")
+                            ->body("Environment variable '{$obj->key}' has been updated successfully.")
                             ->success()
                             ->send();
 

@@ -17,8 +17,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        $middleware->api(append: [
+            \App\Http\Middleware\ApiCacheMiddleware::class,
+        ]);
+
         $middleware->group('installCheck', [
             \App\Installer\Middleware\InstallMiddleware::class,
+            \App\Installer\Middleware\SetInstallerLocale::class,
         ]);
 
         $middleware->group('checkInstallation', [

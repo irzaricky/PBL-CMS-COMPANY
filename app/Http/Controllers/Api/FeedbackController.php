@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Models\Feedback;
-use App\Http\Resources\FeedbackResource;
+use App\Enums\ContentStatus;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\FeedbackResource;
 use Illuminate\Support\Facades\Validator;
 
 class FeedbackController extends Controller
@@ -20,10 +21,9 @@ class FeedbackController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required|exists:users,id_user|integer',
                 'subjek_feedback' => 'required|string|max:200',
                 'isi_feedback' => 'required|string',
-                'tingkat_kepuasan' => 'required|integer|min:1|max:5', // Tambahan validasi
+                'tingkat_kepuasan' => 'required|integer|min:1|max:5',
             ]);
 
             if ($validator->fails()) {
@@ -35,10 +35,10 @@ class FeedbackController extends Controller
             }
 
             $feedback = Feedback::create([
-                'id_user' => $request->id_user,
+                'id_user' => auth()->id(),
                 'subjek_feedback' => $request->subjek_feedback,
                 'isi_feedback' => $request->isi_feedback,
-                'tingkat_kepuasan' => $request->tingkat_kepuasan, // Tambahkan ini
+                'tingkat_kepuasan' => $request->tingkat_kepuasan,
             ]);
 
             return (new FeedbackResource($feedback))
@@ -57,10 +57,21 @@ class FeedbackController extends Controller
 
     public function index()
     {
-        $feedback = Feedback::with('user:id_user,name,foto_profil,email')
-            ->orderBy('created_at', 'desc')
-            ->get();
 
-        return FeedbackResource::collection($feedback);
+        try {
+            $query = Feedback::with('user:id_user,name,foto_profil,email')
+                ->where('status_feedback', ContentStatus::TERPUBLIKASI)
+                ->orderBy('created_at', 'desc');
+
+            $feedback = $query->paginate(10);
+
+            return FeedbackResource::collection($feedback);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal memuat feedback',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -2,32 +2,34 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Form;
+use App\Models\CaseStudy;
+use Filament\Tables\Table;
 use App\Enums\ContentStatus;
+use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Auth;
+use App\Helpers\FilamentGroupingHelper;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Tables\Filters\TrashedFilter;
+use Illuminate\Database\Eloquent\Collection;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Tables\Actions\RestoreBulkAction;
+use App\Services\FileHandlers\MultipleFileHandler;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
 use App\Filament\Resources\CaseStudyResource\Pages;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\CaseStudyResource\RelationManagers;
 use App\Filament\Resources\CaseStudyResource\Widgets\CaseStudyStats;
-use App\Models\CaseStudy;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Storage;
-use App\Services\FileHandlers\MultipleFileHandler;
-use Filament\Tables\Filters\TrashedFilter;
-use Filament\Tables\Actions\RestoreBulkAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use App\Helpers\FilamentGroupingHelper;
 
 class CaseStudyResource extends Resource
 {
     protected static ?string $model = CaseStudy::class;
-    protected static ?string $navigationIcon = 'heroicon-s-document';
+    protected static ?string $navigationIcon = 'heroicon-s-book-open';
 
     public static function getNavigationGroup(): ?string
     {
@@ -47,6 +49,8 @@ class CaseStudyResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Case Study')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Informasi umum mengenai case study')
                     ->schema([
                         Forms\Components\TextInput::make('judul_case_study')
                             ->label('Judul Case Study')
@@ -81,14 +85,11 @@ class CaseStudyResource extends Resource
                                 'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
                             ]),
 
-                        Forms\Components\Select::make('status_case_study')
-                            ->label('Status')
-                            ->options([
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                            ])
+                        Forms\Components\ToggleButtons::make('status_case_study')
+                            ->label('Status Case Study')
+                            ->inline()
+                            ->options(ContentStatus::class)
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
-                            ->native(false)
                             ->required(),
 
                         Forms\Components\Textarea::make('deskripsi_case_study')
@@ -99,6 +100,8 @@ class CaseStudyResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
+                    ->icon('heroicon-s-photo')
+                    ->description('Tambahkan gambar dan konten untuk case study')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_case_study')
                             ->label('Galeri Gambar Case Study')
@@ -121,7 +124,20 @@ class CaseStudyResource extends Resource
                             ->required()
                             ->fileAttachmentsDisk('public')
                             ->fileAttachmentsDirectory('case-study-attachments')
-                            ->columnSpanFull(),
+                            ->columnSpanFull()
+                            ->hintAction(
+                                fn(Get $get) => Action::make('previewContent')
+                                    ->label('Preview Konten')
+                                    ->slideOver()
+                                    ->form([
+                                        Forms\Components\ViewField::make('preview')
+                                            ->view('forms.preview-konten-case-study')
+                                            ->viewData([
+                                                'konten' => $get('isi_case_study'),
+                                            ])
+                                            ->columnSpanFull(),
+                                    ])
+                            ),
                     ]),
             ]);
     }
@@ -130,40 +146,79 @@ class CaseStudyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_case_study')
+                Tables\Columns\TextColumn::make('thumbnail_case_study')
                     ->label('Thumbnail')
-                    ->circular()
-                    ->stacked()
-                    ->limit(1)
-                    ->limitedRemainingText()
-                    ->extraImgAttributes(['class' => 'object-cover']),
+                    ->formatStateUsing(function ($record) {
+                        $images = [];
+                        $totalImages = 0;
+
+                        if (is_array($record->thumbnail_case_study) && !empty($record->thumbnail_case_study)) {
+                            $totalImages = count($record->thumbnail_case_study);
+
+                            // Ambil maksimal 3 gambar untuk stack effect
+                            $imagesToShow = array_slice($record->thumbnail_case_study, 0, 3);
+
+                            foreach ($imagesToShow as $imagePath) {
+                                $images[] = route('thumbnail', [
+                                    'path' => base64_encode($imagePath),
+                                    'w' => 80,
+                                    'h' => 80,
+                                    'q' => 80
+                                ]);
+                            }
+                        }
+
+                        return view('filament.tables.columns.image-stack-advanced', [
+                            'images' => $images,
+                            'total_images' => $totalImages,
+                            'remaining_count' => max(0, $totalImages - 1)
+                        ])->render();
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('judul_case_study')
                     ->label('Judul')
                     ->searchable()
                     ->limit(30),
 
-                Tables\Columns\TextColumn::make('mitra.nama')
-                    ->label('Mitra')
-                    ->searchable(),
+                Tables\Columns\ImageColumn::make('mitra.logo')
+                    ->label('Logo Mitra')
+                    ->disk('public')
+                    ->size(40)
+                    ->circular()
+                    ->defaultImageUrl(url('/image/placeholder.webp')),
 
-                Tables\Columns\SelectColumn::make('status_case_study')
+                Tables\Columns\TextColumn::make('mitra.nama')
+                    ->label('Nama Mitra')
+                    ->searchable()
+                    ->sortable(),
+
+                Tables\Columns\ToggleColumn::make('status_case_study')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
-                    ->rules(['required']),
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
+                    ->disabled(fn() => !auth()->user()->can('update_case::study', CaseStudy::class))
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_case_study' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn($record) => $record->status_case_study === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_case_study === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
                     ->dateTime('d M Y H:i')
-                ,
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Diperbarui Pada')
                     ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->label('Dihapus Pada')
@@ -177,10 +232,9 @@ class CaseStudyResource extends Resource
 
                 Tables\Filters\SelectFilter::make('status_case_study')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ->options(ContentStatus::class),
+
+                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -204,10 +258,14 @@ class CaseStudyResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Case study berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Case study berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Case study berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_case_study');

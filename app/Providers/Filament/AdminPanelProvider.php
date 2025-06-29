@@ -6,9 +6,11 @@ namespace App\Providers\Filament;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
+use App\Helpers\ThemeHelper;
 use App\Filament\Pages\ViewEnv;
 use App\Models\ProfilPerusahaan;
 use Filament\Navigation\MenuItem;
+use Filament\Support\Colors\Color;
 use Illuminate\Support\Facades\Auth;
 use App\Filament\Pages\Auth\Register;
 use App\Filament\Pages\Auth\EditProfile;
@@ -64,8 +66,6 @@ use App\Filament\Widgets\CustomerServices\Feedback\FeedbackTrendChart;
 use App\Filament\Widgets\CustomerServices\Lowongan\LowonganTrendChart;
 use App\Filament\Widgets\ContentManager\CaseStudy\CaseStudyStatusChart;
 use App\Filament\Widgets\ContentManager\Unduhan\DocumentDownloadsChart;
-use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniStatsCard;
-use App\Filament\Widgets\CustomerServices\Testimoni\TestimoniTrendChart;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -85,6 +85,18 @@ class AdminPanelProvider extends PanelProvider
                 }
                 return 'Admin Panel';
             })
+            ->favicon(function () {
+                try {
+                    if (\Illuminate\Support\Facades\Schema::hasTable('profil_perusahaan')) {
+                        $company = ProfilPerusahaan::first();
+                        if ($company && $company->logo_perusahaan) {
+                            return asset('storage/' . $company->logo_perusahaan);
+                        }
+                    }
+                } catch (\Exception $e) {
+                }
+                return asset('favicon.ico');
+            })
             ->globalSearch(false)
             ->id('admin')
             ->path('admin')
@@ -97,7 +109,8 @@ class AdminPanelProvider extends PanelProvider
             ->registration(Register::class)
             ->emailVerification(EmailVerificationPrompt::class)
             ->colors([
-                'primary' => '#3b82f6',
+                'primary' => ThemeHelper::getFilamentTheme()['primary'],
+                'gray' => Color::Slate,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -149,8 +162,6 @@ class AdminPanelProvider extends PanelProvider
                 LamaranTrendChart::class,
                 LowonganStatsCard::class,
                 LowonganTrendChart::class,
-                TestimoniStatsCard::class,
-                TestimoniTrendChart::class,
 
 
                     // Director widgets
@@ -188,7 +199,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup('System')
                     ->navigationLabel('Environment Editor')
                     ->navigationIcon('heroicon-o-cog')
-                    ->hideKeys('APP_KEY', 'BCRYPT_ROUNDS', 'APP_NAME')
+                    ->hideKeys('APP_NAME')
                     ->viewPage(ViewEnv::class)
                     ->authorize(
                         fn() => Auth::check() && Auth::user()->hasPermissionTo('page_ViewEnv')

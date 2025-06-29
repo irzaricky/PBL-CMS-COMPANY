@@ -26,7 +26,7 @@ use App\Filament\Resources\UnduhanResource\Widgets\UnduhanStats;
 class UnduhanResource extends Resource
 {
     protected static ?string $model = Unduhan::class;
-    protected static ?string $navigationIcon = 'heroicon-s-document-arrow-down';
+    protected static ?string $navigationIcon = 'heroicon-s-arrow-down-tray';
     protected static ?string $cluster = UnduhanCluster::class;
     protected static ?int $navigationSort = 1;
 
@@ -35,6 +35,8 @@ class UnduhanResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Unduhan')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Isi informasi dasar tentang unduhan yang akan dibuat.')
                     ->schema([
                         Forms\Components\TextInput::make('nama_unduhan')
                             ->label('Nama Unduhan')
@@ -78,7 +80,7 @@ class UnduhanResource extends Resource
                             ]),
 
                         Forms\Components\Select::make('id_user')
-                            ->label('Penulis')
+                            ->label('Pengunggah')
                             ->relationship('user', 'name')
                             ->default(fn() => Auth::id())
                             ->searchable()
@@ -99,46 +101,29 @@ class UnduhanResource extends Resource
                                 'unique' => 'Slug sudah terpakai. Silakan gunakan slug lain.',
                             ]),
 
-                        Forms\Components\Select::make('status_unduhan')
+                        Forms\Components\ToggleButtons::make('status_unduhan')
                             ->label('Status Unduhan')
-                            ->options([
-                                ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                                ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label()
-                            ])
+                            ->inline()
+                            ->options(ContentStatus::class)
                             ->default(ContentStatus::TIDAK_TERPUBLIKASI)
-                            ->native(false)
                             ->required(),
                     ]),
 
                 Forms\Components\Section::make('File & Konten')
+                    ->icon('heroicon-s-document-text')
+                    ->description('Unggah file unduhan dan tambahkan deskripsi jika diperlukan.')
                     ->schema([
                         Forms\Components\FileUpload::make('lokasi_file')
                             ->label('File Unduhan')
                             ->directory('unduhan-files')
-                            ->acceptedFileTypes(['application/pdf', 'application/zip', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'])
                             ->maxSize(10240) // 10MB
                             ->required()
                             ->disk('public')
                             ->downloadable()
                             ->helperText('Upload file untuk diunduh (format: pdf, doc, docx, xls, xlsx, ppt, pptx, zip)'),
 
-                        Forms\Components\RichEditor::make('deskripsi')
+                        Forms\Components\TextInput::make('deskripsi')
                             ->label('Deskripsi Unduhan')
-                            ->fileAttachmentsDisk('public')
-                            ->fileAttachmentsDirectory('unduhan-attachments')
-                            ->toolbarButtons([
-                                'bold',
-                                'italic',
-                                'underline',
-                                'strike',
-                                'h1',
-                                'h2',
-                                'link',
-                                'bulletList',
-                                'orderedList',
-                                'redo',
-                                'undo',
-                            ])
                             ->columnSpanFull(),
                     ]),
             ]);
@@ -167,6 +152,7 @@ class UnduhanResource extends Resource
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengunggah')
+                    ->icon('heroicon-s-user')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('lokasi_file')
@@ -177,16 +163,26 @@ class UnduhanResource extends Resource
 
                 Tables\Columns\TextColumn::make('jumlah_unduhan')
                     ->label('Jumlah Unduhan')
+                    ->badge()
+                    ->color('primary')
+                    ->icon('heroicon-s-arrow-down-tray')
                     ->numeric(),
 
-                Tables\Columns\SelectColumn::make('status_unduhan')
+                Tables\Columns\ToggleColumn::make('status_unduhan')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ])
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
                     ->disabled(fn() => !auth()->user()->can('update_unduhan', Unduhan::class))
-                    ->rules(['required']),
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_unduhan' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn($record) => $record->status_unduhan === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_unduhan === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -214,10 +210,7 @@ class UnduhanResource extends Resource
 
                 Tables\Filters\SelectFilter::make('status_unduhan')
                     ->label('Status')
-                    ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
-                    ]),
+                    ->options(ContentStatus::class),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -247,10 +240,14 @@ class UnduhanResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Unduhan berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Unduhan berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Unduhan berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             foreach ($records as $record) {

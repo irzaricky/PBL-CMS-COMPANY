@@ -37,6 +37,8 @@ class EventResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Dasar')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Tambahkan informasi dasar event yang akan diselenggarakan')
                     ->schema([
                         Forms\Components\TextInput::make('nama_event')
                             ->label('Nama Event')
@@ -73,6 +75,8 @@ class EventResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Detail Event')
+                    ->icon('heroicon-s-calendar')
+                    ->description('Tambahkan informasi detail event yang akan diselenggarakan')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_event')
                             ->label('Thumbnail Event')
@@ -147,13 +151,35 @@ class EventResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('thumbnail_event')
+                Tables\Columns\TextColumn::make('thumbnail_event')
                     ->label('Thumbnail')
-                    ->circular()
-                    ->stacked()
-                    ->limit(1)
-                    ->limitedRemainingText()
-                    ->extraImgAttributes(['class' => 'object-cover']),
+                    ->formatStateUsing(function ($record) {
+                        $images = [];
+                        $totalImages = 0;
+
+                        if (is_array($record->thumbnail_event) && !empty($record->thumbnail_event)) {
+                            $totalImages = count($record->thumbnail_event);
+
+                            // Ambil maksimal 3 gambar untuk stack effect
+                            $imagesToShow = array_slice($record->thumbnail_event, 0, 3);
+
+                            foreach ($imagesToShow as $imagePath) {
+                                $images[] = route('thumbnail', [
+                                    'path' => base64_encode($imagePath),
+                                    'w' => 80,
+                                    'h' => 80,
+                                    'q' => 80
+                                ]);
+                            }
+                        }
+
+                        return view('filament.tables.columns.image-stack-advanced', [
+                            'images' => $images,
+                            'total_images' => $totalImages,
+                            'remaining_count' => max(0, $totalImages - 1)
+                        ])->render();
+                    })
+                    ->html(),
 
                 Tables\Columns\TextColumn::make('nama_event')
                     ->label('Nama Event')
@@ -261,10 +287,14 @@ class EventResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->label('Arsipkan')
+                        ->color('warning')
+                        ->icon('heroicon-s-archive-box-arrow-down')
                         ->successNotificationTitle('Event berhasil diarsipkan'),
                     RestoreBulkAction::make()
                         ->successNotificationTitle('Event berhasil dipulihkan'),
                     ForceDeleteBulkAction::make()
+                        ->label('Hapus Permanen')
                         ->successNotificationTitle('Event berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_event');

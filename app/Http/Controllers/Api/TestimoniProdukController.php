@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Testimoni;
 use App\Enums\ContentStatus;
 use Illuminate\Http\Request;
 use App\Models\TestimoniProduk;
@@ -14,18 +13,33 @@ use App\Http\Resources\TestimoniProdukResource;
 
 class TestimoniProdukController extends Controller
 {
-    // Dapatkan semua testimoni untuk produk tertentu (publikasi saja)
-
+    /**
+     * Mengambil semua testimoni untuk produk tertentu (yang terpublikasi)
+     * 
+     * @param int $produkId
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index($produkId)
     {
         $testimoni = TestimoniProduk::with('user:id_user,name,foto_profil,email')
             ->where('id_produk', $produkId)
-            ->where('status', 'Terpublikasi')
+            ->where('status', 'terpublikasi')
             ->orderBy('created_at', 'desc')
             ->get();
 
         return TestimoniProdukResource::collection($testimoni);
     }
+
+    /**
+     * Menyimpan testimoni baru untuk produk
+     * 
+     * @param Request $request Request dengan data:
+     *   - isi_testimoni (string, required): Isi testimoni
+     *   - rating (int, required): Rating 1-5
+     *   - id_user (int, required): ID user yang memberikan testimoni
+     * @param int $produkId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request, $produkId)
     {
         $request->validate([
@@ -39,7 +53,7 @@ class TestimoniProdukController extends Controller
         $testimoni->isi_testimoni = $request->isi_testimoni;
         $testimoni->rating = $request->rating;
         $testimoni->id_user = $request->id_user;
-        $testimoni->status = 'Terpublikasi';
+        $testimoni->status = 'terpublikasi';
         $testimoni->save();
 
         return response()->json(['message' => 'Testimoni berhasil dikirim!']);

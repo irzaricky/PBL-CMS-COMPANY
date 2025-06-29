@@ -7,14 +7,18 @@ use Filament\Tables;
 use App\Models\Feedback;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use App\Enums\ContentStatus;
 use Filament\Resources\Resource;
+use App\Helpers\FilamentGroupingHelper;
+use Filament\Forms\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use App\Filament\Resources\FeedbackResource\Pages;
+use App\Services\FileHandlers\MultipleFileHandler;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FeedbackResource\RelationManagers;
 use App\Filament\Resources\FeedbackResource\Widgets\FeedbackStats;
-use App\Helpers\FilamentGroupingHelper;
 
 class FeedbackResource extends Resource
 {
@@ -31,6 +35,8 @@ class FeedbackResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Feedback')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Informasi terkait feedback yang diberikan oleh pengguna.')
                     ->schema([
                         Forms\Components\Select::make('id_user')
                             ->label('Pengguna')
@@ -53,7 +59,13 @@ class FeedbackResource extends Resource
                             ->displayFormat('d F Y')
                             ->disabled(),
 
-                        Forms\Components\RichEditor::make('isi_feedback')
+                        Forms\Components\TextInput::make('subjek_feedback')
+                            ->label('Subjek')
+                            ->required()
+                            ->columnSpanFull()
+                            ->disabled(),
+
+                        Forms\Components\Textarea::make('isi_feedback')
                             ->label('Isi Feedback')
                             ->required()
                             ->columnSpanFull()
@@ -61,11 +73,19 @@ class FeedbackResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Tanggapan Admin')
+                    ->icon('heroicon-s-chat-bubble-left-right')
+                    ->description('Tanggapan dari admin terkait feedback yang diberikan.')
                     ->schema([
-                        Forms\Components\RichEditor::make('tanggapan_feedback')
+                        Forms\Components\TextInput::make('tanggapan_feedback')
                             ->label('Tanggapan')
                             ->placeholder('Masukkan tanggapan untuk feedback ini')
                             ->columnSpanFull(),
+                        Forms\Components\ToggleButtons::make('status_feedback')
+                            ->label('Status Feedback')
+                            ->inline()
+                            ->options(ContentStatus::class)
+                            ->default(ContentStatus::TIDAK_TERPUBLIKASI)
+                            ->required(),
                     ]),
             ]);
     }
@@ -76,18 +96,29 @@ class FeedbackResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Pengguna')
-                    ->searchable()
-                ,
+                    ->searchable(),
 
                 Tables\Columns\TextColumn::make('subjek_feedback')
-                    ->label('Subjek')
+                    ->label('Subjek Feedback')
                     ->searchable()
                     ->limit(50),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Tanggal Feedback')
-                    ->date('d F Y')
-                ,
+                Tables\Columns\ToggleColumn::make('status_feedback')
+                    ->label('Status')
+                    ->onColor('success')
+                    ->offColor('gray')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
+                    ->disabled(fn() => !auth()->user()->can('update_feedback', Feedback::class))
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_feedback' => $state ? ContentStatus::TERPUBLIKASI : ContentStatus::TIDAK_TERPUBLIKASI
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
+
 
                 Tables\Columns\IconColumn::make('tanggapan_feedback')
                     ->label('Ditanggapi')
@@ -97,10 +128,6 @@ class FeedbackResource extends Resource
                     ->falseIcon('heroicon-o-x-circle')
                     ->state(fn(Feedback $record): bool => !empty($record->tanggapan_feedback)),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label('Diperbarui Pada')
-                    ->dateTime('d M Y H:i')
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status_tanggapan')
@@ -122,8 +149,48 @@ class FeedbackResource extends Resource
                     ->relationship('user', 'name'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Tanggapi'),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus')
+                    ->successNotificationTitle('Feedback berhasil dihapus')
+                    ->requiresConfirmation()
+                    ->hidden(fn() => !auth()->user()->can('delete_feedback', Feedback::class)),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Feedback')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan feedback yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_feedback' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Feedback berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Feedback')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi feedback yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_feedback' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi feedback berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion(),
+                ]),
             ]);
+
     }
 
     public static function getRelations(): array

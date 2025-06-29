@@ -12,23 +12,28 @@ class StrukturOrganisasiController extends Controller
     /**
      * Mengambil daftar struktur organisasi yang aktif
      * 
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         try {
-            $struktur = StrukturOrganisasi::with(['user:id_user,name,foto_profil'])
-                ->whereNull('tanggal_selesai')
-                ->orWhere('tanggal_selesai', '>=', now())
-                ->orderBy('jabatan', 'asc')
-                ->get();
+            $query = StrukturOrganisasi::with([
+                'user:id_user,name,foto_profil,email,no_hp,status_kepegawaian,status',
+                'user.roles:id,name'
+            ]);
+
+            // Hanya tampilkan karyawan dengan status aktif dan posisi yang masih aktif
+            $query->withActiveUsers()->active();
+
+            $struktur = $query->ordered()->get();
 
             return StrukturOrganisasiResource::collection($struktur);
         } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Gagal Memuat Struktur Organisasi',
-                'error' => $e->getMessage()
+                'message' => 'Gagal memuat struktur organisasi',
+                'error' => config('app.debug') ? $e->getMessage() : 'Terjadi kesalahan internal'
             ], 500);
         }
     }
