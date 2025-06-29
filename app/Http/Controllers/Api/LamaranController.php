@@ -24,7 +24,6 @@ class LamaranController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required|exists:users,id_user|integer',
                 'id_lowongan' => 'required|exists:lowongan,id_lowongan|integer',
                 'surat_lamaran' => 'required|file|mimes:pdf,doc,docx|max:5120',
                 'cv' => 'required|file|mimes:pdf,doc,docx|max:2048',
@@ -41,7 +40,7 @@ class LamaranController extends Controller
             }
 
             // Cek apakah user sudah pernah melamar untuk lowongan ini
-            $existingApplication = Lamaran::where('id_user', $request->id_user)
+            $existingApplication = Lamaran::where('id_user', auth()->id())
                 ->where('id_lowongan', $request->id_lowongan)
                 ->first();
 
@@ -53,9 +52,9 @@ class LamaranController extends Controller
             }
 
             $data = [
-                'id_user' => $request->id_user,
+                'id_user' => auth()->id(),
                 'id_lowongan' => $request->id_lowongan,
-                'pesan_pelamar' => $request->pesan_pelamar, 
+                'pesan_pelamar' => $request->pesan_pelamar,
                 'status_lamaran' => 'Diproses'
             ];
 
@@ -76,12 +75,12 @@ class LamaranController extends Controller
                 $portfolioPath = $request->file('portfolio')->store('lamaran/portfolio', 'public');
                 $data['portfolio'] = $portfolioPath;
             }
-            
+
             $lamaran = Lamaran::create($data);
-            
+
             // Send notification to user
             $lowongan = Lowongan::findOrFail($request->id_lowongan);
-            $user = User::findOrFail($request->id_user);
+            $user = auth()->user();
             $user->notify(new LamaranSubmissionNotification($lamaran, $lowongan));
 
             return (new LamaranResource($lamaran))

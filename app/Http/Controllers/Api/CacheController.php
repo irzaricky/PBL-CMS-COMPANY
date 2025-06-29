@@ -17,12 +17,37 @@ class CacheController extends Controller
     }
 
     /**
+     * Check if user has admin privileges
+     * 
+     * @return bool|\Illuminate\Http\JsonResponse
+     */
+    private function checkAdminAccess()
+    {
+        $user = auth()->user();
+
+        // Check if user has admin role or is super admin
+        if (!$user || (!$user->hasRole('super_admin') && !$user->hasRole('admin'))) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized. Admin access required.'
+            ], 403);
+        }
+
+        return true;
+    }
+
+    /**
      * Mengambil statistik cache
      * 
      * @return JsonResponse
      */
     public function stats(): JsonResponse
     {
+        $adminCheck = $this->checkAdminAccess();
+        if ($adminCheck !== true) {
+            return $adminCheck;
+        }
+
         try {
             $stats = $this->cacheService->getCacheStats();
 
@@ -47,6 +72,11 @@ class CacheController extends Controller
      */
     public function clearEndpoint(Request $request): JsonResponse
     {
+        $adminCheck = $this->checkAdminAccess();
+        if ($adminCheck !== true) {
+            return $adminCheck;
+        }
+
         $request->validate([
             'endpoint' => 'required|string'
         ]);
@@ -74,6 +104,11 @@ class CacheController extends Controller
      */
     public function clearAll(): JsonResponse
     {
+        $adminCheck = $this->checkAdminAccess();
+        if ($adminCheck !== true) {
+            return $adminCheck;
+        }
+
         try {
             $this->cacheService->clearAllApiCache();
 
@@ -97,6 +132,11 @@ class CacheController extends Controller
      */
     public function warmup(): JsonResponse
     {
+        $adminCheck = $this->checkAdminAccess();
+        if ($adminCheck !== true) {
+            return $adminCheck;
+        }
+
         try {
             $popularEndpoints = [
                 '/api/artikel',

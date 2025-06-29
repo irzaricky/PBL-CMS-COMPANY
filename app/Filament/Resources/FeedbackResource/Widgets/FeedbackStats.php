@@ -15,30 +15,34 @@ class FeedbackStats extends BaseWidget
     {
         return [
             Stat::make('Total Feedback', Feedback::query()->count())
-                ->descriptionIcon('Total semua feedback')
+                ->description('Total semua feedback yang masuk')
+                ->descriptionIcon('heroicon-s-chat-bubble-left-right')
                 ->icon('heroicon-s-chat-bubble-left-right')
                 ->color('primary'),
 
             Stat::make('Sudah Ditanggapi', Feedback::query()
                 ->whereNotNull('tanggapan_feedback')
                 ->count())
-                ->descriptionIcon('Feedback yang sudah ditanggapi')
-                ->icon("heroicon-s-check-circle")
+                ->description('Feedback yang sudah mendapat tanggapan')
+                ->descriptionIcon('heroicon-s-check-circle')
+                ->icon('heroicon-s-check-circle')
                 ->color('success'),
 
             Stat::make('Belum Ditanggapi', Feedback::query()
                 ->whereNull('tanggapan_feedback')
                 ->count())
-                ->descriptionIcon('Feedback yang belum ditanggapi')
-                ->icon("heroicon-s-x-circle")
+                ->description('Feedback yang masih menunggu tanggapan')
+                ->descriptionIcon('heroicon-s-x-circle')
+                ->icon('heroicon-s-x-circle')
                 ->color('warning'),
 
             Stat::make('Feedback Bulan Ini', Feedback::query()
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->count())
-                ->descriptionIcon('Feedback yang diterima bulan ini')
-                ->icon("heroicon-s-calendar-date-range")
+                ->description('Feedback yang diterima bulan ini')
+                ->descriptionIcon('heroicon-s-calendar-date-range')
+                ->icon('heroicon-s-calendar-date-range')
                 ->color('info'),
         ];
     }

@@ -31,21 +31,27 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-// Post feedback (AUTENTIKASI BELUM DITAMBAHKAN)
-
+// Post feedback (DENGAN AUTENTIKASI)
 Route::prefix('feedback')->group(function () {
-
     Route::get('/', [FeedbackController::class, 'index']);
 
-    Route::post('/', [FeedbackController::class, 'store']);
-
+    // POST route memerlukan autentikasi
+    Route::middleware(['web', 'auth'])->group(function () {
+        Route::post('/', [FeedbackController::class, 'store']);
+    });
 });
 
-// Lamaran routes (AUTENTIKASI BELUM DITAMBAHKAN)
-Route::post('/lamaran', [LamaranController::class, 'store']);
-Route::get('/lamaran/user/{userId}', [LamaranController::class, 'getByUserId']);
-Route::get('/lamaran/check/{userId}/{lowonganId}', [LamaranController::class, 'checkUserApplication']);
-Route::get('/lamaran/{id}', [LamaranController::class, 'show']);
+// Lamaran routes (DENGAN AUTENTIKASI)
+Route::prefix('lamaran')->group(function () {
+    Route::get('/user/{userId}', [LamaranController::class, 'getByUserId']);
+    Route::get('/check/{userId}/{lowonganId}', [LamaranController::class, 'checkUserApplication']);
+    Route::get('/{id}', [LamaranController::class, 'show']);
+
+    // POST route memerlukan autentikasi
+    Route::middleware(['web', 'auth'])->group(function () {
+        Route::post('/', [LamaranController::class, 'store']);
+    });
+});
 
 
 // Artikel
@@ -152,13 +158,17 @@ Route::get('/media-sosial', [MediaSosialController::class, 'index']);
 
 // Testimoni
 Route::get('/testimoni/produk/{produkId}', [TestimoniProdukController::class, 'index']);
-Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
 Route::get('/testimoni/artikel/{artikelId}', [TestimoniArtikelController::class, 'index']);
-Route::post('/testimoni/artikel/{artikel}', [TestimoniArtikelController::class, 'store']);
 Route::get('/testimoni/event/{eventId}', [TestimoniEventController::class, 'index']);
-Route::post('/testimoni/event/{event}', [TestimoniEventController::class, 'store']);
 Route::get('/testimoni/lowongan/{lowonganId}', [TestimoniLowonganController::class, 'index']);
-Route::post('/testimoni/lowongan/{lowonganId}', [TestimoniLowonganController::class, 'store']);
+
+// Testimoni POST routes require authentication
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::post('/testimoni/produk/{produk}', [TestimoniProdukController::class, 'store']);
+    Route::post('/testimoni/artikel/{artikel}', [TestimoniArtikelController::class, 'store']);
+    Route::post('/testimoni/event/{event}', [TestimoniEventController::class, 'store']);
+    Route::post('/testimoni/lowongan/{lowonganId}', [TestimoniLowonganController::class, 'store']);
+});
 
 // Testimoni unified endpoint
 Route::get('/testimoni', [TestimoniController::class, 'index']);
@@ -276,8 +286,8 @@ Route::prefix('unduhan')->group(function () {
     Route::get('/{slug}', [UnduhanController::class, 'getUnduhanBySlug']);
 });
 
-// Cache Management (for admin use)
-Route::prefix('cache')->group(function () {
+// Cache Management (for admin use only)
+Route::prefix('cache')->middleware(['web', 'auth'])->group(function () {
     Route::get('/stats', [CacheController::class, 'stats']);
     Route::post('/clear', [CacheController::class, 'clearAll']);
     Route::post('/clear-endpoint', [CacheController::class, 'clearEndpoint']);

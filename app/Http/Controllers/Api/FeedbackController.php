@@ -21,10 +21,9 @@ class FeedbackController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'id_user' => 'required|exists:users,id_user|integer',
                 'subjek_feedback' => 'required|string|max:200',
                 'isi_feedback' => 'required|string',
-                'tingkat_kepuasan' => 'required|integer|min:1|max:5', // Tambahan validasi
+                'tingkat_kepuasan' => 'required|integer|min:1|max:5',
             ]);
 
             if ($validator->fails()) {
@@ -36,10 +35,10 @@ class FeedbackController extends Controller
             }
 
             $feedback = Feedback::create([
-                'id_user' => $request->id_user,
+                'id_user' => auth()->id(),
                 'subjek_feedback' => $request->subjek_feedback,
                 'isi_feedback' => $request->isi_feedback,
-                'tingkat_kepuasan' => $request->tingkat_kepuasan, // Tambahkan ini
+                'tingkat_kepuasan' => $request->tingkat_kepuasan,
             ]);
 
             return (new FeedbackResource($feedback))
