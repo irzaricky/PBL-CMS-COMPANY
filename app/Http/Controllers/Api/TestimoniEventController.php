@@ -13,8 +13,12 @@ use App\Http\Resources\TestimoniEventResource;
 
 class TestimoniEventController extends Controller
 {
-    // Dapatkan semua testimoni untuk event tertentu (publikasi saja)
-
+    /**
+     * Mengambil semua testimoni untuk event tertentu (yang terpublikasi)
+     * 
+     * @param int $eventId
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index($eventId)
     {
         $testimoni = TestimoniEvent::with('user:id_user,name,foto_profil,email')
@@ -25,6 +29,17 @@ class TestimoniEventController extends Controller
 
         return TestimoniEventResource::collection($testimoni);
     }
+
+    /**
+     * Menyimpan testimoni baru untuk event
+     * 
+     * @param Request $request Request dengan data:
+     *   - isi_testimoni (string, required): Isi testimoni
+     *   - rating (int, required): Rating 1-5
+     *   - id_user (int, required): ID user yang memberikan testimoni
+     * @param int $eventId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request, $eventId)
     {
         $request->validate([

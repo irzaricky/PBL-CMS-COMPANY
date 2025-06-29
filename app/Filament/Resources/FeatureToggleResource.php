@@ -12,6 +12,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Illuminate\Database\Eloquent\Model;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -107,10 +108,20 @@ class FeatureToggleResource extends Resource
         return [
             'index' => Pages\ListFeatureToggles::route('/'),
             // 'create' => Pages\CreateFeatureToggle::route('/create'),
-            'edit' => Pages\EditFeatureToggle::route('/{record}/edit'),
+            // 'edit' => Pages\EditFeatureToggle::route('/{record}/edit'),
         ];
     }
     public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return false;
+    }
+
+    public static function canDeleteAny(): bool
     {
         return false;
     }

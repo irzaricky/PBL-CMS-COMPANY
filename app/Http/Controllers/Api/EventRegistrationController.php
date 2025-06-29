@@ -11,7 +11,11 @@ use App\Http\Controllers\Controller;
 class EventRegistrationController extends Controller
 {
     /**
-     * Register the authenticated user for an event.
+     * Mendaftarkan user yang terautentikasi ke event
+     * 
+     * @param Request $request
+     * @param Event $event
+     * @return RedirectResponse
      */
     public function store(Request $request, Event $event): RedirectResponse
     {
@@ -30,7 +34,11 @@ class EventRegistrationController extends Controller
     }
 
     /**
-     * Unregister the authenticated user from an event.
+     * Membatalkan pendaftaran user yang terautentikasi dari event
+     * 
+     * @param Request $request
+     * @param Event $event
+     * @return RedirectResponse
      */
     public function destroy(Request $request, Event $event): RedirectResponse
     {

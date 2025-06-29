@@ -113,10 +113,12 @@ class ArtikelController extends Controller
     }
 
     /**
-     * Mencari artikel berdasarkan judul atau serta kategori
+     * Mencari artikel berdasarkan judul atau kategori
      * 
-     * @param Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @param Request $request Request dengan parameter:
+     *   - query (string, optional): Kata kunci pencarian untuk judul artikel
+     *   - category_id (int, optional): ID kategori artikel
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
      */
     public function search(Request $request)
     {
@@ -188,6 +190,11 @@ class ArtikelController extends Controller
             ], 500);
         }
     }
+    /**
+     * Mengambil artikel unggulan berdasarkan view terbanyak
+     * 
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
+     */
     public function getFeaturedArticles()
     {
         try {

@@ -14,6 +14,9 @@ class CaseStudyController extends Controller
 {
     /**
      * Mengambil daftar case study
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
@@ -40,6 +43,9 @@ class CaseStudyController extends Controller
 
     /**
      * Mengambil case study berdasarkan id
+     * 
+     * @param int $id
+     * @return \App\Http\Resources\CaseStudy\CaseStudyViewResource|\Illuminate\Http\JsonResponse
      */
     public function getCaseStudyById($id)
     {
@@ -61,6 +67,9 @@ class CaseStudyController extends Controller
 
     /**
      * Mengambil case study berdasarkan slug
+     * 
+     * @param string $slug
+     * @return \App\Http\Resources\CaseStudy\CaseStudyViewResource|\Illuminate\Http\JsonResponse
      */
     public function getCaseStudyBySlug($slug)
     {
@@ -81,7 +90,12 @@ class CaseStudyController extends Controller
     }
 
     /**
-     * Mencari case study berdasarkan judul atau serta mitra
+     * Mencari case study berdasarkan judul atau mitra
+     * 
+     * @param Request $request Request dengan parameter:
+     *   - query (string, optional): Kata kunci pencarian untuk judul case study
+     *   - mitra_id (int, optional): ID mitra
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
      */
     public function search(Request $request)
     {
@@ -116,6 +130,8 @@ class CaseStudyController extends Controller
 
     /**
      * Mengambil case study terbaru
+     * 
+     * @return \App\Http\Resources\CaseStudy\CaseStudyViewResource|\Illuminate\Http\JsonResponse
      */
     public function latest()
     {
@@ -144,6 +160,8 @@ class CaseStudyController extends Controller
 
     /**
      * Mengambil semua mitra yang aktif
+     * 
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getAllMitra()
     {
