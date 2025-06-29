@@ -117,8 +117,8 @@ class TestimoniEventResource extends Resource
                 Tables\Columns\SelectColumn::make('status')
                     ->label('Status')
                     ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->getLabel(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->getLabel(),
                     ])
                     ->disabled(fn() => !auth()->user()->can('update_testimoni::event', TestimoniEvent::class))
                     ->rules(['required']),

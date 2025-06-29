@@ -14,10 +14,8 @@ use Filament\Forms\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Filament\Tables\Actions\RestoreBulkAction;
 use App\Filament\Resources\FeedbackResource\Pages;
 use App\Services\FileHandlers\MultipleFileHandler;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FeedbackResource\RelationManagers;
 use App\Filament\Resources\FeedbackResource\Widgets\FeedbackStats;
@@ -118,8 +116,8 @@ class FeedbackResource extends Resource
                         ]);
                         return $state;
                     })
-                    ->getStateUsing(fn ($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI)
-                    ->tooltip(fn ($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
+                    ->getStateUsing(fn($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_feedback === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
 
                 Tables\Columns\IconColumn::make('tanggapan_feedback')
@@ -161,9 +159,35 @@ class FeedbackResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    ForceDeleteBulkAction::make()
-                        ->label('Hapus Permanen')
-                        ->successNotificationTitle('Feedback berhasil dihapus permanen'),
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Feedback')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan feedback yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_feedback' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Feedback berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion(),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Feedback')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi feedback yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_feedback' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi feedback berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
 

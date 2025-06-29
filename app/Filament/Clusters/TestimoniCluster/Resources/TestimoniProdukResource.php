@@ -75,12 +75,12 @@ class TestimoniProdukResource extends Resource
                         Infolists\Components\TextEntry::make('status')
                             ->label('Status')
                             ->badge()
-                            ->color(fn (string $state): string => match ($state) {
+                            ->color(fn(string $state): string => match ($state) {
                                 'terpublikasi' => 'success',
                                 'tidak terpublikasi' => 'warning',
                                 default => 'gray',
                             })
-                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                            ->formatStateUsing(fn(string $state): string => match ($state) {
                                 'terpublikasi' => 'Terpublikasi',
                                 'tidak terpublikasi' => 'Tidak Terpublikasi',
                                 default => $state,
@@ -123,12 +123,12 @@ class TestimoniProdukResource extends Resource
                     ->label('Rating')
                     ->formatStateUsing(fn(string $state): string => str_repeat('⭐', (int) $state))
                     ->sortable(),
-                    
+
                 Tables\Columns\SelectColumn::make('status')
                     ->label('Status')
                     ->options([
-                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->label(),
-                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->label(),
+                        ContentStatus::TERPUBLIKASI->value => ContentStatus::TERPUBLIKASI->getLabel(),
+                        ContentStatus::TIDAK_TERPUBLIKASI->value => ContentStatus::TIDAK_TERPUBLIKASI->getLabel(),
                     ])
                     ->disabled(fn() => !auth()->user()->can('update_testimoni::produk', TestimoniProduk::class))
                     ->rules(['required']),
@@ -169,7 +169,7 @@ class TestimoniProdukResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->visible(fn() => auth()->user()->can('delete_any_testimoni::produk')),
-                        
+
                     Tables\Actions\BulkAction::make('approve')
                         ->label('Setujui')
                         ->icon('heroicon-o-check')
@@ -224,10 +224,10 @@ class TestimoniProdukResource extends Resource
         return false; // Disable create
     }
 
-     public static function canEdit(Model $record): bool
-     {
+    public static function canEdit(Model $record): bool
+    {
         return false; // Disable edit
-     }
+    }
 
     public static function getTabs(): array
     {
