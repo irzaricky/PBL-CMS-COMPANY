@@ -13,8 +13,12 @@ use App\Http\Resources\TestimoniProdukResource;
 
 class TestimoniProdukController extends Controller
 {
-    // Dapatkan semua testimoni untuk produk tertentu (publikasi saja)
-
+    /**
+     * Mengambil semua testimoni untuk produk tertentu (yang terpublikasi)
+     * 
+     * @param int $produkId
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index($produkId)
     {
         $testimoni = TestimoniProduk::with('user:id_user,name,foto_profil,email')
@@ -25,6 +29,17 @@ class TestimoniProdukController extends Controller
 
         return TestimoniProdukResource::collection($testimoni);
     }
+
+    /**
+     * Menyimpan testimoni baru untuk produk
+     * 
+     * @param Request $request Request dengan data:
+     *   - isi_testimoni (string, required): Isi testimoni
+     *   - rating (int, required): Rating 1-5
+     *   - id_user (int, required): ID user yang memberikan testimoni
+     * @param int $produkId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request, $produkId)
     {
         $request->validate([

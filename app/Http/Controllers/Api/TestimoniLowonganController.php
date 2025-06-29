@@ -13,8 +13,12 @@ use App\Http\Resources\TestimoniLowonganResource;
 
 class TestimoniLowonganController extends Controller
 {
-    // Dapatkan semua testimoni untuk lowongan tertentu (publikasi saja)
-
+    /**
+     * Mengambil semua testimoni untuk lowongan tertentu (yang terpublikasi)
+     * 
+     * @param int $lowonganId
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index($lowonganId)
     {
         $testimoni = TestimoniLowongan::with('user:id_user,name,foto_profil,email')
@@ -25,6 +29,17 @@ class TestimoniLowonganController extends Controller
 
         return TestimoniLowonganResource::collection($testimoni);
     }
+
+    /**
+     * Menyimpan testimoni baru untuk lowongan
+     * 
+     * @param Request $request Request dengan data:
+     *   - isi_testimoni (string, required): Isi testimoni
+     *   - rating (int, required): Rating 1-5
+     *   - id_user (int, required): ID user yang memberikan testimoni
+     * @param int $lowonganId
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function store(Request $request, $lowonganId)
     {
         $request->validate([

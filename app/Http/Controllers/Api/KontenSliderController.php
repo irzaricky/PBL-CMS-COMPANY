@@ -11,6 +11,9 @@ class KontenSliderController extends Controller
 {
     /**
      * Menampilkan daftar konten slider
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection|\Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {

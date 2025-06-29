@@ -109,6 +109,11 @@ class EventController extends Controller
         }
     }
 
+    /**
+     * Mengambil event terbaru untuk navbar
+     * 
+     * @return \App\Http\Resources\Events\EventListResource|\Illuminate\Http\JsonResponse
+     */
     public function getNavbarRecentEvent()
     {
         try {
@@ -175,7 +180,11 @@ class EventController extends Controller
     }
 
     /**
-     * Register the authenticated user for an event.
+     * Mendaftarkan user yang terautentikasi ke event
+     * 
+     * @param Request $request
+     * @param string $slug
+     * @return \Illuminate\Http\JsonResponse
      */
     public function register(Request $request, $slug)
     {
@@ -207,7 +216,11 @@ class EventController extends Controller
     }
 
     /**
-     * Unregister the authenticated user from an event.
+     * Membatalkan pendaftaran user yang terautentikasi dari event
+     * 
+     * @param Request $request
+     * @param string $slug
+     * @return \Illuminate\Http\JsonResponse
      */
     public function unregister(Request $request, $slug)
     {
@@ -239,7 +252,10 @@ class EventController extends Controller
     }
 
     /**
-     * Check if the authenticated user is registered for an event.
+     * Mengecek apakah user yang terautentikasi sudah terdaftar di event
+     * 
+     * @param string $slug
+     * @return \Illuminate\Http\JsonResponse
      */
     public function checkRegistration($slug)
     {

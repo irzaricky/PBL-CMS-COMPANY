@@ -2,6 +2,50 @@
 
 use App\Http\Middleware\CustomDocsAccess;
 
+$description = '
+## Fitur Utama
+
+### Manajemen Konten
+- **Artikel**: Pengelolaan artikel dengan kategori, tag, dan optimasi SEO
+- **Produk**: Katalog produk dengan kategori dan fitur pencarian
+- **Galeri**: Manajemen galeri foto dengan kategorisasi
+- **Event**: Pengelolaan acara perusahaan dengan sistem pendaftaran
+- **Studi Kasus**: Showcase proyek dan studi kasus perusahaan
+- **Unduhan**: Repository file untuk download publik
+
+### Fitur Korporat  
+- **Profil Perusahaan**: Informasi lengkap perusahaan (visi, misi, sejarah)
+- **Struktur Organisasi**: Hierarki dan informasi karyawan
+- **Lowongan Kerja**: Sistem posting lowongan dan aplikasi lamaran
+- **Mitra**: Pengelolaan partner dan klien perusahaan
+
+### Fitur Interaktif
+- **Testimoni**: Sistem ulasan dan testimoni multi-platform
+- **Umpan Balik**: Sistem feedback dan saran dari pengguna
+- **Media Sosial**: Integrasi dan konfigurasi tautan media sosial
+- **Newsletter**: Sistem konten slider dan konten unggulan
+
+### Fitur Teknis
+- **Caching**: Caching API lanjutan dengan Redis/Database
+- **Feature Toggle**: Pengaktifan fitur secara dinamis
+- **SEO**: Optimasi SEO bawaan untuk semua konten
+- **Manajemen File**: Upload dan pengelolaan file dengan validasi
+
+## Autentikasi & Keamanan
+API ini menggunakan Laravel Sanctum untuk autentikasi. Beberapa endpoint memerlukan autentikasi, sementara yang lain dapat diakses secara publik.
+
+## Pembatasan Rate
+API menerapkan pembatasan rate untuk mencegah penyalahgunaan dan memastikan performa optimal.
+
+## Strategi Caching
+Implementasi caching untuk meningkatkan performa:
+- Cache otomatis untuk endpoint read-only
+- Invalidasi cache otomatis saat konten diperbarui
+- Cache warming untuk endpoint populer
+
+## Penanganan Error
+Semua response error mengikuti format konsisten dengan HTTP status code yang tepat dan pesan error yang informatif.';
+
 return [
     /*
      * Your API path. By default, all routes starting with this path will be added to the docs.
@@ -24,12 +68,12 @@ return [
         /*
          * API version.
          */
-        'version' => env('API_VERSION', '0.0.1'),
+        'version' => env('API_VERSION', '1.0'),
 
         /*
-         * Description rendered on the home page of the API documentation (`/docs/api`).
+         * Deskripsi yang ditampilkan di halaman utama dokumentasi API (`/docs/api`).
          */
-        'description' => '',
+        'description' => $description,
     ],
 
     /*
@@ -37,9 +81,9 @@ return [
      */
     'ui' => [
         /*
-         * Define the title of the documentation's website. App name is used when this config is `null`.
+         * Tentukan judul website dokumentasi. Nama aplikasi digunakan ketika config ini `null`.
          */
-        'title' => null,
+        'title' => "Dokumentasi API",
 
         /*
          * Define the theme of the documentation. Available options are `light` and `dark`.
@@ -59,7 +103,7 @@ return [
         /*
          * URL to an image that displays as a small square logo next to the title, above the table of contents.
          */
-        'logo' => '',
+        'logo' => '/favicon.ico',
 
         /*
          * Use to fetch the credential policy for the Try It feature. Options are: omit, include (default), and same-origin

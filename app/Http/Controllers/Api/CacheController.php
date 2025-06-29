@@ -17,7 +17,9 @@ class CacheController extends Controller
     }
 
     /**
-     * Get cache statistics
+     * Mengambil statistik cache
+     * 
+     * @return JsonResponse
      */
     public function stats(): JsonResponse
     {
@@ -38,7 +40,10 @@ class CacheController extends Controller
     }
 
     /**
-     * Clear cache for specific endpoint
+     * Menghapus cache untuk endpoint tertentu
+     * 
+     * @param Request $request
+     * @return JsonResponse
      */
     public function clearEndpoint(Request $request): JsonResponse
     {
@@ -63,7 +68,9 @@ class CacheController extends Controller
     }
 
     /**
-     * Clear all API cache
+     * Menghapus semua cache API
+     * 
+     * @return JsonResponse
      */
     public function clearAll(): JsonResponse
     {
@@ -84,7 +91,9 @@ class CacheController extends Controller
     }
 
     /**
-     * Warm up cache for popular endpoints
+     * Memanaskan cache untuk endpoint populer
+     * 
+     * @return JsonResponse
      */
     public function warmup(): JsonResponse
     {

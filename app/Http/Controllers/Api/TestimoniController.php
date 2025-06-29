@@ -9,7 +9,10 @@ use Illuminate\Http\Request;
 class TestimoniController extends Controller
 {
     /**
-     * Get testimoni with separated data by type
+     * Mengambil testimoni dengan data terpisah berdasarkan tipe
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
