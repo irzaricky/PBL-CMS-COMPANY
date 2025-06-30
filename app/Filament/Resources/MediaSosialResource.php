@@ -78,6 +78,7 @@ class MediaSosialResource extends Resource
                         return $state;
                     })
                     ->getStateUsing(fn($record) => (bool) $record->status_aktif)
+                    ->disabled(fn() => !auth()->user()->can('update_media::sosial', MediaSosial::class))
                     ->tooltip(fn($record) => $record->status_aktif ? 'Aktif' : 'Tidak Aktif'),
             ])
             ->filters([
@@ -88,8 +89,9 @@ class MediaSosialResource extends Resource
                     ]),
             ])
             ->actions([
-                 Tables\Actions\EditAction::make()
-                    ->label('Ubah link tujuan'),
+                Tables\Actions\EditAction::make()
+                    ->label('Ubah link tujuan')
+                    ->visible(fn() => auth()->user()->can('update_media::sosial', MediaSosial::class)),
             ])
             ->bulkActions([]);
     }

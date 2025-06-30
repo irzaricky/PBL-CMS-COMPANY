@@ -60,7 +60,8 @@ class FeatureToggleResource extends Resource
                         ]);
                         return $state;
                     })
-                    ->getStateUsing(fn($record) => (bool) $record->status_aktif),
+                    ->getStateUsing(fn($record) => (bool) $record->status_aktif)
+                    ->disabled(fn() => !auth()->user()->can('update_feature::toggle', FeatureToggle::class)),
             ])
             ->filters([
                 //
@@ -111,7 +112,8 @@ class FeatureToggleResource extends Resource
                         });
                     })
                     ->icon('heroicon-o-check-circle')
-                    ->color('success'),
+                    ->color('success')
+                    ->visible(fn() => auth()->user()->can('update_feature::toggle', FeatureToggle::class)),
 
                 Tables\Actions\BulkAction::make('deactivate_all')
                     ->label('Nonaktifkan semua')
@@ -121,7 +123,8 @@ class FeatureToggleResource extends Resource
                         });
                     })
                     ->icon('heroicon-o-x-circle')
-                    ->color('danger'),
+                    ->color('danger')
+                    ->visible(fn() => auth()->user()->can('update_feature::toggle', FeatureToggle::class)),
             ]);
     }
 

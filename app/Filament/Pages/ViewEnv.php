@@ -108,26 +108,8 @@ class ViewEnv extends BaseViewEnvEditor
                 ->actions([
                     \Filament\Notifications\Actions\Action::make('close')
                         ->button()
+                        ->label('Tutup')
                         ->close(),
-                    \Filament\Notifications\Actions\Action::make('selective_restore')
-                        ->button()
-                        ->label('Pulihkan Selektif')
-                        ->color('info')
-                        ->action(function () use ($backupFile) {
-                            $sanitizedBackupFile = $this->validateAndSanitizeBackupFilename($backupFile);
-                            $this->showSelectiveRestoreModal($sanitizedBackupFile);
-                        }),
-                    \Filament\Notifications\Actions\Action::make('restore_backup')
-                        ->button()
-                        ->color('warning')
-                        ->requiresConfirmation()
-                        ->modalHeading('Pulihkan Cadangan')
-                        ->modalDescription(fn() => "Apakah Anda yakin ingin memulihkan '" . e($backupFile) . "' dan mengganti file .env saat ini?")
-                        ->modalSubmitActionLabel('Ya, Pulihkan')
-                        ->action(function () use ($backupFile) {
-                            // Secure server-side backup restoration
-                            $this->performBackupRestore($backupFile);
-                        })
                 ])
                 ->send();
 
@@ -138,213 +120,6 @@ class ViewEnv extends BaseViewEnvEditor
                 ->danger()
                 ->send();
         }
-    }
-    protected function showSelectiveRestoreModal(string $backupFile): void
-    {
-        try {
-            $backupContent = $this->getBackupFileContent($backupFile);
-            $currentContent = file_get_contents(app()->environmentFilePath());
-
-            $currentVars = $this->parseEnvContent($currentContent);
-            $backupVars = $this->parseEnvContent($backupContent);
-
-            $differences = $this->getVariableDifferences($currentVars, $backupVars);
-
-            $form = [
-                Forms\Components\Section::make('Pilih Variabel untuk Dipulihkan')
-                    ->description("Pilih variabel mana yang ingin Anda pulihkan dari cadangan '" . e($backupFile) . "'")
-                    ->schema([
-                        Forms\Components\CheckboxList::make('selected_variables')
-                            ->label('Variabel yang akan Dipulihkan')
-                            ->options($this->formatDifferencesForSelection($differences))
-                            ->descriptions($this->formatDifferencesDescriptions($differences))
-                            ->columns(1)
-                            ->required(),
-                    ])
-            ];
-
-            Action::make('selective_restore_modal')
-                ->label('Pulihkan Selektif')
-                ->form($form)
-                ->action(function (array $data) use ($backupFile, $differences) {
-                    $this->performSelectiveRestore($data['selected_variables'], $differences, $backupFile);
-                })
-                ->modalWidth(MaxWidth::FiveExtraLarge)
-                ->dispatch('open-modal', ['id' => 'selective-restore']);
-
-        } catch (\Exception $e) {
-            Notification::make()
-                ->title('Pulihkan Selektif Gagal')
-                ->body('Tidak dapat menyiapkan pemulihan selektif: ' . $e->getMessage())
-                ->danger()
-                ->send();
-        }
-    }
-
-    protected function getVariableDifferences(array $current, array $backup): array
-    {
-        $differences = [];
-        $allKeys = array_unique(array_merge(array_keys($current), array_keys($backup)));
-
-        foreach ($allKeys as $key) {
-            $currentValue = $current[$key] ?? null;
-            $backupValue = $backup[$key] ?? null;
-
-            if ($currentValue !== $backupValue) {
-                $differences[$key] = [
-                    'key' => $key,
-                    'current' => $currentValue,
-                    'backup' => $backupValue,
-                    'type' => $this->getDifferenceType($currentValue, $backupValue),
-                    'category' => $this->getVariableCategory($key)
-                ];
-            }
-        }
-
-        return $differences;
-    }
-
-    protected function getDifferenceType(?string $current, ?string $backup): string
-    {
-        if ($current === null && $backup !== null) {
-            return 'add'; // Variable exists in backup but not in current
-        } elseif ($current !== null && $backup === null) {
-            return 'remove'; // Variable exists in current but not in backup
-        } else {
-            return 'modify'; // Variable exists in both but with different values
-        }
-    }
-
-    protected function formatDifferencesForSelection(array $differences): array
-    {
-        $options = [];
-
-        foreach ($differences as $key => $diff) {
-            // Skip 'remove' type differences for security reasons
-            if ($diff['type'] === 'remove') {
-                continue;
-            }
-
-            $label = $diff['key'];
-            $badge = match ($diff['type']) {
-                'add' => '➕ ADD',
-                'modify' => '🔄 MODIFY',
-            };
-
-            $options[$key] = "{$badge} {$label}";
-        }
-
-        return $options;
-    }
-
-    protected function formatDifferencesDescriptions(array $differences): array
-    {
-        $descriptions = [];
-
-        foreach ($differences as $key => $diff) {
-            $current = $diff['current'] === null ? '(tidak diatur)' : "'{$diff['current']}'";
-            $backup = $diff['backup'] === null ? '(tidak diatur)' : "'{$diff['backup']}'";
-
-            $descriptions[$key] = "Saat ini: {$current} → Cadangan: {$backup}";
-        }
-
-        return $descriptions;
-    }
-
-    protected function performSelectiveRestore(array $selectedKeys, array $differences, string $backupFile): void
-    {
-        try {
-            $currentContent = file_get_contents(app()->environmentFilePath());
-            $currentVars = $this->parseEnvContent($currentContent);
-
-            $restoredCount = 0;
-
-            foreach ($selectedKeys as $key) {
-                if (isset($differences[$key])) {
-                    $diff = $differences[$key];
-
-                    switch ($diff['type']) {
-                        case 'add':
-                        case 'modify':
-                            // Add or update the variable
-                            $currentVars[$key] = $diff['backup'];
-                            $restoredCount++;
-                            break;
-
-                        // Note: 'remove' case is disabled for security reasons
-                        // Variables cannot be deleted through this interface
-                    }
-                }
-            }
-
-            // Rebuild .env content
-            $newContent = $this->buildEnvContent($currentVars);
-            // Write back to .env file
-            file_put_contents(app()->environmentFilePath(), $newContent);
-
-            $this->refresh();
-
-            Notification::make()
-                ->title('Pemulihan Selektif Selesai')
-                ->body("Berhasil memulihkan " . e($restoredCount) . " variabel dari cadangan '" . e($backupFile) . "'")
-                ->success()
-                ->send();
-
-        } catch (\Exception $e) {
-            Notification::make()
-                ->title('Pemulihan Selektif Gagal')
-                ->body('Tidak dapat melakukan pemulihan selektif: ' . $e->getMessage())
-                ->danger()
-                ->send();
-        }
-    }
-
-    protected function buildEnvContent(array $variables): string
-    {
-        $content = [];
-
-        // Group variables by category for better organization
-        $grouped = [];
-        foreach ($variables as $key => $value) {
-            $category = $this->getVariableCategory($key);
-            $grouped[$category][] = ['key' => $key, 'value' => $value];
-        }
-
-        // Define category order and headers
-        $categoryHeaders = [
-            'app' => '# Konfigurasi Aplikasi',
-            'database' => '# Konfigurasi Database',
-            'cache' => '# Konfigurasi Cache',
-            'queue' => '# Konfigurasi Antrian',
-            'mail' => '# Konfigurasi Email',
-            'session' => '# Konfigurasi Sesi',
-            'security' => '# Konfigurasi Keamanan',
-            'api' => '# Konfigurasi API',
-            'storage' => '# Konfigurasi Penyimpanan',
-            'logging' => '# Konfigurasi Logging',
-            'other' => '# Konfigurasi Lainnya',
-        ];
-
-        foreach ($categoryHeaders as $category => $header) {
-            if (isset($grouped[$category])) {
-                $content[] = '';
-                $content[] = $header;
-
-                foreach ($grouped[$category] as $var) {
-                    $key = $var['key'];
-                    $value = $var['value'];
-
-                    // Quote values that contain spaces or special characters
-                    if (str_contains($value, ' ') || str_contains($value, '#') || str_contains($value, '"')) {
-                        $value = '"' . str_replace('"', '\\"', $value) . '"';
-                    }
-
-                    $content[] = "{$key}={$value}";
-                }
-            }
-        }
-
-        return implode("\n", $content) . "\n";
     }
 
     protected function generateComparison(string $current, string $backup, string $mode): string
@@ -1208,8 +983,10 @@ class ViewEnv extends BaseViewEnvEditor
             ])
             ->action(function (array $data) use ($obj) {
                 try {
-                    // Sanitize inputs
-                    $sanitizedNewKey = $this->sanitizeEnvKey($data['key']);
+                    // For critical system keys, use the original key since the field is disabled
+                    $sanitizedNewKey = $this->isCriticalSystemKey($obj->key)
+                        ? $obj->key
+                        : $this->sanitizeEnvKey($data['key'] ?? $obj->key);
                     $sanitizedNewValue = $this->sanitizeEnvValue($data['value'] ?? '');
                     $oldKey = $obj->key;
 
@@ -1441,5 +1218,90 @@ class ViewEnv extends BaseViewEnvEditor
         }
 
         return $value;
+    }
+
+    /**
+     * Show confirmation dialog for backup restoration
+     */
+    protected function showRestoreConfirmation(string $backupFile): void
+    {
+        Notification::make()
+            ->title('Konfirmasi Pemulihan Cadangan')
+            ->body("Apakah Anda yakin ingin memulihkan '" . e($backupFile) . "' dan mengganti file .env saat ini?")
+            ->warning()
+            ->persistent()
+            ->actions([
+                \Filament\Notifications\Actions\Action::make('confirm_restore')
+                    ->button()
+                    ->label('Ya, Pulihkan')
+                    ->color('danger')
+                    ->action(function () use ($backupFile) {
+                        $this->performBackupRestore($backupFile);
+                    }),
+                \Filament\Notifications\Actions\Action::make('cancel_restore')
+                    ->button()
+                    ->label('Batal')
+                    ->color('gray')
+                    ->close(),
+            ])
+            ->send();
+    }
+
+    /**
+     * Update environment variable while preserving its position in the .env file
+     */
+    protected function updateEnvironmentVariablePreservePosition(string $oldKey, string $newKey, string $newValue): bool
+    {
+        try {
+            // Read current .env content
+            $envPath = app()->environmentFilePath();
+            $content = file_get_contents($envPath);
+
+            if ($content === false) {
+                return false;
+            }
+
+            $lines = explode("\n", $content);
+            $updated = false;
+
+            // Find and update the specific line
+            foreach ($lines as $index => $line) {
+                $trimmedLine = trim($line);
+
+                // Skip empty lines and comments
+                if (empty($trimmedLine) || str_starts_with($trimmedLine, '#')) {
+                    continue;
+                }
+
+                // Check if this line contains our target key
+                if (str_contains($trimmedLine, '=')) {
+                    [$currentKey] = explode('=', $trimmedLine, 2);
+                    $currentKey = trim($currentKey);
+
+                    if ($currentKey === $oldKey) {
+                        // Quote the value if it contains spaces or special characters
+                        $quotedValue = $newValue;
+                        if (str_contains($newValue, ' ') || str_contains($newValue, '#') || str_contains($newValue, '"')) {
+                            $quotedValue = '"' . str_replace('"', '\\"', $newValue) . '"';
+                        }
+
+                        // Replace the line
+                        $lines[$index] = $newKey . '=' . $quotedValue;
+                        $updated = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($updated) {
+                // Write the updated content back
+                $newContent = implode("\n", $lines);
+                return file_put_contents($envPath, $newContent) !== false;
+            }
+
+            return false;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
