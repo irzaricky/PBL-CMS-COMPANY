@@ -11,6 +11,7 @@ const loading = ref(true);
 const error = ref(null);
 const readingTime = ref("");
 const showCopyModal = ref(false);
+const companyProfile = ref(null);
 
 const props = defineProps({
     slug: String,
@@ -18,6 +19,7 @@ const props = defineProps({
 
 onMounted(() => {
     fetchCaseStudy();
+    fetchCompanyProfile();
 });
 
 function fallbackCopy(text) {
@@ -73,6 +75,17 @@ async function fetchCaseStudy() {
         error.value = "Studi kasus tidak ditemukan atau terjadi kesalahan";
         loading.value = false;
         console.error("Error fetching case study:", err);
+    }
+}
+
+// Fetch company profile
+async function fetchCompanyProfile() {
+    try {
+        const response = await axios.get("/api/profil-perusahaan");
+        companyProfile.value = response.data.data;
+    } catch (error) {
+        console.error("Error fetching company profile:", error);
+        companyProfile.value = null;
     }
 }
 
@@ -296,9 +309,19 @@ function formatDate(date) {
                             Lihat Semua Studi Kasus
                         </Link>
 
-                        <Link v-if="caseStudy.mitra" :href="`/mitra/${caseStudy.mitra.id_mitra}`" class="px-6 py-3 bg-white border border-secondary text-secondary rounded-full font-medium
-                            hover:bg-secondary/5 transition-colors">
-                        Hubungi kami
+                        <a
+                            v-if="companyProfile?.email_perusahaan"
+                            :href="`mailto:${companyProfile.email_perusahaan}?subject=Inquiry - Case Study: ${caseStudy.judul_case_study}`"
+                            class="px-6 py-3 bg-white border border-secondary text-secondary rounded-full font-medium hover:bg-secondary/5 transition-colors"
+                        >
+                            Hubungi Kami
+                        </a>
+                        <Link
+                            v-else
+                            href="/kontak"
+                            class="px-6 py-3 bg-white border border-secondary text-secondary rounded-full font-medium hover:bg-secondary/5 transition-colors"
+                        >
+                            Hubungi Kami
                         </Link>
                     </div>
                 </div>

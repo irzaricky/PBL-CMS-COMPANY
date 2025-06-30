@@ -104,6 +104,16 @@ async function fetchMediaSosial() {
     }
 }
 
+// Handle contact button click
+const handleContactClick = () => {
+    if (profil_perusahaan.value?.email_perusahaan) {
+        window.location.href = `mailto:${profil_perusahaan.value.email_perusahaan}?subject=Inquiry - Company Profile`;
+    } else {
+        // Fallback to contact page if email not available
+        window.location.href = '/kontak';
+    }
+}
+
 // Utility
 function getImageUrl(image: string | string[] | null): string {
     if (!image) return ""
@@ -258,14 +268,15 @@ function getMediaSosialComponent(platform) {
                                         d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                                 </svg>
                             </a>
-                            <Link href="/kontak"
+                            <button
+                                @click="handleContactClick"
                                 class="inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:bg-white/10 hover:border-white/50 transition-all duration-300">
-                            <span>Hubungi Kami</span>
-                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                            </svg>
-                            </Link>
+                                <span>Hubungi Kami</span>
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
 

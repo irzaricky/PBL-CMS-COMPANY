@@ -13,6 +13,7 @@ const isLoading = ref(true);
 const currentPage = ref(1);
 const lastPage = ref(1);
 const allMitra = ref([]);
+const companyProfile = ref(null);
 let debounceTimer = null;
 
 // State untuk background hero
@@ -23,6 +24,7 @@ onMounted(() => {
     fetchCaseStudies();
     fetchLatestCaseStudy();
     fetchAllMitra();
+    fetchCompanyProfile();
 });
 
 // Fetch all case studies
@@ -73,6 +75,17 @@ async function fetchAllMitra() {
     } catch (error) {
         console.error("Error fetching mitra:", error);
         allMitra.value = [];
+    }
+}
+
+// Fetch company profile
+async function fetchCompanyProfile() {
+    try {
+        const response = await axios.get("/api/profil-perusahaan");
+        companyProfile.value = response.data.data;
+    } catch (error) {
+        console.error("Error fetching company profile:", error);
+        companyProfile.value = null;
     }
 }
 
@@ -519,8 +532,19 @@ const dynamicStats = computed(() => {
                     <div
                         class="flex flex-col sm:flex-row gap-4 mt-4 font-custom"
                     >
+                        <a
+                            v-if="companyProfile?.email_perusahaan"
+                            :href="`mailto:${companyProfile.email_perusahaan}?subject=Inquiry - Case Study Collaboration`"
+                            class="group px-8 py-4 bg-white text-secondary rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                        >
+                            <span>Hubungi Kami</span>
+                            <ArrowRight
+                                class="w-5 h-5 group-hover:translate-x-1 transition-transform"
+                            />
+                        </a>
                         <Link
-                            href="/kontak"
+                            v-else
+                            href="/profil-perusahaan"
                             class="group px-8 py-4 bg-white text-secondary rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
                         >
                             <span>Hubungi Kami</span>
