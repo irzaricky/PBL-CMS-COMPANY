@@ -285,19 +285,54 @@ class GaleriResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Galeri')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan galeri yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_galeri' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Galeri berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_galeri', Galeri::class)),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Galeri')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi galeri yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_galeri' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi galeri berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_galeri', Galeri::class)),
+
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Arsipkan')
                         ->color('warning')
                         ->icon('heroicon-s-archive-box-arrow-down')
-                        ->successNotificationTitle('Galeri berhasil diarsipkan'),
+                        ->successNotificationTitle('Galeri berhasil diarsipkan')
+                        ->hidden(fn() => !auth()->user()->can('delete_galeri', Galeri::class)),
                     RestoreBulkAction::make()
-                        ->successNotificationTitle('Galeri berhasil dipulihkan'),
+                        ->successNotificationTitle('Galeri berhasil dipulihkan')
+                        ->hidden(fn() => !auth()->user()->can('restore_galeri', Galeri::class)),
                     ForceDeleteBulkAction::make()
                         ->label('Hapus Permanen')
                         ->successNotificationTitle('Galeri berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_galeri');
-                        }),
+                        })
+                        ->hidden(fn() => !auth()->user()->can('force_delete_galeri', Galeri::class)),
                 ]),
             ]);
     }

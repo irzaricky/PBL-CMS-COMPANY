@@ -172,7 +172,8 @@ class FeedbackResource extends Resource
                             });
                         })
                         ->successNotificationTitle('Feedback berhasil dipublikasikan')
-                        ->deselectRecordsAfterCompletion(),
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_feedback', Feedback::class)),
 
                     Tables\Actions\BulkAction::make('unpublish')
                         ->label('Batalkan Publikasi')
@@ -187,7 +188,8 @@ class FeedbackResource extends Resource
                             });
                         })
                         ->successNotificationTitle('Publikasi feedback berhasil dibatalkan')
-                        ->deselectRecordsAfterCompletion(),
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_feedback', Feedback::class)),
                 ]),
             ]);
 
@@ -208,6 +210,11 @@ class FeedbackResource extends Resource
     }
 
     public static function canCreate(): bool
+    {
+        return false;
+    }
+
+    public static function canDelete(Model $record): bool
     {
         return false;
     }

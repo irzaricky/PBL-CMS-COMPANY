@@ -341,19 +341,54 @@ class LowonganResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Lowongan')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan lowongan yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_lowongan' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Lowongan berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_lowongan', Lowongan::class)),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Lowongan')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi lowongan yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_lowongan' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi lowongan berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_lowongan', Lowongan::class)),
+
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Arsipkan')
                         ->color('warning')
                         ->icon('heroicon-s-archive-box-arrow-down')
-                        ->successNotificationTitle('Lowongan berhasil diarsipkan'),
+                        ->successNotificationTitle('Lowongan berhasil diarsipkan')
+                        ->hidden(fn() => !auth()->user()->can('delete_lowongan', Lowongan::class)),
                     RestoreBulkAction::make()
-                        ->successNotificationTitle('Lowongan berhasil dipulihkan'),
+                        ->successNotificationTitle('Lowongan berhasil dipulihkan')
+                        ->hidden(fn() => !auth()->user()->can('restore_lowongan', Lowongan::class)),
                     ForceDeleteBulkAction::make()
                         ->label('Hapus Permanen')
                         ->successNotificationTitle('Lowongan berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_lowongan');
-                        }),
+                        })
+                        ->hidden(fn() => !auth()->user()->can('force_delete_lowongan', Lowongan::class)),
                 ]),
             ]);
     }

@@ -46,8 +46,8 @@ class ArtikelResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Artikel')
-                ->description('Isi informasi dasar artikel seperti judul, kategori, penulis, dan status artikel.')
-                ->icon('heroicon-o-document-text')
+                    ->description('Isi informasi dasar artikel seperti judul, kategori, penulis, dan status artikel.')
+                    ->icon('heroicon-o-document-text')
                     ->schema([
                         Forms\Components\TextInput::make('judul_artikel')
                             ->label('Judul Artikel')
@@ -124,8 +124,8 @@ class ArtikelResource extends Resource
                     ]),
 
                 Forms\Components\Section::make('Media & Konten')
-                ->description('Tambahkan gambar thumbnail dan konten artikel. Gambar akan dioptimalkan untuk ukuran yang sesuai.')
-                ->icon('heroicon-o-photo')
+                    ->description('Tambahkan gambar thumbnail dan konten artikel. Gambar akan dioptimalkan untuk ukuran yang sesuai.')
+                    ->icon('heroicon-o-photo')
                     ->schema([
                         Forms\Components\FileUpload::make('thumbnail_artikel')
                             ->label('Galeri Gambar Artikel')
@@ -204,8 +204,8 @@ class ArtikelResource extends Resource
                         ]);
                         return $state;
                     })
-                    ->getStateUsing(fn ($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI)
-                    ->tooltip(fn ($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
+                    ->getStateUsing(fn($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_artikel === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Dibuat Pada')
@@ -257,19 +257,54 @@ class ArtikelResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Artikel')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan artikel yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_artikel' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Artikel berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_artikel', Artikel::class)),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Artikel')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi artikel yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_artikel' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi artikel berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_artikel', Artikel::class)),
+
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Arsipkan')
                         ->color('warning')
                         ->icon('heroicon-s-archive-box-arrow-down')
-                        ->successNotificationTitle('Artikel berhasil diarsipkan'),
+                        ->successNotificationTitle('Artikel berhasil diarsipkan')
+                        ->hidden(fn() => !auth()->user()->can('delete_artikel', Artikel::class)),
                     RestoreBulkAction::make()
-                        ->successNotificationTitle('Artikel berhasil dipulihkan'),
+                        ->successNotificationTitle('Artikel berhasil dipulihkan')
+                        ->hidden(fn() => !auth()->user()->can('restore_artikel', Artikel::class)),
                     ForceDeleteBulkAction::make()
                         ->label('Hapus Permanen')
                         ->successNotificationTitle('Artikel berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_artikel');
-                        }),
+                        })
+                        ->hidden(fn() => !auth()->user()->can('force_delete_artikel', Artikel::class)),
                 ]),
             ]);
     }

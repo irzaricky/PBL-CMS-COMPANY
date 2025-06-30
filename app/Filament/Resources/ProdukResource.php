@@ -34,8 +34,8 @@ class ProdukResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make('Informasi Produk')
-                ->icon('heroicon-s-information-circle')
-                ->description('Informasi terkait produk yang akan ditambahkan atau diedit.')
+                    ->icon('heroicon-s-information-circle')
+                    ->description('Informasi terkait produk yang akan ditambahkan atau diedit.')
                     ->schema([
                         Forms\Components\TextInput::make('nama_produk')
                             ->label('Nama Produk')
@@ -74,7 +74,7 @@ class ProdukResource extends Resource
                                     ->required()
                                     ->maxLength(50),
                                 Forms\Components\Textarea::make('deskripsi')
-                                    ->label('Deskripsi')   
+                                    ->label('Deskripsi')
                                     ->maxLength(200),
                             ])
                             ->manageOptionForm([
@@ -98,11 +98,11 @@ class ProdukResource extends Resource
                             ->numeric()
                             ->prefix('Rp')
                             ->suffix(',00')
-                            ->required(fn (callable $get) => $get('tampilkan_harga')) // Conditional required
+                            ->required(fn(callable $get) => $get('tampilkan_harga')) // Conditional required
                             ->maxLength(50)
                             ->helperText('Masukkan harga produk dalam format angka tanpa titik')
                             ->placeholder('0')
-                            ->visible(fn (callable $get) => $get('tampilkan_harga')), // Sembunyikan jika tampilkan_harga false
+                            ->visible(fn(callable $get) => $get('tampilkan_harga')), // Sembunyikan jika tampilkan_harga false
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
@@ -234,8 +234,8 @@ class ProdukResource extends Resource
                         ]);
                         return $state;
                     })
-                    ->getStateUsing(fn ($record) => $record->status_produk === ContentStatus::TERPUBLIKASI)
-                    ->tooltip(fn ($record) => $record->status_produk === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
+                    ->getStateUsing(fn($record) => $record->status_produk === ContentStatus::TERPUBLIKASI)
+                    ->tooltip(fn($record) => $record->status_produk === ContentStatus::TERPUBLIKASI ? 'Terpublikasi' : 'Tidak Terpublikasi'),
 
                 Tables\Columns\TextColumn::make('link_produk')
                     ->label('Tautan Produk')
@@ -290,19 +290,54 @@ class ProdukResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Produk')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan produk yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_produk' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Produk berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_produk', Produk::class)),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Produk')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi produk yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_produk' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi produk berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_produk', Produk::class)),
+
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Arsipkan')
                         ->color('warning')
                         ->icon('heroicon-s-archive-box-arrow-down')
-                        ->successNotificationTitle('Produk berhasil diarsipkan'),
+                        ->successNotificationTitle('Produk berhasil diarsipkan')
+                        ->hidden(fn() => !auth()->user()->can('delete_produk', Produk::class)),
                     RestoreBulkAction::make()
-                        ->successNotificationTitle('Produk berhasil dipulihkan'),
+                        ->successNotificationTitle('Produk berhasil dipulihkan')
+                        ->hidden(fn() => !auth()->user()->can('restore_produk', Produk::class)),
                     ForceDeleteBulkAction::make()
                         ->label('Hapus Permanen')
                         ->successNotificationTitle('Produk berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_produk');
-                        }),
+                        })
+                        ->hidden(fn() => !auth()->user()->can('force_delete_produk', Produk::class)),
                 ]),
             ]);
     }
