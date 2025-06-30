@@ -264,7 +264,7 @@ function stripHtmlTags(html) {
                     <div class="w-full">
                         <div class="relative flex items-center">
                             <input
-                                v-model="searchQuery"
+                                v-model="searchQuery" 
                                 @input="handleSearch"
                                 type="text"
                                 placeholder="Cari event berdasarkan nama, lokasi, tanggal, atau deskripsi..."

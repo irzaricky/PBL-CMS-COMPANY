@@ -107,6 +107,13 @@ class ProfilPerusahaanResource extends Resource
                             ->maxLength(50)
                             ->placeholder('contoh@perusahaan.com'),
 
+                        Forms\Components\TextInput::make('telepon_perusahaan')
+                            ->label('Telepon')
+                            ->tel()
+                            ->required()
+                            ->maxLength(16)
+                            ->prefix('+62'),
+
                         Forms\Components\TextInput::make('deskripsi_perusahaan')
                             ->label('Deskripsi Perusahaan')
                             ->maxLength(300)

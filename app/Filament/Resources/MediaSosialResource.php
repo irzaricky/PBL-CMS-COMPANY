@@ -40,6 +40,8 @@ class MediaSosialResource extends Resource
 
                         Forms\Components\Toggle::make('status_aktif')
                             ->label('Status')
+                            ->onIcon('heroicon-s-link')
+                            ->offIcon('heroicon-s-link-slash')
                             ->onColor('success')
                             ->offColor('danger')
                             ->required(),
@@ -63,12 +65,20 @@ class MediaSosialResource extends Resource
                     ->limit(30)
                     ->tooltip(fn(MediaSosial $record): string => $record->link),
 
-                Tables\Columns\TextColumn::make('status_aktif')
+                Tables\Columns\ToggleColumn::make('status_aktif')
                     ->label('Status')
-                    ->badge()
-                    ->formatStateUsing(fn(bool $state): string => $state ? 'Aktif' : 'Nonaktif')
-                    ->color(fn(bool $state): string => $state ? 'success' : 'danger')
-                    ->icon(fn(bool $state): string => $state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle'),
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->onIcon('heroicon-m-link')
+                    ->offIcon('heroicon-m-link-slash')
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_aktif' => $state
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn($record) => (bool) $record->status_aktif)
+                    ->tooltip(fn($record) => $record->status_aktif ? 'Aktif' : 'Tidak Aktif'),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status_aktif')
@@ -78,24 +88,10 @@ class MediaSosialResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\Action::make('show')
-                    ->label('Perlihatkan')
-                    ->icon('heroicon-s-eye')
-                    ->color('success')
-                    ->action(fn(MediaSosial $record) => $record->update(['status_aktif' => true]))
-                    ->visible(fn(MediaSosial $record) => !$record->status_aktif),
-
-                Tables\Actions\Action::make('hide')
-                    ->label('Sembunyikan')
-                    ->icon('heroicon-s-eye-slash')
-                    ->color('danger')
-                    ->action(fn(MediaSosial $record) => $record->update(['status_aktif' => false]))
-                    ->visible(fn(MediaSosial $record) => $record->status_aktif),
-
-                Tables\Actions\EditAction::make(),
+                 Tables\Actions\EditAction::make()
+                    ->label('Ubah link tujuan'),
             ])
-            ->bulkActions([
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array

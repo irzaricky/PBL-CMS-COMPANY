@@ -41,48 +41,124 @@ class TestimoniSliderResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Pilih TestimoniSlider')
+                Forms\Components\Section::make('Pilih Testimoni')
                     ->schema([
                         Forms\Components\Select::make('id_testimoni_produk')
-                            ->label('TestimoniSlider Produk')
+                            ->label('Testimoni Produk')
                             ->relationship('testimoniProduk', 'isi_testimoni')
-                            ->getOptionLabelFromRecordUsing(
-                                fn($record) => ($record->user ? $record->user->name . ' - ' : '') .
-                                Str::limit($record->isi_testimoni, 50)
-                            )
+                            ->getOptionLabelFromRecordUsing(function ($record) {
+                                $userPhoto = $record->user && $record->user->foto_profil
+                                    ? asset('storage/' . $record->user->foto_profil)
+                                    : null;
+
+                                $userName = $record->user ? $record->user->name : 'User Anonim';
+                                $testimoniText = \Illuminate\Support\Str::limit($record->isi_testimoni, 50);
+
+                                if ($userPhoto) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . $userPhoto . '" class="w-10 h-10 rounded-full object-cover flex-shrink-0" />' .
+                                            '<div class="flex flex-col">' .
+                                            '<span class="font-medium">' . e($userName) . '</span>' .
+                                            '<span class="text-sm text-gray-500 truncate">' . e($testimoniText) . '</span>' .
+                                            '</div>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $userName . ' - ' . $testimoniText;
+                            })
+                            ->allowHtml()
                             ->searchable(['isi_testimoni', 'user.name'])
                             ->preload()
                             ->native(false),
 
                         Forms\Components\Select::make('id_testimoni_lowongan')
-                            ->label('TestimoniSlider Lowongan')
+                            ->label('Testimoni Lowongan')
                             ->relationship('testimoniLowongan', 'isi_testimoni')
-                            ->getOptionLabelFromRecordUsing(
-                                fn($record) => ($record->user ? $record->user->name . ' - ' : '') .
-                                Str::limit($record->isi_testimoni, 50)
-                            )
+                            ->getOptionLabelFromRecordUsing(function ($record) {
+                                $userPhoto = $record->user && $record->user->foto_profil
+                                    ? asset('storage/' . $record->user->foto_profil)
+                                    : null;
+
+                                $userName = $record->user ? $record->user->name : 'User Anonim';
+                                $testimoniText = \Illuminate\Support\Str::limit($record->isi_testimoni, 50);
+
+                                if ($userPhoto) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . $userPhoto . '" class="w-10 h-10 rounded-full object-cover flex-shrink-0" />' .
+                                            '<div class="flex flex-col">' .
+                                            '<span class="font-medium">' . e($userName) . '</span>' .
+                                            '<span class="text-sm text-gray-500 truncate">' . e($testimoniText) . '</span>' .
+                                            '</div>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $userName . ' - ' . $testimoniText;
+                            })
+                            ->allowHtml()
                             ->searchable(['isi_testimoni', 'user.name'])
                             ->preload()
                             ->native(false),
 
                         Forms\Components\Select::make('id_testimoni_event')
-                            ->label('TestimoniSlider Event')
+                            ->label('Testimoni Event')
                             ->relationship('testimoniEvent', 'isi_testimoni')
-                            ->getOptionLabelFromRecordUsing(
-                                fn($record) => ($record->user ? $record->user->name . ' - ' : '') .
-                                Str::limit($record->isi_testimoni, 50)
-                            )
+                            ->getOptionLabelFromRecordUsing(function ($record) {
+                                $userPhoto = $record->user && $record->user->foto_profil
+                                    ? asset('storage/' . $record->user->foto_profil)
+                                    : null;
+
+                                $userName = $record->user ? $record->user->name : 'User Anonim';
+                                $testimoniText = \Illuminate\Support\Str::limit($record->isi_testimoni, 50);
+
+                                if ($userPhoto) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . $userPhoto . '" class="w-10 h-10 rounded-full object-cover flex-shrink-0" />' .
+                                            '<div class="flex flex-col">' .
+                                            '<span class="font-medium">' . e($userName) . '</span>' .
+                                            '<span class="text-sm text-gray-500 truncate">' . e($testimoniText) . '</span>' .
+                                            '</div>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $userName . ' - ' . $testimoniText;
+                            })
+                            ->allowHtml()
                             ->searchable(['isi_testimoni', 'user.name'])
                             ->preload()
                             ->native(false),
 
                         Forms\Components\Select::make('id_testimoni_artikel')
-                            ->label('TestimoniSlider Artikel')
+                            ->label('Testimoni Artikel')
                             ->relationship('testimoniArtikel', 'isi_testimoni')
-                            ->getOptionLabelFromRecordUsing(
-                                fn($record) => ($record->user ? $record->user->name . ' - ' : '') .
-                                Str::limit($record->isi_testimoni, 50)
-                            )
+                            ->getOptionLabelFromRecordUsing(function ($record) {
+                                $userPhoto = $record->user && $record->user->foto_profil
+                                    ? asset('storage/' . $record->user->foto_profil)
+                                    : null;
+
+                                $userName = $record->user ? $record->user->name : 'User Anonim';
+                                $testimoniText = \Illuminate\Support\Str::limit($record->isi_testimoni, 50);
+
+                                if ($userPhoto) {
+                                    return new \Illuminate\Support\HtmlString(
+                                        '<div class="flex items-center gap-3">' .
+                                            '<img src="' . $userPhoto . '" class="w-10 h-10 rounded-full object-cover flex-shrink-0" />' .
+                                            '<div class="flex flex-col">' .
+                                            '<span class="font-medium">' . e($userName) . '</span>' .
+                                            '<span class="text-sm text-gray-500 truncate">' . e($testimoniText) . '</span>' .
+                                            '</div>' .
+                                            '</div>'
+                                    );
+                                }
+
+                                return $userName . ' - ' . $testimoniText;
+                            })
+                            ->allowHtml()
                             ->searchable(['isi_testimoni', 'user.name'])
                             ->preload()
                             ->native(false),

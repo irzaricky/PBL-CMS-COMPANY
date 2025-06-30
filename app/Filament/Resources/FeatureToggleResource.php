@@ -42,36 +42,65 @@ class FeatureToggleResource extends Resource
     {
         return $table
             ->heading('Daftar Fitur')
-            ->description('Daftar fitur yang dapat diaktifkan atau dinonaktifkan.')
+            ->description('Daftar fitur yang dapat diaktifkan atau dinonaktifkan. Perubahan hanya akan berlaku di halaman website, bukan panel admin.')
             ->defaultPaginationPageOption('all')
             ->paginationPageOptions(['all'])
             ->columns([
                 Tables\Columns\TextColumn::make('label')
                     ->label('Daftar Fitur'),
-                Tables\Columns\TextColumn::make('status_aktif')
-                    ->label('Status Aktif')
-                    ->badge()
-                    ->formatStateUsing(fn(bool $state): string => $state ? 'Aktif' : 'Nonaktif')
-                    ->color(fn(bool $state): string => $state ? 'success' : 'danger')
-                    ->icon(fn(bool $state): string => $state ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle'),
+                Tables\Columns\ToggleColumn::make('status_aktif')
+                    ->label('Status')
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->onIcon('heroicon-m-eye')
+                    ->offIcon('heroicon-m-eye-slash')
+                    ->updateStateUsing(function ($record, $state) {
+                        $record->update([
+                            'status_aktif' => $state
+                        ]);
+                        return $state;
+                    })
+                    ->getStateUsing(fn($record) => (bool) $record->status_aktif),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('show')
-                    ->label('Perlihatkan')
-                    ->icon('heroicon-s-eye')
-                    ->color('success')
-                    ->action(fn(FeatureToggle $record) => $record->update(['status_aktif' => true]))
-                    ->visible(fn(FeatureToggle $record) => !$record->status_aktif),
-
-                Tables\Actions\Action::make('hide')
-                    ->label('Sembunyikan')
-                    ->icon('heroicon-s-eye-slash')
-                    ->color('danger')
-                    ->action(fn(FeatureToggle $record) => $record->update(['status_aktif' => false]))
-                    ->visible(fn(FeatureToggle $record) => $record->status_aktif),
+                Tables\Actions\Action::make('info')
+                    ->label('Info')
+                    ->icon('heroicon-m-information-circle')
+                    ->color('primary')
+                    ->modalHeading(fn($record) => 'Informasi Fitur: ' . $record->label)
+                    ->modalDescription(function ($record) {
+                        if ($record->key == 'artikel_module') {
+                            return 'Module untuk mengelola artikel atau berita. Fitur ini memungkinkan admin untuk membuat, mengedit, dan menghapus artikel yang akan ditampilkan di website.';
+                        } elseif ($record->key == 'case_study_module') {
+                            return 'Module untuk mengelola studi kasus. Fitur ini digunakan untuk menampilkan portfolio atau project yang telah dikerjakan perusahaan.';
+                        } elseif ($record->key == 'event_module') {
+                            return 'Module untuk mengelola event atau acara. Fitur ini memungkinkan admin untuk membuat dan mengelola informasi tentang event yang akan diselenggarakan.';
+                        } elseif ($record->key == 'feedback_module') {
+                            return 'Module untuk mengelola feedback dari pengunjung. Fitur ini memungkinkan admin untuk melihat dan merespon masukan dari pengguna website.';
+                        } elseif ($record->key == 'galeri_module') {
+                            return 'Module untuk mengelola galeri foto. Fitur ini digunakan untuk menampilkan dokumentasi visual perusahaan.';
+                        } elseif ($record->key == 'lamaran_module') {
+                            return 'Module untuk mengelola lamaran pekerjaan. Fitur ini memungkinkan admin untuk melihat dan mengelola aplikasi pekerjaan dari calon karyawan.';
+                        } elseif ($record->key == 'lowongan_module') {
+                            return 'Module untuk mengelola lowongan pekerjaan. Fitur ini digunakan untuk membuat dan mengelola informasi tentang posisi yang tersedia di perusahaan.';
+                        } elseif ($record->key == 'mitra_module') {
+                            return 'Module untuk mengelola informasi mitra atau partner. Fitur ini digunakan untuk menampilkan daftar perusahaan atau organisasi yang bekerjasama.';
+                        } elseif ($record->key == 'produk_module') {
+                            return 'Module untuk mengelola produk atau layanan. Fitur ini memungkinkan admin untuk menampilkan dan mengelola katalog produk perusahaan.';
+                        } elseif ($record->key == 'testimoni_module') {
+                            return 'Module untuk mengelola testimoni pelanggan. Fitur ini digunakan untuk menampilkan review atau ulasan positif dari klien.';
+                        } elseif ($record->key == 'unduhan_module') {
+                            return 'Module untuk mengelola file download. Fitur ini memungkinkan admin untuk menyediakan file yang dapat diunduh oleh pengunjung website.';
+                        } else {
+                            return 'Tidak ada deskripsi untuk fitur ini.';
+                        }
+                    })
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup')
+                    ->tooltip('Lihat informasi fitur'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('activate_all')
