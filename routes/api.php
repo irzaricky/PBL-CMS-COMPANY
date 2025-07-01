@@ -41,16 +41,12 @@ Route::prefix('feedback')->group(function () {
     });
 });
 
-// Lamaran routes (DENGAN AUTENTIKASI)
-Route::prefix('lamaran')->group(function () {
+// Lamaran routes (SEMUA MEMERLUKAN AUTENTIKASI)
+Route::middleware(['web', 'auth'])->prefix('lamaran')->group(function () {
     Route::get('/user/{userId}', [LamaranController::class, 'getByUserId']);
     Route::get('/check/{userId}/{lowonganId}', [LamaranController::class, 'checkUserApplication']);
     Route::get('/{id}', [LamaranController::class, 'show']);
-
-    // POST route memerlukan autentikasi
-    Route::middleware(['web', 'auth'])->group(function () {
-        Route::post('/', [LamaranController::class, 'store']);
-    });
+    Route::post('/', [LamaranController::class, 'store']);
 });
 
 
