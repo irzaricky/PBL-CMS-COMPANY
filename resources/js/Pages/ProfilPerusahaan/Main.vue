@@ -74,14 +74,43 @@ const showReadMoreMisi = computed(() => {
 // Fetch data
 async function fetchProfilPerusahaan() {
     try {
-        loading.value = true
-        const response = await axios.get(`/api/profil-perusahaan/`)
-        profil_perusahaan.value = response.data.data
-        loading.value = false
+        loading.value = true;
+        const response = await axios.get(`/api/profil-perusahaan/`);
+        profil_perusahaan.value = response.data.data;
+        loading.value = false;
     } catch (err) {
-        error.value = "Event not found or an error occurred"
-        loading.value = false
-        console.error("Error fetching profil_perusahaan:", err)
+        error.value = "Event not found or an error occurred";
+        loading.value = false;
+        console.error("Error fetching profil_perusahaan:", err);
+    }
+}
+
+// Fetch media sosial
+async function fetchMediaSosial() {
+    try {
+        const response = await axios.get("/api/media-sosial");
+        mediaSosial.value = [];
+
+        for (const [platform, data] of Object.entries(response.data.data)) {
+            if ((data as any).active === 1) {
+                mediaSosial.value.push({
+                    name: platform,
+                    link: (data as any).link,
+                });
+            }
+        }
+    } catch (err) {
+        console.error("Error fetching social media:", err);
+    }
+}
+
+// Handle contact button click
+const handleContactClick = () => {
+    if (profil_perusahaan.value?.email_perusahaan) {
+        window.location.href = `mailto:${profil_perusahaan.value.email_perusahaan}?subject=Inquiry - Company Profile`;
+    } else {
+        // Fallback to contact page if email not available
+        window.location.href = "/kontak";
     }
 }
 
@@ -104,29 +133,39 @@ async function fetchMediaSosial() {
     }
 }
 
+// Handle contact button click
+const handleContactClick = () => {
+    if (profil_perusahaan.value?.email_perusahaan) {
+        window.location.href = `mailto:${profil_perusahaan.value.email_perusahaan}?subject=Inquiry - Company Profile`;
+    } else {
+        // Fallback to contact page if email not available
+        window.location.href = '/kontak';
+    }
+}
+
 // Utility
 function getImageUrl(image: string | string[] | null): string {
     if (!image) return ""
     if (Array.isArray(image)) {
         return image.length > 0 ? `/storage/${image[0]}` : ""
     }
-    return `/storage/${image}`
+    return `/storage/${image}`;
 }
 
 // SLIDER TERPISAH
-const topIndex = ref(0)
-const bottomIndex = ref(0)
+const topIndex = ref(0);
+const bottomIndex = ref(0);
 
 const thumbnailTop = computed(() => {
-    return profil_perusahaan.value?.thumbnail_perusahaan?.slice(0, 2) || []
-})
+    return profil_perusahaan.value?.thumbnail_perusahaan?.slice(0, 2) || [];
+});
 const thumbnailBottom = computed(() => {
-    return profil_perusahaan.value?.thumbnail_perusahaan?.slice(2) || []
-})
+    return profil_perusahaan.value?.thumbnail_perusahaan?.slice(2) || [];
+});
 
 // Auto slide
-let intervalTop: any
-let intervalBottom: any
+let intervalTop: any;
+let intervalBottom: any;
 
 onMounted(() => {
     fetchProfilPerusahaan()
@@ -134,13 +173,14 @@ onMounted(() => {
 
     intervalTop = setInterval(() => {
         if (thumbnailTop.value.length > 1) {
-            topIndex.value = (topIndex.value + 1) % thumbnailTop.value.length
+            topIndex.value = (topIndex.value + 1) % thumbnailTop.value.length;
         }
-    }, 4000)
+    }, 4000);
 
     intervalBottom = setInterval(() => {
         if (thumbnailBottom.value.length > 1) {
-            bottomIndex.value = (bottomIndex.value + 1) % thumbnailBottom.value.length
+            bottomIndex.value =
+                (bottomIndex.value + 1) % thumbnailBottom.value.length;
         }
     }, 4000)
 
@@ -258,14 +298,15 @@ function getMediaSosialComponent(platform) {
                                         d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
                                 </svg>
                             </a>
-                            <Link href="/kontak"
+                            <button
+                                @click="handleContactClick"
                                 class="inline-flex items-center justify-center px-8 py-4 border-2 border-white/30 text-white font-semibold rounded-full hover:bg-white/10 hover:border-white/50 transition-all duration-300">
-                            <span>Hubungi Kami</span>
-                            <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-                            </svg>
-                            </Link>
+                                <span>Hubungi Kami</span>
+                                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </button>
                         </div>
                     </div>
 
@@ -369,12 +410,16 @@ function getMediaSosialComponent(platform) {
 
         <!-- Section 3: Visi & Misi Grid with Petal Design -->
         <div class="w-full px-4 sm:px-8 lg:px-16 py-20 bg-white text-white">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 max-w-screen-xl mx-auto">
+            <div
+                class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 max-w-screen-xl mx-auto"
+            >
                 <!-- Visi - top-left petal -->
-                <div class="order-1 flex flex-col justify-center items-start lg:items-end gap-4 bg-secondary py-8 px-10 
-                     rounded-lg lg:rounded-tl-[100px] lg:rounded-bl-[100px] lg:rounded-tr-[100px] lg:rounded-br-[20px]
-                     transform hover:translate-y-[-5px] transition-all duration-300">
-                    <h3 class="text-2xl lg:text-4xl font-semibold font-custom lg:text-right">
+                <div
+                    class="order-1 flex flex-col justify-center items-start lg:items-end gap-4 bg-secondary py-8 px-10 rounded-lg lg:rounded-tl-[100px] lg:rounded-bl-[100px] lg:rounded-tr-[100px] lg:rounded-br-[20px] transform hover:translate-y-[-5px] transition-all duration-300"
+                >
+                    <h3
+                        class="text-2xl lg:text-4xl font-semibold font-custom lg:text-right"
+                    >
                         Visi Kami
                     </h3>
                     <div class="text-base lg:text-lg font-normal font-custom leading-relaxed lg:text-right">
@@ -396,7 +441,10 @@ function getMediaSosialComponent(platform) {
                             <img :src="getImageUrl(img)" class="w-full h-full object-cover" />
                         </div>
                     </div>
-                    <div v-else class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600">
+                    <div
+                        v-else
+                        class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600"
+                    >
                         Gambar belum tersedia.
                     </div>
                 </div>
@@ -411,7 +459,10 @@ function getMediaSosialComponent(platform) {
                             <img :src="getImageUrl(img)" class="w-full h-full object-cover" />
                         </div>
                     </div>
-                    <div v-else class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600">
+                    <div
+                        v-else
+                        class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-600"
+                    >
                         Gambar belum tersedia.
                     </div>
                 </div>
@@ -466,7 +517,6 @@ function getMediaSosialComponent(platform) {
                 </p>
             </div>
         </div>
-
     </AppLayout>
 </template>
 

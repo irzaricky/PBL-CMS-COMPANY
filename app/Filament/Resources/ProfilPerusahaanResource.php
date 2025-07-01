@@ -107,6 +107,13 @@ class ProfilPerusahaanResource extends Resource
                             ->maxLength(50)
                             ->placeholder('contoh@perusahaan.com'),
 
+                        Forms\Components\TextInput::make('telepon_perusahaan')
+                            ->label('Telepon')
+                            ->tel()
+                            ->required()
+                            ->maxLength(16)
+                            ->prefix('+62'),
+
                         Forms\Components\TextInput::make('deskripsi_perusahaan')
                             ->label('Deskripsi Perusahaan')
                             ->maxLength(300)
@@ -156,8 +163,8 @@ class ProfilPerusahaanResource extends Resource
                             ->itemLabel(
                                 fn(array $state): ?string =>
                                 isset($state['tahun'], $state['judul'])
-                                    ? "{$state['tahun']} - {$state['judul']}"
-                                    : 'Timeline Item'
+                                ? "{$state['tahun']} - {$state['judul']}"
+                                : 'Timeline Item'
                             )
                             ->minItems(1)
                             ->maxItems(20)
@@ -223,11 +230,11 @@ class ProfilPerusahaanResource extends Resource
                                     ['value' => '#1B4332', 'name' => 'Brunswick Green'],
                                     ['value' => '#3E1F47', 'name' => 'Purple Taupe'],
                                 ])->mapWithKeys(static fn($theme) => [
-                                    $theme['value'] => "<span class='flex items-center gap-x-3'>
+                                        $theme['value'] => "<span class='flex items-center gap-x-3'>
                         <span class='rounded-full w-4 h-4 border border-gray-300 shadow-sm' style='background-color: {$theme['value']}'></span>
                         <span class='font-medium'>{$theme['name']}</span>
                     </span>",
-                                ])
+                                    ])
                             )
                             ->default('#31487A')
                             ->required()
@@ -342,9 +349,9 @@ class ProfilPerusahaanResource extends Resource
                                                 ->icon('heroicon-o-calendar')
                                                 ->color('primary'),
                                         ])->columnSpan([
-                                            'default' => 1,
-                                            'md' => 1,
-                                        ]),
+                                                    'default' => 1,
+                                                    'md' => 1,
+                                                ]),
 
                                         // Content Section  
                                         Infolists\Components\Group::make([
@@ -360,9 +367,9 @@ class ProfilPerusahaanResource extends Resource
                                                 ->prose()
                                                 ->color('gray'),
                                         ])->columnSpan([
-                                            'default' => 1,
-                                            'md' => 3,
-                                        ]),
+                                                    'default' => 1,
+                                                    'md' => 3,
+                                                ]),
                                     ]),
                             ])
                             ->contained(true),

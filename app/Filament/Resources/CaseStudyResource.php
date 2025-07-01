@@ -233,8 +233,6 @@ class CaseStudyResource extends Resource
                 Tables\Filters\SelectFilter::make('status_case_study')
                     ->label('Status')
                     ->options(ContentStatus::class),
-
-                TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -257,19 +255,54 @@ class CaseStudyResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Case Study')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan case study yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_case_study' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Case study berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_case::study', CaseStudy::class)),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Case Study')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi case study yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_case_study' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi case study berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_case::study', CaseStudy::class)),
+
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Arsipkan')
                         ->color('warning')
                         ->icon('heroicon-s-archive-box-arrow-down')
-                        ->successNotificationTitle('Case study berhasil diarsipkan'),
+                        ->successNotificationTitle('Case study berhasil diarsipkan')
+                        ->hidden(fn() => !auth()->user()->can('delete_case::study', CaseStudy::class)),
                     RestoreBulkAction::make()
-                        ->successNotificationTitle('Case study berhasil dipulihkan'),
+                        ->successNotificationTitle('Case study berhasil dipulihkan')
+                        ->hidden(fn() => !auth()->user()->can('restore_case::study', CaseStudy::class)),
                     ForceDeleteBulkAction::make()
                         ->label('Hapus Permanen')
                         ->successNotificationTitle('Case study berhasil dihapus permanen')
                         ->before(function (Collection $records) {
                             MultipleFileHandler::deleteBulkFiles($records, 'thumbnail_case_study');
-                        }),
+                        })
+                        ->hidden(fn() => !auth()->user()->can('force_delete_case::study', CaseStudy::class)),
                 ]),
             ]);
     }

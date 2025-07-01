@@ -35,7 +35,9 @@
 
                         <!-- Call to Action Card -->
                         <div
-                            class="group relative aspect-square flex flex-col items-center justify-center p-4 md:p-6 bg-gradient-to-br from-primary/8 to-accent/8 rounded-3xl border-2 border-dashed border-primary/30 hover:border-primary/50 transition-all duration-500 cursor-pointer overflow-hidden" data-aos="zoom-in-up">
+                            class="group relative aspect-square flex flex-col items-center justify-center p-4 md:p-6 bg-gradient-to-br from-primary/8 to-accent/8 rounded-3xl border-2 border-dashed border-primary/30 hover:border-primary/50 transition-all duration-500 cursor-pointer overflow-hidden" 
+                            data-aos="zoom-in-up"
+                            @click="handleContactClick">
                             <!-- Animated background pattern -->
                             <div
                                 class="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
@@ -87,6 +89,7 @@
                             <!-- Button Section -->
                             <div class="w-full sm:w-auto flex-shrink-0">
                                 <button
+                                    @click="handleContactClick"
                                     class="group/btn relative w-full sm:w-auto px-8 py-3 bg-white text-secondary hover:bg-secondary hover:text-white font-semibold rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95">
                                     <span class="relative z-10">Hubungi Kami</span>
                                     <div
@@ -109,9 +112,9 @@ import axios from 'axios'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
-
 const mitraList = ref([])
 const isLoading = ref(true)
+const companyProfile = ref(null)
 
 // Fetch mitra data from API
 const fetchMitraData = async () => {
@@ -136,6 +139,17 @@ const fetchMitraData = async () => {
     }
 }
 
+// Fetch company profile
+const fetchCompanyProfile = async () => {
+    try {
+        const response = await axios.get("/api/profil-perusahaan");
+        companyProfile.value = response.data.data;
+    } catch (error) {
+        console.error("Error fetching company profile:", error);
+        companyProfile.value = null;
+    }
+}
+
 // Handle image loading errors
 const handleImageError = (event) => {
     event.target.src = '/image/placeholder.webp'
@@ -152,8 +166,19 @@ function getImageUrl(image) {
     return `/storage/${image}`;
 }
 
+// Handle contact button click
+const handleContactClick = () => {
+    if (companyProfile.value?.email_perusahaan) {
+        window.location.href = `mailto:${companyProfile.value.email_perusahaan}?subject=Inquiry - Partnership Collaboration`;
+    } else {
+        // Fallback to contact page if email not available
+        window.location.href = '/kontak';
+    }
+}
+
 onMounted(async () => {
     await fetchMitraData()
+    await fetchCompanyProfile()
     AOS.init({
         duration: 1000,
         once: false,

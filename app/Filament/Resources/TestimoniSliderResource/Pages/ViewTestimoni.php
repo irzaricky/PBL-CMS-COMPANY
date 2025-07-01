@@ -31,7 +31,8 @@ class ViewTestimoni extends ViewRecord
     {
         return [
             Actions\EditAction::make()
-                ->label('Edit Testimoni'),
+                ->label('Pilih Testimoni Yang Akan Ditampilkan')
+                ->icon('heroicon-o-cursor-arrow-rays'),
         ];
     }
 }

@@ -108,9 +108,8 @@ async function submitApplication() {
         const submitData = new FormData();
         submitData.append("id_lowongan", props.lowongan.id_lowongan);
 
-        if (props.user?.id_user) {
-            submitData.append("id_user", props.user.id_user);
-        } else {
+        // Remove id_user parameter - backend will use authenticated user
+        if (!props.user?.id_user) {
             alert("Anda harus login terlebih dahulu untuk melamar");
             return;
         }
@@ -281,10 +280,7 @@ async function submitApplication() {
 
         <!-- CV Upload -->
         <div>
-            <label
-                for="cv"
-                class="block text-sm font-medium text-white mb-2"
-            >
+            <label for="cv" class="block text-sm font-medium text-white mb-2">
                 CV/Resume <span class="text-red-400">*</span>
             </label>
             <input
@@ -349,7 +345,9 @@ async function submitApplication() {
                 class="block text-sm font-medium text-white mb-2"
             >
                 Portfolio
-                <span class="text-white/60 text-xs font-normal">(opsional)</span>
+                <span class="text-white/60 text-xs font-normal"
+                    >(opsional)</span
+                >
             </label>
             <input
                 id="portfolio"
@@ -416,7 +414,9 @@ async function submitApplication() {
                 class="block text-sm font-medium text-white mb-2"
             >
                 Pesan Lamaran
-                <span class="text-white/60 text-xs font-normal">(opsional)</span>
+                <span class="text-white/60 text-xs font-normal"
+                    >(opsional)</span
+                >
             </label>
             <textarea
                 id="pesan_pelamar"
@@ -455,8 +455,12 @@ async function submitApplication() {
         <div
             class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden shadow-2xl"
         >
-            <div class="flex items-center justify-between p-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Preview File</h3>
+            <div
+                class="flex items-center justify-between p-6 border-b border-gray-200"
+            >
+                <h3 class="text-lg font-semibold text-gray-900">
+                    Preview File
+                </h3>
                 <button
                     @click="closePreview"
                     class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
@@ -488,7 +492,8 @@ async function submitApplication() {
                         Preview Tidak Tersedia
                     </p>
                     <p class="text-sm text-center text-gray-600 mb-6 max-w-md">
-                        File Word/DOC tidak dapat di-preview di browser. Silakan download untuk melihat isi file.
+                        File Word/DOC tidak dapat di-preview di browser. Silakan
+                        download untuk melihat isi file.
                     </p>
                     <a
                         :href="previewFile"

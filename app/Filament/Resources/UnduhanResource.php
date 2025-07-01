@@ -239,13 +239,47 @@ class UnduhanResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\BulkAction::make('publish')
+                        ->label('Publikasikan')
+                        ->icon('heroicon-m-eye')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->modalHeading('Publikasikan Unduhan')
+                        ->modalDescription('Apakah Anda yakin ingin mempublikasikan unduhan yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_unduhan' => ContentStatus::TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Unduhan berhasil dipublikasikan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_unduhan', Unduhan::class)),
+
+                    Tables\Actions\BulkAction::make('unpublish')
+                        ->label('Batalkan Publikasi')
+                        ->icon('heroicon-m-eye-slash')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Batalkan Publikasi Unduhan')
+                        ->modalDescription('Apakah Anda yakin ingin membatalkan publikasi unduhan yang dipilih?')
+                        ->action(function (Collection $records) {
+                            $records->each(function ($record) {
+                                $record->update(['status_unduhan' => ContentStatus::TIDAK_TERPUBLIKASI]);
+                            });
+                        })
+                        ->successNotificationTitle('Publikasi unduhan berhasil dibatalkan')
+                        ->deselectRecordsAfterCompletion()
+                        ->hidden(fn() => !auth()->user()->can('update_unduhan', Unduhan::class)),
+
                     Tables\Actions\DeleteBulkAction::make()
                         ->label('Arsipkan')
                         ->color('warning')
                         ->icon('heroicon-s-archive-box-arrow-down')
-                        ->successNotificationTitle('Unduhan berhasil diarsipkan'),
+                        ->successNotificationTitle('Unduhan berhasil diarsipkan')
+                        ->hidden(fn() => !auth()->user()->can('delete_unduhan', Unduhan::class)),
                     RestoreBulkAction::make()
-                        ->successNotificationTitle('Unduhan berhasil dipulihkan'),
+                        ->successNotificationTitle('Unduhan berhasil dipulihkan')
+                        ->hidden(fn() => !auth()->user()->can('restore_unduhan', Unduhan::class)),
                     ForceDeleteBulkAction::make()
                         ->label('Hapus Permanen')
                         ->successNotificationTitle('Unduhan berhasil dihapus permanen')
@@ -253,7 +287,8 @@ class UnduhanResource extends Resource
                             foreach ($records as $record) {
                                 SingleFileHandler::deleteFile($record, 'lokasi_file');
                             }
-                        }),
+                        })
+                        ->hidden(fn() => !auth()->user()->can('force_delete_unduhan', Unduhan::class)),
                 ]),
             ]);
     }

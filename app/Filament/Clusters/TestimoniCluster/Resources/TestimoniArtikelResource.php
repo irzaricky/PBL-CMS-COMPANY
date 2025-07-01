@@ -2,18 +2,21 @@
 
 namespace App\Filament\Clusters\TestimoniCluster\Resources;
 
-use App\Filament\Clusters\TestimoniCluster;
-use App\Models\TestimoniArtikel;
-use App\Models\Artikel;
-use App\Models\User;
-use App\Enums\ContentStatus;
 use Filament\Forms;
+use App\Models\User;
+use Filament\Tables;
+use App\Models\Artikel;
+use Filament\Infolists;
 use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Enums\ContentStatus;
+use App\Models\TestimoniArtikel;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Resources\Components\Tab;
-use Filament\Tables;
-use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use App\Filament\Clusters\TestimoniCluster;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Clusters\TestimoniCluster\Resources\TestimoniArtikelResource\Pages;
 use App\Filament\Clusters\TestimoniCluster\Resources\TestimoniArtikelResource\RelationManagers;
@@ -57,6 +60,7 @@ class TestimoniArtikelResource extends Resource
                             ->columnSpanFull()
                             ->maxLength(255)
                             ->helperText('Maksimal 5 kata')
+                            ->disabled()
                             ->rules([
                                 'required',
                                 function ($attribute, $value, $fail) {
@@ -86,6 +90,66 @@ class TestimoniArtikelResource extends Resource
                             ])
                             ->default('tidak terpublikasi')
                             ->required(),
+                    ])
+                    ->columns(2),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Infolists\Components\Section::make('Informasi Testimoni')
+                    ->schema([
+                        Infolists\Components\TextEntry::make('user.name')
+                            ->label('User')
+                            ->icon('heroicon-o-user'),
+
+                        Infolists\Components\TextEntry::make('user.email')
+                            ->label('Email User')
+                            ->icon('heroicon-o-envelope'),
+
+                        Infolists\Components\TextEntry::make('artikel.judul_artikel')
+                            ->label('Artikel')
+                            ->icon('heroicon-o-document-text'),
+
+                        Infolists\Components\TextEntry::make('artikel.kategoriArtikel.nama_kategori_artikel')
+                            ->label('Kategori Artikel')
+                            ->icon('heroicon-o-tag'),
+
+                        Infolists\Components\TextEntry::make('isi_testimoni')
+                            ->label('Isi Testimoni')
+                            ->columnSpanFull()
+                            ->icon('heroicon-o-chat-bubble-left-right'),
+
+                        Infolists\Components\TextEntry::make('rating')
+                            ->label('Rating')
+                            ->formatStateUsing(fn(string $state): string => str_repeat('⭐', (int) $state))
+                            ->icon('heroicon-o-star'),
+
+                        Infolists\Components\TextEntry::make('status')
+                            ->label('Status')
+                            ->badge()
+                            ->color(fn(string $state): string => match ($state) {
+                                'terpublikasi' => 'success',
+                                'tidak terpublikasi' => 'warning',
+                                default => 'gray',
+                            })
+                            ->formatStateUsing(fn(string $state): string => match ($state) {
+                                'terpublikasi' => 'Terpublikasi',
+                                'tidak terpublikasi' => 'Tidak Terpublikasi',
+                                default => $state,
+                            }),
+
+                        Infolists\Components\TextEntry::make('created_at')
+                            ->label('Tanggal Dibuat')
+                            ->dateTime('d M Y, H:i')
+                            ->icon('heroicon-o-calendar'),
+
+                        Infolists\Components\TextEntry::make('updated_at')
+                            ->label('Terakhir Diperbarui')
+                            ->dateTime('d M Y, H:i')
+                            ->icon('heroicon-o-clock'),
                     ])
                     ->columns(2),
             ]);
@@ -199,6 +263,11 @@ class TestimoniArtikelResource extends Resource
     public static function canCreate(): bool
     {
         return false;
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return false; // Disable edit
     }
 
     public static function getTabs(): array

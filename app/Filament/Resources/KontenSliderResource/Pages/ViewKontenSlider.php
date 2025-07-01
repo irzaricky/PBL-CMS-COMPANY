@@ -15,7 +15,8 @@ class ViewKontenSlider extends ViewRecord
     {
         return [
             Actions\EditAction::make()
-                ->label('Edit Konten Slider'),
+                ->icon('heroicon-o-presentation-chart-line')
+                ->label('Pilih Konten yang Ditampilkan'),
         ];
     }
 
@@ -28,7 +29,7 @@ class ViewKontenSlider extends ViewRecord
                 $record = $firstRecord->getKey();
             }
         }
-        
+
         parent::mount($record);
     }
 
@@ -38,7 +39,7 @@ class ViewKontenSlider extends ViewRecord
         if (!$key) {
             return KontenSlider::firstOrFail();
         }
-        
+
         return parent::resolveRecord($key);
     }
 }

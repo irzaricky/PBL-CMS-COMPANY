@@ -8,7 +8,7 @@ import { Link } from "@inertiajs/vue3";
 const events = ref([]);
 const featuredEvent = ref(null);
 const loading = ref(true);
-const searchQuery = ref('');
+const searchQuery = ref("");
 const searching = ref(false);
 const currentPage = ref(1);
 const lastPage = ref(1);
@@ -64,9 +64,10 @@ async function fetchEvents() {
 
         // Filter featured from list if we have a featured event
         if (featuredEvent.value) {
-            events.value = events.value.filter(e => e.id_event !== featuredEvent.value?.id_event);
+            events.value = events.value.filter(
+                (e) => e.id_event !== featuredEvent.value?.id_event
+            );
         }
-
     } catch (error) {
         console.error("Error fetching events:", error);
         events.value = [];
@@ -86,7 +87,11 @@ function getImageUrl(image) {
 function formatDate(date) {
     if (!date) return "";
     const d = new Date(date);
-    return d.toLocaleDateString("id-ID", { year: "numeric", month: "long", day: "numeric" });
+    return d.toLocaleDateString("id-ID", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+    });
 }
 
 function getDay(date) {
@@ -98,7 +103,10 @@ function getDate(date) {
 }
 
 function getMonthYear(date) {
-    return new Date(date).toLocaleDateString("id-ID", { month: "short", year: "numeric" });
+    return new Date(date).toLocaleDateString("id-ID", {
+        month: "short",
+        year: "numeric",
+    });
 }
 
 function formatTimeRange(start, end) {
@@ -129,7 +137,9 @@ function stripHtmlTags(html) {
 
 <template>
     <AppLayout>
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-28 bg-background text-black font-custom">
+        <div
+            class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-28 bg-background text-black font-custom"
+        >
             <div class="flex flex-col gap-20 overflow-hidden">
                 <!-- Header -->
                 <div class="w-full mb-12 flex flex-col gap-4">
@@ -150,7 +160,9 @@ function stripHtmlTags(html) {
                     <div class="flex flex-col lg:flex-row gap-12">
                         <!-- Image skeleton -->
                         <div class="relative flex-1 animate-pulse">
-                            <div class="w-full h-96 bg-gray-200 rounded-2xl"></div>
+                            <div
+                                class="w-full h-96 bg-gray-200 rounded-2xl"
+                            ></div>
                             <div
                                 class="absolute left-4 top-4 bg-white text-black rounded-2xl px-3 py-2 text-center border border-gray-200">
                                 <div class="w-8 h-4 bg-gray-200 mb-1 rounded"></div>
@@ -161,12 +173,22 @@ function stripHtmlTags(html) {
                         <!-- Content skeleton -->
                         <div class="flex-1 flex flex-col gap-6 animate-pulse">
                             <div class="flex flex-col gap-2">
-                                <div class="h-10 w-3/4 bg-gray-200 rounded"></div>
-                                <div class="h-6 w-1/2 bg-gray-200 rounded mt-2"></div>
-                                <div class="h-6 w-1/3 bg-gray-200 rounded mt-2"></div>
-                                <div class="h-24 w-full bg-gray-200 rounded mt-4"></div>
+                                <div
+                                    class="h-10 w-3/4 bg-gray-200 rounded"
+                                ></div>
+                                <div
+                                    class="h-6 w-1/2 bg-gray-200 rounded mt-2"
+                                ></div>
+                                <div
+                                    class="h-6 w-1/3 bg-gray-200 rounded mt-2"
+                                ></div>
+                                <div
+                                    class="h-24 w-full bg-gray-200 rounded mt-4"
+                                ></div>
                             </div>
-                            <div class="w-32 h-10 bg-gray-200 rounded-full"></div>
+                            <div
+                                class="w-32 h-10 bg-gray-200 rounded-full"
+                            ></div>
                         </div>
                     </div>
                 </div>
@@ -177,8 +199,13 @@ function stripHtmlTags(html) {
                     <div
                         class="flex flex-col lg:flex-row gap-12 lg:items-center p-6 bg-gradient-to-br from-secondary via-secondary to-black rounded-2xl">
                         <div class="relative flex-1">
-                            <img class="w-full h-96 object-cover rounded-2xl"
-                                :src="getImageUrl(featuredEvent.thumbnail_event)" alt="Event Image" />
+                            <img
+                                class="w-full h-96 object-cover rounded-2xl"
+                                :src="
+                                    getImageUrl(featuredEvent.thumbnail_event)
+                                "
+                                alt="Event Image"
+                            />
                             <div
                                 class="absolute left-4 top-4 bg-white text-black rounded-2xl px-3 py-2 text-center border border-gray-200">
                                 <div class="text-sm font-medium text-secondary">{{
@@ -226,7 +253,9 @@ function stripHtmlTags(html) {
 
                 <!-- Other Events - Skeleton Loading -->
                 <div v-if="loading" class="flex flex-col gap-10">
-                    <div class="flex flex-wrap justify-between items-center gap-4">
+                    <div
+                        class="flex flex-wrap justify-between items-center gap-4"
+                    >
                         <h2 class="text-4xl font-normal">Event Lainnya</h2>
                         <div class="w-full md:w-auto md:max-w-md">
                             <div class="relative">
@@ -257,6 +286,51 @@ function stripHtmlTags(html) {
                 </div>
 
                 <!-- Search Bar - Always show when not loading -->
+                <div
+                    v-if="!loading"
+                    class="flex flex-wrap justify-between items-center gap-4"
+                >
+                    <h2 class="text-4xl font-normal">
+                        {{
+                            searchQuery
+                                ? `Hasil Pencarian "${searchQuery}"`
+                                : "Event Lainnya"
+                        }}
+                    </h2>
+                    <div class="w-full">
+                        <div class="relative flex items-center">
+                            <input
+                                v-model="searchQuery"
+                                @input="handleSearch"
+                                type="text"
+                                placeholder="Cari event berdasarkan nama, lokasi, tanggal, atau deskripsi..."
+                                class="w-full px-5 py-3 pr-12 rounded-full border border-gray-300 focus:outline-none focus:ring-0 focus:border-gray-300 bg-white text-base"
+                            />
+                            <div
+                                class="absolute right-3 top-1/2 transform -translate-y-1/2"
+                            >
+                                <button
+                                    @click="fetchEvents"
+                                    class="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                                    :disabled="searching"
+                                >
+                                    <Search
+                                        class="w-5 h-5 text-gray-500"
+                                        :class="{ 'animate-spin': searching }"
+                                    />
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-sm text-gray-500">
+                            Contoh:
+                            <span class="font-medium"
+                                >"Jakarta", "Webinar", "2024", "Teknologi"</span
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Bar - Always show when not loading -->
                 <div v-if="!loading" class="flex flex-wrap justify-between items-center gap-4">
                     <h2 class="text-4xl font-normal">
                         {{ searchQuery ? `Hasil Pencarian "${searchQuery}"` : 'Event Lainnya' }}
@@ -264,7 +338,7 @@ function stripHtmlTags(html) {
                     <div class="w-full">
                         <div class="relative flex items-center">
                             <input
-                                v-model="searchQuery"
+                                v-model="searchQuery" 
                                 @input="handleSearch"
                                 type="text"
                                 placeholder="Cari event berdasarkan nama, lokasi, tanggal, atau deskripsi..."
@@ -307,6 +381,9 @@ function stripHtmlTags(html) {
                                     Lihat Semua Event
                                 </button>
                             </div>
+                            <div
+                                class="h-10 w-32 bg-gray-200 rounded-full"
+                            ></div>
                         </div>
                     </div>
                 </div>
@@ -355,9 +432,17 @@ function stripHtmlTags(html) {
                                     <MapPin class="w-4 h-4 text-secondary" />
                                     {{ event.lokasi_event }}
                                 </p>
-                                <p class="text-sm text-gray-700 flex items-center gap-1.5">
+                                <p
+                                    class="text-sm text-gray-700 flex items-center gap-1.5"
+                                >
                                     <Clock class="w-4 h-4 text-secondary" />
-                                    {{ formatTimeRange(event.waktu_start_event, event.waktu_end_event) }} WIB
+                                    {{
+                                        formatTimeRange(
+                                            event.waktu_start_event,
+                                            event.waktu_end_event
+                                        )
+                                    }}
+                                    WIB
                                 </p>
                             </div>
                             <p class="text-base text-gray-600 line-clamp-3">{{ stripHtmlTags(event.deskripsi_event) }}
@@ -373,26 +458,42 @@ function stripHtmlTags(html) {
                 </div>
 
                 <!-- Pagination -->
-                <div v-if="lastPage > 1 && !loading"
-                    class="flex justify-center items-center gap-4 mt-10 font-custom text-sm">
+                <div
+                    v-if="lastPage > 1 && !loading"
+                    class="flex justify-center items-center gap-4 mt-10 font-custom text-sm"
+                >
                     <!-- Tombol Sebelumnya -->
-                    <button @click="goToPage(currentPage - 1)" :disabled="currentPage === 1"
-                        class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === 1
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'">
+                    <button
+                        @click="goToPage(currentPage - 1)"
+                        :disabled="currentPage === 1"
+                        class="px-4 py-2 rounded-xl font-medium transition border"
+                        :class="
+                            currentPage === 1
+                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                                : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                        "
+                    >
                         Sebelumnya
                     </button>
 
                     <!-- Indikator halaman -->
-                    <div class="px-4 py-2 rounded-xl border border-black text-black font-semibold">
+                    <div
+                        class="px-4 py-2 rounded-xl border border-black text-black font-semibold"
+                    >
                         {{ currentPage }} / {{ lastPage }}
                     </div>
 
                     <!-- Tombol Selanjutnya -->
-                    <button @click="goToPage(currentPage + 1)" :disabled="currentPage === lastPage"
-                        class="px-4 py-2 rounded-xl font-medium transition border" :class="currentPage === lastPage
-                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
-                            : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'">
+                    <button
+                        @click="goToPage(currentPage + 1)"
+                        :disabled="currentPage === lastPage"
+                        class="px-4 py-2 rounded-xl font-medium transition border"
+                        :class="
+                            currentPage === lastPage
+                                ? 'bg-gray-200 text-gray-400 cursor-not-allowed border-gray-200'
+                                : 'bg-white text-black border-gray-300 hover:bg-black hover:text-white'
+                        "
+                    >
                         Selanjutnya
                     </button>
                 </div>
