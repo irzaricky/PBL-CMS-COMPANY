@@ -21,6 +21,8 @@ use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\ShowBackupContentAction;
 use GeoSot\FilamentEnvEditor\Pages\Actions\Backups\UploadBackupAction;
 use GeoSot\FilamentEnvEditor\Pages\ViewEnv as BaseViewEnvEditor;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Url;
 use SebastianBergmann\Diff\Differ;
@@ -444,7 +446,10 @@ class ViewEnv extends BaseViewEnvEditor
                         ->columnSpan(2),
                     Forms\Components\Placeholder::make('created_at')
                         ->label('')
-                        ->content($obj->createdAt->format('Y-m-d H:i:s'))
+                        ->content(function () use ($obj) {
+                            $timezone = config('app.timezone', env('APP_TIMEZONE', 'UTC'));
+                            return $obj->createdAt->setTimezone($timezone)->format('Y-m-d H:i:s T');
+                        })
                         ->columnSpan(2),
                 ])->columns(5);
             })->all();
@@ -452,8 +457,8 @@ class ViewEnv extends BaseViewEnvEditor
         $header = Forms\Components\Group::make([
             Forms\Components\Actions::make([
                 DownloadEnvFileAction::make('download_current')->tooltip('Download current .env file')->outlined(false),
-                UploadBackupAction::make('upload'),
-                MakeBackupAction::make('backup'),
+                $this->createCustomUploadBackupAction(),
+                $this->createCustomMakeBackupAction(),
             ])->alignEnd(),
         ]);
 
@@ -886,6 +891,9 @@ class ViewEnv extends BaseViewEnvEditor
             ])
             ->action(function (array $data) {
                 try {
+                    // Create backup before making changes
+                    $backupResult = $this->createTimezoneAwareBackup();
+
                     // Sanitize inputs
                     $sanitizedKey = $this->sanitizeEnvKey($data['key']);
                     $sanitizedValue = $this->sanitizeEnvValue($data['value'] ?? '');
@@ -895,7 +903,7 @@ class ViewEnv extends BaseViewEnvEditor
                     if ($result) {
                         Notification::make()
                             ->title('Berhasil')
-                            ->body("Variabel lingkungan '" . e($sanitizedKey) . "' berhasil ditambahkan.")
+                            ->body("Variabel lingkungan '" . e($sanitizedKey) . "' berhasil ditambahkan. Cadangan otomatis dibuat.")
                             ->success()
                             ->send();
 
@@ -991,7 +999,7 @@ class ViewEnv extends BaseViewEnvEditor
                     $oldKey = $obj->key;
 
                     // Always create backup before making changes
-                    $backupResult = EnvEditor::backUpCurrent();
+                    $backupResult = $this->createTimezoneAwareBackup();
 
                     if ($sanitizedNewKey !== $oldKey) {
                         // Key name changed - preserve position in .env file
@@ -1082,7 +1090,7 @@ class ViewEnv extends BaseViewEnvEditor
             ->action(function () use ($obj) {
                 try {
                     // Always create backup before making changes
-                    $backupResult = EnvEditor::backUpCurrent();
+                    $backupResult = $this->createTimezoneAwareBackup();
 
                     // Delete the environment variable
                     $result = EnvEditor::deleteKey($obj->key);
@@ -1303,5 +1311,280 @@ class ViewEnv extends BaseViewEnvEditor
         } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Create backup with timezone-aware naming
+     */
+    protected function createTimezoneAwareBackup(): bool
+    {
+        try {
+            // Get the timezone from environment or fallback to UTC
+            $timezone = config('app.timezone', env('APP_TIMEZONE', 'UTC'));
+
+            // Create filename with timezone-aware timestamp
+            $timestamp = now()->setTimezone($timezone)->format('Y_m_d_H_i_s');
+            $backupName = "backup_{$timestamp}.env";
+
+            // Get current .env content
+            $envContent = file_get_contents(app()->environmentFilePath());
+
+            if ($envContent === false) {
+                throw new \Exception('Tidak dapat membaca file .env saat ini');
+            }
+
+            // Ensure backup directory exists
+            $backupDir = storage_path('env-editor');
+            if (!is_dir($backupDir)) {
+                if (!mkdir($backupDir, 0755, true)) {
+                    throw new \Exception('Tidak dapat membuat direktori backup');
+                }
+            }
+
+            // Write backup file
+            $backupPath = $backupDir . DIRECTORY_SEPARATOR . $backupName;
+            $result = file_put_contents($backupPath, $envContent);
+
+            if ($result === false) {
+                throw new \Exception('Gagal menulis file backup');
+            }
+
+            return true;
+
+        } catch (\Exception $e) {
+            // Log error for debugging
+            Log::error('Backup creation failed: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Create custom Make Backup Action with timezone-aware naming
+     */
+    protected function createCustomMakeBackupAction(): FormAction
+    {
+        return FormAction::make('custom_backup')
+            ->label('Buat Cadangan')
+            ->icon('heroicon-o-document-duplicate')
+            ->color('info')
+            ->action(function () {
+                try {
+                    $result = $this->createTimezoneAwareBackup();
+
+                    if ($result) {
+                        // Get timezone for notification
+                        $timezone = config('app.timezone', env('APP_TIMEZONE', 'UTC'));
+                        $timestamp = now()->setTimezone($timezone)->format('Y-m-d H:i:s T');
+
+                        Notification::make()
+                            ->title('Cadangan Berhasil Dibuat')
+                            ->body("Cadangan file .env berhasil dibuat pada {$timestamp}")
+                            ->success()
+                            ->send();
+
+                        // Refresh the page data
+                        $this->dispatch('$refresh');
+                    } else {
+                        throw new \Exception('Gagal membuat cadangan');
+                    }
+                } catch (\Exception $e) {
+                    Notification::make()
+                        ->title('Gagal Membuat Cadangan')
+                        ->body('Tidak dapat membuat cadangan: ' . $e->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            })
+            ->tooltip('Buat cadangan dari file .env saat ini dengan timestamp sesuai timezone');
+    }
+
+    /**
+     * Create custom Upload Backup Action with proper naming
+     */
+    protected function createCustomUploadBackupAction(): FormAction
+    {
+        return FormAction::make('custom_upload')
+            ->label('Unggah Cadangan')
+            ->icon('heroicon-o-arrow-up-tray')
+            ->color('warning')
+            ->form([
+                Forms\Components\FileUpload::make('backup_file')
+                    ->label('File Cadangan')
+                    ->acceptedFileTypes([]) // Accept all file types
+                    ->required()
+                    ->disk('local')
+                    ->directory('livewire-tmp')
+                    ->visibility('private')
+                    ->maxSize(1024) // 1MB max
+                    ->storeFileNamesIn('backup_file_names')
+                    ->helperText('Pilih file untuk dijadikan cadangan environment'),
+            ])
+            ->action(function (array $data) {
+                try {
+                    if (!isset($data['backup_file']) || empty($data['backup_file'])) {
+                        throw new \Exception('File cadangan tidak dipilih');
+                    }
+
+                    // Handle file upload - Filament may return array or string
+                    $fileData = $data['backup_file'];
+                    if (is_array($fileData)) {
+                        $fileData = $fileData[0] ?? null;
+                    }
+
+                    if (!$fileData) {
+                        throw new \Exception('File cadangan tidak valid');
+                    }
+
+                    // Use Storage facade to check if file exists
+                    $disk = Storage::disk('local');
+
+                    // Try different possible paths based on Livewire/Filament conventions
+                    $possiblePaths = [
+                        'livewire-tmp/' . $fileData,
+                        $fileData,
+                        'public/' . $fileData,
+                        'temp-uploads/' . $fileData
+                    ];
+
+                    $uploadedFilePath = null;
+                    $relativePath = null;
+
+                    foreach ($possiblePaths as $path) {
+                        if ($disk->exists($path)) {
+                            $relativePath = $path;
+                            $uploadedFilePath = storage_path('app/' . $path);
+                            break;
+                        }
+                    }
+
+                    if (!$uploadedFilePath) {
+                        // Debug information - log more detailed info
+                        $debugInfo = [
+                            'received_data' => $data,
+                            'file_data' => $fileData,
+                            'tried_relative_paths' => $possiblePaths,
+                            'storage_disk_files' => $disk->allFiles(),
+                            'livewire_tmp_files' => $disk->exists('livewire-tmp') ? $disk->allFiles('livewire-tmp') : 'livewire-tmp not found'
+                        ];
+
+                        Log::warning('Upload file not found - debug info', $debugInfo);
+
+                        throw new \Exception('File tidak ditemukan.');
+                    }
+
+                    // Read the uploaded file content using Storage
+                    $content = $disk->get($relativePath);
+
+                    if ($content === false || $content === null) {
+                        throw new \Exception('Tidak dapat membaca file.');
+                    }
+
+                    // Validate that it's a valid .env file (basic validation)
+                    // Note: We'll be more lenient now as we accept any file type
+                    if (!$this->isValidEnvContent($content)) {
+                        // If it's not a valid .env format, we'll still allow it but warn the user
+                        Log::warning('Uploaded file may not be in standard .env format', [
+                            'file' => $uploadedFilePath,
+                            'content_preview' => substr($content, 0, 200)
+                        ]);
+                    }
+
+                    // Create proper backup filename with timezone
+                    $timezone = config('app.timezone', env('APP_TIMEZONE', 'UTC'));
+                    $timestamp = now()->setTimezone($timezone)->format('Y_m_d_H_i_s');
+                    $backupName = "uploaded_{$timestamp}.env";
+
+                    // Ensure backup directory exists
+                    $backupDir = storage_path('env-editor');
+                    if (!is_dir($backupDir)) {
+                        if (!mkdir($backupDir, 0755, true)) {
+                            throw new \Exception('Tidak dapat membuat direktori backup');
+                        }
+                    }
+
+                    // Copy to backup directory with proper name
+                    $backupPath = $backupDir . DIRECTORY_SEPARATOR . $backupName;
+                    $result = file_put_contents($backupPath, $content);
+
+                    if ($result === false) {
+                        throw new \Exception('Gagal menyimpan file.');
+                    }
+
+                    // Clean up temporary file using Storage
+                    if ($relativePath) {
+                        $disk->delete($relativePath);
+                    }
+
+                    // Success notification
+                    Notification::make()
+                        ->title('Upload Berhasil')
+                        ->body("File berhasil disimpan sebagai '{$backupName}'")
+                        ->success()
+                        ->send();
+
+                    // Refresh the page data
+                    $this->dispatch('$refresh');
+
+                } catch (\Exception $e) {
+                    // Clean up temporary file if it exists
+                    if (isset($relativePath) && $relativePath && isset($disk)) {
+                        $disk->delete($relativePath);
+                    }
+
+                    Notification::make()
+                        ->title('Upload Gagal')
+                        ->body($e->getMessage())
+                        ->danger()
+                        ->send();
+                }
+            })
+            ->modalWidth(MaxWidth::Large)
+            ->modalHeading('Unggah File Cadangan')
+            ->modalDescription('Unggah file untuk dijadikan cadangan environment.')
+            ->modalIcon('heroicon-o-arrow-up-tray')
+            ->tooltip('Upload cadangan environment');
+    }
+
+    /**
+     * Validate if content is a valid .env file
+     */
+    protected function isValidEnvContent(string $content): bool
+    {
+        // Basic validation - check if it contains environment variable patterns
+        $lines = explode("\n", $content);
+        $validLines = 0;
+        $totalNonEmptyLines = 0;
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            // Skip empty lines
+            if (empty($line)) {
+                continue;
+            }
+
+            $totalNonEmptyLines++;
+
+            // Comments are valid
+            if (str_starts_with($line, '#')) {
+                $validLines++;
+                continue;
+            }
+
+            // Environment variable format: KEY=VALUE
+            if (str_contains($line, '=')) {
+                [$key] = explode('=', $line, 2);
+                $key = trim($key);
+
+                // Check if key is valid environment variable name
+                if (preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $key)) {
+                    $validLines++;
+                }
+            }
+        }
+
+        // Consider valid if at least 50% of non-empty lines are valid env format
+        // or if file is empty (which is also a valid .env file)
+        return $totalNonEmptyLines === 0 || ($validLines / $totalNonEmptyLines) >= 0.5;
     }
 }
