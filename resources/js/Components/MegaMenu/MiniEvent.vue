@@ -21,7 +21,6 @@ async function fetchEvent() {
             megaMenuCache.setCache("events", response.data.data);
         }
     } catch (error) {
-        console.error("Error fetching event:", error);
     } finally {
         isLoading.value = false;
     }

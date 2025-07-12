@@ -50,7 +50,6 @@ async function fetchProfilPerusahaan() {
     } catch (err) {
         error.value = "Event not found or an error occurred";
         loading.value = false;
-        console.error("Error fetching profil_perusahaan:", err);
     }
 }
 
@@ -59,7 +58,6 @@ async function fetchFeatureToggles() {
         const res = await axios.get("/api/feature-toggles");
         featureToggles.value = res.data.data || {};
     } catch (err) {
-        console.error("Error fetching feature toggles:", err);
     }
 }
 
@@ -113,12 +111,12 @@ onUnmounted(() => {
                 <Link href="/" class="text-typography-dark hover:text-typography-hover2 transition text-lg">Beranda
                 </Link>
 
-                <Link v-if="featureToggles.produk_module === 1" href="/produk"
+                <Link v-if="featureToggles.produk_module == 1" href="/produk"
                     class="text-typography-dark hover:text-typography-hover2 transition text-lg">
                 Produk
                 </Link>
 
-                <Link v-if="featureToggles.feedback_module === 1" href="/feedback"
+                <Link v-if="featureToggles.feedback_module == 1" href="/feedback"
                     class="text-typography-dark hover:text-typography-hover2 transition text-lg">
                 Feedback
                 </Link>
@@ -206,7 +204,7 @@ onUnmounted(() => {
                 </a>
 
                 <div class="flex flex-col gap-2 mt-4">
-                    <a v-if="user.status_kepegawaian === 'Tetap'" href="/admin"
+                    <a v-if="user.status_kepegawaian == 'Tetap'" href="/admin"
                         class="flex items-center space-x-3 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-md transition">
                         <LayoutDashboard class="w-5 h-5 text-gray-700" />
                         <span class="text-sm font-medium text-gray-800">Admin Panel</span>
@@ -233,8 +231,8 @@ onUnmounted(() => {
             </template>
 
             <Link href="/" class="text-2xl py-1">Beranda</Link>
-            <Link v-if="featureToggles.produk_module === 1" href="/produk" class="text-2xl py-1">Produk</Link>
-            <Link v-if="featureToggles.feedback_module === 1" href="/feedback" class="text-2xl py-1">Feedback</Link>
+            <Link v-if="featureToggles.produk_module == 1" href="/produk" class="text-2xl py-1">Produk</Link>
+            <Link v-if="featureToggles.feedback_module == 1" href="/feedback" class="text-2xl py-1">Feedback</Link>
 
             <div class="text-2xl py-1 flex justify-between items-center cursor-pointer" @click="toggleMegaMenu">
                 <span>Lainnya</span>

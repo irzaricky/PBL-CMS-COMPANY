@@ -43,6 +43,7 @@ class Unduhan extends Model
     protected $casts = [
         'status_unduhan' => ContentStatus::class,
         'thumbnail_unduhan' => 'array',
+        'jumlah_unduhan' => 'integer',
     ];
 
     /**

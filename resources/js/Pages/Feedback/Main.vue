@@ -55,7 +55,6 @@ async function fetchFeedback(pageNumber = 1) {
         currentPage.value = res.data.meta?.current_page || 1;
         lastPage.value = res.data.meta?.last_page || 1;
     } catch (err) {
-        console.error("Gagal mengambil data feedback", err);
     } finally {
         loading.value = false;
     }
@@ -93,7 +92,6 @@ async function submitForm() {
 
         await fetchFeedback();
     } catch (err) {
-        console.error(err);
         alert("Gagal mengirim feedback.");
     }
 }

@@ -385,7 +385,6 @@ const fetchTestimonials = async () => {
         }
     } catch (err) {
         error.value = "Gagal memuat testimoni. Silakan coba lagi.";
-        console.error("Error fetching testimonials:", err);
     } finally {
         loading.value = false;
     }

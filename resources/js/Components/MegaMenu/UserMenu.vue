@@ -127,16 +127,16 @@ const handleNotificationClick = (notification) => {
                 <button
                     @click="activeTab = 'profile'"
                     class="flex-1 py-2 px-4 text-sm font-medium"
-                    :class="activeTab === 'profile' ? 'border-b-2' : 'text-gray-500 hover:text-gray-700'"
-                    :style="activeTab === 'profile' ? { color: theme?.secondary || '#3B82F6', borderBottomColor: theme?.secondary || '#3B82F6' } : {}"
+                    :class="activeTab == 'profile' ? 'border-b-2' : 'text-gray-500 hover:text-gray-700'"
+                    :style="activeTab == 'profile' ? { color: theme?.secondary || '#3B82F6', borderBottomColor: theme?.secondary || '#3B82F6' } : {}"
                 >
                     Profil
                 </button>
                 <button
                     @click="activeTab = 'notifications'"
                     class="flex-1 py-2 px-4 text-sm font-medium relative"
-                    :class="activeTab === 'notifications' ? 'border-b-2' : 'text-gray-500 hover:text-gray-700'"
-                    :style="activeTab === 'notifications' ? { color: theme?.secondary || '#3B82F6', borderBottomColor: theme?.secondary || '#3B82F6' } : {}"
+                    :class="activeTab == 'notifications' ? 'border-b-2' : 'text-gray-500 hover:text-gray-700'"
+                    :style="activeTab == 'notifications' ? { color: theme?.secondary || '#3B82F6', borderBottomColor: theme?.secondary || '#3B82F6' } : {}"
                 >
                     Notifikasi
                     <span
@@ -150,7 +150,7 @@ const handleNotificationClick = (notification) => {
             </div>
 
             <!-- Profile Content -->
-            <div v-if="activeTab === 'profile'" class="p-4">
+            <div v-if="activeTab == 'profile'" class="p-4">
                 <ul class="space-y-3 text-sm text-black">
                     <li class="flex items-center gap-2">
                         <User class="w-4 h-4" />
@@ -168,7 +168,7 @@ const handleNotificationClick = (notification) => {
             </div>
 
             <!-- Notifications Content -->
-            <div v-else-if="activeTab === 'notifications'" class="overflow-y-auto max-h-[60vh]">
+            <div v-else-if="activeTab == 'notifications'" class="overflow-y-auto max-h-[60vh]">
                 <!-- Notifications Header with Mark All as Read button -->
                 <div class="px-4 py-2 border-b border-gray-200 flex justify-between items-center sticky top-0 bg-white">
                     <span class="text-xs font-semibold text-gray-500">NOTIFIKASI</span>
@@ -271,7 +271,7 @@ const handleNotificationClick = (notification) => {
 
                 <!-- Empty State -->
                 <div
-                    v-if="notifications.unread.length === 0 && notifications.recent.length === 0"
+                    v-if="notifications.unread.length == 0 && notifications.recent.length == 0"
                     class="px-4 py-8 text-center"
                 >
                     <Bell class="w-10 h-10 text-gray-300 mx-auto mb-3" />

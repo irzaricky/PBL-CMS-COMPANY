@@ -60,7 +60,6 @@ async function fetchProfilPerusahaan() {
     } catch (err) {
         error.value = "Event not found or an error occurred";
         loading.value = false;
-        console.error("Error fetching profil_perusahaan:", err);
     }
 }
 
@@ -79,7 +78,6 @@ async function fetchMediaSosial() {
             }
         }
     } catch (err) {
-        console.error("Error fetching social media:", err);
     }
 }
 

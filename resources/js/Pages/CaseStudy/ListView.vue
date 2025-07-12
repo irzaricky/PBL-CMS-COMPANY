@@ -49,7 +49,6 @@ async function fetchCaseStudies(query = "", page = 1) {
             heroBackground.value = getImageUrl(randomCase.thumbnail_case_study);
         }
     } catch (error) {
-        console.error("Error fetching case studies:", error);
         caseStudies.value = [];
     } finally {
         isLoading.value = false;
@@ -62,7 +61,6 @@ async function fetchLatestCaseStudy() {
         const response = await axios.get("/api/case-study/latest");
         featuredCase.value = response.data.data;
     } catch (error) {
-        console.error("Error fetching latest case study:", error);
         featuredCase.value = null;
     }
 }
@@ -73,7 +71,6 @@ async function fetchAllMitra() {
         const response = await axios.get("/api/case-study/mitra");
         allMitra.value = response.data.data;
     } catch (error) {
-        console.error("Error fetching mitra:", error);
         allMitra.value = [];
     }
 }
@@ -84,7 +81,6 @@ async function fetchCompanyProfile() {
         const response = await axios.get("/api/profil-perusahaan");
         companyProfile.value = response.data.data;
     } catch (error) {
-        console.error("Error fetching company profile:", error);
         companyProfile.value = null;
     }
 }

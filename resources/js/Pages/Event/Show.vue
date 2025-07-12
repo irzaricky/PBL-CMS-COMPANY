@@ -63,7 +63,6 @@ async function fetchTestimoni() {
         );
         testimoniList.value = response.data.data;
     } catch (err) {
-        console.error("Gagal muat testimoni:", err);
     }
 }
 
@@ -84,7 +83,6 @@ async function fetchEvent() {
         await fetchTestimoni();
     } catch (err) {
         error.value = "Event not found or an error occurred";
-        console.error("Error fetching event:", err);
     } finally {
         loading.value = false;
     }
@@ -102,7 +100,6 @@ async function checkRegistrationStatus() {
             event.value.is_registered = response.data.is_registered;
         }
     } catch (err) {
-        console.error("Error checking registration status:", err);
     }
 }
 
@@ -326,7 +323,6 @@ async function submitTestimoni() {
         await fetchTestimoni();
     } catch (err) {
         alert("Gagal mengirim testimoni");
-        console.error(err);
     }
 }
 

@@ -74,7 +74,6 @@ async function fetchCaseStudy() {
     } catch (err) {
         error.value = "Studi kasus tidak ditemukan atau terjadi kesalahan";
         loading.value = false;
-        console.error("Error fetching case study:", err);
     }
 }
 
@@ -84,7 +83,6 @@ async function fetchCompanyProfile() {
         const response = await axios.get("/api/profil-perusahaan");
         companyProfile.value = response.data.data;
     } catch (error) {
-        console.error("Error fetching company profile:", error);
         companyProfile.value = null;
     }
 }

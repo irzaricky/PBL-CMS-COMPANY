@@ -68,7 +68,6 @@ async function fetchEvents() {
         }
 
     } catch (error) {
-        console.error("Error fetching events:", error);
         events.value = [];
     } finally {
         searching.value = false;

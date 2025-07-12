@@ -44,6 +44,7 @@ class Produk extends Model
     protected $casts = [
         'thumbnail_produk' => 'array',
         'status_produk' => ContentStatus::class,
+        'tampilkan_harga' => 'boolean',
     ];
 
     /**

@@ -15,7 +15,6 @@ async function fetchFeaturedArticles() {
         const response = await axios.get("/api/artikel/featured");
         featuredArticles.value = response.data.data || [];
     } catch (error) {
-        console.error("Error fetching featured articles:", error);
     } finally {
         loading.value = false;
     }

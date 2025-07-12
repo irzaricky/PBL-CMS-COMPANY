@@ -25,7 +25,6 @@ async function fetchEvent() {
         events.value = getRandomEvent(allEvent, 3);
     } catch (err) {
         error.value = "Event not found or an error occurred";
-        console.error("Error fetching event:", err);
     } finally {
         loading.value = false;
         // Refresh AOS to ensure animations work after data change

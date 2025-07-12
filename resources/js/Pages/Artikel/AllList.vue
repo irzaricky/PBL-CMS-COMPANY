@@ -48,7 +48,6 @@ async function fetchCategories() {
         categories.value = response.data.data;
         filterUsedCategories();
     } catch (error) {
-        console.error("Error fetching categories:", error);
     }
 }
 
@@ -71,7 +70,6 @@ async function fetchArticles(page = 1) {
         await nextTick();
         AOS.refresh();
     } catch (error) {
-        console.error("Error fetching articles:", error);
         articles.value = [];
         usedCategories.value = [];
     } finally {
@@ -94,7 +92,6 @@ async function searchArticles(query) {
         await nextTick();
         AOS.refresh();
     } catch (error) {
-        console.error("Error searching articles:", error);
         articles.value = [];
         usedCategories.value = [];
     } finally {

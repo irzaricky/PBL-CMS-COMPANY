@@ -9,7 +9,6 @@ class FeatureToggle extends Model
 {
     use HasFactory;
 
-
     /**
      * The table associated with the model.
      *
@@ -24,7 +23,6 @@ class FeatureToggle extends Model
      */
     protected $primaryKey = 'feature_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -34,6 +32,17 @@ class FeatureToggle extends Model
         'key',
         'label',
         'status_aktif',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'status_aktif' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public $timestamps = true;

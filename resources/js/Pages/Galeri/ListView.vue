@@ -62,7 +62,6 @@ async function fetchGaleries(query = "", categoryId = null, page = 1) {
             activeSlideIndex.value[galeri.id_galeri] = 0;
         });
     } catch (error) {
-        console.error("Error fetching galeries:", error);
         galeries.value = [];
     } finally {
         loadingGaleries.value = false;
@@ -75,7 +74,6 @@ async function fetchCategories() {
         categories.value = response.data.data || [];
         filterUsedCategories();
     } catch (error) {
-        console.error("Error fetching categories:", error);
         categories.value = [];
     }
 }

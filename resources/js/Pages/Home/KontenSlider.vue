@@ -36,7 +36,6 @@ async function fetchFeatureToggles() {
         const response = await axios.get('/api/feature-toggles')
         featureToggles.value = response.data.data || {}
     } catch (err) {
-        console.error("Error fetching feature toggles:", err)
     }
 }
 
@@ -45,7 +44,7 @@ async function fetchProfilPerusahaan() {
         const response = await axios.get(`/api/profil-perusahaan`)
         profil_perusahaan.value = response.data.data
     } catch (err) {
-        console.error("Error fetching profil_perusahaan:", err)
+       
     }
 }
 
@@ -100,7 +99,7 @@ async function fetchKontenSlider() {
         }
 
     } catch (err) {
-        console.error("Error fetching konten slider:", err)
+        
     }
 }
 

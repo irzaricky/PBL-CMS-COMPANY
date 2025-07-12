@@ -36,7 +36,6 @@ async function fetchProfilPerusahaan() {
     } catch (err) {
         error.value = "Profil perusahaan gagal dimuat.";
         loading.value = false;
-        console.error("Error fetching profilPerusahaan:", err);
     }
 }
 

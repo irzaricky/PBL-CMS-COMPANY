@@ -45,6 +45,7 @@ class Artikel extends Model
     protected $casts = [
         'thumbnail_artikel' => 'array',
         'status_artikel' => ContentStatus::class,
+        'jumlah_view' => 'integer',
     ];
 
 

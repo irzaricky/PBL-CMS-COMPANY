@@ -43,6 +43,7 @@ class Galeri extends Model
     protected $casts = [
         'thumbnail_galeri' => 'array',
         'status_galeri' => ContentStatus::class,
+        'jumlah_unduhan' => 'integer',
     ];
 
     /**

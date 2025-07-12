@@ -46,7 +46,7 @@ const filteredOtherSections = computed(() => {
             return {
                 ...section,
                 links: section.links.filter(
-                    (link) => featureToggles.value[link.toggleKey] === 1
+                    (link) => featureToggles.value[link.toggleKey] == 1
                 ),
             };
         })
@@ -63,7 +63,6 @@ async function fetchFeatureToggles() {
         const res = await axios.get("/api/feature-toggles");
         featureToggles.value = res.data.data || {};
     } catch (err) {
-        console.error("Error fetching feature toggles:", err);
         featureToggles.value = {};
     }
 }
@@ -90,8 +89,8 @@ onMounted(() => {
                             class="space-y-6"
                             :class="{
                                 'lg:col-span-1':
-                                    index === 0 &&
-                                    filteredMenuSections.length === 3,
+                                    index == 0 &&
+                                    filteredMenuSections.length == 3,
                             }"
                         >
                             <div class="border-b border-secondary/20 pb-3">
@@ -131,9 +130,9 @@ onMounted(() => {
                     >
                         <div
                             v-if="
-                                featureToggles.artikel_module === 1 ||
-                                featureToggles.event_module === 1 ||
-                                featureToggles.lowongan_module === 1
+                                featureToggles.artikel_module == 1 ||
+                                featureToggles.event_module == 1 ||
+                                featureToggles.lowongan_module == 1
                             "
                             class="border-b border-secondary/20 pb-3 lg:border-b-0 lg:pb-0"
                         >
@@ -145,13 +144,13 @@ onMounted(() => {
                         </div>
                         <div class="space-y-6">
                             <MiniArtikel
-                                v-if="featureToggles.artikel_module === 1"
+                                v-if="featureToggles.artikel_module == 1"
                             />
                             <MiniEvent
-                                v-if="featureToggles.event_module === 1"
+                                v-if="featureToggles.event_module == 1"
                             />
                             <MiniLowongan
-                                v-if="featureToggles.lowongan_module === 1"
+                                v-if="featureToggles.lowongan_module == 1"
                             />
                         </div>
                     </div>

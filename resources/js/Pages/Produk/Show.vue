@@ -41,7 +41,6 @@ async function fetchProduk() {
         item.value = response.data.data
         await fetchTestimoni()
     } catch (err) {
-        console.error('Produk not found or error:', err)
     } finally {
         loading.value = false
     }
@@ -69,7 +68,6 @@ async function fetchTestimoni() {
         const response = await axios.get(`/api/testimoni/produk/${item.value.id_produk}`)
         testimoniList.value = response.data.data
     } catch (err) {
-        console.error('Gagal muat testimoni:', err)
     }
 }
 
@@ -101,7 +99,6 @@ async function submitTestimoni() {
         await fetchTestimoni()
     } catch (err) {
         alert('Gagal mengirim testimoni')
-        console.error(err)
     }
 }
 

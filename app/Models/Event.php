@@ -49,6 +49,7 @@ class Event extends Model
         'waktu_start_event' => 'datetime',
         'waktu_end_event' => 'datetime',
         'thumbnail_event' => 'array',
+        'jumlah_pendaftar' => 'integer',
     ];
 
     /**

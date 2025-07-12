@@ -52,7 +52,6 @@ const fetchGaleri = async () => {
 
 		isLoaded.value = true
 	} catch (err) {
-		console.error('Gagal mengambil data galeri:', err)
 		// Add fallback on error
 		handleEmptyGallery()
 	}

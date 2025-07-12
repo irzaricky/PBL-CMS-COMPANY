@@ -54,8 +54,6 @@ async function refreshApplicationStatus() {
             }
         }
     } catch (err) {
-        console.error("Error refreshing application status:", err);
-        // You might want to show an error message to user here
     } finally {
         isRefreshing.value = false;
     }

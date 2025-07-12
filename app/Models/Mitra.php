@@ -44,5 +44,6 @@ class Mitra extends Model
      */
     protected $casts = [
         'tanggal_kemitraan' => 'date',
+        'status' => 'boolean',
     ];
 }

@@ -20,7 +20,6 @@ async function fetchArticles() {
             megaMenuCache.setCache("articles", response.data.data);
         }
     } catch (error) {
-        console.error("Error fetching articles:", error);
     } finally {
         isLoading.value = false;
     }

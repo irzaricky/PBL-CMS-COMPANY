@@ -24,7 +24,6 @@ async function fetchCategories() {
         const response = await axios.get("/api/artikel/categories");
         categories.value = response.data.data;
     } catch (error) {
-        console.error("Error fetching categories:", error);
     }
 }
 
@@ -47,7 +46,6 @@ async function fetchArticles() {
 
         articles.value = getRandomArticles(allArticles, 3);
     } catch (error) {
-        console.error("Error fetching articles:", error);
     } finally {
         loading.value = false;
         searching.value = false;

@@ -164,7 +164,6 @@ async function submitApplication() {
             "Gagal mengirim lamaran: " +
                 (err.response?.data?.message || err.message)
         );
-        console.error(err);
     } finally {
         isApplying.value = false;
     }

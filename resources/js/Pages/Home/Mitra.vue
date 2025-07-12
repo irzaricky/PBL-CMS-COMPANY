@@ -123,7 +123,7 @@ const fetchMitraData = async () => {
         mitraList.value = response.data.data || response.data
         isLoading.value = false
     } catch (error) {
-        console.error('Error fetching mitra data:', error)
+      
         isLoading.value = false
         // Fallback to default logos if API fails
         mitraList.value = [
@@ -145,7 +145,7 @@ const fetchCompanyProfile = async () => {
         const response = await axios.get("/api/profil-perusahaan");
         companyProfile.value = response.data.data;
     } catch (error) {
-        console.error("Error fetching company profile:", error);
+   
         companyProfile.value = null;
     }
 }

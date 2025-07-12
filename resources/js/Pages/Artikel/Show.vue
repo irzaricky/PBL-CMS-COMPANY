@@ -34,7 +34,6 @@ async function fetchRelatedArticles() {
         const response = await axios.get("/api/artikel/featured");
         relatedArticles.value = response.data.data;
     } catch (err) {
-        console.error("Error fetching related articles:", err);
     }
 }
 
@@ -99,7 +98,6 @@ async function fetchArticle() {
     } catch (err) {
         error.value = "Article not found or an error occurred";
         loading.value = false;
-        console.error("Error fetching article:", err);
     }
 }
 
@@ -139,7 +137,6 @@ async function fetchTestimoni() {
         );
         testimoniList.value = response.data.data;
     } catch (err) {
-        console.error("Gagal muat testimoni:", err);
     }
 }
 async function submitTestimoni() {
@@ -170,7 +167,6 @@ async function submitTestimoni() {
         await fetchTestimoni();
     } catch (err) {
         alert("Gagal mengirim testimoni");
-        console.error(err);
     }
 }
 function closeTestimoniModal() {

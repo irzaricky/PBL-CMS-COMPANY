@@ -46,6 +46,7 @@ class StrukturOrganisasi extends Model
     protected $casts = [
         'tanggal_mulai' => 'datetime',
         'tanggal_selesai' => 'datetime',
+        'urutan' => 'integer',
     ];
 
     /**

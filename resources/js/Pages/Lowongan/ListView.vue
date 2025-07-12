@@ -41,12 +41,10 @@ const fetchLowongan = async (page = 1, query = '') => {
                 lastPage.value = response.data.meta.last_page;
             }
         } else {
-            console.error("Unexpected response format:", response.data);
             lowongan.value = [];
             allLowongan.value = [];
         }
     } catch (err) {
-        console.error("Error fetching job listings:", err);
         lowongan.value = [];
         allLowongan.value = [];
     } finally {

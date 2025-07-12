@@ -29,7 +29,7 @@ async function fetchLowongan() {
         lowongan.value = getRandomItems(allData, 3)
     } catch (err) {
         error.value = 'Lowongan tidak ditemukan atau terjadi kesalahan.'
-        console.error('Error fetching lowongan:', err)
+       
     } finally {
         loading.value = false
     }
@@ -42,7 +42,7 @@ async function fetchProfilPerusahaan() {
         profil_perusahaan.value = response.data.data
     } catch (err) {
         error.value = "Profil perusahaan tidak ditemukan atau terjadi kesalahan"
-        console.error("Error fetching profil_perusahaan:", err)
+        
     } finally {
         loading.value = false
     }

@@ -73,7 +73,6 @@ const fetchProduk = async (query = "", categoryId = null, page = 1) => {
         }
 
     } catch (error) {
-        console.error("Error fetching produk:", error);
         produk.value = [];
         usedCategories.value = [];
     } finally {
@@ -104,7 +103,6 @@ async function fetchKategori() {
         categories.value = response.data.data;
         filterUsedCategories();
     } catch (error) {
-        console.error("Error fetching categories:", error);
     }
 }
 
@@ -153,7 +151,6 @@ const fetchLatestProduct = async () => {
         const response = await axios.get("/api/produk/latest");
         item.value = response.data.data;
     } catch (error) {
-        console.error("Gagal mengambil produk terbaru:", error);
         item.value = null;
     }
 };

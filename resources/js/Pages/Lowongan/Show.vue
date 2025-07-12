@@ -97,7 +97,6 @@ async function checkUserApplication() {
             }
         }
     } catch (err) {
-        console.error("Error checking user application:", err);
         userApplication.value = null;
     } finally {
         checkingApplication.value = false;
@@ -132,21 +131,14 @@ async function fetchLowongan() {
             }
             // Handle error response that might have a message
             else if (response.data.message) {
-                console.error("API error message:", response.data.message);
                 item.value = null;
             } else {
-                console.error("Unexpected response structure:", response.data);
                 item.value = null;
             }
         } else {
-            console.error("No data in response");
             item.value = null;
         }
     } catch (err) {
-        console.error(
-            "Lowongan not found or error:",
-            err.response?.data || err.message || err
-        );
         item.value = null;
     } finally {
         loading.value = false;
@@ -199,7 +191,6 @@ async function fetchTestimoni() {
         );
         testimoniList.value = response.data.data;
     } catch (err) {
-        console.error("Gagal muat testimoni:", err);
     }
 }
 
@@ -231,7 +222,6 @@ async function submitTestimoni() {
         await fetchTestimoni();
     } catch (err) {
         alert("Gagal mengirim testimoni");
-        console.error(err);
     }
 }
 

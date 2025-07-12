@@ -35,6 +35,6 @@ class MediaSosial extends Model
     ];
 
     protected $casts = [
-        'status' => ContentStatus::class,
+        'status_aktif' => 'boolean',
     ];
 }

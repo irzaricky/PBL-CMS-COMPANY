@@ -31,7 +31,6 @@ const fetchUnduhan = async () => {
         currentPage.value = data.meta?.current_page || 1;
         lastPage.value = data.meta?.last_page || 1;
     } catch (error) {
-        console.error("Error fetching unduhan:", error);
         unduhanList.value = [];
         usedCategories.value = [];
     } finally {
@@ -45,7 +44,6 @@ const fetchCategories = async () => {
         categories.value = data.data;
         filterUsedCategories();
     } catch (error) {
-        console.error("Error fetching categories:", error);
         categories.value = [];
     }
 };
@@ -55,7 +53,6 @@ const fetchMostDownloaded = async () => {
         const { data } = await axios.get("/api/unduhan/most-downloaded");
         mostDownloaded.value = data.data;
     } catch (error) {
-        console.error("Error fetching most downloaded:", error);
         mostDownloaded.value = [];
     }
 };

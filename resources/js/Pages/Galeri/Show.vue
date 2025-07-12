@@ -85,7 +85,7 @@ async function fetchGallery() {
     } catch (err) {
         error.value = "Gallery not found or an error occurred";
         loading.value = false;
-        console.error("Error fetching gallery:", err);
+
     }
 }
 
@@ -113,7 +113,6 @@ async function loadImageMetadata() {
             imageMetadata.value = response.data.data;
         }
     } catch (err) {
-        console.error("Error loading image metadata:", err);
     } finally {
         loadingMeta.value = false;
     }
@@ -226,7 +225,6 @@ async function downloadGallery(galleryId) {
             }
         }
     } catch (error) {
-        console.error("Error downloading gallery:", error);
     }
 }
 

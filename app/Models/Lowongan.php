@@ -54,6 +54,7 @@ class Lowongan extends Model
         'gaji' => 'decimal:2',
         'thumbnail_lowongan' => 'array',
         'status_lowongan' => ContentStatus::class,
+        'tenaga_dibutuhkan' => 'integer',
     ];
 
     /**

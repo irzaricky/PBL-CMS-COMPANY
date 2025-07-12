@@ -26,7 +26,7 @@ async function fetchProduk() {
         produk.value = getRandomProduk(allProduk, 4);
     } catch (err) {
         error.value = "Produk not found or an error occurred";
-        console.error("Error fetching produk:", err);
+     
     } finally {
         loading.value = false;
         // Refresh AOS to ensure animations work after data change

@@ -22,7 +22,6 @@ async function fetchLowongan() {
             megaMenuCache.setCache("lowongans", response.data.data);
         }
     } catch (error) {
-        console.error("Error fetching lowongan:", error);
     } finally {
         isLoading.value = false;
     }
