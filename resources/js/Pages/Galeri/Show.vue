@@ -85,7 +85,6 @@ async function fetchGallery() {
     } catch (err) {
         error.value = "Gallery not found or an error occurred";
         loading.value = false;
-
     }
 }
 
@@ -208,8 +207,6 @@ async function downloadGallery(galleryId) {
                 // Create download URL based on path type
                 let downloadUrl;
                 if (imagePath.startsWith("galeri-thumbnails/")) {
-                    downloadUrl = `/${imagePath}`;
-                } else {
                     downloadUrl = `/storage/${imagePath}`;
                 }
 
@@ -224,8 +221,7 @@ async function downloadGallery(galleryId) {
                 document.body.removeChild(link);
             }
         }
-    } catch (error) {
-    }
+    } catch (error) {}
 }
 
 function setActiveImage(index) {
@@ -268,11 +264,15 @@ function prevImage() {
 
 <template>
     <AppLayout>
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-20 font-custom text-black">
+        <div
+            class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-16 py-20 font-custom text-black"
+        >
             <!-- Loading Skeleton -->
             <div v-if="loading" class="flex flex-col gap-20">
                 <!-- Skeleton Breadcrumb - Simplified to single rectangle -->
-                <div class="w-full max-w-md h-5 bg-gray-200 animate-pulse rounded"></div>
+                <div
+                    class="w-full max-w-md h-5 bg-gray-200 animate-pulse rounded"
+                ></div>
 
                 <!-- Skeleton Judul & Kategori -->
                 <div class="flex flex-col gap-4">
@@ -386,7 +386,9 @@ function prevImage() {
                 <div class="flex flex-col gap-12">
                     <div>
                         <nav class="flex" aria-label="Breadcrumb">
-                            <ol class="inline-flex items-center space-x-1 text-sm">
+                            <ol
+                                class="inline-flex items-center space-x-1 text-sm"
+                            >
                                 <li class="inline-flex items-center">
                                     <Link
                                         href="/"
@@ -397,7 +399,9 @@ function prevImage() {
                                     </Link>
                                 </li>
                                 <li class="inline-flex items-center">
-                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
+                                    <ChevronRight
+                                        class="w-4 h-4 text-gray-400 mx-1.5"
+                                    />
                                     <Link
                                         href="/galeri"
                                         class="inline-flex items-center text-gray-500 hover:text-secondary transition-colors"
@@ -407,12 +411,16 @@ function prevImage() {
                                     </Link>
                                 </li>
                                 <li class="inline-flex items-center">
-                                    <ChevronRight class="w-4 h-4 text-gray-400 mx-1.5" />
+                                    <ChevronRight
+                                        class="w-4 h-4 text-gray-400 mx-1.5"
+                                    />
                                     <span
                                         class="text-sm font-medium text-gray-700 truncate max-w-[140px] sm:max-w-[200px] md:max-w-[300px]"
                                         :title="gallery?.judul_galeri"
                                     >
-                                        {{ gallery?.judul_galeri || "Memuat..." }}
+                                        {{
+                                            gallery?.judul_galeri || "Memuat..."
+                                        }}
                                     </span>
                                 </li>
                             </ol>
@@ -426,25 +434,41 @@ function prevImage() {
                                 class="px-3 py-1 rounded-full border text-sm font-semibold bg-black/5 text-black"
                             >
                                 {{
-                                    gallery?.kategoriGaleri?.nama_kategori_galeri ||
+                                    gallery?.kategoriGaleri
+                                        ?.nama_kategori_galeri ||
                                     "Tanpa Kategori"
                                 }}
                             </div>
-                            <div class="text-sm font-semibold text-black flex items-center gap-2">
+                            <div
+                                class="text-sm font-semibold text-black flex items-center gap-2"
+                            >
                                 <Image class="w-4 h-4" />
-                                {{ gallery?.thumbnail_galeri?.length || 0 }} gambar
+                                {{
+                                    gallery?.thumbnail_galeri?.length || 0
+                                }}
+                                gambar
                             </div>
                         </div>
-                        <h1 class="text-4xl sm:text-5xl font-normal leading-tight">
-                            {{ gallery?.judul_galeri || "Judul tidak tersedia" }}
+                        <h1
+                            class="text-4xl sm:text-5xl font-normal leading-tight"
+                        >
+                            {{
+                                gallery?.judul_galeri || "Judul tidak tersedia"
+                            }}
                         </h1>
                     </div>
                 </div>
 
                 <!-- Gambar Utama - Fixed button events -->
-                <div class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white group">
+                <div
+                    class="relative rounded-2xl overflow-hidden shadow-sm aspect-[16/9] bg-white group"
+                >
                     <img
-                        :src="getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])"
+                        :src="
+                            getImageUrl(
+                                gallery?.thumbnail_galeri?.[activeImageIndex]
+                            )
+                        "
                         :alt="gallery?.judul_galeri"
                         class="w-full h-full object-cover"
                     />
@@ -453,8 +477,7 @@ function prevImage() {
                     <div class="absolute top-4 right-4 flex gap-2 z-20">
                         <button
                             @click.stop="openImageModal"
-                            class="p-3 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg 
-                                   opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                            class="p-3 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg opacity-100 md:opacity-0 md:group-hover:opacity-100"
                             title="Lihat gambar penuh"
                             type="button"
                         >
@@ -462,8 +485,7 @@ function prevImage() {
                         </button>
                         <button
                             @click.stop="openMetaModal"
-                            class="p-3 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg 
-                                   opacity-100 md:opacity-0 md:group-hover:opacity-100"
+                            class="p-3 bg-white/90 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg opacity-100 md:opacity-0 md:group-hover:opacity-100"
                             title="Info gambar"
                             type="button"
                         >
@@ -479,8 +501,7 @@ function prevImage() {
                         <!-- Desktop arrows (hover only) -->
                         <button
                             @click.stop="prevImage"
-                            class="p-3 bg-white/80 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg
-                                   hidden md:block opacity-0 group-hover:opacity-100"
+                            class="p-3 bg-white/80 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg hidden md:block opacity-0 group-hover:opacity-100"
                             title="Gambar sebelumnya"
                             type="button"
                         >
@@ -488,8 +509,7 @@ function prevImage() {
                         </button>
                         <button
                             @click.stop="nextImage"
-                            class="p-3 bg-white/80 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg
-                                   hidden md:block opacity-0 group-hover:opacity-100"
+                            class="p-3 bg-white/80 backdrop-blur-sm rounded-full text-black hover:bg-white transition-all duration-200 shadow-lg hidden md:block opacity-0 group-hover:opacity-100"
                             title="Gambar selanjutnya"
                             type="button"
                         >
@@ -510,8 +530,11 @@ function prevImage() {
                         >
                             <ChevronRight class="w-4 h-4 rotate-180" />
                         </button>
-                        <span class="px-3 py-2 bg-white/90 backdrop-blur-sm rounded-full text-black text-sm font-medium">
-                            {{ activeImageIndex + 1 }} / {{ gallery?.thumbnail_galeri?.length }}
+                        <span
+                            class="px-3 py-2 bg-white/90 backdrop-blur-sm rounded-full text-black text-sm font-medium"
+                        >
+                            {{ activeImageIndex + 1 }} /
+                            {{ gallery?.thumbnail_galeri?.length }}
                         </span>
                         <button
                             @click.stop="nextImage"
@@ -650,7 +673,9 @@ function prevImage() {
                 :show="showImageModal"
                 :images="gallery?.thumbnail_galeri"
                 :active-index="activeImageIndex"
-                :current-image-url="getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])"
+                :current-image-url="
+                    getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])
+                "
                 :gallery-title="gallery?.judul_galeri"
                 @close="closeImageModal"
                 @next="nextImage"
@@ -663,7 +688,9 @@ function prevImage() {
                 :show="showMetaModal"
                 :metadata="currentImageMeta"
                 :loading-meta="loadingMeta"
-                :current-image-url="getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])"
+                :current-image-url="
+                    getImageUrl(gallery?.thumbnail_galeri?.[activeImageIndex])
+                "
                 :gallery-title="gallery?.judul_galeri"
                 @close="closeMetaModal"
             />
