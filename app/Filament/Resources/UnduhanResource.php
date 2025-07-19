@@ -122,8 +122,13 @@ class UnduhanResource extends Resource
                             ->downloadable()
                             ->helperText('Upload file untuk diunduh (format: pdf, doc, docx, xls, xlsx, ppt, pptx, zip)'),
 
-                        Forms\Components\TextInput::make('deskripsi')
+                         Forms\Components\RichEditor::make('deskripsi')
                             ->label('Deskripsi Unduhan')
+                             ->toolbarButtons([
+                                'redo',
+                                'undo',
+                            ])
+                            ->required() 
                             ->columnSpanFull(),
                     ]),
             ]);

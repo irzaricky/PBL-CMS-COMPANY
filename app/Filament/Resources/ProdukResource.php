@@ -141,9 +141,13 @@ class ProdukResource extends Resource
                             ->imageResizeTargetHeight(720)
                             ->optimize('webp'),
 
-                        Forms\Components\TextInput::make('deskripsi_produk')
+                        Forms\Components\RichEditor::make('deskripsi_produk')
                             ->label('Deskripsi Produk')
-                            ->required()
+                             ->toolbarButtons([
+                                'redo',
+                                'undo',
+                            ])
+                            ->required() 
                             ->columnSpanFull(),
                     ]),
                 Forms\Components\Section::make('Tautan & Informasi Tambahan')
